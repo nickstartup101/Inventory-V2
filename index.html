@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - V2 Production Stable</title>
+    <title>La Dolce Portal - V2 Stable Integration</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -161,6 +161,12 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
+            <!-- Connection Diagnostics Badge -->
+            <div id="connection-status-badge" class="flex items-center space-x-2 text-[10px] text-neutral-400">
+                <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+                <span>ກຳລັງກວດສອບການເຊື່ອມຕໍ່ Sheets...</span>
+            </div>
+            
             <div id="user-info-bar" class="flex items-center space-x-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>
@@ -244,7 +250,7 @@
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div class="flex items-center space-x-3 text-xs">
                     <div id="session-status-dot" class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
-                    <span id="session-status-text" class="font-semibold text-neutral-400">ເຊດຊັນຍັງຖືກລັອກ (ກະລຸນາຢືນຢັນຕົວຕົນ)</span>
+                    <span id="session-status-text" class="font-semibold text-neutral-400">ເຊດຊັນຍັງຖືກລັອກ (ກະລຸນາປົດລັອກເພື່ອບັນທຶກສະຕ໊ອກ)</span>
                 </div>
                 <div id="session-action-area" class="flex gap-2 w-full sm:w-auto">
                     <input type="password" id="session-pin-input" maxlength="6" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-xs text-white placeholder-neutral-500 w-full sm:w-32" placeholder="PIN 6 ຫຼັກ">
@@ -641,7 +647,7 @@
     <script>
         // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
         // ວາງ Web App URL ທີ່ໄດ້ຈາກການ Deploy Google Sheet ໃສ່ລະຫວ່າງເຄື່ອງໝາຍ " " 
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz-2t4mrT5XQH6ZF6rsTDi4sZiZTjmvWypdBezT7J7dsEAWXHoToqX5oWt7nl5qPMTFXw/exec"; 
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwCHCbPcJBFXNRuag3qbRBWX2V1BHWSX_SbFIZa_2xTN_kXIJ1p5hBT1yAwlfTz6jG83w/exec"; 
 
         let db = {
             products: [
@@ -671,20 +677,40 @@
         let authPinBuffer = "";
         let quickStockChanges = {};
         let isHRMMode = false;
+        let activeOperator = null; // Session-based operator state
 
         window.addEventListener('DOMContentLoaded', async () => {
-            if (GOOGLE_SHEET_API_URL !== "") {
+            if (GOOGLE_SHEET_API_URL !== "" && GOOGLE_SHEET_API_URL.startsWith("https://")) {
                 await syncDataFromGoogleSheet();
             } else {
+                updateConnectionBadge("offline", "Local Mode (No API URL config)");
                 renderAllViews();
             }
             applyUserModeUI();
+            updateSessionUI();
         });
+
+        // ຟັງຊັນປ່ຽນແປງ Badge ສະຖານະການເຊື່ອມຕໍ່ Sheets
+        function updateConnectionBadge(status, message) {
+            const badge = document.getElementById('connection-status-badge');
+            if (status === "connected") {
+                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-emerald-400 font-bold">Sheets Sync Active</span>`;
+            } else if (status === "error") {
+                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div><span class="text-rose-400 font-bold" title="${message}">Connection Error (Click for info)</span>`;
+                badge.style.cursor = "pointer";
+                badge.onclick = () => alert(`ລາຍລະອຽດຂໍ້ຜິດພາດ: ${message}\n\nວິທີແກ້ໄຂ:\n1. ກວດສອບວ່າ Google Sheet ຖືກຕັ້ງຄ່າ Deploy ເປັນ 'Anyone' ແລ້ວຫຼືບໍ່\n2. ກວດສອບ URL ຂອງ Web App ໃນ Code ໃຫ້ຖືກຕ້ອງ.`);
+            } else {
+                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-neutral-600 animate-pulse"></div><span>${message}</span>`;
+            }
+        }
 
         // ຟັງຊັນສຳລັບດຶງຂໍ້ມູນຈາກ Google Sheet
         async function syncDataFromGoogleSheet() {
+            updateConnectionBadge("pending", "ກຳລັງດຶງຂໍ້ມູນຈາກ Google Sheets...");
             try {
                 const res = await fetch(`${GOOGLE_SHEET_API_URL}?action=loadAllData`);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                
                 const data = await res.json();
                 if (data) {
                     db.products = data.products.length ? data.products : db.products;
@@ -693,32 +719,78 @@
                     db.attendance = data.attendance.length ? data.attendance : db.attendance;
                     db.leaves = data.leaves.length ? data.leaves : db.leaves;
                     
-                    // ດຶງຂໍ້ມູນ Log ຫຼ້າສຸດມາອັບເດດໃນໜ້າຈໍ
                     if (data.logs && data.logs.length) {
                         db.logs = data.logs;
                     }
+                    updateConnectionBadge("connected");
                 }
                 renderAllViews();
             } catch (err) {
-                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets. ລະບົບຈະໃຊ້ Local Data ແທນ.", err);
+                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets:", err);
+                updateConnectionBadge("error", err.message);
                 renderAllViews();
             }
         }
 
         // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Google Sheet (POST)
         async function postToGoogleSheet(payload) {
-            if (GOOGLE_SHEET_API_URL === "") return true;
+            if (GOOGLE_SHEET_API_URL === "" || !GOOGLE_SHEET_API_URL.startsWith("https://")) return true;
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL, {
                     method: "POST",
-                    mode: "no-cors", // ສໍາລັບ Web App ທີ່ Deploy ໃນ Google Sheets
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "text/plain" }, // ຫຼີກເວັ້ນ CORS preflight issues
                     body: JSON.stringify(payload)
                 });
                 return true;
             } catch (err) {
                 console.error("ບໍ່ສາມາດສົ່ງຂໍ້ມູນຫາ Google Sheet ໄດ້:", err);
                 return false;
+            }
+        }
+
+        // ລະບົບປົດລັອກ Session ຂອງພະນັກງານ
+        function unlockInventorySession() {
+            const pinVal = document.getElementById('session-pin-input').value;
+            if (pinVal.length !== 6) {
+                alert("ລະຫັດ PIN ຕ້ອງມີ 6 ຫຼັກ");
+                return;
+            }
+
+            const staffMember = db.staff.find(s => s.pin === pinVal && s.active);
+            if (staffMember) {
+                activeOperator = staffMember;
+                document.getElementById('session-pin-input').value = "";
+                updateSessionUI();
+                alert(`ຍິນດີຕ້ອນຮັບ, ປົດລັອກເຊດຊັນສຳລັບ: ${staffMember.name}`);
+            } else {
+                alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ ຫຼື ພະນັກງານບໍ່ມີສິດນຳໃຊ້");
+            }
+        }
+
+        function lockInventorySession() {
+            activeOperator = null;
+            updateSessionUI();
+        }
+
+        function updateSessionUI() {
+            const statusDot = document.getElementById('session-status-dot');
+            const statusText = document.getElementById('session-status-text');
+            const actionArea = document.getElementById('session-action-area');
+            const workspace = document.getElementById('inventory-workspace');
+
+            if (activeOperator) {
+                statusDot.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse";
+                statusText.innerHTML = `ຜູ້ບັນທຶກປັດຈຸບັນ (Active): <span class="text-[#FF4D00] font-bold">${activeOperator.name} (${activeOperator.pin})</span>`;
+                actionArea.innerHTML = `<button onclick="lockInventorySession()" class="px-4 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-rose-400 text-xs font-bold rounded-xl whitespace-nowrap transition-all">ປ່ຽນຜູ້ບັນທຶກ / Lock</button>`;
+                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-100 pointer-events-auto transition-all duration-300";
+            } else {
+                statusDot.className = "w-3 h-3 rounded-full bg-rose-500 animate-pulse";
+                statusText.innerText = "ເຊດຊັນຍັງຖືກລັອກ (ກະລຸນາປົດລັອກເພື່ອບັນທຶກສະຕ໊ອກ)";
+                actionArea.innerHTML = `
+                    <input type="password" id="session-pin-input" maxlength="6" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-xs text-white placeholder-neutral-500 w-full sm:w-32" placeholder="PIN 6 ຫຼັກ">
+                    <button onclick="unlockInventorySession()" class="px-4 py-1.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">ປົດລັອກ</button>
+                `;
+                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-40 pointer-events-none transition-all duration-300";
             }
         }
 
@@ -890,8 +962,6 @@
             };
 
             db.attendance.push(payload);
-
-            // ສົ່ງຂໍ້ມູນໄປ Google Sheet (ຖ້າຕັ້ງຄ່າ URL ໄວ້)
             await postToGoogleSheet(payload);
 
             document.getElementById('attendance-live-log').innerHTML = `
@@ -1042,17 +1112,10 @@
             }
         }
 
-        // Quick adjust with 6-digit PIN tracking & API Sync
+        // Quick adjust using Active Session instead of requesting PIN every time
         async function submitQuickInventory() {
-            const pin = document.getElementById('quick-auth-pin').value;
-            if (pin.length !== 6) {
-                alert("ກະລຸນາປ້ອນລະຫັດ PIN 6 ຫຼັກ ເພື່ອຢືນຢັນຕົວຕົນຜູ້ບັນທຶກ");
-                return;
-            }
-
-            const staffMember = db.staff.find(s => s.pin === pin && s.active);
-            if (!staffMember) {
-                alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ ຫຼື ພະນັກງານຖືກປິດໃຊ້ງານ");
+            if (!activeOperator) {
+                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນບັນທຶກສະຕ໊ອກ");
                 return;
             }
 
@@ -1072,7 +1135,7 @@
                             type: amt > 0 ? "IN" : "OUT",
                             qty: Math.abs(amt),
                             note: "Quick Adjustment",
-                            user: `${staffMember.name} (${staffMember.pin})`
+                            user: `${activeOperator.name} (${activeOperator.pin})`
                         };
                         db.logs.push(logPayload);
                         await postToGoogleSheet(logPayload);
@@ -1081,9 +1144,8 @@
                 }
             }
             if (changeMade) {
-                alert(`ບັນທຶກສະຕ໊ອກດ່ວນສຳເລັດ ໂດຍ: ${staffMember.name}`);
+                alert(`ບັນທຶກສະຕ໊ອກດ່ວນສຳເລັດ ໂດຍ: ${activeOperator.name}`);
                 quickStockChanges = {};
-                document.getElementById('quick-auth-pin').value = "";
                 renderAllViews();
                 updateQuickText();
             } else {
@@ -1103,26 +1165,19 @@
             document.getElementById('manual-remark-desc-container').classList.toggle('hidden', val !== 'others');
         }
 
-        // Manual record with 6-digit PIN tracking & API Sync
+        // Manual record using Active Session
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
-            const pin = document.getElementById('manual-auth-pin').value;
+            if (!activeOperator) {
+                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນທຳການບັນທຶກ");
+                return;
+            }
+
             const sku = document.getElementById('manual-sku').value;
             const type = document.getElementById('manual-type').value;
             const qty = parseInt(document.getElementById('manual-qty').value);
             let remark = document.getElementById('manual-remark').value;
             if (remark === 'others') remark = document.getElementById('manual-remark-desc').value || "ອື່ນໆ";
-
-            if (pin.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-                return;
-            }
-
-            const staffMember = db.staff.find(s => s.pin === pin && s.active);
-            if (!staffMember) {
-                alert("ບໍ່ພົບຂໍ້ມູນພະນັກງານຈາກ PIN ນີ້");
-                return;
-            }
 
             const prod = db.products.find(p => p.sku === sku);
             if (prod) {
@@ -1140,13 +1195,13 @@
                     type: type,
                     qty: qty,
                     note: remark,
-                    user: `${staffMember.name} (${staffMember.pin})`
+                    user: `${activeOperator.name} (${activeOperator.pin})`
                 };
 
                 db.logs.push(logPayload);
                 await postToGoogleSheet(logPayload);
 
-                alert(`ບັນທຶກສຳເລັດ ໂດຍ: ${staffMember.name}`);
+                alert(`ບັນທຶກສຳເລັດ ໂດຍ: ${activeOperator.name}`);
                 e.target.reset();
                 document.getElementById('manual-remark-desc-container').classList.add('hidden');
                 renderAllViews();
@@ -1244,7 +1299,78 @@
             renderAllViews();
         }
 
-        // Add staff modal controls
+        function renderStaffTable() {
+            const tbody = document.getElementById('staff-table-body');
+            tbody.innerHTML = "";
+            db.staff.forEach(st => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 font-mono font-bold text-[#FF4D00]">${st.pin}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${st.name}</td>
+                        <td class="p-3 text-neutral-400">${st.branch}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.active ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">
+                                ${st.active ? 'Active' : 'Deactive'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right space-x-2">
+                            <button onclick="changePassword('${st.pin}')" class="text-xs text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
+                            <button onclick="toggleStaffState('${st.pin}')" class="text-xs text-neutral-400 hover:underline">
+                                ${st.active ? 'Deactive' : 'Active'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function changePassword(pin) {
+            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
+            if (newPin && newPin.length === 6) {
+                const staffMember = db.staff.find(s => s.pin === pin);
+                if (staffMember) {
+                    staffMember.pin = newPin;
+                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
+                    renderAllViews();
+                }
+            } else {
+                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
+            }
+        }
+
+        function toggleStaffState(pin) {
+            const staffMember = db.staff.find(s => s.pin === pin);
+            if (staffMember) {
+                staffMember.active = !staffMember.active;
+                renderAllViews();
+            }
+        }
+
+        function handleBranchSubmit(e) {
+            e.preventDefault();
+            const bName = document.getElementById('branch-name').value;
+            if (db.branches.includes(bName)) return;
+            db.branches.push(bName);
+            
+            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
+            document.getElementById('qr-branch-title').innerText = bName;
+            document.getElementById('qr-link-text').innerText = mockUrl;
+            document.getElementById('qr-image-container').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
+            `;
+            document.getElementById('branch-qr-output').classList.remove('hidden');
+            e.target.reset();
+            renderAllViews();
+        }
+
+        function renderBranchDropdowns() {
+            const select = document.getElementById('staff-branch');
+            select.innerHTML = "";
+            db.branches.forEach(b => {
+                select.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+        }
+
         function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
         function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
 
@@ -1341,4 +1467,3 @@
     </script>
 </body>
 </html>
-
