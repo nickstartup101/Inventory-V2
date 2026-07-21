@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - V2 Stable Integration</title>
+    <title>La Dolce Portal - V2 Production</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -106,10 +106,10 @@
     <!-- SIDEBAR NAVIGATION (NO-PRINT) -->
     <aside class="w-full md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print">
         <div>
-            <!-- Header Logo -->
+            <!-- Header Logo (Updated LD to V2) -->
             <div class="p-6 border-b border-neutral-800">
                 <div class="flex items-center space-x-3">
-                    <span class="text-2xl font-black text-outline-orange">LD</span>
+                    <span class="text-2xl font-black text-outline-orange">V2</span>
                     <div>
                         <h2 class="font-extrabold text-sm tracking-wider uppercase">La Dolce</h2>
                         <span id="mode-badge" class="text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit">
@@ -638,7 +638,7 @@
     <script>
         // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
         // ວາງ Web App URL ທີ່ໄດ້ຈາກການ Deploy Google Sheet ໃສ່ລະຫວ່າງເຄື່ອງໝາຍ " " 
-        const https://script.google.com/macros/s/AKfycbwCHCbPcJBFXNRuag3qbRBWX2V1BHWSX_SbFIZa_2xTN_kXIJ1p5hBT1yAwlfTz6jG83w/exec = ""; 
+        const GOOGLE_SHEET_API_URL = ""; 
 
         let db = {
             products: [
@@ -690,7 +690,6 @@
                     db.attendance = data.attendance.length ? data.attendance : db.attendance;
                     db.leaves = data.leaves.length ? data.leaves : db.leaves;
                     
-                    // ດຶງຂໍ້ມູນ Log ຫຼ້າສຸດມາອັບເດດໃນໜ້າຈໍ
                     if (data.logs && data.logs.length) {
                         db.logs = data.logs;
                     }
@@ -708,7 +707,7 @@
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL, {
                     method: "POST",
-                    mode: "no-cors", // ສໍາລັບ Web App ທີ່ Deploy ໃນ Google Sheets
+                    mode: "no-cors", 
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
@@ -839,7 +838,6 @@
             const now = new Date();
             const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
             
-            // ກວດສອບປະຫວັດການປ້ຳໂມງຫຼ້າສຸດຂອງພະນັກງານ
             const lastLog = db.attendance.filter(a => a.pin === pinBuffer).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
@@ -871,7 +869,6 @@
                 const inTime = parseTimestamp(lastLog.timestamp);
                 const durationMs = now - inTime;
                 
-                // ປ້ອງກັນການຄຳນວນຜິດພາດກໍລະນີເວລາລະບົບມີບັນຫາ
                 const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
                 const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
 
@@ -887,8 +884,6 @@
             };
 
             db.attendance.push(payload);
-
-            // ສົ່ງຂໍ້ມູນໄປ Google Sheet (ຖ້າຕັ້ງຄ່າ URL ໄວ້)
             await postToGoogleSheet(payload);
 
             document.getElementById('attendance-live-log').innerHTML = `
@@ -1174,7 +1169,7 @@
                 pin: pin,
                 name: staffMember.name,
                 type: type,
-                dates: `${start} ຫາ ${end}`,
+                dates: `${start} 配合 ${end}`,
                 reason: reason,
                 status: "Pending"
             };
