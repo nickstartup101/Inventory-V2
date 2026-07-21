@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - Attendance Time Calculator</title>
+    <title>La Dolce Portal - V2 Stable Integration</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -121,7 +121,6 @@
 
             <!-- TAB MENU -->
             <div class="p-4 space-y-6">
-                <!-- Group 1: Employee Tabs -->
                 <div id="group-employee-menu" class="space-y-2">
                     <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest px-3 block mb-2">ພະນັກງານ (Employee)</span>
                     <nav class="space-y-1">
@@ -140,7 +139,6 @@
                     </nav>
                 </div>
 
-                <!-- Group 2: HRM Admin Tabs -->
                 <div id="group-hrm-menu" class="hidden space-y-2">
                     <span class="text-[10px] font-bold text-[#FF4D00] uppercase tracking-widest px-3 block mb-2">ຜູ້ບໍລິຫານ (HRM Admin)</span>
                     <nav class="space-y-1">
@@ -184,7 +182,6 @@
                 <p class="text-xs text-neutral-400 mt-1">ຂໍ້ມູນຕິດຕາມສິນຄ້າຄົງເຫຼືອ ແລະ ໝວດໝູ່ທີ່ເຄື່ອນໄຫວຖີ່ສຳລັບພະນັກງານ</p>
             </div>
 
-            <!-- High-Frequency Trackers -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -345,7 +342,6 @@
                         </div>
                     </div>
                     
-                    <!-- Real-time Status and Lateness / Duration Log -->
                     <div id="attendance-live-log" class="mt-4 p-4 bg-neutral-950 border border-neutral-900 rounded-2xl text-center text-neutral-400 text-xs font-semibold leading-relaxed">
                         ລໍຖ້າການສະແກນ PIN ຈາກພະນັກງານ...
                     </div>
@@ -534,8 +530,8 @@
                         <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ</p>
                     </div>
                     <div class="text-right text-xs text-neutral-400 font-medium">
-                        <p>ບໍລິສັດ ລາ ໂດນເຊ້ ຈຳກັດ</p>
-                        <p class="text-[10px] font-mono text-neutral-500">ລາຍງານເຮັດວຽກ: ກະ 1 & ກະ 2</p>
+                        <p class="font-bold text-neutral-200">ບໍລິສັດ ລາໂດເຊ ຈຳກັດ</p>
+                        <p class="text-[10px] font-mono text-neutral-500 mt-1">ລາຍງານເຮັດວຽກ: ກະ 1 & ກະ 2</p>
                     </div>
                 </div>
 
@@ -640,7 +636,10 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // Mock DB using 6-Digit PINs
+        // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
+        // ວາງ Web App URL ທີ່ໄດ້ຈາກການ Deploy Google Sheet ໃສ່ລະຫວ່າງເຄື່ອງໝາຍ " " 
+        const https://script.google.com/macros/s/AKfycbwCHCbPcJBFXNRuag3qbRBWX2V1BHWSX_SbFIZa_2xTN_kXIJ1p5hBT1yAwlfTz6jG83w/exec = ""; 
+
         let db = {
             products: [
                 { sku: "SKU-9901", name: "ເຈ້ຍ A4 Double A", category: "ເຄື່ອງໃຊ້ຫ້ອງການ", frequency: "High", stock: 120 },
@@ -670,10 +669,55 @@
         let quickStockChanges = {};
         let isHRMMode = false;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderAllViews();
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (GOOGLE_SHEET_API_URL !== "") {
+                await syncDataFromGoogleSheet();
+            } else {
+                renderAllViews();
+            }
             applyUserModeUI();
         });
+
+        // ຟັງຊັນສຳລັບດຶງຂໍ້ມູນຈາກ Google Sheet
+        async function syncDataFromGoogleSheet() {
+            try {
+                const res = await fetch(`${GOOGLE_SHEET_API_URL}?action=loadAllData`);
+                const data = await res.json();
+                if (data) {
+                    db.products = data.products.length ? data.products : db.products;
+                    db.staff = data.staff.length ? data.staff : db.staff;
+                    db.branches = data.branches.length ? data.branches : db.branches;
+                    db.attendance = data.attendance.length ? data.attendance : db.attendance;
+                    db.leaves = data.leaves.length ? data.leaves : db.leaves;
+                    
+                    // ດຶງຂໍ້ມູນ Log ຫຼ້າສຸດມາອັບເດດໃນໜ້າຈໍ
+                    if (data.logs && data.logs.length) {
+                        db.logs = data.logs;
+                    }
+                }
+                renderAllViews();
+            } catch (err) {
+                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets. ລະບົບຈະໃຊ້ Local Data ແທນ.", err);
+                renderAllViews();
+            }
+        }
+
+        // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Google Sheet (POST)
+        async function postToGoogleSheet(payload) {
+            if (GOOGLE_SHEET_API_URL === "") return true;
+            try {
+                const response = await fetch(GOOGLE_SHEET_API_URL, {
+                    method: "POST",
+                    mode: "no-cors", // ສໍາລັບ Web App ທີ່ Deploy ໃນ Google Sheets
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                return true;
+            } catch (err) {
+                console.error("ບໍ່ສາມາດສົ່ງຂໍ້ມູນຫາ Google Sheet ໄດ້:", err);
+                return false;
+            }
+        }
 
         function toggleUserMode() {
             if (isHRMMode) {
@@ -761,6 +805,12 @@
             document.getElementById('payroll-period-title').innerText = selectedMonth;
         }
 
+        // ຟັງຊັນສຳລັບການແປງວັນທີ-ເວລາໃຫ້ຮອງຮັບທຸກບຣາວເຊີ (Cross-browser compatible date parser)
+        function parseTimestamp(tsStr) {
+            if (!tsStr) return new Date();
+            return new Date(tsStr.replace(" ", "T"));
+        }
+
         // Clock logic
         function pressPin(num) {
             if (pinBuffer.length < 6) {
@@ -773,8 +823,8 @@
             document.getElementById('pin-display').value = "";
         }
 
-        // Clock-In/Out logic calculating lateness and total work duration
-        function submitClock() {
+        // ຄຳນວນການມາຊ້າ ແລະ ໄລຍະເວລາການເຮັດວຽກ
+        async function submitClock() {
             if (pinBuffer.length < 6) {
                 alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
                 return;
@@ -789,14 +839,14 @@
             const now = new Date();
             const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
             
-            // Check for previous attendance log on the same day to verify punch type
+            // ກວດສອບປະຫວັດການປ້ຳໂມງຫຼ້າສຸດຂອງພະນັກງານ
             const lastLog = db.attendance.filter(a => a.pin === pinBuffer).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
             let detailsMsg = "";
 
             if (actionType === "Clock-In") {
-                // Determine Shift based on current time
+                // ກວດສອບກະເຮັດວຽກ
                 let shiftStartHour = 7;
                 let shiftStartMin = 0;
                 let shiftName = "ກະ 1 (07:00)";
@@ -817,24 +867,30 @@
                     detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
                 }
             } else {
-                // Calculate elapsed time from last Clock-In
-                const inTime = new Date(lastLog.timestamp);
+                // ຄຳນວນໄລຍະເວລາການເຮັດວຽກຕົວຈິງ
+                const inTime = parseTimestamp(lastLog.timestamp);
                 const durationMs = now - inTime;
                 
-                const totalHours = Math.floor(durationMs / (1000 * 60 * 60));
-                const totalMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                // ປ້ອງກັນການຄຳນວນຜິດພາດກໍລະນີເວລາລະບົບມີບັນຫາ
+                const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
+                const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
 
                 detailsMsg = `ອອກວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} <br><span class="text-sky-400 font-extrabold"><i class="fa-solid fa-calculator mr-1"></i> ເຮັດວຽກທັງໝົດ: ${totalHours} ຊົ່ວໂມງ ${totalMinutes} ນາທີ</span>`;
             }
 
-            db.attendance.push({
+            const payload = {
+                action: "addAttendance",
                 timestamp: nowStr,
                 pin: pinBuffer,
                 type: actionType,
                 branch: staffMember.branch
-            });
+            };
 
-            // Display formatted dynamic details to screen
+            db.attendance.push(payload);
+
+            // ສົ່ງຂໍ້ມູນໄປ Google Sheet (ຖ້າຕັ້ງຄ່າ URL ໄວ້)
+            await postToGoogleSheet(payload);
+
             document.getElementById('attendance-live-log').innerHTML = `
                 <div class="space-y-1">
                     <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
@@ -983,7 +1039,8 @@
             }
         }
 
-        function submitQuickInventory() {
+        // Quick adjust with 6-digit PIN tracking & API Sync
+        async function submitQuickInventory() {
             const pin = document.getElementById('quick-auth-pin').value;
             if (pin.length !== 6) {
                 alert("ກະລຸນາປ້ອນລະຫັດ PIN 6 ຫຼັກ ເພື່ອຢືນຢັນຕົວຕົນຜູ້ບັນທຶກ");
@@ -1004,7 +1061,8 @@
                     const prod = db.products.find(p => p.sku === sku);
                     if (prod) {
                         prod.stock += amt;
-                        db.logs.push({
+                        const logPayload = {
+                            action: "addInventoryLog",
                             timestamp: now,
                             sku: sku,
                             name: prod.name,
@@ -1012,7 +1070,9 @@
                             qty: Math.abs(amt),
                             note: "Quick Adjustment",
                             user: `${staffMember.name} (${staffMember.pin})`
-                        });
+                        };
+                        db.logs.push(logPayload);
+                        await postToGoogleSheet(logPayload);
                         changeMade = true;
                     }
                 }
@@ -1040,7 +1100,8 @@
             document.getElementById('manual-remark-desc-container').classList.toggle('hidden', val !== 'others');
         }
 
-        function handleManualRecordSubmit(e) {
+        // Manual record with 6-digit PIN tracking & API Sync
+        async function handleManualRecordSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('manual-auth-pin').value;
             const sku = document.getElementById('manual-sku').value;
@@ -1067,7 +1128,9 @@
                     return;
                 }
                 prod.stock = type === "IN" ? prod.stock + qty : prod.stock - qty;
-                db.logs.push({
+                
+                const logPayload = {
+                    action: "addInventoryLog",
                     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
                     sku: sku,
                     name: prod.name,
@@ -1075,7 +1138,11 @@
                     qty: qty,
                     note: remark,
                     user: `${staffMember.name} (${staffMember.pin})`
-                });
+                };
+
+                db.logs.push(logPayload);
+                await postToGoogleSheet(logPayload);
+
                 alert(`ບັນທຶກສຳເລັດ ໂດຍ: ${staffMember.name}`);
                 e.target.reset();
                 document.getElementById('manual-remark-desc-container').classList.add('hidden');
@@ -1083,7 +1150,7 @@
             }
         }
 
-        function handleLeaveRequestSubmit(e) {
+        async function handleLeaveRequestSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('leave-pin').value;
             const type = document.getElementById('leave-type').value;
@@ -1102,14 +1169,18 @@
                 return;
             }
 
-            db.leaves.push({
+            const leavePayload = {
+                action: "addLeave",
                 pin: pin,
                 name: staffMember.name,
                 type: type,
                 dates: `${start} ຫາ ${end}`,
                 reason: reason,
                 status: "Pending"
-            });
+            };
+
+            db.leaves.push(leavePayload);
+            await postToGoogleSheet(leavePayload);
 
             alert("ສົ່ງໃບລາວຽກແລ້ວ");
             e.target.reset();
@@ -1307,8 +1378,8 @@
                 const clockIn = dayLogs.find(l => l.type === "Clock-In");
                 const clockOut = dayLogs.find(l => l.type === "Clock-Out");
                 if (clockIn && clockOut) {
-                    const inTime = new Date(clockIn.timestamp);
-                    const outTime = new Date(clockOut.timestamp);
+                    const inTime = parseTimestamp(clockIn.timestamp);
+                    const outTime = parseTimestamp(clockOut.timestamp);
                     const totalHours = (outTime - inTime) / (1000 * 60 * 60);
                     if (inTime.getHours() < 10) {
                         if (totalHours > 9) totalOT += (totalHours - 9);
