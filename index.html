@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - V2 Production Stable</title>
+    <title>La Dolce Portal - V2 High-Performance</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -161,14 +161,10 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <!-- Connection Diagnostics Console -->
-            <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
-                <div class="flex items-center space-x-2 text-[10px]">
-                    <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                    <span id="sync-badge-text">ກຳລັງກວດສອບການເຊື່ອມຕໍ່ Sheets...</span>
-                </div>
+            <div id="connection-status-badge" class="flex items-center space-x-2 text-[10px] text-neutral-400">
+                <div id="conn-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span id="sync-badge-text">Sheets Sync Connected</span>
             </div>
-            
             <div id="user-info-bar" class="flex items-center space-x-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>
@@ -190,6 +186,7 @@
                 <p class="text-xs text-neutral-400 mt-1">ຂໍ້ມູນຕິດຕາມສິນຄ້າຄົງເຫຼືອ ແລະ ໝວດໝູ່ທີ່ເຄື່ອນໄຫວຖີ່ສຳລັບພະນັກງານ</p>
             </div>
 
+            <!-- High-Frequency Trackers -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -274,7 +271,7 @@
                             <div id="quick-summary-text" class="mono-font text-xs font-bold text-neutral-400">ບໍ່ມີການປ່ຽນແປງ</div>
                         </div>
                         <button onclick="submitQuickInventory()" class="w-full sm:w-auto px-5 py-2.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl active:scale-95 transition-all">
-                            ບັນທຶກສະຕ໊ອກດ່ວນທັງໝົດ
+                            ຢືນຢັນ ແລະ ບັນທຶກທັງໝົດ
                         </button>
                     </div>
                 </div>
@@ -668,8 +665,8 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // ດຶງຄ່າ API URL ຈາກ LocalStorage ຫາກມີການບັນທຶກໄວ້ກ່ອນໜ້ານີ້
-        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "https://script.google.com/macros/s/AKfycby0_nCG4gAK7-TQdt3uVRw6eBD7GjM93WeHDAcrI-CVkQ2_jNtvctQg0itpOFRfgb_1RQ/exec";
+        // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
+        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "https://script.google.com/macros/s/AKfycby0_nCG4gAK7-TQdt3uVRw6eBD7GjM93WeHDAcrI-CVkQ2_jNtvctQg0itpOFRfgb_1RQ/exec"; 
 
         let db = {
             products: [],
@@ -683,7 +680,7 @@
         const backupMockDB = {
             products: [
                 { sku: "P001", name: "ຜົງໂກໂກ້ (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
-                { sku: "P002", name: "ບ໊ອບ (ตຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
+                { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
                 { sku: "P010", name: "ເນີຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
             ],
             staff: [
@@ -768,7 +765,7 @@
                     
                     addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
                     addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
-                    addLogConsole(`ດຶງຂໍ້ມູນສຳເລັດ!`);
+                    addLogConsole("ດຶງຂໍ້ມູນສຳເລັດ!");
                     
                     if (badgeText) badgeText.innerText = "Sheets Sync Connected (Online)";
                     if (connDot) {
