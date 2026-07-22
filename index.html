@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Dolce Portal - V2 Production Stable</title>
     
-    <!-- Beautiful Dynamic Favicon (V2 Logo Style as requested) -->
+    <!-- Beautiful Dynamic Favicon (V2 Orange Logo) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
     
     <!-- Google Fonts -->
@@ -13,6 +13,8 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
@@ -165,16 +167,16 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <!-- Connection Diagnostics Console -->
+            <!-- Connection Diagnostics Console (Shows Supabase Status) -->
             <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງກວດສອບການເຊື່ອມຕໍ່ Sheets...</span>
+                        <span id="sync-badge-text">ກຳລັງ Sync ກັບ Supabase...</span>
                     </div>
-                    <!-- Clickable Link Icon for Sheet Shortcut -->
-                    <a id="sheet-shortcut-link" target="_blank" href="#" class="hidden text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດໄຟລ໌ Google Sheet ຕົວຈິງ">
-                        <i class="fa-solid fa-file-excel text-xs"></i>
+                    <!-- Clickable Link Icon to Open Supabase Direct Database Dashboard -->
+                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard/project/jxkcnraixazvmwdfmraa/editor" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດຖານຂໍ້ມູນ Supabase ຕົວຈິງ">
+                        <i class="fa-solid fa-database text-xs"></i>
                     </a>
                 </div>
             </div>
@@ -269,14 +271,14 @@
                 </div>
             </div>
 
-            <!-- Action Area (Disabled by default until session unlocked) -->
+            <!-- Workspace enabled once session active -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Quick tools with Search Filter to avoid DOM lag -->
+                <!-- Quick tools -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
                             <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1">ປັບປ່ຽນຈຳນວນແບບດ່ວນ (Quick In / Out Tools)</h2>
-                            <p class="text-[10px] text-neutral-500">ສະແດງສິນຄ້າເຄື່ອນໄຫວຖີ່ເປັນຫຼັກ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອປັບສະຕ໊ອກ</p>
+                            <p class="text-[10px] text-neutral-500">ສະແດງສິນຄ້າໝວດໝູ່ "ວັດຖຸດິບ" ເປັນຫຼັກ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອປັບສະຕ໊ອກ</p>
                         </div>
                         <input type="text" id="quick-adjust-search" oninput="renderQuickAdjustments()" placeholder="ຄົ້ນຫາສິນຄ້າໃນສະຕ໊ອກດ່ວນ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                     </div>
@@ -317,7 +319,7 @@
                             <label class="block text-neutral-400 font-semibold mb-1">ໝາຍເຫດ</label>
                             <select id="manual-remark" onchange="toggleManualRemarkInput(this.value)" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
                                 <option value="ຊື້ເພີ່ມ">ຊື້ເພີ່ມ</option>
-                                <option value="ເຄື່ອງເຊື່ອມຄຸນະພາບ">ເຄື່ອງເຊື່ອມຄຸນະພາບ</option>
+                                <option value="เครื่องເຊື່ອມຄຸນະພາບ">ເຄື່ອງເຊື່ອມຄຸນະພາບ</option>
                                 <option value="ເພ">ເພ</option>
                                 <option value="others">ອື່ນໆ (ລະບຸ)</option>
                             </select>
@@ -527,51 +529,6 @@
 
         <!-- ================= TAB 6: PAYROLLS REALTIME (La Dolce Payrolls) ================= -->
         <section id="tab-payroll" class="hidden space-y-8">
-            <!-- Connection Setup & API Manager with Excel Sheet URL input -->
-            <div class="glass-panel p-6 rounded-3xl space-y-4 no-print">
-                <h2 class="font-black text-sm text-neutral-200 uppercase tracking-wider flex items-center">
-                    <i class="fa-solid fa-cloud-arrow-down text-[#FF4D00] mr-2"></i> ຕັ້ງຄ່າການເຊື່ອມຕໍ່ Google Sheets API
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <label class="block text-neutral-400 font-semibold mb-1">Google Apps Script Web App URL</label>
-                        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
-                    </div>
-                    <div>
-                        <!-- Requested Google Sheet shortcut link field -->
-                        <label class="block text-neutral-400 font-semibold mb-1">Google Sheet Link (Shortcut ທາງລັດເປີດ Sheet ຕົວຈິງ)</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="sheet-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
-                            <button onclick="saveAndTestAPIConnection()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">
-                                Save & Sync API
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Mini Log Console -->
-                <div class="bg-neutral-950 p-4 border border-neutral-900 rounded-2xl space-y-2">
-                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider">Sync Console Output:</span>
-                    <pre id="api-sync-log" class="text-[10px] text-neutral-400 font-mono overflow-x-auto max-h-24 leading-normal">ລໍຖ້າການເຊື່ອມຕໍ່...</pre>
-                </div>
-            </div>
-
-            <!-- Filter & Print Config Action Bar -->
-            <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
-                <div class="flex items-center space-x-3 text-xs">
-                    <div>
-                        <label class="block text-[10px] text-neutral-500 font-bold mb-1">ເລືອກປະຈຳເດືອນ</label>
-                        <select id="payroll-month-select" onchange="updatePayrollPeriodDisplay()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:outline-none">
-                            <option value="ພະຈິກ 2024">ພະຈິກ 2024</option>
-                            <option value="ທັນວາ 2024">ທັນວາ 2024</option>
-                            <option value="ມັງກອນ 2025">ມັງກອນ 2025</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="window.print()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl text-xs transition-all">
-                    <i class="fa-solid fa-print mr-2"></i> ພິມລາຍງານ / Export PDF
-                </button>
-            </div>
-
             <!-- Professional Print Area -->
             <div class="glass-panel p-8 rounded-3xl space-y-6 print-area bg-neutral-950/40">
                 <!-- Report Header Design -->
@@ -688,9 +645,15 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
-        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "https://script.google.com/macros/s/AKfycby0_nCG4gAK7-TQdt3uVRw6eBD7GjM93WeHDAcrI-CVkQ2_jNtvctQg0itpOFRfgb_1RQ/exec"; 
+        // Supabase configuration pre-loaded with your exact details
+        const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
+        
+        // Direct Excel Sheet URL (Optional)
         let GOOGLE_SHEET_DIRECT_URL = localStorage.getItem("LD_PORTAL_SHEET_URL") || "";
+
+        // Initialize Supabase Client
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let db = {
             products: [],
@@ -702,7 +665,7 @@
 
         const backupMockDB = {
             products: [
-                { sku: "P001", name: "ຜົງໂກໂກ້ (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
+                { sku: "P001", name: "ຜົງໂກ້ໂກ້ (ຖົງ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
                 { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
                 { sku: "P010", name: "ເນີຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
             ],
@@ -722,16 +685,12 @@
         let activeOperator = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('api-url-input').value = GOOGLE_SHEET_API_URL;
             document.getElementById('sheet-url-input').value = GOOGLE_SHEET_DIRECT_URL;
-            
             updateSheetShortcutUI();
             
-            if (GOOGLE_SHEET_API_URL !== "" && GOOGLE_SHEET_API_URL.startsWith("https://")) {
-                await syncDataFromGoogleSheet();
-            } else {
-                useBackupMockData("Local Mode: ຍັງບໍ່ທັນໄດ້ຕັ້ງຄ່າ API URL");
-            }
+            // Sync data directly from Supabase on load
+            await syncDataFromSupabase();
+            
             applyUserModeUI();
             updateSessionUI();
         });
@@ -751,29 +710,12 @@
 
         // ຟັງຊັນບັນທຶກ ແລະ ທົດສອບການເຊື່ອມຕໍ່ Sheets ຜ່ານໜ້າຈໍ HRM
         async function saveAndTestAPIConnection() {
-            const urlValue = document.getElementById('api-url-input').value.trim();
             const sheetUrlValue = document.getElementById('sheet-url-input').value.trim();
-            
-            if (!urlValue.startsWith("https://")) {
-                alert("ກະລຸນາປ້ອນ URL ທີ່ຂຶ້ນຕົ້ນດ້ວຍ https:// ໃຫ້ຖືກຕ້ອງ");
-                return;
-            }
-            
-            GOOGLE_SHEET_API_URL = urlValue;
             GOOGLE_SHEET_DIRECT_URL = sheetUrlValue;
-            
-            localStorage.setItem("LD_PORTAL_API_URL", urlValue);
             localStorage.setItem("LD_PORTAL_SHEET_URL", sheetUrlValue);
-            
             updateSheetShortcutUI();
-            addLogConsole("ກຳລັງທົດສອບເຊື່ອມຕໍ່: " + urlValue);
-            
-            const success = await syncDataFromGoogleSheet();
-            if (success) {
-                alert("ເຊື່ອມຕໍ່ Google Sheets ສຳເລັດແລ້ວ!");
-            } else {
-                alert("ການເຊື່ອມຕໍ່ຫຼົ້ມເຫຼວ! ກະລຸນາກວດສອບ Console Log.");
-            }
+            await syncDataFromSupabase();
+            alert("ອັບເດດການຕັ້ງຄ່າ ແລະ Sync ຂໍ້ມູນຮຽບຮ້ອຍແລ້ວ!");
         }
 
         function addLogConsole(text) {
@@ -785,7 +727,7 @@
             }
         }
 
-        // ລະບົບແປງຊື່ຫົວຖັນ (Column Headers) ເປັນຕົວແປລະບົບອັດຕະໂນມັດ (ແກ້ໄຂຄ່າ undefined)
+        // ລະບົບແປງຊື່ຫົວຖັນ (Column Headers) ເປັນຕົວແປລະບົບອັດຕະໂນມັດ ປ້ອງກັນຂໍ້ມູນວ່າງເປົ່າ Crash 100%
         function normalizeDataset(rawArray, type) {
             if (!rawArray || !Array.isArray(rawArray)) return [];
             return rawArray.map(item => {
@@ -801,7 +743,7 @@
                     if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
                     else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
                     else if (k === "category" || k === "category " || k === "ໝວດໝູ່") norm.category = valStr;
-                    else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
+                    else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock" || k === "current_stock") norm.stock = Number(val) || 0;
                     else if (k === "stock_in" || k === "stock in" || k === "ຮັບເຂົ້າ") norm.stock_in = Number(val) || 0;
                     else if (k === "stock_out" || k === "stock out" || k === "ເບີກອອກ") norm.stock_out = Number(val) || 0;
                     else if (k === "min_stock" || k === "min_stock <" || k === "ຂັ້ນຕ່ຳ") norm.min_stock = Number(val) || 0;
@@ -810,7 +752,7 @@
                     else if (k === "branch" || k === "ສາຂາ") norm.branch = valStr;
                     else if (k === "salary" || k === "ເງິນເດືອນ") norm.salary = Number(val) || 0;
                     else if (k === "benefit" || k === "ສະຫວັດດິການ") norm.benefit = Number(val) || 0;
-                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (valLower === "active" || valLower === "ok" || val === true);
+                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (valLower === "active" || valLower === "ok" || val === true || valLower === "ເປີດໃຊ້");
                     else if (k === "timestamp" || k === "time stamp" || k === "ເວລາ") norm.timestamp = valStr;
                     else if (k === "type" || k === "ປະເພດ") norm.type = valStr;
                     else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
@@ -821,42 +763,52 @@
             });
         }
 
-        async function syncDataFromGoogleSheet() {
+        // ດຶງຂໍ້ມູນຈາກ Supabase ໂດຍກົງ
+        async function syncDataFromSupabase() {
             const badgeText = document.getElementById('sync-badge-text');
             const connDot = document.getElementById('conn-dot');
-            if (badgeText) badgeText.innerText = "ກຳລັງ Sync ຂໍ້ມູນ...";
-            addLogConsole("ກຳລັງສົ່ງ Request ໄປຫາ Google API...");
+            if (badgeText) badgeText.innerText = "ກຳລັງ Sync ກັບ Supabase...";
+            addLogConsole("ກຳລັງດຶງຂໍ້ມູນຈາກ Supabase...");
             
             try {
-                const res = await fetch(`${GOOGLE_SHEET_API_URL}?action=loadAllData`);
-                if (!res.ok) throw new Error(`HTTP status: ${res.status}`);
+                // 1. Fetch Products
+                const { data: rawProducts, error: prodErr } = await supabase.from('main_inventory').select('*');
+                if (prodErr) throw prodErr;
+
+                // 2. Fetch Staff
+                const { data: rawStaff, error: staffErr } = await supabase.from('staff').select('*');
+                if (staffErr) throw staffErr;
+
+                // 3. Fetch Attendance
+                const { data: rawAttendance, error: attErr } = await supabase.from('attendance').select('*');
+                if (attErr) throw attErr;
+
+                // 4. Fetch Logs
+                const { data: rawLogs, error: logsErr } = await supabase.from('daily_inventory_movement').select('*');
+                if (logsErr) throw logsErr;
+
+                // Normalize datasets safely (resolves undefined & Unknown names)
+                db.products = rawProducts ? normalizeDataset(rawProducts, "products") : [];
+                db.staff = rawStaff && rawStaff.length ? normalizeDataset(rawStaff, "staff") : backupMockDB.staff;
+                db.attendance = rawAttendance ? normalizeDataset(rawAttendance, "attendance") : [];
+                db.logs = rawLogs ? normalizeDataset(rawLogs, "logs") : [];
+
+                // Extract branches dynamically
+                db.branches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
+                if (db.branches.length === 0) db.branches = ["ສາຂາ ວຽງຈັນ"];
                 
-                const data = await res.json();
+                addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
+                addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
+                addLogConsole("Sync ຂໍ້ມູນຈາກ Supabase ສຳເລັດ!");
                 
-                if (data) {
-                    if (!data.products || data.products.length === 0) {
-                        throw new Error("ບໍ່ພົບຂໍ້ມູນໃນ 'Main inventory'.");
-                    }
-                    
-                    // Safe normalization check prevents crash on empty arrays
-                    db.products = data.products ? normalizeDataset(data.products, "products") : [];
-                    db.staff = data.staff && data.staff.length ? normalizeDataset(data.staff, "staff") : backupMockDB.staff;
-                    db.attendance = data.attendance ? normalizeDataset(data.attendance, "attendance") : [];
-                    db.logs = data.logs ? normalizeDataset(data.logs, "logs") : [];
-                    
-                    addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
-                    addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
-                    addLogConsole("ດຶງຂໍ້ມູນສຳເລັດ!");
-                    
-                    if (badgeText) badgeText.innerText = "Sheets Sync Connected (Online)";
-                    if (connDot) {
-                        connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-                    }
-                    renderAllViews();
-                    return true;
+                if (badgeText) badgeText.innerText = "Supabase Connected";
+                if (connDot) {
+                    connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
                 }
+                renderAllViews();
+                return true;
             } catch (err) {
-                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets:", err);
+                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Supabase:", err);
                 addLogConsole(`Error: ${err.message}`);
                 useBackupMockData(`Error: ລະບົບປ່ຽນມາໃຊ້ຂໍ້ມູນສຳຮອງ`);
                 return false;
@@ -879,23 +831,58 @@
             renderAllViews();
         }
 
-        async function postToGoogleSheet(payload) {
-            if (GOOGLE_SHEET_API_URL === "" || !GOOGLE_SHEET_API_URL.startsWith("https://")) return true;
+        // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Supabase
+        async function postAttendanceToSupabase(payload) {
             try {
-                addLogConsole(`ກຳລັງສົ່ງຂໍ້ມູນທຸລະກຳລົງ Sheet...`);
-                await fetch(GOOGLE_SHEET_API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" },
-                    body: JSON.stringify(payload)
-                });
-                addLogConsole(`ບັນທຶກລົງ Sheet ສຳເລັດ!`);
+                addLogConsole(`ກຳລັງບັນທຶກ Attendance ລົງ Supabase...`);
+                const { error } = await supabase.from('attendance').insert([{
+                    timestamp: payload.timestamp,
+                    pin: payload.pin,
+                    type: payload.type,
+                    branch: payload.branch
+                }]);
+                if (error) throw error;
+                addLogConsole(`ບັນທຶກ Attendance ສຳເລັດ!`);
                 return true;
             } catch (err) {
-                addLogConsole(`ສົ່ງຂໍ້ມູນຫຼົ້ມເຫຼວ: ${err.message}`);
+                addLogConsole(`ບັນທຶກAttendanceຫຼົ້ມເຫຼວ: ${err.message}`);
                 return false;
             }
         }
 
+        // ຟັງຊັນບັນທຶກການເຄື່ອນໄຫວສະຕ໊ອກ ແລະ ອັບເດດສະຕ໊ອກສິນຄ້າໃນ Supabase ພ້ອມກັນ
+        async function postInventoryMoveToSupabase(logPayload, updatedStockIn, updatedStockOut, updatedStock) {
+            try {
+                addLogConsole(`ກຳລັງບັນທຶກການເຄື່ອນໄຫວ ແລະ ອັບເດດສະຕ໊ອກ...`);
+                
+                // 1. Post Movement Log
+                const { error: logErr } = await supabase.from('daily_inventory_movement').insert([{
+                    timestamp: logPayload.timestamp,
+                    sku: logPayload.sku,
+                    name: logPayload.name,
+                    type: logPayload.type,
+                    qty: logPayload.qty,
+                    note: logPayload.note
+                }]);
+                if (logErr) throw logErr;
+
+                // 2. Update Product Stock numbers
+                const { error: prodErr } = await supabase.from('main_inventory').update({
+                    stock_in: updatedStockIn,
+                    stock_out: updatedStockOut,
+                    stock: updatedStock
+                }).eq('sku', logPayload.sku);
+                if (prodErr) throw prodErr;
+
+                addLogConsole(`ອັບເດດສະຕ໊ອກໃນ Supabase ສຳເລັດ!`);
+                return true;
+            } catch (err) {
+                addLogConsole(`ອັບເດດສະຕ໊ອກຫຼົ້ມເຫຼວ: ${err.message}`);
+                return false;
+            }
+        }
+
+        // ລະບົບປົດລັອກ Session ຂອງພະນັກງານ
         function unlockInventorySession() {
             const pinVal = document.getElementById('session-pin-input').value.trim();
             if (pinVal.length !== 6) {
@@ -903,6 +890,7 @@
                 return;
             }
 
+            // PIN comparison type safety check
             const staffMember = db.staff.find(s => s.pin.toString() === pinVal.toString() && s.active);
             if (staffMember) {
                 activeOperator = staffMember;
@@ -953,4 +941,716 @@
 
         function openAdminAuthModal() {
             authPinBuffer = "";
-            document.getElementById('admin-auth
+            document.getElementById('admin-auth-display').value = "";
+            document.getElementById('modal-admin-auth').classList.remove('hidden');
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById('modal-admin-auth').classList.add('hidden');
+        }
+
+        function pressAuthPin(num) {
+            if (authPinBuffer.length < 4) {
+                authPinBuffer += num;
+                document.getElementById('admin-auth-display').value = authPinBuffer;
+            }
+        }
+
+        function clearAuthPin() {
+            authPinBuffer = "";
+            document.getElementById('admin-auth-display').value = "";
+        }
+
+        function submitAuthPin() {
+            if (authPinBuffer === "9999") { // Admin authorization
+                isHRMMode = true;
+                closeAdminAuthModal();
+                applyUserModeUI();
+                switchTab('tab-hrm-dash');
+            } else {
+                const card = document.getElementById('auth-panel-card');
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 300);
+                clearAuthPin();
+            }
+        }
+
+        function applyUserModeUI() {
+            const empMenu = document.getElementById('group-employee-menu');
+            const hrmMenu = document.getElementById('group-hrm-menu');
+            const modeBadge = document.getElementById('mode-badge');
+            const switchBtnText = document.getElementById('btn-switch-text');
+            const switchIcon = document.querySelector('#btn-switch-user i');
+            const userInfo = document.getElementById('user-info-bar');
+
+            if (isHRMMode) {
+                empMenu.classList.add('hidden');
+                hrmMenu.classList.remove('hidden');
+                modeBadge.innerText = "HRM Admin Mode";
+                modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
+                switchBtnText.innerText = "Switch to Employee";
+                switchIcon.className = "fa-solid fa-users text-white";
+                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
+            } else {
+                empMenu.classList.remove('hidden');
+                hrmMenu.classList.add('hidden');
+                modeBadge.innerText = "Employee Mode";
+                modeBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
+                switchBtnText.innerText = "Switch to HRM Admin";
+                switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
+                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('tab-active'));
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('tab-active');
+        }
+
+        function updatePayrollPeriodDisplay() {
+            const selectedMonth = document.getElementById('payroll-month-select').value;
+            document.getElementById('payroll-period-title').innerText = selectedMonth;
+        }
+
+        function parseTimestamp(tsStr) {
+            if (!tsStr) return new Date();
+            return new Date(tsStr.toString().replace(" ", "T"));
+        }
+
+        // Clock logic
+        function pressPin(num) {
+            if (pinBuffer.length < 6) {
+                pinBuffer += num;
+                document.getElementById('pin-display').value = pinBuffer;
+            }
+        }
+        function clearPin() {
+            pinBuffer = "";
+            document.getElementById('pin-display').value = "";
+        }
+
+        async function submitClock() {
+            if (pinBuffer.length < 6) {
+                alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
+                return;
+            }
+            
+            const staffMember = db.staff.find(s => s.pin.toString() === pinBuffer.toString() && s.active);
+            if (!staffMember) {
+                alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
+                clearPin();
+                return;
+            }
+            
+            const now = new Date();
+            const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
+            const lastLog = db.attendance.filter(a => a.pin.toString() === pinBuffer.toString()).pop();
+            const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
+
+            let detailsMsg = "";
+
+            if (actionType === "Clock-In") {
+                let shiftStartHour = 7;
+                let shiftStartMin = 0;
+                let shiftName = "ກະ 1 (07:00)";
+
+                if (now.getHours() >= 10) {
+                    shiftStartHour = 11;
+                    shiftStartMin = 30;
+                    shiftName = "ກະ 2 (11:30)";
+                }
+
+                const scheduledMinutes = shiftStartHour * 60 + shiftStartMin;
+                const actualMinutes = now.getHours() * 60 + now.getMinutes();
+                const lateMinutes = actualMinutes - scheduledMinutes;
+
+                if (lateMinutes > 0) {
+                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນາທີ</span>`;
+                } else {
+                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
+                }
+            } else {
+                const inTime = parseTimestamp(lastLog.timestamp);
+                const durationMs = now - inTime;
+                
+                const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
+                const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
+
+                detailsMsg = `ອອກວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} <br><span class="text-sky-400 font-extrabold"><i class="fa-solid fa-calculator mr-1"></i> ເຮັດວຽກທັງໝົດ: ${totalHours} ຊົ່ວໂມງ ${totalMinutes} ນາທີ</span>`;
+            }
+
+            const payload = {
+                action: "addAttendance",
+                timestamp: nowStr,
+                pin: pinBuffer,
+                type: actionType,
+                branch: staffMember.branch
+            };
+
+            db.attendance.push(payload);
+            await postAttendanceToSupabase(payload);
+
+            document.getElementById('attendance-live-log').innerHTML = `
+                <div class="space-y-1">
+                    <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
+                    <p class="text-[10px] text-neutral-400 uppercase tracking-widest">${actionType} Success</p>
+                    <p class="mt-2 text-neutral-300 font-medium">${detailsMsg}</p>
+                </div>
+            `;
+            
+            clearPin();
+            renderAllViews();
+        }
+
+        // Master Renders
+        function renderAllViews() {
+            renderHighFreqTrackers();
+            renderStockTable();
+            renderDailyLogs();
+            renderQuickAdjustments();
+            renderManualRecordDropdowns();
+            renderHRMDashboard();
+            renderStaffTable();
+            renderBranchDropdowns();
+            renderPayroll();
+        }
+
+        // ດຶງສະເພາະສິນຄ້າທີ່ຢູ່ໃນໝວດໝູ່ "ວັດຖຸດິບ" ຂຶ້ນມາສະແດງໃນສ່ວນ High Frequency [1]
+        function renderHighFreqTrackers() {
+            const container = document.getElementById('high-freq-trackers');
+            if (!container) return;
+            container.innerHTML = "";
+            let html = "";
+            
+            db.products.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
+                const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
+                html += `
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+                        <div class="space-y-1">
+                            <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
+                            <h3 class="font-bold text-neutral-200 text-sm">${item.name}</h3>
+                            <p class="text-[11px] text-neutral-400">${item.category}</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-neutral-900">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-neutral-500 font-bold">ຄົງເຫຼືອ:</span>
+                                <span class="mono-font text-xs font-bold text-[#FF4D00]">${item.stock}</span>
+                            </div>
+                            <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-[#FF4D00] h-full" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderStockTable() {
+            const tbody = document.getElementById('stock-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let html = "";
+            db.products.forEach(item => {
+                html += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 font-mono text-xs font-bold text-neutral-400">${item.sku}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${item.name}</td>
+                        <td class="p-3 text-neutral-400">${item.category}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-[9px] font-bold ${item.stock < 1 ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                ${item.stock < 1 ? 'ສັ່ງດ່ວນ' : 'OK'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right font-mono font-bold text-white">${item.stock}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterStockTable() {
+            const search = document.getElementById('stock-search').value.toLowerCase();
+            document.querySelectorAll('#stock-table-body tr').forEach(row => {
+                row.classList.toggle('hidden', !row.innerText.toLowerCase().includes(search));
+            });
+        }
+
+        function renderDailyLogs() {
+            const tbody = document.getElementById('daily-log-body');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let html = "";
+            db.logs.slice().reverse().forEach(log => {
+                const isOut = log.type === "OUT";
+                html += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 text-neutral-500 font-mono">${log.timestamp || ""}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${log.name || ""}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${isOut ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                ${log.type || ""}
+                            </span>
+                        </td>
+                        <td class="p-3 font-mono font-bold text-white">${log.qty || ""}</td>
+                        <td class="p-3 text-neutral-400">${log.note || ""}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Lazy Rendering Engine: Default focus on raw materials ("ວັດຖຸດິບ") by default to avoid DOM overload
+        function renderQuickAdjustments() {
+            const container = document.getElementById('quick-adjust-grid');
+            if (!container) return;
+            container.innerHTML = "";
+            
+            const searchQuery = (document.getElementById('quick-adjust-search')?.value || "").toLowerCase();
+            let filteredList = [];
+            
+            if (searchQuery !== "") {
+                filteredList = db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery));
+            } else {
+                filteredList = db.products.filter(p => p.category === "ວັດຖຸດິບ");
+                if (filteredList.length === 0) {
+                    filteredList = db.products.slice(0, 12);
+                }
+            }
+
+            let html = "";
+            filteredList.forEach(item => {
+                const qtyValue = quickStockChanges[item.sku] || 0;
+                html += `
+                    <div class="bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl flex justify-between items-center">
+                        <div>
+                            <span class="mono-font text-[10px] text-neutral-500">${item.sku}</span>
+                            <h4 class="font-bold text-xs text-neutral-300">${item.name}</h4>
+                            <p class="text-[10px] text-neutral-500">ປັດຈຸບັນ: <span class="text-[#FF4D00] font-bold">${item.stock}</span></p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeQuickVal('${item.sku}', -1)" class="w-8 h-8 rounded-lg bg-[#3b0712] text-rose-300 font-black text-sm">-</button>
+                            <span class="mono-font text-sm font-extrabold text-white min-w-[18px] text-center">${qtyValue}</span>
+                            <button onclick="changeQuickVal('${item.sku}', 1)" class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-300 font-black text-sm">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderManualRecordDropdowns() {
+            const select = document.getElementById('manual-sku');
+            if (!select) return;
+            select.innerHTML = "";
+            let html = "";
+            db.products.forEach(p => {
+                html += `<option value="${p.sku}">${p.name} (${p.sku})</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function toggleManualRemarkInput(val) {
+            const descContainer = document.getElementById('manual-remark-desc-container');
+            if (descContainer) {
+                descContainer.classList.toggle('hidden', val !== 'others');
+            }
+        }
+
+        // Quick adjust with 6-digit PIN tracking & Supabase Real-time Sync
+        async function submitQuickInventory() {
+            if (!activeOperator) {
+                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນບັນທຶກສະຕ໊ອກ");
+                return;
+            }
+
+            let changeMade = false;
+            const now = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            for (let sku in quickStockChanges) {
+                const amt = quickStockChanges[sku];
+                if (amt !== 0) {
+                    const prod = db.products.find(p => p.sku === sku);
+                    if (prod) {
+                        let newStockIn = prod.stock_in;
+                        let newStockOut = prod.stock_out;
+                        
+                        if (amt > 0) {
+                            newStockIn += amt;
+                        } else {
+                            newStockOut += Math.abs(amt);
+                        }
+                        
+                        let newStock = newStockIn - newStockOut;
+                        
+                        const logPayload = {
+                            timestamp: now,
+                            sku: sku,
+                            name: prod.name,
+                            type: amt > 0 ? "IN" : "OUT",
+                            qty: Math.abs(amt),
+                            note: "Quick Adjustment",
+                            user: `${activeOperator.name} (${activeOperator.pin})`
+                        };
+                        
+                        db.logs.push(logPayload);
+                        await postInventoryMoveToSupabase(logPayload, newStockIn, newStockOut, newStock);
+                        changeMade = true;
+                    }
+                }
+            }
+            if (changeMade) {
+                alert(`ບັນທຶກສະຕ໊ອກດ່ວນສຳເລັດ ໂດຍ: ${activeOperator.name}`);
+                quickStockChanges = {};
+                renderAllViews();
+                updateQuickText();
+                await syncDataFromSupabase(); // Refetch updated numbers
+            } else {
+                alert("ບໍ່ມີຂໍ້ມູນການປ່ຽນແປງ");
+            }
+        }
+
+        // Manual record using Active Session and Sync to Supabase
+        async function handleManualRecordSubmit(e) {
+            e.preventDefault();
+            if (!activeOperator) {
+                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນທຳການບັນທຶກ");
+                return;
+            }
+
+            const sku = document.getElementById('manual-sku').value;
+            const type = document.getElementById('manual-type').value;
+            const qty = parseInt(document.getElementById('manual-qty').value);
+            let remark = document.getElementById('manual-remark').value;
+            if (remark === 'others') remark = document.getElementById('manual-remark-desc').value || "ອື່ນໆ";
+
+            const prod = db.products.find(p => p.sku === sku);
+            if (prod) {
+                let newStockIn = prod.stock_in;
+                let newStockOut = prod.stock_out;
+                
+                if (type === "IN") {
+                    newStockIn += qty;
+                } else {
+                    if (prod.stock < qty) {
+                        alert("ສິນຄ້າໃນຄັງບໍ່ພຽງພໍ");
+                        return;
+                    }
+                    newStockOut += qty;
+                }
+                
+                let newStock = newStockIn - newStockOut;
+                
+                const logPayload = {
+                    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                    sku: sku,
+                    name: prod.name,
+                    type: type,
+                    qty: qty,
+                    note: remark,
+                    user: `${activeOperator.name} (${activeOperator.pin})`
+                };
+
+                db.logs.push(logPayload);
+                await postInventoryMoveToSupabase(logPayload, newStockIn, newStockOut, newStock);
+
+                alert(`ບັນທຶກສຳເລັດ ໂດຍ: ${activeOperator.name}`);
+                e.target.reset();
+                document.getElementById('manual-remark-desc-container').classList.add('hidden');
+                renderAllViews();
+                await syncDataFromSupabase(); // Refetch updated numbers
+            }
+        }
+
+        async function handleLeaveRequestSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('leave-pin').value;
+            const type = document.getElementById('leave-type').value;
+            const start = document.getElementById('leave-start').value;
+            const end = document.getElementById('leave-end').value;
+            const reason = document.getElementById('leave-reason').value;
+
+            if (pin.length !== 6) {
+                alert("ລະຫັດ PIN ຕ້ອງມີ 6 ຫຼັກ");
+                return;
+            }
+
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString() && s.active);
+            if (!staffMember) {
+                alert("ບໍ່ພົບຂໍ້ມູນພະນັກງານ");
+                return;
+            }
+
+            const leavePayload = {
+                pin: pin,
+                name: staffMember.name,
+                type: type,
+                dates: `${start} ຫາ ${end}`,
+                reason: reason,
+                status: "Pending"
+            };
+
+            // Post leave directly to Supabase table
+            const { error } = await supabase.from('leaves').insert([leavePayload]);
+            if (error) {
+                alert("ສົ່ງໃບລາວຽກຫຼົ້ມເຫຼວ: " + error.message);
+            } else {
+                alert("ສົ່ງໃບລາວຽກແລ້ວ");
+                e.target.reset();
+                await syncDataFromSupabase();
+            }
+        }
+
+        function renderHRMDashboard() {
+            const statActive = document.getElementById('stat-active-staff');
+            const statBranch = document.getElementById('stat-branches');
+            const statInv = document.getElementById('stat-inventory-logs');
+            const statPending = document.getElementById('stat-pending-leaves');
+
+            if (statActive) statActive.innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
+            if (statBranch) statBranch.innerText = db.branches.length;
+            if (statInv) statInv.innerText = db.logs.length;
+            if (statPending) statPending.innerText = "0";
+
+            const attBody = document.getElementById('hrm-attendance-body');
+            if (attBody) {
+                attBody.innerHTML = "";
+                let html = "";
+                db.attendance.slice().reverse().forEach(att => {
+                    const staffMember = db.staff.find(s => s.pin.toString() === att.pin.toString());
+                    const name = staffMember ? staffMember.name : "Unknown";
+                    html += `
+                        <tr class="hover:bg-neutral-950/40">
+                            <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
+                            <td class="p-3 text-neutral-400">${att.branch}</td>
+                            <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                    ${att.type}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+                attBody.innerHTML = html;
+            }
+        }
+
+        function renderStaffTable() {
+            const tbody = document.getElementById('staff-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let html = "";
+            db.staff.forEach(st => {
+                html += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 font-mono font-bold text-[#FF4D00]">${st.pin}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${st.name}</td>
+                        <td class="p-3 text-neutral-400">${st.branch}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.active ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">
+                                ${st.active ? 'Active' : 'Deactive'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right space-x-2">
+                            <button onclick="changePassword('${st.pin}')" class="text-xs text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
+                            <button onclick="toggleStaffState('${st.pin}')" class="text-xs text-neutral-400 hover:underline">
+                                ${st.active ? 'Deactive' : 'Active'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderBranchDropdowns() {
+            const select = document.getElementById('staff-branch');
+            if (!select) return;
+            select.innerHTML = "";
+            let html = "";
+            db.branches.forEach(b => {
+                html += `<option value="${b}">${b}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function renderPayroll() {
+            const tbody = document.getElementById('payroll-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let html = "";
+            
+            // Pre-index attendance logs to prevent browser freezing over large logs
+            const attendanceMap = {};
+            db.attendance.forEach(att => {
+                if (!attendanceMap[att.pin]) {
+                    attendanceMap[att.pin] = [];
+                }
+                attendanceMap[att.pin].push(att);
+            });
+
+            db.staff.forEach(st => {
+                const staffAttendance = attendanceMap[st.pin] || [];
+                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
+                const otHours = calculateOTHoursOptimized(st.pin, staffAttendance);
+                const net = calculateNetSalary(st, daysWorked, otHours);
+                
+                html += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 font-semibold text-neutral-200">
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch})</span>
+                        </td>
+                        <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
+                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">${otHours} Hrs</td>
+                        <td class="p-3 text-right">
+                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'salary', this.value)" class="w-24 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.salary}">
+                        </td>
+                        <td class="p-3 text-right">
+                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'benefit', this.value)" class="w-20 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.benefit}">
+                        </td>
+                        <td class="p-3 text-right mono-font font-bold text-emerald-400" id="net-pay-${st.pin}">${net.toLocaleString()} LAK</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function calculateDaysWorkedOptimized(pinAttendance) {
+            return new Set(pinAttendance.filter(a => a.type === "Clock-In").map(l => l.timestamp.split(' ')[0])).size;
+        }
+
+        function calculateOTHoursOptimized(pin, pinAttendance) {
+            let totalOT = 0;
+            const dates = Array.from(new Set(pinAttendance.map(a => a.timestamp.split(' ')[0])));
+            dates.forEach(date => {
+                const dayLogs = pinAttendance.filter(a => a.timestamp.startsWith(date));
+                const clockIn = dayLogs.find(l => l.type === "Clock-In");
+                const clockOut = dayLogs.find(l => l.type === "Clock-Out");
+                if (clockIn && clockOut) {
+                    const inTime = parseTimestamp(clockIn.timestamp);
+                    const outTime = parseTimestamp(clockOut.timestamp);
+                    const totalHours = (outTime - inTime) / (1000 * 60 * 60);
+                    if (inTime.getHours() < 10) {
+                        if (totalHours > 9) totalOT += (totalHours - 9);
+                    } else {
+                        if (totalHours > 8.5) totalOT += (totalHours - 8.5);
+                    }
+                }
+            });
+            return parseFloat(totalOT.toFixed(1));
+        }
+
+        // ຟັງຊັນຄຳນວນເງິນເດືອນສຸດທິ (Net Salary Calculation)
+        function calculateNetSalary(st, days, ot) {
+            const baseSalaryPerDay = st.salary / 22;
+            return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
+        }
+
+        // ຟັງຊັນອັບເດດຄ່າ Payroll ແບບ Real-time (Dynamic updates)
+        function updatePayrollVariables(pin, field, val) {
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (staffMember) {
+                staffMember[field] = parseFloat(val) || 0;
+                
+                const attendanceMap = {};
+                db.attendance.forEach(att => {
+                    if (!attendanceMap[att.pin]) {
+                        attendanceMap[att.pin] = [];
+                    }
+                    attendanceMap[att.pin].push(att);
+                });
+                
+                const staffAttendance = attendanceMap[pin] || [];
+                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
+                const otHours = calculateOTHoursOptimized(pin, staffAttendance);
+                const net = calculateNetSalary(staffMember, daysWorked, otHours);
+                
+                const el = document.getElementById(`net-pay-${pin}`);
+                if (el) {
+                    el.innerText = `${net.toLocaleString()} LAK`;
+                }
+            }
+        }
+
+        function changePassword(pin) {
+            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
+            if (newPin && newPin.length === 6) {
+                const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
+                if (staffMember) {
+                    staffMember.pin = newPin;
+                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
+                    renderAllViews();
+                }
+            } else {
+                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
+            }
+        }
+
+        function toggleStaffState(pin) {
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (staffMember) {
+                staffMember.active = !staffMember.active;
+                renderAllViews();
+            }
+        }
+
+        function handleBranchSubmit(e) {
+            e.preventDefault();
+            const bName = document.getElementById('branch-name').value;
+            if (db.branches.includes(bName)) return;
+            db.branches.push(bName);
+            
+            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
+            document.getElementById('qr-branch-title').innerText = bName;
+            document.getElementById('qr-link-text').innerText = mockUrl;
+            document.getElementById('qr-image-container').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
+            `;
+            document.getElementById('branch-qr-output').classList.remove('hidden');
+            e.target.reset();
+            renderAllViews();
+        }
+
+        function renderBranchDropdowns() {
+            const select = document.getElementById('staff-branch');
+            if (!select) return;
+            select.innerHTML = "";
+            let html = "";
+            db.branches.forEach(b => {
+                html += `<option value="${b}">${b}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
+        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
+
+        function handleStaffSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('staff-pin').value;
+            const name = document.getElementById('staff-name').value;
+            const branch = document.getElementById('staff-branch').value;
+            const salary = parseFloat(document.getElementById('staff-salary').value);
+            const benefit = parseFloat(document.getElementById('staff-benefit').value);
+
+            if (pin.length !== 6) {
+                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
+                return;
+            }
+
+            if (db.staff.some(s => s.pin.toString() === pin.toString())) {
+                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
+                return;
+            }
+
+            db.staff.push({ pin: pin.toString(), name, branch, salary, benefit, active: true });
+            closeAddStaffModal();
+            e.target.reset();
+            renderAllViews();
+        }
+    </script>
+</body>
+</html>
