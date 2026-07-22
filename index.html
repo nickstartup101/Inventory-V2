@@ -133,9 +133,6 @@
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                         <span id="sync-badge-text">ພ້ອມໃຊ້ງານ (Ready)</span>
                     </div>
-                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດ Supabase">
-                        <i class="fa-solid fa-database text-xs"></i>
-                    </a>
                 </div>
             </div>
             
@@ -442,14 +439,14 @@
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ-ປ່ຽນແປງສະຖານະພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
+                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ລາຍຊື່ພະນັກງານທັງໝົດ</h2>
-                        <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl whitespace-nowrap">
+                        <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl whitespace-nowrap hover:bg-[#FF4D00]/20 transition-all">
                             + ເພີ່ມພະນັກງານໃໝ່
                         </button>
                     </div>
@@ -506,31 +503,6 @@
 
         <!-- ================= TAB 6: PAYROLLS REALTIME ================= -->
         <section id="tab-payroll" class="hidden space-y-8">
-            <div class="glass-panel p-6 rounded-3xl space-y-4 no-print">
-                <h2 class="font-black text-sm text-neutral-200 uppercase tracking-wider flex items-center">
-                    <i class="fa-solid fa-cloud-arrow-down text-[#FF4D00] mr-2"></i> ຕັ້ງຄ່າການເຊື່ອມຕໍ່ Google Sheets API
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <label class="block text-neutral-400 font-semibold mb-1">Google Sheets Web App URL (Optional)</label>
-                        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
-                    </div>
-                    <div>
-                        <label class="block text-neutral-400 font-semibold mb-1">Google Sheet Link (Shortcut ທາງລັດເປີດ Sheet ຕົວຈິງ)</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="sheet-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
-                            <button onclick="saveAndTestAPIConnection()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">
-                                Save Settings
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-neutral-950 p-4 border border-neutral-900 rounded-2xl space-y-2">
-                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider">Sync Console Output:</span>
-                    <pre id="api-sync-log" class="text-[10px] text-neutral-400 font-mono overflow-x-auto max-h-24 leading-normal">ລໍຖ້າການເຊື່ອມຕໍ່...</pre>
-                </div>
-            </div>
-
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
                     <div>
@@ -591,7 +563,7 @@
 
     </main>
 
-    <!-- MODAL ADD STAFF -->
+    <!-- MODAL ADD STAFF (WITH LOCAL DEVICE PHOTO UPLOAD) -->
     <div id="modal-add-staff" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider">ເພີ່ມພະນັກງານໃໝ່</h3>
@@ -612,10 +584,14 @@
                     <label class="block text-neutral-400 font-semibold mb-1">ວັນເດືອນປີເກີດ</label>
                     <input type="text" id="staff-dob" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="DD/MM/YYYY">
                 </div>
+                
+                <!-- DEVICE PHOTO UPLOAD INPUT -->
                 <div>
-                    <label class="block text-neutral-400 font-semibold mb-1">Link ຮູບພາບພະນັກງານ (URL)</label>
-                    <input type="text" id="staff-photo" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="https://...">
+                    <label class="block text-neutral-400 font-semibold mb-1"><i class="fa-solid fa-image text-[#FF4D00] mr-1"></i> ເລືອກຮູບພະນັກງານ (ຈາກ Device/ມືຖື)</label>
+                    <input type="file" id="staff-photo-file" accept="image/*" onchange="previewAddStaffImage(this)" class="w-full text-xs text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FF4D00]/10 file:text-[#FF4D00] hover:file:bg-[#FF4D00]/20 bg-neutral-900 border border-neutral-800 rounded-xl cursor-pointer">
+                    <img id="add-photo-preview" class="hidden h-20 w-20 object-cover rounded-full mt-3 border border-neutral-700 mx-auto">
                 </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-neutral-400 font-semibold mb-1">ປະເພດວຽກ</label>
@@ -654,6 +630,73 @@
         </div>
     </div>
 
+    <!-- MODAL EDIT STAFF (NEW) -->
+    <div id="modal-edit-staff" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider"><i class="fa-solid fa-user-pen text-[#FF4D00] mr-2"></i>ແກ້ໄຂຂໍ້ມູນພະນັກງານ</h3>
+                <span id="edit-staff-pin-badge" class="text-[10px] font-mono text-[#FF4D00] bg-[#FF4D00]/10 px-2 py-0.5 rounded font-bold"></span>
+            </div>
+            <form onsubmit="handleStaffEditSubmit(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="edit-staff-pin">
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ຊື່ ແລະ ນາມສະກຸນ</label>
+                    <input type="text" id="edit-staff-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ເບີໂທພະນັກງານ</label>
+                    <input type="text" id="edit-staff-phone" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ວັນເດືອນປີເກີດ</label>
+                    <input type="text" id="edit-staff-dob" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none">
+                </div>
+                
+                <!-- EDIT DEVICE PHOTO UPLOAD -->
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1"><i class="fa-solid fa-image text-[#FF4D00] mr-1"></i> ອັບໂຫຼດປ່ຽນຮູບ (ຈາກ Device)</label>
+                    <input type="file" id="edit-staff-photo-file" accept="image/*" onchange="previewEditStaffImage(this)" class="w-full text-xs text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FF4D00]/10 file:text-[#FF4D00] hover:file:bg-[#FF4D00]/20 bg-neutral-900 border border-neutral-800 rounded-xl cursor-pointer">
+                    <img id="edit-photo-preview" class="h-20 w-20 object-cover rounded-full mt-3 border border-neutral-700 mx-auto">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ປະເພດວຽກ</label>
+                        <select id="edit-staff-emptype" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ຈັດກະເຮັດວຽກ</label>
+                        <select id="edit-staff-shift" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                            <option value="ກະ 1">ກະ 1</option>
+                            <option value="ກະ 2">ກະ 2</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ສາຂາ</label>
+                    <select id="edit-staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ເງິນເດືອນພື້ນຖານ</label>
+                        <input type="number" id="edit-staff-salary" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                    </div>
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ສະຫວັດດິການ</label>
+                        <input type="number" id="edit-staff-benefit" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeEditStaffModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ອັບເດດຂໍ້ມູນ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- SWITCH USER AUTH MODAL -->
     <div id="modal-admin-auth" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
         <div id="auth-panel-card" class="glass-panel p-6 rounded-3xl max-w-sm w-full space-y-6 border border-neutral-800">
@@ -687,15 +730,15 @@
         </div>
     </div>
 
-    <!-- CORE SCRIPT (CRASH-PROOF LOGIC) -->
+    <!-- CORE SCRIPT ENGINE -->
     <script>
-        // Global State & Default Mock Data
         let isHRMMode = false;
         let activeOperator = null;
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
-        let GOOGLE_SHEET_DIRECT_URL = localStorage.getItem("LD_PORTAL_SHEET_URL") || "";
+        let addPhotoBase64 = "";
+        let editPhotoBase64 = "";
 
         let db = {
             products: [
@@ -711,7 +754,7 @@
             leaves: []
         };
 
-        // --- 1. CORE UI FUNCTIONS (Defined First so HTML onclick NEVER fails) ---
+        // --- 1. CORE UI FUNCTIONS ---
         function switchTab(tabId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             const target = document.getElementById(tabId);
@@ -806,6 +849,11 @@
         }
 
         function openAddStaffModal() {
+            addPhotoBase64 = "";
+            const preview = document.getElementById('add-photo-preview');
+            if (preview) preview.classList.add('hidden');
+            const fileInput = document.getElementById('staff-photo-file');
+            if (fileInput) fileInput.value = "";
             const m = document.getElementById('modal-add-staff');
             if (m) m.classList.remove('hidden');
         }
@@ -813,6 +861,142 @@
         function closeAddStaffModal() {
             const m = document.getElementById('modal-add-staff');
             if (m) m.classList.add('hidden');
+        }
+
+        // --- DEVICE IMAGE UPLOAD PREVIEW HANDLERS ---
+        function previewAddStaffImage(input) {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("ຮູບພາບມີຂະໜາດໃຫຍ່ເກີນໄປ (ກະລຸນາເລືອກຮູບທີ່ນ້ອຍກວ່າ 2MB)");
+                    input.value = "";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    addPhotoBase64 = e.target.result;
+                    const preview = document.getElementById('add-photo-preview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewEditStaffImage(input) {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("ຮູບພາບມີຂະໜາດໃຫຍ່ເກີນໄປ (ກະລຸນາເລືອກຮູບທີ່ນ້ອຍກວ່າ 2MB)");
+                    input.value = "";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editPhotoBase64 = e.target.result;
+                    const preview = document.getElementById('edit-photo-preview');
+                    if (preview) preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- EDIT & DELETE STAFF FUNCTIONS ---
+        function openEditStaffModal(pin) {
+            const member = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (!member) return;
+
+            document.getElementById('edit-staff-pin').value = member.pin;
+            document.getElementById('edit-staff-pin-badge').innerText = `PIN: ${member.pin}`;
+            document.getElementById('edit-staff-name').value = member.name || "";
+            document.getElementById('edit-staff-phone').value = member.phone || "";
+            document.getElementById('edit-staff-dob').value = member.dob || "";
+            document.getElementById('edit-staff-emptype').value = member.emp_type || "Full-time";
+            document.getElementById('edit-staff-shift').value = member.shift || "ກະ 1";
+            document.getElementById('edit-staff-salary').value = member.salary || 3500000;
+            document.getElementById('edit-staff-benefit').value = member.benefit || 400000;
+
+            // Render Edit Branch Dropdown
+            const branchSelect = document.getElementById('edit-staff-branch');
+            if (branchSelect) {
+                branchSelect.innerHTML = "";
+                db.branches.forEach(b => {
+                    branchSelect.innerHTML += `<option value="${b}" ${b === member.branch ? 'selected' : ''}>${b}</option>`;
+                });
+            }
+
+            editPhotoBase64 = member.photo_url || "";
+            const preview = document.getElementById('edit-photo-preview');
+            if (preview) {
+                preview.src = editPhotoBase64 || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
+            }
+
+            const m = document.getElementById('modal-edit-staff');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeEditStaffModal() {
+            const m = document.getElementById('modal-edit-staff');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function handleStaffEditSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('edit-staff-pin').value;
+            const staffIndex = db.staff.findIndex(s => s.pin.toString() === pin.toString());
+
+            if (staffIndex !== -1) {
+                db.staff[staffIndex].name = document.getElementById('edit-staff-name').value;
+                db.staff[staffIndex].phone = document.getElementById('edit-staff-phone').value;
+                db.staff[staffIndex].dob = document.getElementById('edit-staff-dob').value;
+                db.staff[staffIndex].emp_type = document.getElementById('edit-staff-emptype').value;
+                db.staff[staffIndex].shift = document.getElementById('edit-staff-shift').value;
+                db.staff[staffIndex].branch = document.getElementById('edit-staff-branch').value;
+                db.staff[staffIndex].salary = parseFloat(document.getElementById('edit-staff-salary').value) || 3500000;
+                db.staff[staffIndex].benefit = parseFloat(document.getElementById('edit-staff-benefit').value) || 400000;
+                
+                if (editPhotoBase64) {
+                    db.staff[staffIndex].photo_url = editPhotoBase64;
+                }
+
+                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+                renderAllViews();
+                closeEditStaffModal();
+
+                if (supabaseClient) {
+                    await supabaseClient.from('staff').update({
+                        name: db.staff[staffIndex].name,
+                        phone: db.staff[staffIndex].phone,
+                        dob: db.staff[staffIndex].dob,
+                        emp_type: db.staff[staffIndex].emp_type,
+                        shift: db.staff[staffIndex].shift,
+                        branch: db.staff[staffIndex].branch,
+                        salary: db.staff[staffIndex].salary,
+                        benefit: db.staff[staffIndex].benefit,
+                        photo_url: db.staff[staffIndex].photo_url
+                    }).eq('pin', pin);
+                }
+
+                alert("ອັບເດດຂໍ້ມູນພະນັກງານຮຽບຮ້ອຍແລ້ວ!");
+            }
+        }
+
+        async function deleteStaff(pin) {
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (!staffMember) return;
+
+            if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບພະນັກງານ: "${staffMember.name}" (PIN: ${pin})?`)) {
+                db.staff = db.staff.filter(s => s.pin.toString() !== pin.toString());
+                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+                renderAllViews();
+
+                if (supabaseClient) {
+                    await supabaseClient.from('staff').delete().eq('pin', pin);
+                }
+                alert("ລົບພະນັກງານຮຽບຮ້ອຍແລ້ວ!");
+            }
         }
 
         function pressPin(num) {
@@ -1133,6 +1317,7 @@
             }
         }
 
+        // --- RENDER STAFF TABLE (WITH EDIT & DELETE BUTTONS) ---
         function renderStaffTable() {
             const tbody = document.getElementById('staff-table-body');
             if (!tbody) return;
@@ -1159,9 +1344,11 @@
                             </span>
                         </td>
                         <td class="p-3 text-right space-x-2 no-print" onclick="event.stopPropagation();">
-                            <button onclick="toggleStaffState('${st.pin}')" class="text-[11px] text-neutral-500 hover:underline">
-                                ${st.active ? 'Deactive' : 'Active'}
+                            <button onclick="openEditStaffModal('${st.pin}')" class="text-xs text-sky-400 hover:underline"><i class="fa-solid fa-pen-to-square"></i> ແກ້ໄຂ</button>
+                            <button onclick="toggleStaffState('${st.pin}')" class="text-xs ${st.active ? 'text-amber-400' : 'text-emerald-400'} hover:underline">
+                                ${st.active ? 'ປິດ' : 'ເປີດ'}
                             </button>
+                            <button onclick="deleteStaff('${st.pin}')" class="text-xs text-rose-500 hover:underline"><i class="fa-solid fa-trash"></i> ລົບ</button>
                         </td>
                     </tr>`;
             });
@@ -1357,6 +1544,11 @@
             const pin = document.getElementById('staff-pin').value;
             const name = document.getElementById('staff-name').value;
 
+            if (db.staff.some(s => s.pin.toString() === pin.toString())) {
+                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
+                return;
+            }
+
             const newStaff = {
                 pin: pin.toString(),
                 staff_id: "EMP" + String(db.staff.length + 1).padStart(4, '0'),
@@ -1365,7 +1557,7 @@
                 role: 'Barista',
                 phone: document.getElementById('staff-phone').value,
                 dob: document.getElementById('staff-dob').value,
-                photo_url: document.getElementById('staff-photo').value,
+                photo_url: addPhotoBase64 || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120",
                 emp_type: document.getElementById('staff-emptype').value,
                 shift: document.getElementById('staff-shift').value,
                 active: true,
@@ -1374,38 +1566,36 @@
             };
 
             db.staff.push(newStaff);
+            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
             renderAllViews();
             closeAddStaffModal();
 
             if (supabaseClient) supabaseClient.from('staff').insert([newStaff]);
             alert("ເພີ່ມພະນັກງານໃໝ່ສຳເລັດ");
+            e.target.reset();
         }
 
-        // --- 4. SAFE SUPABASE CLIENT INITIALIZATION & APP START ---
+        // --- 4. SAFE SUPABASE INITIALIZATION & START ---
         let supabaseClient = null;
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
 
         window.addEventListener('DOMContentLoaded', () => {
-            // A. Safely Init Supabase without crashing global JS
             try {
                 if (window.supabase && typeof window.supabase.createClient === 'function') {
                     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 }
             } catch(e) { console.warn("Supabase init skipped:", e); }
 
-            // B. Load Local Cache
             const cachedData = localStorage.getItem('LD_LOCAL_DB_CACHE');
             if (cachedData) {
                 try { db = JSON.parse(cachedData); } catch(e) {}
             }
 
-            // C. Initial Setup & Render
             applyUserModeUI();
             updateSessionUI();
             renderAllViews();
 
-            // D. Background Supabase Data Fetch
             if (supabaseClient) {
                 setTimeout(async () => {
                     try {
@@ -1417,7 +1607,7 @@
                         if (staffRes.data && staffRes.data.length) db.staff = staffRes.data;
                         localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
                         renderAllViews();
-                    } catch(e) { console.log("Background sync skipped."); }
+                    } catch(e) {}
                 }, 100);
             }
         });
