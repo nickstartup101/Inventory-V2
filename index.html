@@ -253,7 +253,7 @@
         <!-- ================= TAB 2: INVENTORY ACTIONS ================= -->
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>...</h1>
+                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
             </div>
 
@@ -269,6 +269,7 @@
                 </div>
             </div>
 
+            <!-- Action Area (Disabled by default until session unlocked) -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Quick tools with Search Filter to avoid DOM lag -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
@@ -566,7 +567,7 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="window.print()" class="px-5 py-2 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 font-bold rounded-xl text-xs transition-all">
+                <button onclick="window.print()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl text-xs transition-all">
                     <i class="fa-solid fa-print mr-2"></i> ພິມລາຍງານ / Export PDF
                 </button>
             </div>
@@ -735,6 +736,7 @@
             updateSessionUI();
         });
 
+        // ລະບົບປັບປຸງປຸ່ມ Icon ທາງລັດເປີດ Sheet ຕົວຈິງ
         function updateSheetShortcutUI() {
             const linkIcon = document.getElementById('sheet-shortcut-link');
             if (linkIcon) {
@@ -747,6 +749,7 @@
             }
         }
 
+        // ຟັງຊັນບັນທຶກ ແລະ ທົດສອບການເຊື່ອມຕໍ່ Sheets ຜ່ານໜ້າຈໍ HRM
         async function saveAndTestAPIConnection() {
             const urlValue = document.getElementById('api-url-input').value.trim();
             const sheetUrlValue = document.getElementById('sheet-url-input').value.trim();
@@ -788,28 +791,31 @@
             return rawArray.map(item => {
                 let norm = {};
                 for (let rawKey in item) {
+                    if (rawKey === null || rawKey === undefined) continue;
                     let k = rawKey.toString().trim().toLowerCase();
                     let val = item[rawKey];
+                    let valStr = (val !== null && val !== undefined) ? val.toString().trim() : "";
+                    let valLower = valStr.toLowerCase();
                     
                     // Normalizing key matches
-                    if (k === "sku" || k === "ລະຫັດ") norm.sku = val;
-                    else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = val;
-                    else if (k === "category" || k === "category " || k === "ໝວດໝູ່") norm.category = val;
+                    if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
+                    else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
+                    else if (k === "category" || k === "category " || k === "ໝວດໝູ່") norm.category = valStr;
                     else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
                     else if (k === "stock_in" || k === "stock in" || k === "ຮັບເຂົ້າ") norm.stock_in = Number(val) || 0;
                     else if (k === "stock_out" || k === "stock out" || k === "ເບີກອອກ") norm.stock_out = Number(val) || 0;
                     else if (k === "min_stock" || k === "min_stock <" || k === "ຂັ້ນຕ່ຳ") norm.min_stock = Number(val) || 0;
-                    else if (k === "barcode" || k === "ບາໂຄດ") norm.barcode = val;
-                    else if (k === "pin" || k === "ລະຫັດ pin") norm.pin = val.toString().trim(); // Convert to String to prevent comparison errors
-                    else if (k === "branch" || k === "ສາຂາ") norm.branch = val;
+                    else if (k === "barcode" || k === "ບາໂຄດ") norm.barcode = valStr;
+                    else if (k === "pin" || k === "ລະຫັດ pin") norm.pin = valStr;
+                    else if (k === "branch" || k === "ສາຂາ") norm.branch = valStr;
                     else if (k === "salary" || k === "ເງິນເດືອນ") norm.salary = Number(val) || 0;
                     else if (k === "benefit" || k === "ສະຫວັດດິການ") norm.benefit = Number(val) || 0;
-                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (val.toString().toLowerCase() === "active" || val.toString().toLowerCase() === "ok" || val === true);
-                    else if (k === "timestamp" || k === "time stamp" || k === "ເວລາ") norm.timestamp = val;
-                    else if (k === "type" || k === "ປະເພດ") norm.type = val;
+                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (valLower === "active" || valLower === "ok" || val === true);
+                    else if (k === "timestamp" || k === "time stamp" || k === "ເວລາ") norm.timestamp = valStr;
+                    else if (k === "type" || k === "ປະເພດ") norm.type = valStr;
                     else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
-                    else if (k === "note" || k === "remark" || k === "ໝາຍເຫດ") norm.note = val;
-                    else norm[k] = val;
+                    else if (k === "note" || k === "remark" || k === "ໝາຍເຫດ") norm.note = valStr;
+                    else norm[k] = valStr;
                 }
                 return norm;
             });
@@ -832,8 +838,8 @@
                         throw new Error("ບໍ່ພົບຂໍ້ມູນໃນ 'Main inventory'.");
                     }
                     
-                    // Normalize datasets after fetching
-                    db.products = normalizeDataset(data.products, "products");
+                    // Safe normalization check prevents crash on empty arrays
+                    db.products = data.products ? normalizeDataset(data.products, "products") : [];
                     db.staff = data.staff && data.staff.length ? normalizeDataset(data.staff, "staff") : backupMockDB.staff;
                     db.attendance = data.attendance ? normalizeDataset(data.attendance, "attendance") : [];
                     db.logs = data.logs ? normalizeDataset(data.logs, "logs") : [];
@@ -897,7 +903,6 @@
                 return;
             }
 
-            // PIN comparison type safety check
             const staffMember = db.staff.find(s => s.pin.toString() === pinVal.toString() && s.active);
             if (staffMember) {
                 activeOperator = staffMember;
@@ -948,579 +953,4 @@
 
         function openAdminAuthModal() {
             authPinBuffer = "";
-            document.getElementById('admin-auth-display').value = "";
-            document.getElementById('modal-admin-auth').classList.remove('hidden');
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('modal-admin-auth').classList.add('hidden');
-        }
-
-        function pressAuthPin(num) {
-            if (authPinBuffer.length < 4) {
-                authPinBuffer += num;
-                document.getElementById('admin-auth-display').value = authPinBuffer;
-            }
-        }
-
-        function clearAuthPin() {
-            authPinBuffer = "";
-            document.getElementById('admin-auth-display').value = "";
-        }
-
-        function submitAuthPin() {
-            if (authPinBuffer === "9999") { // Admin authorization
-                isHRMMode = true;
-                closeAdminAuthModal();
-                applyUserModeUI();
-                switchTab('tab-hrm-dash');
-            } else {
-                const card = document.getElementById('auth-panel-card');
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 300);
-                clearAuthPin();
-            }
-        }
-
-        function applyUserModeUI() {
-            const empMenu = document.getElementById('group-employee-menu');
-            const hrmMenu = document.getElementById('group-hrm-menu');
-            const modeBadge = document.getElementById('mode-badge');
-            const switchBtnText = document.getElementById('btn-switch-text');
-            const switchIcon = document.querySelector('#btn-switch-user i');
-            const userInfo = document.getElementById('user-info-bar');
-
-            if (isHRMMode) {
-                empMenu.classList.add('hidden');
-                hrmMenu.classList.remove('hidden');
-                modeBadge.innerText = "HRM Admin Mode";
-                modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
-                switchBtnText.innerText = "Switch to Employee";
-                switchIcon.className = "fa-solid fa-users text-white";
-                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
-            } else {
-                empMenu.classList.remove('hidden');
-                hrmMenu.classList.add('hidden');
-                modeBadge.innerText = "Employee Mode";
-                modeBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
-                switchBtnText.innerText = "Switch to HRM Admin";
-                switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
-                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
-            }
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('tab-active'));
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (activeBtn) activeBtn.classList.add('tab-active');
-        }
-
-        function updatePayrollPeriodDisplay() {
-            const selectedMonth = document.getElementById('payroll-month-select').value;
-            document.getElementById('payroll-period-title').innerText = selectedMonth;
-        }
-
-        function parseTimestamp(tsStr) {
-            if (!tsStr) return new Date();
-            // Handle different timestamp string formats safely
-            return new Date(tsStr.toString().replace(" ", "T"));
-        }
-
-        // Clock logic
-        function pressPin(num) {
-            if (pinBuffer.length < 6) {
-                pinBuffer += num;
-                document.getElementById('pin-display').value = pinBuffer;
-            }
-        }
-        function clearPin() {
-            pinBuffer = "";
-            document.getElementById('pin-display').value = "";
-        }
-
-        async function submitClock() {
-            if (pinBuffer.length < 6) {
-                alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
-                return;
-            }
-            
-            // Compare String pins safely
-            const staffMember = db.staff.find(s => s.pin.toString() === pinBuffer.toString() && s.active);
-            if (!staffMember) {
-                alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
-                clearPin();
-                return;
-            }
-            
-            const now = new Date();
-            const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
-            const lastLog = db.attendance.filter(a => a.pin.toString() === pinBuffer.toString()).pop();
-            const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
-
-            let detailsMsg = "";
-
-            if (actionType === "Clock-In") {
-                let shiftStartHour = 7;
-                let shiftStartMin = 0;
-                let shiftName = "ກະ 1 (07:00)";
-
-                if (now.getHours() >= 10) {
-                    shiftStartHour = 11;
-                    shiftStartMin = 30;
-                    shiftName = "ກະ 2 (11:30)";
-                }
-
-                const scheduledMinutes = shiftStartHour * 60 + shiftStartMin;
-                const actualMinutes = now.getHours() * 60 + now.getMinutes();
-                const lateMinutes = actualMinutes - scheduledMinutes;
-
-                if (lateMinutes > 0) {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນາທີ</span>`;
-                } else {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
-                }
-            } else {
-                const inTime = parseTimestamp(lastLog.timestamp);
-                const durationMs = now - inTime;
-                
-                const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
-                const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
-
-                detailsMsg = `ອອກວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} <br><span class="text-sky-400 font-extrabold"><i class="fa-solid fa-calculator mr-1"></i> ເຮັດວຽກທັງໝົດ: ${totalHours} ຊົ່ວໂມງ ${totalMinutes} ນາທີ</span>`;
-            }
-
-            const payload = {
-                action: "addAttendance",
-                timestamp: nowStr,
-                pin: pinBuffer,
-                type: actionType,
-                branch: staffMember.branch
-            };
-
-            db.attendance.push(payload);
-            await postToGoogleSheet(payload);
-
-            document.getElementById('attendance-live-log').innerHTML = `
-                <div class="space-y-1">
-                    <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
-                    <p class="text-[10px] text-neutral-400 uppercase tracking-widest">${actionType} Success</p>
-                    <p class="mt-2 text-neutral-300 font-medium">${detailsMsg}</p>
-                </div>
-            `;
-            
-            clearPin();
-            renderAllViews();
-        }
-
-        // Master Renders
-        function renderAllViews() {
-            renderHighFreqTrackers();
-            renderStockTable();
-            renderDailyLogs();
-            renderQuickAdjustments();
-            renderManualRecordDropdowns();
-            renderHRMDashboard();
-            renderStaffTable();
-            renderBranchDropdowns();
-            renderPayroll();
-        }
-
-        // ດຶງສະເພາະສິນຄ້າທີ່ຢູ່ໃນໝວດໝູ່ "ວັດຖຸດິບ" ຂຶ້ນມາສະແດງໃນສ່ວນ High Frequency
-        function renderHighFreqTrackers() {
-            const container = document.getElementById('high-freq-trackers');
-            if (!container) return;
-            container.innerHTML = "";
-            let html = "";
-            
-            // Filter by "ວັດຖຸດິບ" raw materials Category
-            db.products.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
-                const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
-                html += `
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
-                        <div class="space-y-1">
-                            <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
-                            <h3 class="font-bold text-neutral-200 text-sm">${item.name}</h3>
-                            <p class="text-[11px] text-neutral-400">${item.category}</p>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-neutral-900">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-neutral-500 font-bold">ຄົງເຫຼືອ:</span>
-                                <span class="mono-font text-xs font-bold text-[#FF4D00]">${item.stock}</span>
-                            </div>
-                            <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-[#FF4D00] h-full" style="width: ${percentage}%"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function renderStockTable() {
-            const tbody = document.getElementById('stock-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            let html = "";
-            db.products.forEach(item => {
-                html += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-mono text-xs font-bold text-neutral-400">${item.sku}</td>
-                        <td class="p-3 font-semibold text-neutral-200">${item.name}</td>
-                        <td class="p-3 text-neutral-400">${item.category}</td>
-                        <td class="p-3 text-center">
-                            <span class="px-2.5 py-1 rounded-full text-[9px] font-bold ${item.stock < 1 ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
-                                ${item.stock < 1 ? 'ສັ່ງດ່ວນ' : 'OK'}
-                            </span>
-                        </td>
-                        <td class="p-3 text-right font-mono font-bold text-white">${item.stock}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function filterStockTable() {
-            const search = document.getElementById('stock-search').value.toLowerCase();
-            document.querySelectorAll('#stock-table-body tr').forEach(row => {
-                row.classList.toggle('hidden', !row.innerText.toLowerCase().includes(search));
-            });
-        }
-
-        function renderDailyLogs() {
-            const tbody = document.getElementById('daily-log-body');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            let html = "";
-            db.logs.slice().reverse().forEach(log => {
-                const isOut = log.type === "OUT";
-                html += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 text-neutral-500 font-mono">${log.timestamp || ""}</td>
-                        <td class="p-3 font-semibold text-neutral-200">${log.name || ""}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${isOut ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
-                                ${log.type || ""}
-                            </span>
-                        </td>
-                        <td class="p-3 font-mono font-bold text-white">${log.qty || ""}</td>
-                        <td class="p-3 text-neutral-400">${log.note || ""}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        // Lazy Rendering Engine: Default focus on high-frequency, render others only on Search to avoid DOM lagging
-        function renderQuickAdjustments() {
-            const container = document.getElementById('quick-adjust-grid');
-            if (!container) return;
-            container.innerHTML = "";
-            
-            const searchQuery = (document.getElementById('quick-adjust-search')?.value || "").toLowerCase();
-            let filteredList = [];
-            
-            if (searchQuery !== "") {
-                filteredList = db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery));
-            } else {
-                // Focus ONLY on Raw materials Category ("ວັດຖຸດິບ") by default to avoid DOM overload
-                filteredList = db.products.filter(p => p.category === "ວັດຖຸດິບ");
-                if (filteredList.length === 0) {
-                    filteredList = db.products.slice(0, 12);
-                }
-            }
-
-            let html = "";
-            filteredList.forEach(item => {
-                const qtyValue = quickStockChanges[item.sku] || 0;
-                html += `
-                    <div class="bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl flex justify-between items-center">
-                        <div>
-                            <span class="mono-font text-[10px] text-neutral-500">${item.sku}</span>
-                            <h4 class="font-bold text-xs text-neutral-300">${item.name}</h4>
-                            <p class="text-[10px] text-neutral-500">ປັດຈຸບັນ: <span class="text-[#FF4D00] font-bold">${item.stock}</span></p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="changeQuickVal('${item.sku}', -1)" class="w-8 h-8 rounded-lg bg-[#3b0712] text-rose-300 font-black text-sm">-</button>
-                            <span class="mono-font text-sm font-extrabold text-white min-w-[18px] text-center">${qtyValue}</span>
-                            <button onclick="changeQuickVal('${item.sku}', 1)" class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-300 font-black text-sm">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function renderManualRecordDropdowns() {
-            const select = document.getElementById('manual-sku');
-            if (!select) return;
-            select.innerHTML = "";
-            let html = "";
-            db.products.forEach(p => {
-                html += `<option value="${p.sku}">${p.name} (${p.sku})</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        function toggleManualRemarkInput(val) {
-            const descContainer = document.getElementById('manual-remark-desc-container');
-            if (descContainer) {
-                descContainer.classList.toggle('hidden', val !== 'others');
-            }
-        }
-
-        function renderHRMDashboard() {
-            const statActive = document.getElementById('stat-active-staff');
-            const statBranch = document.getElementById('stat-branches');
-            const statInv = document.getElementById('stat-inventory-logs');
-            const statPending = document.getElementById('stat-pending-leaves');
-
-            if (statActive) statActive.innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
-            if (statBranch) statBranch.innerText = db.branches.length;
-            if (statInv) statInv.innerText = db.logs.length;
-            if (statPending) statPending.innerText = "0";
-
-            const attBody = document.getElementById('hrm-attendance-body');
-            if (attBody) {
-                attBody.innerHTML = "";
-                let html = "";
-                db.attendance.slice().reverse().forEach(att => {
-                    // Type-safe matching of staff PINs
-                    const staffMember = db.staff.find(s => s.pin.toString() === att.pin.toString());
-                    const name = staffMember ? staffMember.name : "Unknown";
-                    html += `
-                        <tr class="hover:bg-neutral-950/40">
-                            <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                            <td class="p-3 text-neutral-400">${att.branch}</td>
-                            <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
-                            <td class="p-3">
-                                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
-                                    ${att.type}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-                attBody.innerHTML = html;
-            }
-        }
-
-        function renderStaffTable() {
-            const tbody = document.getElementById('staff-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            let html = "";
-            db.staff.forEach(st => {
-                html += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-mono font-bold text-[#FF4D00]">${st.pin}</td>
-                        <td class="p-3 font-semibold text-neutral-200">${st.name}</td>
-                        <td class="p-3 text-neutral-400">${st.branch}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.active ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">
-                                ${st.active ? 'Active' : 'Deactive'}
-                            </span>
-                        </td>
-                        <td class="p-3 text-right space-x-2">
-                            <button onclick="changePassword('${st.pin}')" class="text-xs text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
-                            <button onclick="toggleStaffState('${st.pin}')" class="text-xs text-neutral-400 hover:underline">
-                                ${st.active ? 'Deactive' : 'Active'}
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function renderBranchDropdowns() {
-            const select = document.getElementById('staff-branch');
-            if (!select) return;
-            select.innerHTML = "";
-            let html = "";
-            db.branches.forEach(b => {
-                html += `<option value="${b}">${b}</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        function renderPayroll() {
-            const tbody = document.getElementById('payroll-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            let html = "";
-            
-            // Pre-index attendance logs to prevent browser freezing over large logs
-            const attendanceMap = {};
-            db.attendance.forEach(att => {
-                if (!attendanceMap[att.pin]) {
-                    attendanceMap[att.pin] = [];
-                }
-                attendanceMap[att.pin].push(att);
-            });
-
-            db.staff.forEach(st => {
-                const staffAttendance = attendanceMap[st.pin] || [];
-                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
-                const otHours = calculateOTHoursOptimized(st.pin, staffAttendance);
-                const net = calculateNetSalary(st, daysWorked, otHours);
-                
-                html += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch})</span>
-                        </td>
-                        <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
-                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">${otHours} Hrs</td>
-                        <td class="p-3 text-right">
-                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'salary', this.value)" class="w-24 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.salary}">
-                        </td>
-                        <td class="p-3 text-right">
-                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'benefit', this.value)" class="w-20 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.benefit}">
-                        </td>
-                        <td class="p-3 text-right mono-font font-bold text-emerald-400" id="net-pay-${st.pin}">${net.toLocaleString()} LAK</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function calculateDaysWorkedOptimized(pinAttendance) {
-            return new Set(pinAttendance.filter(a => a.type === "Clock-In").map(l => l.timestamp.split(' ')[0])).size;
-        }
-
-        function calculateOTHoursOptimized(pin, pinAttendance) {
-            let totalOT = 0;
-            const dates = Array.from(new Set(pinAttendance.map(a => a.timestamp.split(' ')[0])));
-            dates.forEach(date => {
-                const dayLogs = pinAttendance.filter(a => a.timestamp.startsWith(date));
-                const clockIn = dayLogs.find(l => l.type === "Clock-In");
-                const clockOut = dayLogs.find(l => l.type === "Clock-Out");
-                if (clockIn && clockOut) {
-                    const inTime = parseTimestamp(clockIn.timestamp);
-                    const outTime = parseTimestamp(clockOut.timestamp);
-                    const totalHours = (outTime - inTime) / (1000 * 60 * 60);
-                    if (inTime.getHours() < 10) {
-                        if (totalHours > 9) totalOT += (totalHours - 9);
-                    } else {
-                        if (totalHours > 8.5) totalOT += (totalHours - 8.5);
-                    }
-                }
-            });
-            return parseFloat(totalOT.toFixed(1));
-        }
-
-        // ຟັງຊັນຄຳນວນເງິນເດືອນສຸດທິ (Net Salary Calculation)
-        function calculateNetSalary(st, days, ot) {
-            const baseSalaryPerDay = st.salary / 22;
-            return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
-        }
-
-        // ຟັງຊັນອັບເດດຄ່າ Payroll ແບບ Real-time (Dynamic updates)
-        function updatePayrollVariables(pin, field, val) {
-            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-            if (staffMember) {
-                staffMember[field] = parseFloat(val) || 0;
-                
-                // ຄຳນວນຄືນໃໝ່ສະເພາະແຖວທີ່ປ່ຽນແປງຂໍ້ມູນ
-                const attendanceMap = {};
-                db.attendance.forEach(att => {
-                    if (!attendanceMap[att.pin]) {
-                        attendanceMap[att.pin] = [];
-                    }
-                    attendanceMap[att.pin].push(att);
-                });
-                
-                const staffAttendance = attendanceMap[pin] || [];
-                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
-                const otHours = calculateOTHoursOptimized(pin, staffAttendance);
-                const net = calculateNetSalary(staffMember, daysWorked, otHours);
-                
-                const el = document.getElementById(`net-pay-${pin}`);
-                if (el) {
-                    el.innerText = `${net.toLocaleString()} LAK`;
-                }
-            }
-        }
-
-        function changePassword(pin) {
-            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
-            if (newPin && newPin.length === 6) {
-                const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-                if (staffMember) {
-                    staffMember.pin = newPin;
-                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
-                    renderAllViews();
-                }
-            } else {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-            }
-        }
-
-        function toggleStaffState(pin) {
-            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-            if (staffMember) {
-                staffMember.active = !staffMember.active;
-                renderAllViews();
-            }
-        }
-
-        function handleBranchSubmit(e) {
-            e.preventDefault();
-            const bName = document.getElementById('branch-name').value;
-            if (db.branches.includes(bName)) return;
-            db.branches.push(bName);
-            
-            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
-            document.getElementById('qr-branch-title').innerText = bName;
-            document.getElementById('qr-link-text').innerText = mockUrl;
-            document.getElementById('qr-image-container').innerHTML = `
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
-            `;
-            document.getElementById('branch-qr-output').classList.remove('hidden');
-            e.target.reset();
-            renderAllViews();
-        }
-
-        function renderBranchDropdowns() {
-            const select = document.getElementById('staff-branch');
-            if (!select) return;
-            select.innerHTML = "";
-            let html = "";
-            db.branches.forEach(b => {
-                html += `<option value="${b}">${b}</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
-        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
-
-        function handleStaffSubmit(e) {
-            e.preventDefault();
-            const pin = document.getElementById('staff-pin').value;
-            const name = document.getElementById('staff-name').value;
-            const branch = document.getElementById('staff-branch').value;
-            const salary = parseFloat(document.getElementById('staff-salary').value);
-            const benefit = parseFloat(document.getElementById('staff-benefit').value);
-
-            if (pin.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-                return;
-            }
-
-            if (db.staff.some(s => s.pin.toString() === pin.toString())) {
-                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
-                return;
-            }
-
-            db.staff.push({ pin: pin.toString(), name, branch, salary, benefit, active: true });
-            closeAddStaffModal();
-            e.target.reset();
-            renderAllViews();
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('admin-auth
