@@ -22,88 +22,51 @@
             --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
             --color-primary: #FF4D00;
         }
-
         body {
             background-color: #050505;
             color: #ffffff;
             font-family: "Noto Sans Lao", "Inter", sans-serif;
             overflow-x: hidden;
         }
-
-        .mono-font {
-            font-family: "JetBrains Mono", monospace;
-        }
-
+        .mono-font { font-family: "JetBrains Mono", monospace; }
         .glass-panel {
             background: #0a0a0a;
             border: 2px solid #1a1a1a;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
-
         .glass-card {
             background: #111111;
             border: 2px solid #1a1a1a;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         .glass-card:hover {
             background: #161616;
             border-color: #FF4D00;
             transform: translateY(-2px);
             box-shadow: 0 12px 24px -10px rgba(255, 77, 0, 0.15);
         }
-
         .text-outline-orange {
             -webkit-text-stroke: 1.5px #FF4D00;
             color: transparent;
         }
-
         .tab-active {
             background-color: #FF4D00 !important;
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
-
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
             75% { transform: translateX(6px); }
         }
-        .shake {
-            animation: shake 0.2s ease-in-out 0s 2;
-        }
-
+        .shake { animation: shake 0.2s ease-in-out 0s 2; }
         @media print {
-            body {
-                background: #ffffff !important;
-                color: #000000 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-area {
-                border: none !important;
-                background: transparent !important;
-                box-shadow: none !important;
-                color: #000000 !important;
-                width: 100% !important;
-                padding: 0 !important;
-            }
-            table {
-                border-collapse: collapse !important;
-                width: 100% !important;
-            }
-            th, td {
-                border: 1px solid #e5e7eb !important;
-                color: #000000 !important;
-                padding: 8px !important;
-            }
-            input {
-                border: none !important;
-                background: transparent !important;
-                color: #000000 !important;
-                text-align: right !important;
-            }
+            body { background: #ffffff !important; color: #000000 !important; }
+            .no-print { display: none !important; }
+            .print-area { border: none !important; background: transparent !important; box-shadow: none !important; color: #000000 !important; width: 100% !important; padding: 0 !important; }
+            table { border-collapse: collapse !important; width: 100% !important; }
+            th, td { border: 1px solid #e5e7eb !important; color: #000000 !important; padding: 8px !important; }
+            input { border: none !important; background: transparent !important; color: #000000 !important; text-align: right !important; }
         }
     </style>
 </head>
@@ -136,7 +99,7 @@
                         </button>
                         <button onclick="switchTab('tab-quick-action')" id="btn-tab-quick-action" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
                             <i class="fa-solid fa-square-plus w-4"></i>
-                            <span>ເຄື່ອງມືຈັດການສະຕ໊ອກ</span>
+                            <span>...</span>
                         </button>
                         <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
                             <i class="fa-solid fa-user-clock w-4"></i>
@@ -167,14 +130,14 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <!-- Connection Diagnostics Console (Shows Supabase Status) -->
+            <!-- Connection Diagnostics Console -->
             <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງ Sync ກັບ Supabase...</span>
+                        <span id="sync-badge-text">ກຳລັງກວດສອບການເຊື່ອມຕໍ່...</span>
                     </div>
-                    <!-- Clickable Link Icon to Open Supabase Direct Database Dashboard -->
+                    <!-- Clickable Link Icon for Supabase Direct Database Dashboard -->
                     <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard/project/jxkcnraixazvmwdfmraa/editor" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດຖານຂໍ້ມູນ Supabase ຕົວຈິງ">
                         <i class="fa-solid fa-database text-xs"></i>
                     </a>
@@ -197,9 +160,27 @@
 
         <!-- ================= TAB 1: DASHBOARD & STOCK ================= -->
         <section id="tab-dashboard" class="space-y-8">
-            <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight flex items-center"><i class="fa-solid fa-chart-line text-[#FF4D00] mr-3"></i>Dashboard & ສະຕ໊ອກສິນຄ້າ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ຂໍ້ມູນຕິດຕາມສິນຄ້າຄົງເຫຼືອ ແລະ ໝວດໝູ່ທີ່ເຄື່ອນໄຫວຖີ່ສຳລັບພະນັກງານ</p>
+            <!-- Top Status Grid for Employee (Shows Live Workers with Avatars) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
+                    <div>
+                        <span class="text-[10px] text-neutral-500 font-bold block uppercase">ກະເຮັດວຽກປັດຈຸບັນ</span>
+                        <h3 id="current-shift-title" class="text-lg font-black text-white mt-1">ກຳລັງຄຳນວນກະ...</h3>
+                        <p class="text-[10px] text-neutral-500 mt-1">ກະ 1: 07:00-16:00 | ກະ 2: 11:30-20:00</p>
+                    </div>
+                    <i class="fa-solid fa-business-time text-3xl text-neutral-800"></i>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານໃນກະປັດຈຸບັນ</span>
+                        <div class="flex items-center space-x-2 mt-2">
+                            <div id="active-avatars-row" class="flex -space-x-2 overflow-hidden"></div>
+                            <span id="active-staff-count" class="text-xs font-bold text-neutral-300 ml-1">0 ຄົນ</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-users text-3xl text-neutral-800"></i>
+                </div>
             </div>
 
             <!-- High-Frequency Trackers -->
@@ -271,7 +252,6 @@
                 </div>
             </div>
 
-            <!-- Workspace enabled once session active -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Quick tools -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
@@ -319,7 +299,7 @@
                             <label class="block text-neutral-400 font-semibold mb-1">ໝາຍເຫດ</label>
                             <select id="manual-remark" onchange="toggleManualRemarkInput(this.value)" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
                                 <option value="ຊື້ເພີ່ມ">ຊື້ເພີ່ມ</option>
-                                <option value="เครื่องເຊື່ອມຄຸນະພາບ">ເຄື່ອງເຊື່ອມຄຸນະພາບ</option>
+                                <option value="ເຄື່ອງເຊື່ອມຄຸນະພາບ">ເຄື່ອງເຊື່ອມຄຸນະພາບ</option>
                                 <option value="ເພ">ເພ</option>
                                 <option value="others">ອື່ນໆ (ລະບຸ)</option>
                             </select>
@@ -418,7 +398,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="glass-panel p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານ Active</span>
-                    <h3 id="stat-active-staff" class="text-3xl font-black text-outline-orange mt-2">2/2</h3>
+                    <h3 id="stat-active-staff" class="text-3xl font-black text-outline-orange mt-2">6/6</h3>
                 </div>
                 <div class="glass-panel p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ສາຂາເປີດບໍລິການ</span>
@@ -474,19 +454,20 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: STAFF & BRANCHES ================= -->
+        <!-- ================= TAB 5: STAFF & BRANCHES (HRM Staff Detail view) ================= -->
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ-ປ່ຽນແປງສະຖານະພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
             </div>
 
+            <!-- Staff Grid Details -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Staff panel -->
+                <!-- Staff list table card -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ລາຍຊື່ພະນັກງານທັງໝົດ</h2>
-                        <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl">
+                        <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl whitespace-nowrap">
                             + ເພີ່ມພະນັກງານໃໝ່
                         </button>
                     </div>
@@ -494,10 +475,10 @@
                         <table class="w-full text-left text-xs text-neutral-300">
                             <thead class="bg-neutral-900 text-neutral-400 uppercase">
                                 <tr>
-                                    <th class="p-3">PIN (6-Digit)</th>
-                                    <th class="p-3">ຊື່-ນາມສະກຸນ</th>
-                                    <th class="p-3">ສາຂາ</th>
-                                    <th class="p-3">ສະຖານະ</th>
+                                    <th class="p-3">ຮູບ/ຊື່ພະນັກງານ</th>
+                                    <th class="p-3">ເບີໂທ</th>
+                                    <th class="p-3 text-center">ກະວຽກ</th>
+                                    <th class="p-3">ປະເພດວຽກ</th>
                                     <th class="p-3 text-right">ຈັດການ</th>
                                 </tr>
                             </thead>
@@ -506,29 +487,92 @@
                     </div>
                 </div>
 
-                <!-- Branch config -->
-                <div class="glass-panel p-6 rounded-2xl space-y-6">
-                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ເປີດນຳໃຊ້ສາຂາໃໝ່</h2>
-                    <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
-                        <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາ</label>
-                            <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" placeholder="ສາຂາໃໝ່...">
+                <!-- Live profile card & Individual Leave history (New Feature!) -->
+                <div class="glass-panel p-6 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div>
+                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4"><i class="fa-solid fa-user-shield text-[#FF4D00] mr-2"></i>ປະຫວັດ ແລະ ໂປຣໄຟລ໌ລະອຽດ</h2>
+                        <div id="staff-detail-card" class="text-center py-4 space-y-3">
+                            <p class="text-xs text-neutral-500">ເລືອກລາຍຊື່ພະນັກງານເພື່ອເບິ່ງໂປຣໄຟລ໌ ແລະ ປະຫວັດການລາວຽກ</p>
                         </div>
-                        <button type="submit" class="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 font-bold rounded-xl transition-all">Active ສາຂານີ້</button>
-                    </form>
-
-                    <!-- QR output -->
-                    <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-4 bg-neutral-950/60">
-                        <span id="qr-branch-title" class="text-xs font-bold text-neutral-300"></span>
-                        <div id="qr-image-container" class="w-32 h-32 flex items-center justify-center border border-neutral-800 rounded-lg bg-neutral-900"></div>
-                        <p id="qr-link-text" class="text-[9px] text-neutral-500 break-all select-all font-mono text-center"></p>
                     </div>
+                    
+                    <!-- Individual Leave History sub-panel inside Profile card -->
+                    <div class="border-t border-neutral-900 pt-4">
+                        <h3 class="font-bold text-[10px] text-neutral-500 uppercase tracking-widest mb-2">ປະຫວັດການລາພັກສ່ວນຕົວ</h3>
+                        <div id="staff-leave-history-list" class="space-y-1.5 max-h-36 overflow-y-auto text-[11px] text-neutral-400">
+                            <p class="text-xs text-neutral-500 italic text-center">ບໍ່ມີປະຫວັດການລາວຽກ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch config card -->
+            <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-md">
+                <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ເປີດນຳໃຊ້ສາຂາໃໝ່</h2>
+                <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາ</label>
+                        <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ສາຂາໃໝ່...">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 font-bold rounded-xl transition-all">Active ສາຂານີ້</button>
+                </form>
+
+                <!-- QR output -->
+                <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-4 bg-neutral-950/60">
+                    <span id="qr-branch-title" class="text-xs font-bold text-neutral-300"></span>
+                    <div id="qr-image-container" class="w-32 h-32 flex items-center justify-center border border-neutral-800 rounded-lg bg-neutral-900"></div>
+                    <p id="qr-link-text" class="text-[9px] text-neutral-500 break-all select-all font-mono text-center"></p>
                 </div>
             </div>
         </section>
 
         <!-- ================= TAB 6: PAYROLLS REALTIME (La Dolce Payrolls) ================= -->
         <section id="tab-payroll" class="hidden space-y-8">
+            <!-- Connection Setup & API Manager with Excel Sheet URL input -->
+            <div class="glass-panel p-6 rounded-3xl space-y-4 no-print">
+                <h2 class="font-black text-sm text-neutral-200 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-cloud-arrow-down text-[#FF4D00] mr-2"></i> ຕັ້ງຄ່າການເຊື່ອມຕໍ່ Google Sheets API
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">Google Apps Script Web App URL</label>
+                        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
+                    </div>
+                    <div>
+                        <!-- Requested Google Sheet shortcut link field -->
+                        <label class="block text-neutral-400 font-semibold mb-1">Google Sheet Link (Shortcut ທາງລັດເປີດ Sheet ຕົວຈິງ)</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="sheet-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
+                            <button onclick="saveAndTestAPIConnection()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">
+                                Save & Sync API
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mini Log Console -->
+                <div class="bg-neutral-950 p-4 border border-neutral-900 rounded-2xl space-y-2">
+                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider">Sync Console Output:</span>
+                    <pre id="api-sync-log" class="text-[10px] text-neutral-400 font-mono overflow-x-auto max-h-24 leading-normal">ລໍຖ້າການເຊື່ອມຕໍ່...</pre>
+                </div>
+            </div>
+
+            <!-- Filter & Print Config Action Bar -->
+            <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
+                <div class="flex items-center space-x-3 text-xs">
+                    <div>
+                        <label class="block text-[10px] text-neutral-500 font-bold mb-1">ເລືອກປະຈຳເດືອນ</label>
+                        <select id="payroll-month-select" onchange="updatePayrollPeriodDisplay()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:outline-none">
+                            <option value="ພະຈິກ 2024">ພະຈິກ 2024</option>
+                            <option value="ທັນວາ 2024">ທັນວາ 2024</option>
+                            <option value="ມັງກອນ 2025">ມັງກອນ 2025</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="window.print()" class="px-5 py-2 bg-[#FF4D00] text-white font-bold rounded-xl text-xs transition-all">
+                    <i class="fa-solid fa-print mr-2"></i> ພິມລາຍງານ / Export PDF
+                </button>
+            </div>
+
             <!-- Professional Print Area -->
             <div class="glass-panel p-8 rounded-3xl space-y-6 print-area bg-neutral-950/40">
                 <!-- Report Header Design -->
@@ -584,23 +628,71 @@
             <form onsubmit="handleStaffSubmit(event)" class="space-y-4 text-xs">
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ລະຫັດ PIN (6 ຕົວເລກ)</label>
-                    <input type="text" id="staff-pin" maxlength="6" minlength="6" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" placeholder="******">
+                    <input type="text" id="staff-pin" maxlength="6" minlength="6" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="******">
                 </div>
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ຊື່ ແລະ ນາມສະກຸນ</label>
-                    <input type="text" id="staff-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                    <input type="text" id="staff-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ເບີໂທພະນັກງານ</label>
+                    <input type="text" id="staff-phone" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="20XXXXXXXX">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ວັນເດືອນປີເກີດ</label>
+                    <input type="text" id="staff-dob" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="DD/MM/YYYY">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">Link ຮູບພາບພະນັກງານ (URL)</label>
+                    <input type="text" id="staff-photo" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ສາມາດເພີ່ມຮູບພາບພາຍຫຼັງໄດ້...">
+                </div>
+                <!-- ID, Family Book, Passport attachment inputs [1] -->
+                <div class="space-y-3 border-t border-neutral-900 pt-3">
+                    <span class="text-[10px] text-neutral-500 font-bold uppercase block tracking-wider">ເອກະສານຢືນຢັນຕົວຕົນ (Attachments URL)</span>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div>
+                            <label class="block text-neutral-400 font-semibold mb-1">Link ເອກະສານ ID Card [1]</label>
+                            <input type="text" id="staff-id-card" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-neutral-400 font-semibold mb-1">Link ສຳມະໂນຄົວ Family Book [1]</label>
+                            <input type="text" id="staff-family-book" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-neutral-400 font-semibold mb-1">Link ພາດສະປອດ Passport [1]</label>
+                            <input type="text" id="staff-passport" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ປະເພດວຽກ</label>
+                        <select id="staff-emptype" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ຈັດກະເຮັດວຽກ</label>
+                        <select id="staff-shift" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                            <option value="ກະ 1">ກະ 1</option>
+                            <option value="ກະ 2">ກະ 2</option>
+                        </select>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ກຳນົດສາຂາ</label>
                     <select id="staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"></select>
                 </div>
-                <div>
-                    <label class="block text-neutral-400 font-semibold mb-1">ເງິນເດືອນພື້ນຖານ</label>
-                    <input type="number" id="staff-salary" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" value="4500000">
-                </div>
-                <div>
-                    <label class="block text-neutral-400 font-semibold mb-1">ສະຫວັດດິການ</label>
-                    <input type="number" id="staff-benefit" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" value="500000">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ເງິນເດືອນພື້ນຖານ</label>
+                        <input type="number" id="staff-salary" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" value="3500000">
+                    </div>
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ສະຫວັດດິການ</label>
+                        <input type="number" id="staff-benefit" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" value="400000">
+                    </div>
                 </div>
                 <div class="flex justify-end space-x-2 pt-2">
                     <button type="button" onclick="closeAddStaffModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
@@ -645,11 +737,9 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // Supabase configuration pre-loaded with your exact details
+        // Supabase configuration details
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
-        
-        // Direct Excel Sheet URL (Optional)
         let GOOGLE_SHEET_DIRECT_URL = localStorage.getItem("LD_PORTAL_SHEET_URL") || "";
 
         // Initialize Supabase Client
@@ -660,22 +750,22 @@
             logs: [],
             staff: [],
             branches: ["ສາຂາ ວຽງຈັນ"],
-            attendance: []
+            attendance: [],
+            leaves: []
         };
 
         const backupMockDB = {
             products: [
-                { sku: "P001", name: "ຜົງໂກ້ໂກ້ (ຖົງ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
-                { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
-                { sku: "P010", name: "ເນີຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
+                { sku: "P001", name: "ຜົງໂກ້ໂກ້ (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
+                { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 }
             ],
             staff: [
-                { pin: "100100", name: "ສົມສັກ ພົມມະວົງ", branch: "ສາຂາ ວຽງຈັນ", salary: 5000000, benefit: 600000, active: true },
-                { pin: "100200", name: "ອາລິສາ ຈັນທະລາ", branch: "ສາຂາ ວຽງຈັນ", salary: 4500000, benefit: 500000, active: true }
+                { pin: "225588", staff_id: "EMP0001", name: "Keo", branch: "ສາຂາ ວຽງຈັນ", role: "Barista", phone: "2057558813", dob: "15/08/1998", hire_date: "01/06/2026", photo_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120", emp_type: "Full-time", shift: "ກະ 1", active: true, salary: 3800000, benefit: 500000 }
             ],
             branches: ["ສາຂາ ວຽງຈັນ"],
             attendance: [],
-            logs: []
+            logs: [],
+            leaves: []
         };
 
         let pinBuffer = "";
@@ -757,6 +847,22 @@
                     else if (k === "type" || k === "ປະເພດ") norm.type = valStr;
                     else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
                     else if (k === "note" || k === "remark" || k === "ໝາຍເຫດ") norm.note = valStr;
+                    
+                    // Expanded profile normalizations
+                    else if (k === "dob" || k === "ວັນເດືອນປີເກີດ") norm.dob = valStr;
+                    else if (k === "photo_url" || k === "photo url" || k === "ຮູບພາບ") norm.photo_url = valStr;
+                    else if (k === "emp_type" || k === "emp type" || k === "ປະເພດວຽກ") norm.emp_type = valStr;
+                    else if (k === "shift" || k === "ກະວຽກ") norm.shift = valStr;
+                    else if (k === "staff_id" || k === "staff id" || k === "ລະຫັດພະນັກງານ") norm.staff_id = valStr;
+                    else if (k === "role" || k === "ຕຳແໜ່ງ") norm.role = valStr;
+                    else if (k === "phone" || k === "ເບີໂທ") norm.phone = valStr;
+                    else if (k === "hire_date" || k === "ວັນເລີ່ມວຽກ") norm.hire_date = valStr;
+
+                    // Identity verification document normalizations [1]
+                    else if (k === "id_card_url" || k === "id card" || k === "id_card") norm.id_card_url = valStr;
+                    else if (k === "family_book_url" || k === "family book" || k === "family_book") norm.family_book_url = valStr;
+                    else if (k === "passport_url" || k === "passport") norm.passport_url = valStr;
+
                     else norm[k] = valStr;
                 }
                 return norm;
@@ -771,27 +877,28 @@
             addLogConsole("ກຳລັງດຶງຂໍ້ມູນຈາກ Supabase...");
             
             try {
-                // 1. Fetch Products
+                // Fetch tables from Supabase PostgreSQL in lowercase
                 const { data: rawProducts, error: prodErr } = await supabase.from('main_inventory').select('*');
                 if (prodErr) throw prodErr;
 
-                // 2. Fetch Staff
                 const { data: rawStaff, error: staffErr } = await supabase.from('staff').select('*');
                 if (staffErr) throw staffErr;
 
-                // 3. Fetch Attendance
                 const { data: rawAttendance, error: attErr } = await supabase.from('attendance').select('*');
                 if (attErr) throw attErr;
 
-                // 4. Fetch Logs
                 const { data: rawLogs, error: logsErr } = await supabase.from('daily_inventory_movement').select('*');
                 if (logsErr) throw logsErr;
+
+                const { data: rawLeaves, error: leavesErr } = await supabase.from('leaves').select('*');
+                if (leavesErr) throw leavesErr;
 
                 // Normalize datasets safely (resolves undefined & Unknown names)
                 db.products = rawProducts ? normalizeDataset(rawProducts, "products") : [];
                 db.staff = rawStaff && rawStaff.length ? normalizeDataset(rawStaff, "staff") : backupMockDB.staff;
                 db.attendance = rawAttendance ? normalizeDataset(rawAttendance, "attendance") : [];
                 db.logs = rawLogs ? normalizeDataset(rawLogs, "logs") : [];
+                db.leaves = rawLeaves ? normalizeDataset(rawLeaves, "leaves") : [];
 
                 // Extract branches dynamically
                 db.branches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
@@ -821,20 +928,13 @@
             db.branches = backupMockDB.branches;
             db.logs = backupMockDB.logs;
             db.attendance = backupMockDB.attendance;
-            
-            const badgeText = document.getElementById('sync-badge-text');
-            const connDot = document.getElementById('conn-dot');
-            if (badgeText) badgeText.innerText = reason;
-            if (connDot) {
-                connDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
-            }
+            db.leaves = backupMockDB.leaves;
             renderAllViews();
         }
 
-        // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Supabase
         async function postAttendanceToSupabase(payload) {
             try {
-                addLogConsole(`ກຳລັງບັນທຶກ Attendance ລົງ Supabase...`);
+                addLogConsole(`ກຳລັງບັນທຶກ Attendance...`);
                 const { error } = await supabase.from('attendance').insert([{
                     timestamp: payload.timestamp,
                     pin: payload.pin,
@@ -842,20 +942,16 @@
                     branch: payload.branch
                 }]);
                 if (error) throw error;
-                addLogConsole(`ບັນທຶກ Attendance ສຳເລັດ!`);
                 return true;
             } catch (err) {
-                addLogConsole(`ບັນທຶກAttendanceຫຼົ້ມເຫຼວ: ${err.message}`);
+                addLogConsole(`ບັນທຶກ Attendance ຫຼົ້ມເຫຼວ: ${err.message}`);
                 return false;
             }
         }
 
-        // ຟັງຊັນບັນທຶກການເຄື່ອນໄຫວສະຕ໊ອກ ແລະ ອັບເດດສະຕ໊ອກສິນຄ້າໃນ Supabase ພ້ອມກັນ
         async function postInventoryMoveToSupabase(logPayload, updatedStockIn, updatedStockOut, updatedStock) {
             try {
-                addLogConsole(`ກຳລັງບັນທຶກການເຄື່ອນໄຫວ ແລະ ອັບເດດສະຕ໊ອກ...`);
-                
-                // 1. Post Movement Log
+                addLogConsole(`ກຳລັງອັບເດດສະຕ໊ອກ...`);
                 const { error: logErr } = await supabase.from('daily_inventory_movement').insert([{
                     timestamp: logPayload.timestamp,
                     sku: logPayload.sku,
@@ -866,7 +962,6 @@
                 }]);
                 if (logErr) throw logErr;
 
-                // 2. Update Product Stock numbers
                 const { error: prodErr } = await supabase.from('main_inventory').update({
                     stock_in: updatedStockIn,
                     stock_out: updatedStockOut,
@@ -874,58 +969,10 @@
                 }).eq('sku', logPayload.sku);
                 if (prodErr) throw prodErr;
 
-                addLogConsole(`ອັບເດດສະຕ໊ອກໃນ Supabase ສຳເລັດ!`);
                 return true;
             } catch (err) {
                 addLogConsole(`ອັບເດດສະຕ໊ອກຫຼົ້ມເຫຼວ: ${err.message}`);
                 return false;
-            }
-        }
-
-        // ລະບົບປົດລັອກ Session ຂອງພະນັກງານ
-        function unlockInventorySession() {
-            const pinVal = document.getElementById('session-pin-input').value.trim();
-            if (pinVal.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີ 6 ຫຼັກ");
-                return;
-            }
-
-            // PIN comparison type safety check
-            const staffMember = db.staff.find(s => s.pin.toString() === pinVal.toString() && s.active);
-            if (staffMember) {
-                activeOperator = staffMember;
-                document.getElementById('session-pin-input').value = "";
-                updateSessionUI();
-                alert(`ຍິນດີຕ້ອນຮັບ, ປົດລັອກເຊດຊັນສຳລັບ: ${staffMember.name}`);
-            } else {
-                alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
-            }
-        }
-
-        function lockInventorySession() {
-            activeOperator = null;
-            updateSessionUI();
-        }
-
-        function updateSessionUI() {
-            const statusDot = document.getElementById('session-status-dot');
-            const statusText = document.getElementById('session-status-text');
-            const actionArea = document.getElementById('session-action-area');
-            const workspace = document.getElementById('inventory-workspace');
-
-            if (activeOperator) {
-                statusDot.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse";
-                statusText.innerHTML = `ຜູ້ບັນທຶກປັດຈຸບັນ (Active): <span class="text-[#FF4D00] font-bold">${activeOperator.name} (${activeOperator.pin})</span>`;
-                actionArea.innerHTML = `<button onclick="lockInventorySession()" class="px-4 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-rose-400 text-xs font-bold rounded-xl whitespace-nowrap transition-all">ປ່ຽນຜູ້ບັນທຶກ / Lock</button>`;
-                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-100 pointer-events-auto transition-all duration-300";
-            } else {
-                statusDot.className = "w-3 h-3 rounded-full bg-rose-500 animate-pulse";
-                statusText.innerText = "ເຊດຊັນຍັງຖືກລັອກ (ກະລຸນາປົດລັອກເພື່ອບັນທຶກສະຕ໊ອກ)";
-                actionArea.innerHTML = `
-                    <input type="password" id="session-pin-input" maxlength="6" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-xs text-white placeholder-neutral-500 w-full sm:w-32" placeholder="PIN 6 ຫຼັກ">
-                    <button onclick="unlockInventorySession()" class="px-4 py-1.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">ປົດລັອກ</button>
-                `;
-                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-40 pointer-events-none transition-all duration-300";
             }
         }
 
@@ -1032,12 +1079,12 @@
             document.getElementById('pin-display').value = "";
         }
 
+        // Clock-In/Out logic with real-time shift & lateness calculation
         async function submitClock() {
             if (pinBuffer.length < 6) {
                 alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
                 return;
             }
-            
             const staffMember = db.staff.find(s => s.pin.toString() === pinBuffer.toString() && s.active);
             if (!staffMember) {
                 alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
@@ -1103,10 +1150,12 @@
             
             clearPin();
             renderAllViews();
+            await syncDataFromSupabase(); // Refetch live active avatars
         }
 
         // Master Renders
         function renderAllViews() {
+            renderActiveShiftCard();
             renderHighFreqTrackers();
             renderStockTable();
             renderDailyLogs();
@@ -1118,7 +1167,52 @@
             renderPayroll();
         }
 
-        // ດຶງສະເພາະສິນຄ້າທີ່ຢູ່ໃນໝວດໝູ່ "ວັດຖຸດິບ" ຂຶ້ນມາສະແດງໃນສ່ວນ High Frequency [1]
+        // ຟັງຊັນສະແດງຮູບພາບພະນັກງານທີ່ກຳລັງເຮັດວຽກປັດຈຸບັນ (Active Shift Card Renderer)
+        function renderActiveShiftCard() {
+            const shiftTitleEl = document.getElementById('current-shift-title');
+            const avatarsRow = document.getElementById('active-avatars-row');
+            const countEl = document.getElementById('active-staff-count');
+            if (!shiftTitleEl || !avatarsRow || !countEl) return;
+
+            const now = new Date();
+            let activeShift = "ກະ 1 (07:00 - 16:00)";
+            if (now.getHours() >= 11 && now.getHours() < 20) {
+                activeShift = "ກະ 2 (11:30 - 20:00)";
+            }
+            shiftTitleEl.innerText = activeShift;
+
+            const activeStaffPins = [];
+            const staffClockState = {};
+
+            db.attendance.forEach(att => {
+                staffClockState[att.pin.toString()] = att.type;
+            });
+
+            for (let pin in staffClockState) {
+                if (staffClockState[pin] === "Clock-In") {
+                    activeStaffPins.push(pin);
+                }
+            }
+
+            let avatarsHtml = "";
+            let renderedCount = 0;
+
+            activeStaffPins.forEach(pin => {
+                const member = db.staff.find(s => s.pin.toString() === pin.toString() && s.active);
+                if (member) {
+                    renderedCount++;
+                    const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
+                    avatarsHtml += `
+                        <img class="inline-block h-8 w-8 rounded-full ring-2 ring-neutral-900 object-cover" src="${imgUrl}" alt="${member.name}" title="${member.name} (${member.role})">
+                    `;
+                }
+            });
+
+            avatarsRow.innerHTML = avatarsHtml || `<span class="text-neutral-500 italic text-[11px]">ບໍ່ມີພະນັກງານກຳລັງເຮັດວຽກ</span>`;
+            countEl.innerText = `${renderedCount} ຄົນ`;
+        }
+
+        // ດຶງສະເພາະສິນຄ້າທີ່ຢູ່ໃນໝວດໝູ່ "ວັດຖຸດິບ" ຂຶ້ນມາສະແດງໃນສ່ວນ High Frequency
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1203,7 +1297,7 @@
             tbody.innerHTML = html;
         }
 
-        // Lazy Rendering Engine: Default focus on raw materials ("ວັດຖຸດິບ") by default to avoid DOM overload
+        // Lazy Rendering Engine: Default focus on raw materials ("ວັດຖຸດິບ") by default to avoid DOM lagging
         function renderQuickAdjustments() {
             const container = document.getElementById('quick-adjust-grid');
             if (!container) return;
@@ -1260,7 +1354,7 @@
             }
         }
 
-        // Quick adjust with 6-digit PIN tracking & Supabase Real-time Sync
+        // Quick adjust using Active Session and Sync to Supabase
         async function submitQuickInventory() {
             if (!activeOperator) {
                 alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນບັນທຶກສະຕ໊ອກ");
@@ -1294,7 +1388,6 @@
                             note: "Quick Adjustment",
                             user: `${activeOperator.name} (${activeOperator.pin})`
                         };
-                        
                         db.logs.push(logPayload);
                         await postInventoryMoveToSupabase(logPayload, newStockIn, newStockOut, newStock);
                         changeMade = true;
@@ -1312,7 +1405,7 @@
             }
         }
 
-        // Manual record using Active Session and Sync to Supabase
+        // Manual record using Active Session
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) {
@@ -1387,12 +1480,11 @@
                 pin: pin,
                 name: staffMember.name,
                 type: type,
-                dates: `${start} ຫາ ${end}`,
+                dates: `${start} 配合 ${end}`,
                 reason: reason,
                 status: "Pending"
             };
 
-            // Post leave directly to Supabase table
             const { error } = await supabase.from('leaves').insert([leavePayload]);
             if (error) {
                 alert("ສົ່ງໃບລາວຽກຫຼົ້ມເຫຼວ: " + error.message);
@@ -1412,7 +1504,7 @@
             if (statActive) statActive.innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
             if (statBranch) statBranch.innerText = db.branches.length;
             if (statInv) statInv.innerText = db.logs.length;
-            if (statPending) statPending.innerText = "0";
+            if (statPending) statPending.innerText = db.leaves.filter(l => l.status === 'Pending').length;
 
             const attBody = document.getElementById('hrm-attendance-body');
             if (attBody) {
@@ -1436,6 +1528,44 @@
                 });
                 attBody.innerHTML = html;
             }
+
+            const leaveBody = document.getElementById('hrm-leaves-body');
+            if (leaveBody) {
+                leaveBody.innerHTML = "";
+                let html = "";
+                db.leaves.slice().reverse().forEach(lv => {
+                    html += `
+                        <tr class="hover:bg-neutral-950/40">
+                            <td class="p-3 font-semibold text-neutral-200">${lv.name} (${lv.pin})</td>
+                            <td class="p-3 text-neutral-400">${lv.type}</td>
+                            <td class="p-3 text-neutral-500 font-mono">${lv.dates}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${lv.status === 'Approved' ? 'bg-emerald-950 text-emerald-300' : lv.status === 'Rejected' ? 'bg-rose-950 text-rose-300' : 'bg-neutral-900 text-neutral-400'}">
+                                    ${lv.status}
+                                </span>
+                            </td>
+                            <td class="p-3 text-right space-x-1">
+                                ${lv.status === 'Pending' ? `
+                                    <button onclick="approveLeave(${lv.id}, true)" class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 hover:bg-emerald-900 rounded text-[10px]">ອະນຸມັດ</button>
+                                    <button onclick="approveLeave(${lv.id}, false)" class="px-1.5 py-0.5 bg-rose-950 text-rose-300 hover:bg-rose-900 rounded text-[10px]">ປະຕິເສດ</button>
+                                ` : '-'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                leaveBody.innerHTML = html;
+            }
+        }
+
+        async function approveLeave(id, approve) {
+            const newStatus = approve ? "Approved" : "Rejected";
+            const { error } = await supabase.from('leaves').update({ status: newStatus }).eq('id', id);
+            if (error) {
+                alert("ອະນຸມັດຫຼົ້ມເຫຼວ: " + error.message);
+            } else {
+                alert(`ທຳການ ${newStatus} ໃບລາວຽກແລ້ວ`);
+                await syncDataFromSupabase();
+            }
         }
 
         function renderStaffTable() {
@@ -1444,19 +1574,28 @@
             tbody.innerHTML = "";
             let html = "";
             db.staff.forEach(st => {
+                const imgUrl = st.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
                 html += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-mono font-bold text-[#FF4D00]">${st.pin}</td>
-                        <td class="p-3 font-semibold text-neutral-200">${st.name}</td>
-                        <td class="p-3 text-neutral-400">${st.branch}</td>
+                    <tr onclick="viewStaffProfile('${st.pin}')" class="hover:bg-neutral-950/40 cursor-pointer">
+                        <td class="p-3 font-semibold text-neutral-200 flex items-center space-x-3">
+                            <img class="h-8 w-8 rounded-full object-cover border border-neutral-800" src="${imgUrl}" alt="${st.name}">
+                            <div>
+                                <p class="text-xs font-bold">${st.name}</p>
+                                <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id} | PIN: ${st.pin}</p>
+                            </div>
+                        </td>
+                        <td class="p-3 text-neutral-400 font-mono">${st.phone || "-"}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 text-[10px] font-bold">${st.shift || "ກະ 1"}</span>
+                        </td>
                         <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.active ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">
-                                ${st.active ? 'Active' : 'Deactive'}
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.emp_type === 'Full-time' ? 'bg-[#FF4D00]/10 text-[#FF4D00]' : 'bg-neutral-900 text-neutral-400'}">
+                                ${st.emp_type || "Full-time"}
                             </span>
                         </td>
-                        <td class="p-3 text-right space-x-2">
-                            <button onclick="changePassword('${st.pin}')" class="text-xs text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
-                            <button onclick="toggleStaffState('${st.pin}')" class="text-xs text-neutral-400 hover:underline">
+                        <td class="p-3 text-right space-x-2 no-print" onclick="event.stopPropagation();">
+                            <button onclick="changePassword('${st.pin}')" class="text-[11px] text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
+                            <button onclick="toggleStaffState('${st.pin}')" class="text-[11px] text-neutral-500 hover:underline">
                                 ${st.active ? 'Deactive' : 'Active'}
                             </button>
                         </td>
@@ -1464,6 +1603,84 @@
                 `;
             });
             tbody.innerHTML = html;
+        }
+
+        // ຟັງຊັນສະແດງໂປຣໄຟລ໌ລະອຽດ, ເອກະສານຢືນຢັນຕົວຕົນ ແລະ ປະຫວັດການລາພັກສ່ວນຕົວ [1]
+        function viewStaffProfile(pin) {
+            const member = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (!member) return;
+
+            const detailCard = document.getElementById('staff-detail-card');
+            const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
+            
+            // Safe URL parser for document badges [1]
+            const renderDocBadge = (url, name, icon) => {
+                if (url && url.startsWith("https://")) {
+                    return `
+                        <a href="${url}" target="_blank" class="flex items-center space-x-2 px-3 py-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 hover:bg-[#FF4D00]/20 text-[#FF4D00] rounded-xl text-xs font-bold transition-all">
+                            <i class="${icon}"></i>
+                            <span>${name}</span>
+                        </a>
+                    `; // Pill Badge [1]
+                }
+                return `
+                    <div class="flex items-center space-x-2 px-3 py-2 bg-neutral-950 border border-neutral-900 text-neutral-500 rounded-xl text-xs font-bold cursor-not-allowed">
+                        <i class="${icon}"></i>
+                        <span>${name} (ຍັງບໍ່ມີ)</span>
+                    </div>
+                `; // Grayed out if missing [1]
+            };
+
+            detailCard.innerHTML = `
+                <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
+                <div>
+                    <h3 class="font-black text-white text-base">${member.name}</h3>
+                    <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider">${member.role} | ${member.emp_type}</p>
+                    <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id} | PIN: ${member.pin}</p>
+                </div>
+                <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
+                    <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
+                    <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
+                    <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
+                    <p><span class="text-neutral-500">ວັນເລີ່ມວຽກ:</span> <span class="text-neutral-300 font-mono">${member.hire_date || "-"}</span></p>
+                </div>
+                
+                <!-- ID/Passport/Family book verification buttons section [1] -->
+                <div class="space-y-2 text-left pt-2 border-t border-neutral-900">
+                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider mb-2">ເອກະສານຢືນຢັນຕົວຕົນ (Identity Docs)</span>
+                    <div class="grid grid-cols-1 gap-2">
+                        ${renderDocBadge(member.id_card_url, "ເອກະສານ ID Card", "fa-solid fa-id-card")}
+                        ${renderDocBadge(member.family_book_url, "ສຳມະໂນຄົວ Family Book", "fa-solid fa-book")}
+                        ${renderDocBadge(member.passport_url, "ພາດສະປອດ Passport", "fa-solid fa-passport")}
+                    </div>
+                </div>
+            `;
+
+            // Render individual Leave history
+            const leaveHistoryList = document.getElementById('staff-leave-history-list');
+            const memberLeaves = db.leaves.filter(l => l.pin.toString() === pin.toString());
+
+            if (memberLeaves.length > 0) {
+                let leaveHtml = "";
+                memberLeaves.slice().reverse().forEach(lv => {
+                    const isApproved = lv.status === "Approved";
+                    const isRejected = lv.status === "Rejected";
+                    const statusColor = isApproved ? "text-emerald-400" : isRejected ? "text-rose-400" : "text-neutral-500";
+                    leaveHtml += `
+                        <div class="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900 space-y-1 leading-snug">
+                            <div class="flex justify-between items-center text-[10px] font-bold">
+                                <span class="text-neutral-300">${lv.type}</span>
+                                <span class="${statusColor}">${lv.status}</span>
+                            </div>
+                            <p class="text-[10px] text-neutral-500 font-mono">${lv.dates}</p>
+                            <p class="text-[10px] text-neutral-400 italic">"${lv.reason || ""}"</p>
+                        </div>
+                    `;
+                });
+                leaveHistoryList.innerHTML = leaveHtml;
+            } else {
+                leaveHistoryList.innerHTML = `<p class="text-xs text-neutral-500 italic text-center py-4">ບໍ່ມີປະຫວັດການລາວຽກ</p>`;
+            }
         }
 
         function renderBranchDropdowns() {
@@ -1483,7 +1700,6 @@
             tbody.innerHTML = "";
             let html = "";
             
-            // Pre-index attendance logs to prevent browser freezing over large logs
             const attendanceMap = {};
             db.attendance.forEach(att => {
                 if (!attendanceMap[att.pin]) {
@@ -1543,13 +1759,11 @@
             return parseFloat(totalOT.toFixed(1));
         }
 
-        // ຟັງຊັນຄຳນວນເງິນເດືອນສຸດທິ (Net Salary Calculation)
         function calculateNetSalary(st, days, ot) {
             const baseSalaryPerDay = st.salary / 22;
             return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
         }
 
-        // ຟັງຊັນອັບເດດຄ່າ Payroll ແບບ Real-time (Dynamic updates)
         function updatePayrollVariables(pin, field, val) {
             const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
             if (staffMember) {
@@ -1589,11 +1803,17 @@
             }
         }
 
-        function toggleStaffState(pin) {
+        async function toggleStaffState(pin) {
             const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
             if (staffMember) {
-                staffMember.active = !staffMember.active;
-                renderAllViews();
+                const newState = !staffMember.active;
+                const { error } = await supabase.from('staff').update({ active: newState }).eq('pin', pin);
+                if (error) {
+                    alert("ປ່ຽນສະຖານະພະນັກງານຫຼົ້ມເຫຼວ: " + error.message);
+                } else {
+                    alert(`ປ່ຽນສະຖານະພະນັກງານສຳເລັດ`);
+                    await syncDataFromSupabase();
+                }
             }
         }
 
@@ -1628,10 +1848,21 @@
         function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
         function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
 
-        function handleStaffSubmit(e) {
+        async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
             const name = document.getElementById('staff-name').value;
+            const phone = document.getElementById('staff-phone').value;
+            const dob = document.getElementById('staff-dob').value;
+            const photo_url = document.getElementById('staff-photo').value;
+            
+            // New identity document URL inputs [1]
+            const id_card_url = document.getElementById('staff-id-card').value;
+            const family_book_url = document.getElementById('staff-family-book').value;
+            const passport_url = document.getElementById('staff-passport').value;
+
+            const emp_type = document.getElementById('staff-emptype').value;
+            const shift = document.getElementById('staff-shift').value;
             const branch = document.getElementById('staff-branch').value;
             const salary = parseFloat(document.getElementById('staff-salary').value);
             const benefit = parseFloat(document.getElementById('staff-benefit').value);
@@ -1646,10 +1877,39 @@
                 return;
             }
 
-            db.staff.push({ pin: pin.toString(), name, branch, salary, benefit, active: true });
-            closeAddStaffModal();
-            e.target.reset();
-            renderAllViews();
+            const staffId = "EMP" + String(db.staff.length + 1).padStart(4, '0');
+
+            const newStaff = {
+                pin: pin.toString(),
+                staff_id: staffId,
+                name: name,
+                branch: branch,
+                role: 'Barista',
+                phone: phone,
+                dob: dob,
+                photo_url: photo_url,
+                
+                // Saving identity document links to Supabase [1]
+                id_card_url: id_card_url,
+                family_book_url: family_book_url,
+                passport_url: passport_url,
+
+                emp_type: emp_type,
+                shift: shift,
+                active: true,
+                salary: salary,
+                benefit: benefit
+            };
+
+            const { error } = await supabase.from('staff').insert([newStaff]);
+            if (error) {
+                alert("ເພີ່ມພະນັກງານຫຼົ້ມເຫຼວ: " + error.message);
+            } else {
+                alert("ເພີ່ມພະນັກງານໃໝ່ສຳເລັດ");
+                closeAddStaffModal();
+                e.target.reset();
+                await syncDataFromSupabase();
+            }
         }
     </script>
 </body>
