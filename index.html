@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Dolce Portal - V2 Production Stable</title>
+    
+    <!-- Beautiful Dynamic Favicon (V2 Logo Style as requested) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -16,51 +20,88 @@
             --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
             --color-primary: #FF4D00;
         }
+
         body {
             background-color: #050505;
             color: #ffffff;
             font-family: "Noto Sans Lao", "Inter", sans-serif;
             overflow-x: hidden;
         }
-        .mono-font { font-family: "JetBrains Mono", monospace; }
+
+        .mono-font {
+            font-family: "JetBrains Mono", monospace;
+        }
+
         .glass-panel {
             background: #0a0a0a;
             border: 2px solid #1a1a1a;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
+
         .glass-card {
             background: #111111;
             border: 2px solid #1a1a1a;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .glass-card:hover {
             background: #161616;
             border-color: #FF4D00;
             transform: translateY(-2px);
             box-shadow: 0 12px 24px -10px rgba(255, 77, 0, 0.15);
         }
+
         .text-outline-orange {
             -webkit-text-stroke: 1.5px #FF4D00;
             color: transparent;
         }
+
         .tab-active {
             background-color: #FF4D00 !important;
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
             75% { transform: translateX(6px); }
         }
-        .shake { animation: shake 0.2s ease-in-out 0s 2; }
+        .shake {
+            animation: shake 0.2s ease-in-out 0s 2;
+        }
+
         @media print {
-            body { background: #ffffff !important; color: #000000 !important; }
-            .no-print { display: none !important; }
-            .print-area { border: none !important; background: transparent !important; box-shadow: none !important; color: #000000 !important; width: 100% !important; padding: 0 !important; }
-            table { border-collapse: collapse !important; width: 100% !important; }
-            th, td { border: 1px solid #e5e7eb !important; color: #000000 !important; padding: 8px !important; }
-            input { border: none !important; background: transparent !important; color: #000000 !important; text-align: right !important; }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-area {
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                color: #000000 !important;
+                width: 100% !important;
+                padding: 0 !important;
+            }
+            table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+            }
+            th, td {
+                border: 1px solid #e5e7eb !important;
+                color: #000000 !important;
+                padding: 8px !important;
+            }
+            input {
+                border: none !important;
+                background: transparent !important;
+                color: #000000 !important;
+                text-align: right !important;
+            }
         }
     </style>
 </head>
@@ -212,7 +253,7 @@
         <!-- ================= TAB 2: INVENTORY ACTIONS ================= -->
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
+                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>...</h1>
                 <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
             </div>
 
@@ -496,6 +537,7 @@
                         <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
                     </div>
                     <div>
+                        <!-- Requested Google Sheet shortcut link field -->
                         <label class="block text-neutral-400 font-semibold mb-1">Google Sheet Link (Shortcut ທາງລັດເປີດ Sheet ຕົວຈິງ)</label>
                         <div class="flex gap-2">
                             <input type="text" id="sheet-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
@@ -693,7 +735,6 @@
             updateSessionUI();
         });
 
-        // ລະບົບປັບປຸງປຸ່ມ Icon ທາງລັດເປີດ Sheet ຕົວຈິງ
         function updateSheetShortcutUI() {
             const linkIcon = document.getElementById('sheet-shortcut-link');
             if (linkIcon) {
@@ -706,7 +747,6 @@
             }
         }
 
-        // ຟັງຊັນບັນທຶກ ແລະ ທົດສອບການເຊື່ອມຕໍ່ Sheets ຜ່ານໜ້າຈໍ HRM
         async function saveAndTestAPIConnection() {
             const urlValue = document.getElementById('api-url-input').value.trim();
             const sheetUrlValue = document.getElementById('sheet-url-input').value.trim();
@@ -742,7 +782,39 @@
             }
         }
 
-        // ຟັງຊັນສຳລັບດຶງຂໍ້ມູນຈາກ Google Sheet
+        // ລະບົບແປງຊື່ຫົວຖັນ (Column Headers) ເປັນຕົວແປລະບົບອັດຕະໂນມັດ (ແກ້ໄຂຄ່າ undefined)
+        function normalizeDataset(rawArray, type) {
+            if (!rawArray || !Array.isArray(rawArray)) return [];
+            return rawArray.map(item => {
+                let norm = {};
+                for (let rawKey in item) {
+                    let k = rawKey.toString().trim().toLowerCase();
+                    let val = item[rawKey];
+                    
+                    // Normalizing key matches
+                    if (k === "sku" || k === "ລະຫັດ") norm.sku = val;
+                    else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = val;
+                    else if (k === "category" || k === "category " || k === "ໝວດໝູ່") norm.category = val;
+                    else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
+                    else if (k === "stock_in" || k === "stock in" || k === "ຮັບເຂົ້າ") norm.stock_in = Number(val) || 0;
+                    else if (k === "stock_out" || k === "stock out" || k === "ເບີກອອກ") norm.stock_out = Number(val) || 0;
+                    else if (k === "min_stock" || k === "min_stock <" || k === "ຂັ້ນຕ່ຳ") norm.min_stock = Number(val) || 0;
+                    else if (k === "barcode" || k === "ບາໂຄດ") norm.barcode = val;
+                    else if (k === "pin" || k === "ລະຫັດ pin") norm.pin = val.toString().trim(); // Convert to String to prevent comparison errors
+                    else if (k === "branch" || k === "ສາຂາ") norm.branch = val;
+                    else if (k === "salary" || k === "ເງິນເດືອນ") norm.salary = Number(val) || 0;
+                    else if (k === "benefit" || k === "ສະຫວັດດິການ") norm.benefit = Number(val) || 0;
+                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (val.toString().toLowerCase() === "active" || val.toString().toLowerCase() === "ok" || val === true);
+                    else if (k === "timestamp" || k === "time stamp" || k === "ເວລາ") norm.timestamp = val;
+                    else if (k === "type" || k === "ປະເພດ") norm.type = val;
+                    else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
+                    else if (k === "note" || k === "remark" || k === "ໝາຍເຫດ") norm.note = val;
+                    else norm[k] = val;
+                }
+                return norm;
+            });
+        }
+
         async function syncDataFromGoogleSheet() {
             const badgeText = document.getElementById('sync-badge-text');
             const connDot = document.getElementById('conn-dot');
@@ -760,10 +832,11 @@
                         throw new Error("ບໍ່ພົບຂໍ້ມູນໃນ 'Main inventory'.");
                     }
                     
-                    db.products = data.products;
-                    db.staff = data.staff && data.staff.length ? data.staff : backupMockDB.staff;
-                    db.attendance = data.attendance || [];
-                    db.logs = data.logs || [];
+                    // Normalize datasets after fetching
+                    db.products = normalizeDataset(data.products, "products");
+                    db.staff = data.staff && data.staff.length ? normalizeDataset(data.staff, "staff") : backupMockDB.staff;
+                    db.attendance = data.attendance ? normalizeDataset(data.attendance, "attendance") : [];
+                    db.logs = data.logs ? normalizeDataset(data.logs, "logs") : [];
                     
                     addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
                     addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
@@ -788,6 +861,8 @@
             db.products = backupMockDB.products;
             db.staff = backupMockDB.staff;
             db.branches = backupMockDB.branches;
+            db.logs = backupMockDB.logs;
+            db.attendance = backupMockDB.attendance;
             
             const badgeText = document.getElementById('sync-badge-text');
             const connDot = document.getElementById('conn-dot');
@@ -798,7 +873,6 @@
             renderAllViews();
         }
 
-        // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Google Sheet (POST)
         async function postToGoogleSheet(payload) {
             if (GOOGLE_SHEET_API_URL === "" || !GOOGLE_SHEET_API_URL.startsWith("https://")) return true;
             try {
@@ -816,15 +890,15 @@
             }
         }
 
-        // ລະບົບປົດລັອກ Session ຂອງພະນັກງານ
         function unlockInventorySession() {
-            const pinVal = document.getElementById('session-pin-input').value;
+            const pinVal = document.getElementById('session-pin-input').value.trim();
             if (pinVal.length !== 6) {
                 alert("ລະຫັດ PIN ຕ້ອງມີ 6 ຫຼັກ");
                 return;
             }
 
-            const staffMember = db.staff.find(s => s.pin === pinVal && s.active);
+            // PIN comparison type safety check
+            const staffMember = db.staff.find(s => s.pin.toString() === pinVal.toString() && s.active);
             if (staffMember) {
                 activeOperator = staffMember;
                 document.getElementById('session-pin-input').value = "";
@@ -950,7 +1024,8 @@
 
         function parseTimestamp(tsStr) {
             if (!tsStr) return new Date();
-            return new Date(tsStr.replace(" ", "T"));
+            // Handle different timestamp string formats safely
+            return new Date(tsStr.toString().replace(" ", "T"));
         }
 
         // Clock logic
@@ -970,7 +1045,9 @@
                 alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
                 return;
             }
-            const staffMember = db.staff.find(s => s.pin === pinBuffer && s.active);
+            
+            // Compare String pins safely
+            const staffMember = db.staff.find(s => s.pin.toString() === pinBuffer.toString() && s.active);
             if (!staffMember) {
                 alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
                 clearPin();
@@ -979,7 +1056,7 @@
             
             const now = new Date();
             const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
-            const lastLog = db.attendance.filter(a => a.pin === pinBuffer).pop();
+            const lastLog = db.attendance.filter(a => a.pin.toString() === pinBuffer.toString()).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
             let detailsMsg = "";
@@ -1000,7 +1077,7 @@
                 const lateMinutes = actualMinutes - scheduledMinutes;
 
                 if (lateMinutes > 0) {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນาທີ</span>`;
+                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນາທີ</span>`;
                 } else {
                     detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
                 }
@@ -1050,12 +1127,15 @@
             renderPayroll();
         }
 
+        // ດຶງສະເພາະສິນຄ້າທີ່ຢູ່ໃນໝວດໝູ່ "ວັດຖຸດິບ" ຂຶ້ນມາສະແດງໃນສ່ວນ High Frequency
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
             container.innerHTML = "";
             let html = "";
-            db.products.filter(p => p.frequency === "High").forEach(item => {
+            
+            // Filter by "ວັດຖຸດິບ" raw materials Category
+            db.products.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
                 html += `
                     <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
@@ -1145,7 +1225,8 @@
             if (searchQuery !== "") {
                 filteredList = db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery));
             } else {
-                filteredList = db.products.filter(p => p.frequency === "High");
+                // Focus ONLY on Raw materials Category ("ວັດຖຸດິບ") by default to avoid DOM overload
+                filteredList = db.products.filter(p => p.category === "ວັດຖຸດິບ");
                 if (filteredList.length === 0) {
                     filteredList = db.products.slice(0, 12);
                 }
@@ -1206,7 +1287,8 @@
                 attBody.innerHTML = "";
                 let html = "";
                 db.attendance.slice().reverse().forEach(att => {
-                    const staffMember = db.staff.find(s => s.pin === att.pin);
+                    // Type-safe matching of staff PINs
+                    const staffMember = db.staff.find(s => s.pin.toString() === att.pin.toString());
                     const name = staffMember ? staffMember.name : "Unknown";
                     html += `
                         <tr class="hover:bg-neutral-950/40">
@@ -1338,7 +1420,7 @@
 
         // ຟັງຊັນອັບເດດຄ່າ Payroll ແບບ Real-time (Dynamic updates)
         function updatePayrollVariables(pin, field, val) {
-            const staffMember = db.staff.find(s => s.pin === pin);
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
             if (staffMember) {
                 staffMember[field] = parseFloat(val) || 0;
                 
@@ -1366,7 +1448,7 @@
         function changePassword(pin) {
             const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
             if (newPin && newPin.length === 6) {
-                const staffMember = db.staff.find(s => s.pin === pin);
+                const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
                 if (staffMember) {
                     staffMember.pin = newPin;
                     alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
@@ -1378,7 +1460,7 @@
         }
 
         function toggleStaffState(pin) {
-            const staffMember = db.staff.find(s => s.pin === pin);
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
             if (staffMember) {
                 staffMember.active = !staffMember.active;
                 renderAllViews();
@@ -1429,12 +1511,12 @@
                 return;
             }
 
-            if (db.staff.some(s => s.pin === pin)) {
+            if (db.staff.some(s => s.pin.toString() === pin.toString())) {
                 alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
                 return;
             }
 
-            db.staff.push({ pin, name, branch, salary, benefit, active: true });
+            db.staff.push({ pin: pin.toString(), name, branch, salary, benefit, active: true });
             closeAddStaffModal();
             e.target.reset();
             renderAllViews();
