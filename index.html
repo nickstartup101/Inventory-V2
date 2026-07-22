@@ -131,9 +131,9 @@
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ພ້ອມໃຊ້ງານ (Fast Mode)</span>
+                        <span id="sync-badge-text">ພ້ອມໃຊ້ງານ (Ready)</span>
                     </div>
-                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard/project/jxkcnraixazvmwdfmraa/editor" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດ Supabase">
+                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດ Supabase">
                         <i class="fa-solid fa-database text-xs"></i>
                     </a>
                 </div>
@@ -159,7 +159,7 @@
                 <div class="glass-panel p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
                     <div>
                         <span class="text-[10px] text-neutral-500 font-bold block uppercase">ກະເຮັດວຽກປັດຈຸບັນ</span>
-                        <h3 id="current-shift-title" class="text-lg font-black text-white mt-1">ກຳລັງຄຳນວນກະ...</h3>
+                        <h3 id="current-shift-title" class="text-lg font-black text-white mt-1">ກະ 1 (07:00 - 16:00)</h3>
                         <p class="text-[10px] text-neutral-500 mt-1">ກະ 1: 07:00-16:00 | ກະ 2: 11:30-20:00</p>
                     </div>
                     <i class="fa-solid fa-business-time text-3xl text-neutral-800"></i>
@@ -384,7 +384,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="glass-panel p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານ Active</span>
-                    <h3 id="stat-active-staff" class="text-3xl font-black text-outline-orange mt-2">6/6</h3>
+                    <h3 id="stat-active-staff" class="text-3xl font-black text-outline-orange mt-2">1/1</h3>
                 </div>
                 <div class="glass-panel p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ສາຂາເປີດບໍລິການ</span>
@@ -614,24 +614,7 @@
                 </div>
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">Link ຮູບພາບພະນັກງານ (URL)</label>
-                    <input type="text" id="staff-photo" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ສາມາດເພີ່ມຮູບພາບພາຍຫຼັງໄດ້...">
-                </div>
-                <div class="space-y-3 border-t border-neutral-800 pt-3">
-                    <span class="text-[10px] text-neutral-500 font-bold block uppercase tracking-wider">ເອກະສານຢືນຢັນຕົວຕົນ (Attachments URL)</span>
-                    <div class="grid grid-cols-1 gap-2">
-                        <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">Link ເອກະສານ ID Card</label>
-                            <input type="text" id="staff-id-card" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
-                        </div>
-                        <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">Link ສຳມະໂນຄົວ Family Book</label>
-                            <input type="text" id="staff-family-book" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
-                        </div>
-                        <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">Link ພາດສະປອດ Passport</label>
-                            <input type="text" id="staff-passport" class="w-full px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs outline-none focus:border-[#FF4D00]" placeholder="https://...">
-                        </div>
-                    </div>
+                    <input type="text" id="staff-photo" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="https://...">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -704,27 +687,20 @@
         </div>
     </div>
 
-    <!-- HIGH-SPEED ENGINE -->
+    <!-- CORE SCRIPT (CRASH-PROOF LOGIC) -->
     <script>
-        const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
+        // Global State & Default Mock Data
+        let isHRMMode = false;
+        let activeOperator = null;
+        let pinBuffer = "";
+        let authPinBuffer = "";
+        let quickStockChanges = {};
         let GOOGLE_SHEET_DIRECT_URL = localStorage.getItem("LD_PORTAL_SHEET_URL") || "";
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         let db = {
-            products: [],
-            logs: [],
-            staff: [],
-            branches: ["ສາຂາ ວຽງຈັນ"],
-            attendance: [],
-            leaves: []
-        };
-
-        const backupMockDB = {
             products: [
-                { sku: "P001", name: "ຜົງໂກ້ໂກ້", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
-                { sku: "P002", name: "ບ໊ອບ (ຕຸກ)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 }
+                { sku: "P001", name: "ຜົງໂກ້ໂກ້", category: "ວັດຖຸດິບ", stock: 12 },
+                { sku: "P002", name: "ບ໊ອບ (ຕຸກ)", category: "ວັດຖຸດິບ", stock: 15 }
             ],
             staff: [
                 { pin: "225588", staff_id: "EMP0001", name: "Keo", branch: "ສາຂາ ວຽງຈັນ", role: "Barista", phone: "2057558813", dob: "15/08/1998", hire_date: "01/06/2026", photo_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120", emp_type: "Full-time", shift: "ກະ 1", active: true, salary: 3800000, benefit: 500000 }
@@ -735,344 +711,122 @@
             leaves: []
         };
 
-        let pinBuffer = "";
-        let authPinBuffer = "";
-        let quickStockChanges = {};
-        let isHRMMode = false;
-        let activeOperator = null;
-
-        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
-        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
-
-        // Strict Timeout Utility (Max 3 Seconds)
-        function fetchWithTimeout(supabasePromise, timeoutMs = 3000) {
-            return Promise.race([
-                supabasePromise,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase Connection Timeout')), timeoutMs))
-            ]);
+        // --- 1. CORE UI FUNCTIONS (Defined First so HTML onclick NEVER fails) ---
+        function switchTab(tabId) {
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            const target = document.getElementById(tabId);
+            if (target) target.classList.remove('hidden');
+            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('tab-active'));
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('tab-active');
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const sheetUrlElem = document.getElementById('sheet-url-input');
-            if (sheetUrlElem) sheetUrlElem.value = GOOGLE_SHEET_DIRECT_URL;
-            updateSheetShortcutUI();
-            
-            // 1. Instant Render from Cache (0.05 seconds)
-            const cachedData = localStorage.getItem('LD_LOCAL_DB_CACHE');
-            if (cachedData) {
-                try {
-                    db = JSON.parse(cachedData);
-                    addLogConsole("⚡ ດຶງຂໍ້ມູນ Cache ທັນທີ (Instant Render)");
-                } catch(e) { useBackupMockData("ປັບໃຊ້ຂໍ້ມູນສຳຮອງ..."); }
+        function toggleUserMode() {
+            if (isHRMMode) {
+                isHRMMode = false;
+                applyUserModeUI();
+                switchTab('tab-dashboard');
             } else {
-                useBackupMockData("ກຳລັງໂຫຼດຂໍ້ມູນ...");
-            }
-
-            applyUserModeUI();
-            updateSessionUI();
-            renderAllViews();
-
-            // 2. Fetch live data with 3s Limit Timeout
-            syncDataFastMode();
-        });
-
-        async function syncDataFastMode() {
-            const badgeText = document.getElementById('sync-badge-text');
-            const connDot = document.getElementById('conn-dot');
-            if (badgeText) badgeText.innerText = "ກຳລັງ Sync...";
-
-            try {
-                // Fetch critical data first (Staff & Products) with 3s Timeout
-                const [prodRes, staffRes] = await Promise.all([
-                    fetchWithTimeout(supabase.from('main_inventory').select('*'), 3000),
-                    fetchWithTimeout(supabase.from('staff').select('*'), 3000)
-                ]);
-
-                if (!prodRes.error && prodRes.data) db.products = normalizeDataset(prodRes.data, "products");
-                if (!staffRes.error && staffRes.data) db.staff = normalizeDataset(staffRes.data, "staff");
-
-                db.branches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
-                if (db.branches.length === 0) db.branches = ["ສາຂາ ວຽງຈັນ"];
-
-                // Save to Cache
-                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-                renderAllViews();
-
-                if (badgeText) badgeText.innerText = "Supabase Connected";
-                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-
-                // Fetch secondary background logs slowly without blocking
-                fetchSecondaryLogsBackground();
-
-            } catch (err) {
-                console.warn("Supabase Response delayed, kept cache:", err.message);
-                addLogConsole(`⚠️ Supabase ຕອບຊ້າ (Timeout): ໃຊ້ Local Cache ທັນທີ`);
-                if (badgeText) badgeText.innerText = "Ready (Cache Mode)";
-                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+                openAdminAuthModal();
             }
         }
 
-        async function fetchSecondaryLogsBackground() {
-            try {
-                const [attRes, logsRes, leavesRes] = await Promise.all([
-                    supabase.from('attendance').select('*').limit(30),
-                    supabase.from('daily_inventory_movement').select('*').limit(30),
-                    supabase.from('leaves').select('*').limit(30)
-                ]);
-
-                if (!attRes.error && attRes.data) db.attendance = normalizeDataset(attRes.data, "attendance");
-                if (!logsRes.error && logsRes.data) db.logs = normalizeDataset(logsRes.data, "logs");
-                if (!leavesRes.error && leavesRes.data) db.leaves = normalizeDataset(leavesRes.data, "leaves");
-
-                renderDailyLogs();
-                renderHRMDashboard();
-            } catch(e) { console.log("Background fetch skipped."); }
+        function openAdminAuthModal() {
+            authPinBuffer = "";
+            const display = document.getElementById('admin-auth-display');
+            if (display) display.value = "";
+            const modal = document.getElementById('modal-admin-auth');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function updateSheetShortcutUI() {
-            const linkIcon = document.getElementById('sheet-shortcut-link');
-            if (linkIcon) {
-                if (GOOGLE_SHEET_DIRECT_URL && GOOGLE_SHEET_DIRECT_URL.startsWith("https://")) {
-                    linkIcon.href = GOOGLE_SHEET_DIRECT_URL;
-                    linkIcon.classList.remove('hidden');
-                } else {
-                    linkIcon.classList.add('hidden');
+        function closeAdminAuthModal() {
+            const modal = document.getElementById('modal-admin-auth');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function pressAuthPin(num) {
+            if (authPinBuffer.length < 4) {
+                authPinBuffer += num;
+                const display = document.getElementById('admin-auth-display');
+                if (display) display.value = authPinBuffer;
+            }
+        }
+
+        function clearAuthPin() {
+            authPinBuffer = "";
+            const display = document.getElementById('admin-auth-display');
+            if (display) display.value = "";
+        }
+
+        function submitAuthPin() {
+            if (authPinBuffer === "9999") {
+                isHRMMode = true;
+                closeAdminAuthModal();
+                applyUserModeUI();
+                switchTab('tab-hrm-dash');
+            } else {
+                const card = document.getElementById('auth-panel-card');
+                if (card) {
+                    card.classList.add('shake');
+                    setTimeout(() => card.classList.remove('shake'), 300);
                 }
+                clearAuthPin();
             }
         }
 
-        async function saveAndTestAPIConnection() {
-            const sheetUrlValue = document.getElementById('sheet-url-input').value.trim();
-            GOOGLE_SHEET_DIRECT_URL = sheetUrlValue;
-            localStorage.setItem("LD_PORTAL_SHEET_URL", sheetUrlValue);
-            updateSheetShortcutUI();
-            await syncDataFastMode();
-            alert("ອັບເດດການຕັ້ງຄ່າຮຽບຮ້ອຍແລ້ວ!");
-        }
+        function applyUserModeUI() {
+            const empMenu = document.getElementById('group-employee-menu');
+            const hrmMenu = document.getElementById('group-hrm-menu');
+            const modeBadge = document.getElementById('mode-badge');
+            const switchBtnText = document.getElementById('btn-switch-text');
+            const switchIcon = document.querySelector('#btn-switch-user i');
+            const userInfo = document.getElementById('user-info-bar');
 
-        function addLogConsole(text) {
-            const consoleEl = document.getElementById('api-sync-log');
-            if (consoleEl) {
-                const now = new Date().toLocaleTimeString();
-                consoleEl.innerHTML += `\n[${now}] ${text}`;
-                consoleEl.scrollTop = consoleEl.scrollHeight;
-            }
-        }
-
-        function normalizeDataset(rawArray, type) {
-            if (!rawArray || !Array.isArray(rawArray)) return [];
-            return rawArray.map(item => {
-                let norm = {};
-                for (let rawKey in item) {
-                    if (rawKey === null || rawKey === undefined) continue;
-                    let k = rawKey.toString().trim().toLowerCase();
-                    let val = item[rawKey];
-                    let valStr = (val !== null && val !== undefined) ? val.toString().trim() : "";
-                    let valLower = valStr.toLowerCase();
-                    
-                    if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
-                    else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
-                    else if (k === "category" || k === "category " || k === "ໝວດໝູ່") norm.category = valStr;
-                    else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
-                    else if (k === "stock_in" || k === "stock in" || k === "ຮັບເຂົ້າ") norm.stock_in = Number(val) || 0;
-                    else if (k === "stock_out" || k === "stock out" || k === "ເບີກອອກ") norm.stock_out = Number(val) || 0;
-                    else if (k === "pin" || k === "ລະຫັດ pin") norm.pin = valStr;
-                    else if (k === "branch" || k === "ສາຂາ") norm.branch = valStr;
-                    else if (k === "salary" || k === "ເງິນເດືອນ") norm.salary = Number(val) || 0;
-                    else if (k === "benefit" || k === "ສະຫວັດດິການ") norm.benefit = Number(val) || 0;
-                    else if (k === "active" || k === "status" || k === "ສະຖານະ") norm.active = (valLower === "active" || valLower === "ok" || val === true || valLower === "ເປີດໃຊ້");
-                    else if (k === "timestamp" || k === "time stamp" || k === "ເວລາ") norm.timestamp = valStr;
-                    else if (k === "type" || k === "ປະເພດ") norm.type = valStr;
-                    else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
-                    else if (k === "note" || k === "remark" || k === "ໝາຍເຫດ") norm.note = valStr;
-                    else if (k === "dob" || k === "ວັນເດືອນປີເກີດ") norm.dob = valStr;
-                    else if (k === "photo_url" || k === "photo url" || k === "ຮູບພາບ") norm.photo_url = valStr;
-                    else if (k === "emp_type" || k === "emp type" || k === "ປະເພດວຽກ") norm.emp_type = valStr;
-                    else if (k === "shift" || k === "ກະວຽກ") norm.shift = valStr;
-                    else if (k === "staff_id" || k === "staff id" || k === "ລະຫັດພະນັກງານ") norm.staff_id = valStr;
-                    else if (k === "role" || k === "ຕຳແໜ່ງ") norm.role = valStr;
-                    else if (k === "phone" || k === "ເບີໂທ") norm.phone = valStr;
-                    else if (k === "hire_date" || k === "ວັນເລີ່ມວຽກ") norm.hire_date = valStr;
-                    else if (k === "id_card_url" || k === "id card" || k === "id_card") norm.id_card_url = valStr;
-                    else if (k === "family_book_url" || k === "family book" || k === "family_book") norm.family_book_url = valStr;
-                    else if (k === "passport_url" || k === "passport") norm.passport_url = valStr;
-                    else norm[k] = valStr;
+            if (isHRMMode) {
+                if (empMenu) empMenu.classList.add('hidden');
+                if (hrmMenu) hrmMenu.classList.remove('hidden');
+                if (modeBadge) {
+                    modeBadge.innerText = "HRM Admin Mode";
+                    modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
                 }
-                return norm;
-            });
-        }
-
-        function useBackupMockData(reason) {
-            db.products = backupMockDB.products;
-            db.staff = backupMockDB.staff;
-            db.branches = backupMockDB.branches;
-            db.logs = backupMockDB.logs;
-            db.attendance = backupMockDB.attendance;
-            db.leaves = backupMockDB.leaves;
-            
-            const badgeText = document.getElementById('sync-badge-text');
-            const connDot = document.getElementById('conn-dot');
-            if (badgeText) badgeText.innerText = reason;
-            if (connDot) connDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
-            renderAllViews();
-        }
-
-        async function postAttendanceToSupabase(payload) {
-            try {
-                const { error } = await supabase.from('attendance').insert([{
-                    timestamp: payload.timestamp,
-                    pin: payload.pin,
-                    type: payload.type,
-                    branch: payload.branch
-                }]);
-                if (error) console.error(error);
-                return true;
-            } catch (err) { return false; }
-        }
-
-        async function postInventoryMoveToSupabase(logPayload, updatedStockIn, updatedStockOut, updatedStock) {
-            try {
-                await supabase.from('daily_inventory_movement').insert([{
-                    timestamp: logPayload.timestamp,
-                    sku: logPayload.sku,
-                    name: logPayload.name,
-                    type: logPayload.type,
-                    qty: logPayload.qty,
-                    note: logPayload.note
-                }]);
-
-                await supabase.from('main_inventory').update({
-                    stock_in: updatedStockIn,
-                    stock_out: updatedStockOut,
-                    stock: updatedStock
-                }).eq('sku', logPayload.sku);
-
-                return true;
-            } catch (err) { return false; }
-        }
-
-        function changeQuickVal(sku, delta) {
-            if (!quickStockChanges[sku]) quickStockChanges[sku] = 0;
-            quickStockChanges[sku] += delta;
-            renderQuickAdjustments();
-            updateQuickSummary();
-        }
-
-        function updateQuickSummary() {
-            const summaryEl = document.getElementById('quick-summary-text');
-            if (!summaryEl) return;
-            const entries = Object.entries(quickStockChanges).filter(([_, qty]) => qty !== 0);
-            if (entries.length === 0) {
-                summaryEl.innerText = "ບໍ່ມີການປ່ຽນແປງ";
-                return;
+                if (switchBtnText) switchBtnText.innerText = "Switch to Employee";
+                if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
+                if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
+            } else {
+                if (empMenu) empMenu.classList.remove('hidden');
+                if (hrmMenu) hrmMenu.classList.add('hidden');
+                if (modeBadge) {
+                    modeBadge.innerText = "Employee Mode";
+                    modeBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
+                }
+                if (switchBtnText) switchBtnText.innerText = "Switch to HRM Admin";
+                if (switchIcon) switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
+                if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
             }
-            summaryEl.innerText = entries.map(([sku, qty]) => `${sku}: ${qty > 0 ? '+' : ''}${qty}`).join(', ');
         }
 
-        async function submitQuickInventory() {
-            if (!activeOperator) {
-                alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ");
-                return;
-            }
-            const entries = Object.entries(quickStockChanges).filter(([_, qty]) => qty !== 0);
-            if (entries.length === 0) {
-                alert("ບໍ່ມີລາຍການປ່ຽນແປງ");
-                return;
-            }
-
-            for (const [sku, qty] of entries) {
-                const prod = db.products.find(p => p.sku === sku);
-                if (!prod) continue;
-                const type = qty > 0 ? "IN" : "OUT";
-                const absQty = Math.abs(qty);
-                const newStock = prod.stock + qty;
-                prod.stock = newStock; // Local update
-                
-                const logPayload = {
-                    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                    sku: sku,
-                    name: prod.name,
-                    type: type,
-                    qty: absQty,
-                    note: `Quick Adjust ໂດຍ: ${activeOperator.name}`
-                };
-
-                db.logs.push(logPayload);
-                postInventoryMoveToSupabase(logPayload, prod.stock_in || 0, prod.stock_out || 0, newStock);
-            }
-
-            quickStockChanges = {};
-            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-            renderAllViews();
-            alert("ບັນທຶກການປ່ຽນແປງສະຕ໊ອກຮຽບຮ້ອຍແລ້ວ!");
+        function openAddStaffModal() {
+            const m = document.getElementById('modal-add-staff');
+            if (m) m.classList.remove('hidden');
         }
 
-        async function handleManualRecordSubmit(e) {
-            e.preventDefault();
-            if (!activeOperator) {
-                alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ");
-                return;
-            }
-            const sku = document.getElementById('manual-sku').value;
-            const type = document.getElementById('manual-type').value;
-            const qty = parseInt(document.getElementById('manual-qty').value);
-            const remarkSelect = document.getElementById('manual-remark').value;
-            const remarkDesc = document.getElementById('manual-remark-desc').value;
-            const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
-
-            const prod = db.products.find(p => p.sku === sku);
-            if (!prod) return;
-
-            const newStock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
-            prod.stock = newStock;
-
-            const logPayload = {
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                sku: sku,
-                name: prod.name,
-                type: type,
-                qty: qty,
-                note: `${note} (ໂດຍ: ${activeOperator.name})`
-            };
-
-            db.logs.push(logPayload);
-            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-            renderAllViews();
-
-            postInventoryMoveToSupabase(logPayload, prod.stock_in || 0, prod.stock_out || 0, newStock);
-            alert("ບັນທຶກລາຍການສຳເລັດ");
-            e.target.reset();
+        function closeAddStaffModal() {
+            const m = document.getElementById('modal-add-staff');
+            if (m) m.classList.add('hidden');
         }
 
-        async function handleLeaveRequestSubmit(e) {
-            e.preventDefault();
-            const pin = document.getElementById('leave-pin').value;
-            const type = document.getElementById('leave-type').value;
-            const start = document.getElementById('leave-start').value;
-            const end = document.getElementById('leave-end').value;
-            const reason = document.getElementById('leave-reason').value;
-
-            const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
-            if (!staffMember) {
-                alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ");
-                return;
+        function pressPin(num) {
+            if (pinBuffer.length < 6) {
+                pinBuffer += num;
+                const display = document.getElementById('pin-display');
+                if (display) display.value = pinBuffer;
             }
+        }
 
-            const newLeave = {
-                pin: pin,
-                name: staffMember.name,
-                type: type,
-                dates: `${start} ຫາ ${end}`,
-                reason: reason,
-                status: 'Pending'
-            };
-
-            db.leaves.push(newLeave);
-            renderAllViews();
-
-            supabase.from('leaves').insert([newLeave]);
-            alert("ສົ່ງໃບລາວຽກຮຽບຮ້ອຍແລ້ວ!");
-            e.target.reset();
+        function clearPin() {
+            pinBuffer = "";
+            const display = document.getElementById('pin-display');
+            if (display) display.value = "";
         }
 
         function unlockInventorySession() {
@@ -1124,160 +878,20 @@
             }
         }
 
-        function toggleUserMode() {
-            if (isHRMMode) {
-                isHRMMode = false;
-                applyUserModeUI();
-                switchTab('tab-dashboard');
-            } else {
-                openAdminAuthModal();
-            }
-        }
-
-        function openAdminAuthModal() {
-            authPinBuffer = "";
-            document.getElementById('admin-auth-display').value = "";
-            document.getElementById('modal-admin-auth').classList.remove('hidden');
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('modal-admin-auth').classList.add('hidden');
-        }
-
-        function pressAuthPin(num) {
-            if (authPinBuffer.length < 4) {
-                authPinBuffer += num;
-                document.getElementById('admin-auth-display').value = authPinBuffer;
-            }
-        }
-
-        function clearAuthPin() {
-            authPinBuffer = "";
-            document.getElementById('admin-auth-display').value = "";
-        }
-
-        function submitAuthPin() {
-            if (authPinBuffer === "9999") {
-                isHRMMode = true;
-                closeAdminAuthModal();
-                applyUserModeUI();
-                switchTab('tab-hrm-dash');
-            } else {
-                const card = document.getElementById('auth-panel-card');
-                card.classList.add('shake');
-                setTimeout(() => card.classList.remove('shake'), 300);
-                clearAuthPin();
-            }
-        }
-
-        function applyUserModeUI() {
-            const empMenu = document.getElementById('group-employee-menu');
-            const hrmMenu = document.getElementById('group-hrm-menu');
-            const modeBadge = document.getElementById('mode-badge');
-            const switchBtnText = document.getElementById('btn-switch-text');
-            const switchIcon = document.querySelector('#btn-switch-user i');
-            const userInfo = document.getElementById('user-info-bar');
-
-            if (isHRMMode) {
-                empMenu.classList.add('hidden');
-                hrmMenu.classList.remove('hidden');
-                modeBadge.innerText = "HRM Admin Mode";
-                modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
-                switchBtnText.innerText = "Switch to Employee";
-                if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
-                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
-            } else {
-                empMenu.classList.remove('hidden');
-                hrmMenu.classList.add('hidden');
-                modeBadge.innerText = "Employee Mode";
-                modeBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
-                switchBtnText.innerText = "Switch to HRM Admin";
-                if (switchIcon) switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
-                userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
-            }
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('tab-active'));
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if (activeBtn) activeBtn.classList.add('tab-active');
-        }
-
-        function updatePayrollPeriodDisplay() {
-            const selectedMonth = document.getElementById('payroll-month-select').value;
-            document.getElementById('payroll-period-title').innerText = selectedMonth;
-        }
-
-        function parseTimestamp(tsStr) {
-            if (!tsStr) return new Date();
-            return new Date(tsStr.toString().replace(" ", "T"));
-        }
-
-        function pressPin(num) {
-            if (pinBuffer.length < 6) {
-                pinBuffer += num;
-                document.getElementById('pin-display').value = pinBuffer;
-            }
-        }
-        function clearPin() {
-            pinBuffer = "";
-            document.getElementById('pin-display').value = "";
-        }
-
-        async function submitClock() {
-            if (pinBuffer.length < 6) {
-                alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
-                return;
-            }
-            const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
-            if (!staffMember) {
-                alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
-                clearPin();
-                return;
-            }
-            
-            const now = new Date();
-            const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
-            const lastLog = db.attendance.filter(a => a.pin && a.pin.toString() === pinBuffer.toString()).pop();
-            const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
-
-            let detailsMsg = actionType === "Clock-In" ? "ເຂົ້າວຽກຮຽບຮ້ອຍແລ້ວ" : "ອອກວຽກຮຽບຮ້ອຍແລ້ວ";
-
-            const payload = {
-                timestamp: nowStr,
-                pin: pinBuffer,
-                type: actionType,
-                branch: staffMember.branch
-            };
-
-            db.attendance.push(payload);
-            postAttendanceToSupabase(payload);
-
-            document.getElementById('attendance-live-log').innerHTML = `
-                <div class="space-y-1">
-                    <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
-                    <p class="text-[10px] text-neutral-400 uppercase tracking-widest">${actionType} Success</p>
-                    <p class="mt-2 text-neutral-300 font-medium">${detailsMsg}</p>
-                </div>
-            `;
-            
-            clearPin();
-            renderAllViews();
-        }
-
+        // --- 2. RENDER ENGINE & COMPONENT RENDERING ---
         function renderAllViews() {
-            renderActiveShiftCard();
-            renderHighFreqTrackers();
-            renderStockTable();
-            renderDailyLogs();
-            renderQuickAdjustments();
-            renderManualRecordDropdowns();
-            renderHRMDashboard();
-            renderStaffTable();
-            renderBranchDropdowns();
-            renderPayroll();
+            try {
+                renderActiveShiftCard();
+                renderHighFreqTrackers();
+                renderStockTable();
+                renderDailyLogs();
+                renderQuickAdjustments();
+                renderManualRecordDropdowns();
+                renderHRMDashboard();
+                renderStaffTable();
+                renderBranchDropdowns();
+                renderPayroll();
+            } catch(e) { console.error("Error rendering views:", e); }
         }
 
         function renderActiveShiftCard() {
@@ -1288,37 +902,22 @@
 
             const now = new Date();
             let activeShift = "ກະ 1 (07:00 - 16:00)";
-            if (now.getHours() >= 11 && now.getHours() < 20) {
-                activeShift = "ກະ 2 (11:30 - 20:00)";
-            }
+            if (now.getHours() >= 11 && now.getHours() < 20) activeShift = "ກະ 2 (11:30 - 20:00)";
             shiftTitleEl.innerText = activeShift;
 
             const activeStaffPins = [];
             const staffClockState = {};
-
-            db.attendance.forEach(att => {
-                if (att.pin) {
-                    staffClockState[att.pin.toString()] = att.type;
-                }
-            });
-
-            for (let pin in staffClockState) {
-                if (staffClockState[pin] === "Clock-In") {
-                    activeStaffPins.push(pin);
-                }
-            }
+            db.attendance.forEach(att => { if (att.pin) staffClockState[att.pin.toString()] = att.type; });
+            for (let pin in staffClockState) { if (staffClockState[pin] === "Clock-In") activeStaffPins.push(pin); }
 
             let avatarsHtml = "";
             let renderedCount = 0;
-
             activeStaffPins.forEach(pin => {
                 const member = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
                 if (member) {
                     renderedCount++;
                     const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
-                    avatarsHtml += `
-                        <img class="inline-block h-8 w-8 rounded-full ring-2 ring-neutral-900 object-cover" src="${imgUrl}" alt="${member.name}">
-                    `;
+                    avatarsHtml += `<img class="inline-block h-8 w-8 rounded-full ring-2 ring-neutral-900 object-cover" src="${imgUrl}" alt="${member.name}">`;
                 }
             });
 
@@ -1331,7 +930,6 @@
             if (!container) return;
             container.innerHTML = "";
             let html = "";
-            
             db.products.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
                 html += `
@@ -1350,8 +948,7 @@
                                 <div class="bg-[#FF4D00] h-full" style="width: ${percentage}%"></div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
         }
@@ -1373,8 +970,7 @@
                             </span>
                         </td>
                         <td class="p-3 text-right font-mono font-bold text-white">${item.stock}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1404,8 +1000,7 @@
                         </td>
                         <td class="p-3 font-mono font-bold text-white">${log.qty || ""}</td>
                         <td class="p-3 text-neutral-400">${log.note || ""}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1437,10 +1032,27 @@
                             <span class="mono-font text-sm font-extrabold text-white min-w-[18px] text-center">${qtyValue}</span>
                             <button onclick="changeQuickVal('${item.sku}', 1)" class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-300 font-black text-sm">+</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
+            updateQuickSummary();
+        }
+
+        function changeQuickVal(sku, delta) {
+            if (!quickStockChanges[sku]) quickStockChanges[sku] = 0;
+            quickStockChanges[sku] += delta;
+            renderQuickAdjustments();
+        }
+
+        function updateQuickSummary() {
+            const summaryEl = document.getElementById('quick-summary-text');
+            if (!summaryEl) return;
+            const entries = Object.entries(quickStockChanges).filter(([_, qty]) => qty !== 0);
+            if (entries.length === 0) {
+                summaryEl.innerText = "ບໍ່ມີການປ່ຽນແປງ";
+                return;
+            }
+            summaryEl.innerText = entries.map(([sku, qty]) => `${sku}: ${qty > 0 ? '+' : ''}${qty}`).join(', ');
         }
 
         function renderManualRecordDropdowns() {
@@ -1481,15 +1093,14 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${att.branch}</td>
+                                <td class="p-3 text-neutral-400">${att.branch || "-"}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
                                         ${att.type}
                                     </span>
                                 </td>
-                            </tr>
-                        `;
+                            </tr>`;
                     }
                 });
                 attBody.innerHTML = html;
@@ -1512,22 +1123,14 @@
                             </td>
                             <td class="p-3 text-right space-x-1">
                                 ${lv.status === 'Pending' ? `
-                                    <button onclick="approveLeave(${lv.id}, true)" class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 hover:bg-emerald-900 rounded text-[10px]">ອະນຸມັດ</button>
-                                    <button onclick="approveLeave(${lv.id}, false)" class="px-1.5 py-0.5 bg-rose-950 text-rose-300 hover:bg-rose-900 rounded text-[10px]">ປະຕິເສດ</button>
+                                    <button onclick="approveLeave('${lv.id}', true)" class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 hover:bg-emerald-900 rounded text-[10px]">ອະນຸມັດ</button>
+                                    <button onclick="approveLeave('${lv.id}', false)" class="px-1.5 py-0.5 bg-rose-950 text-rose-300 hover:bg-rose-900 rounded text-[10px]">ປະຕິເສດ</button>
                                 ` : '-'}
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
                 leaveBody.innerHTML = html;
             }
-        }
-
-        async function approveLeave(id, approve) {
-            const newStatus = approve ? "Approved" : "Rejected";
-            await supabase.from('leaves').update({ status: newStatus }).eq('id', id);
-            alert(`ທຳການ ${newStatus} ໃບລາວຽກແລ້ວ`);
-            await syncDataFastMode();
         }
 
         function renderStaffTable() {
@@ -1543,7 +1146,7 @@
                             <img class="h-8 w-8 rounded-full object-cover border border-neutral-800" src="${imgUrl}" alt="${st.name}">
                             <div>
                                 <p class="text-xs font-bold">${st.name}</p>
-                                <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id} | PIN: ${st.pin}</p>
+                                <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id || "EMP0000"} | PIN: ${st.pin}</p>
                             </div>
                         </td>
                         <td class="p-3 text-neutral-400 font-mono">${st.phone || "-"}</td>
@@ -1556,13 +1159,11 @@
                             </span>
                         </td>
                         <td class="p-3 text-right space-x-2 no-print" onclick="event.stopPropagation();">
-                            <button onclick="changePassword('${st.pin}')" class="text-[11px] text-[#FF4D00] hover:underline">ປ່ຽນ PIN</button>
                             <button onclick="toggleStaffState('${st.pin}')" class="text-[11px] text-neutral-500 hover:underline">
                                 ${st.active ? 'Deactive' : 'Active'}
                             </button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1575,20 +1176,20 @@
             const detailCard = document.getElementById('staff-detail-card');
             const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
 
-            detailCard.innerHTML = `
-                <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
-                <div>
-                    <h3 class="font-black text-white text-base">${member.name}</h3>
-                    <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider">${member.role} | ${member.emp_type}</p>
-                    <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id} | PIN: ${member.pin}</p>
-                </div>
-                <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
-                    <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
-                    <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
-                    <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
-                    <p><span class="text-neutral-500">ວັນເລີ່ມວຽກ:</span> <span class="text-neutral-300 font-mono">${member.hire_date || "-"}</span></p>
-                </div>
-            `;
+            if (detailCard) {
+                detailCard.innerHTML = `
+                    <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
+                    <div>
+                        <h3 class="font-black text-white text-base">${member.name}</h3>
+                        <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
+                        <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id || "EMP0001"} | PIN: ${member.pin}</p>
+                    </div>
+                    <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
+                        <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
+                        <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
+                        <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
+                    </div>`;
+            }
         }
 
         function renderBranchDropdowns() {
@@ -1596,9 +1197,7 @@
             if (!select) return;
             select.innerHTML = "";
             let html = "";
-            db.branches.forEach(b => {
-                html += `<option value="${b}">${b}</option>`;
-            });
+            db.branches.forEach(b => { html += `<option value="${b}">${b}</option>`; });
             select.innerHTML = html;
         }
 
@@ -1610,11 +1209,218 @@
             
             db.staff.forEach(st => {
                 const daysWorked = 22;
-                const otHours = 0;
-                const net = calculateNetSalary(st, daysWorked, otHours);
+                const net = Math.round(((st.salary || 3500000) / 22 * daysWorked) + (st.benefit || 400000));
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch})</span>
-                        </td
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂາ ວຽງຈັນ"})</span>
+                        </td>
+                        <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
+                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
+                        <td class="p-3 text-right font-mono text-white">${(st.salary || 3500000).toLocaleString()}</td>
+                        <td class="p-3 text-right font-mono text-white">${(st.benefit || 400000).toLocaleString()}</td>
+                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${net.toLocaleString()} LAK</td>
+                    </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // --- 3. ACTIONS & FORM HANDLERS ---
+        async function submitClock() {
+            if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
+            const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
+            if (!staffMember) { alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ"); clearPin(); return; }
+            
+            const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            const lastLog = db.attendance.filter(a => a.pin && a.pin.toString() === pinBuffer.toString()).pop();
+            const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
+
+            const payload = { timestamp: nowStr, pin: pinBuffer, type: actionType, branch: staffMember.branch };
+            db.attendance.push(payload);
+            
+            const logEl = document.getElementById('attendance-live-log');
+            if (logEl) {
+                logEl.innerHTML = `
+                    <div class="space-y-1">
+                        <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
+                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">${actionType} Success</p>
+                    </div>`;
+            }
+            
+            clearPin();
+            renderAllViews();
+            if (supabaseClient) supabaseClient.from('attendance').insert([payload]);
+        }
+
+        async function submitQuickInventory() {
+            if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
+            const entries = Object.entries(quickStockChanges).filter(([_, qty]) => qty !== 0);
+            if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
+
+            for (const [sku, qty] of entries) {
+                const prod = db.products.find(p => p.sku === sku);
+                if (!prod) continue;
+                const type = qty > 0 ? "IN" : "OUT";
+                const absQty = Math.abs(qty);
+                prod.stock = prod.stock + qty;
+                
+                const logPayload = {
+                    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                    sku: sku, name: prod.name, type: type, qty: absQty, note: `Quick Adjust ໂດຍ: ${activeOperator.name}`
+                };
+                db.logs.push(logPayload);
+
+                if (supabaseClient) {
+                    supabaseClient.from('daily_inventory_movement').insert([logPayload]);
+                    supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku);
+                }
+            }
+
+            quickStockChanges = {};
+            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+            renderAllViews();
+            alert("ບັນທຶກການປ່ຽນແປງສະຕ໊ອກຮຽບຮ້ອຍແລ້ວ!");
+        }
+
+        async function handleManualRecordSubmit(e) {
+            e.preventDefault();
+            if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
+            const sku = document.getElementById('manual-sku').value;
+            const type = document.getElementById('manual-type').value;
+            const qty = parseInt(document.getElementById('manual-qty').value);
+            const remarkSelect = document.getElementById('manual-remark').value;
+            const remarkDesc = document.getElementById('manual-remark-desc').value;
+            const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
+
+            const prod = db.products.find(p => p.sku === sku);
+            if (!prod) return;
+
+            prod.stock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
+            const logPayload = {
+                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                sku: sku, name: prod.name, type: type, qty: qty, note: `${note} (ໂດຍ: ${activeOperator.name})`
+            };
+
+            db.logs.push(logPayload);
+            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+            renderAllViews();
+
+            if (supabaseClient) {
+                supabaseClient.from('daily_inventory_movement').insert([logPayload]);
+                supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku);
+            }
+            alert("ບັນທຶກລາຍການສຳເລັດ");
+            e.target.reset();
+        }
+
+        async function handleLeaveRequestSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('leave-pin').value;
+            const type = document.getElementById('leave-type').value;
+            const start = document.getElementById('leave-start').value;
+            const end = document.getElementById('leave-end').value;
+            const reason = document.getElementById('leave-reason').value;
+
+            const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
+            if (!staffMember) { alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ"); return; }
+
+            const newLeave = { pin: pin, name: staffMember.name, type: type, dates: `${start} ຫາ ${end}`, reason: reason, status: 'Pending' };
+            db.leaves.push(newLeave);
+            renderAllViews();
+
+            if (supabaseClient) supabaseClient.from('leaves').insert([newLeave]);
+            alert("ສົ່ງໃບລາວຽກຮຽບຮ້ອຍແລ້ວ!");
+            e.target.reset();
+        }
+
+        async function toggleStaffState(pin) {
+            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
+            if (staffMember) {
+                staffMember.active = !staffMember.active;
+                renderAllViews();
+                if (supabaseClient) supabaseClient.from('staff').update({ active: staffMember.active }).eq('pin', pin);
+            }
+        }
+
+        function handleBranchSubmit(e) {
+            e.preventDefault();
+            const bName = document.getElementById('branch-name').value;
+            if (db.branches.includes(bName)) return;
+            db.branches.push(bName);
+            e.target.reset();
+            renderAllViews();
+        }
+
+        async function handleStaffSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('staff-pin').value;
+            const name = document.getElementById('staff-name').value;
+
+            const newStaff = {
+                pin: pin.toString(),
+                staff_id: "EMP" + String(db.staff.length + 1).padStart(4, '0'),
+                name: name,
+                branch: document.getElementById('staff-branch').value,
+                role: 'Barista',
+                phone: document.getElementById('staff-phone').value,
+                dob: document.getElementById('staff-dob').value,
+                photo_url: document.getElementById('staff-photo').value,
+                emp_type: document.getElementById('staff-emptype').value,
+                shift: document.getElementById('staff-shift').value,
+                active: true,
+                salary: parseFloat(document.getElementById('staff-salary').value) || 3500000,
+                benefit: parseFloat(document.getElementById('staff-benefit').value) || 400000
+            };
+
+            db.staff.push(newStaff);
+            renderAllViews();
+            closeAddStaffModal();
+
+            if (supabaseClient) supabaseClient.from('staff').insert([newStaff]);
+            alert("ເພີ່ມພະນັກງານໃໝ່ສຳເລັດ");
+        }
+
+        // --- 4. SAFE SUPABASE CLIENT INITIALIZATION & APP START ---
+        let supabaseClient = null;
+        const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // A. Safely Init Supabase without crashing global JS
+            try {
+                if (window.supabase && typeof window.supabase.createClient === 'function') {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                }
+            } catch(e) { console.warn("Supabase init skipped:", e); }
+
+            // B. Load Local Cache
+            const cachedData = localStorage.getItem('LD_LOCAL_DB_CACHE');
+            if (cachedData) {
+                try { db = JSON.parse(cachedData); } catch(e) {}
+            }
+
+            // C. Initial Setup & Render
+            applyUserModeUI();
+            updateSessionUI();
+            renderAllViews();
+
+            // D. Background Supabase Data Fetch
+            if (supabaseClient) {
+                setTimeout(async () => {
+                    try {
+                        const [prodRes, staffRes] = await Promise.all([
+                            supabaseClient.from('main_inventory').select('*'),
+                            supabaseClient.from('staff').select('*')
+                        ]);
+                        if (prodRes.data && prodRes.data.length) db.products = prodRes.data;
+                        if (staffRes.data && staffRes.data.length) db.staff = staffRes.data;
+                        localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+                        renderAllViews();
+                    } catch(e) { console.log("Background sync skipped."); }
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
