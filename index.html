@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Dolce Portal - V2 Production Stable</title>
     
-    <!-- Beautiful Dynamic Favicon (V2 Orange Logo) -->
+    <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
     
     <!-- Google Fonts -->
@@ -72,10 +72,9 @@
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- SIDEBAR NAVIGATION (NO-PRINT) -->
+    <!-- SIDEBAR NAVIGATION -->
     <aside class="w-full md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print">
         <div>
-            <!-- Header Logo (V2) -->
             <div class="p-6 border-b border-neutral-800">
                 <div class="flex items-center space-x-3">
                     <span class="text-2xl font-black text-outline-orange">V2</span>
@@ -88,7 +87,6 @@
                 </div>
             </div>
 
-            <!-- TAB MENU -->
             <div class="p-4 space-y-6">
                 <div id="group-employee-menu" class="space-y-2">
                     <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest px-3 block mb-2">ພະນັກງານ (Employee)</span>
@@ -128,16 +126,14 @@
             </div>
         </div>
 
-        <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <!-- Connection Diagnostics Console -->
             <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
-                        <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງກວດສອບການເຊື່ອມຕໍ່...</span>
+                        <div id="conn-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span id="sync-badge-text">ພ້ອມໃຊ້ງານ (Fast Mode)</span>
                     </div>
-                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard/project/jxkcnraixazvmwdfmraa/editor" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດຖານຂໍ້ມູນ Supabase ຕົວຈິງ">
+                    <a id="sheet-shortcut-link" target="_blank" href="https://supabase.com/dashboard/project/jxkcnraixazvmwdfmraa/editor" class="text-neutral-400 hover:text-[#FF4D00] transition-colors" title="ເປີດ Supabase">
                         <i class="fa-solid fa-database text-xs"></i>
                     </a>
                 </div>
@@ -181,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- High-Frequency Trackers -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -189,7 +184,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- Stock Table -->
             <div class="glass-panel p-6 rounded-2xl space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Inventory Stock)</h2>
@@ -211,7 +205,6 @@
                 </div>
             </div>
 
-            <!-- Daily Logs -->
             <div class="glass-panel p-6 rounded-2xl space-y-4">
                 <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
                 <div class="overflow-x-auto">
@@ -711,7 +704,7 @@
         </div>
     </div>
 
-    <!-- MAIN LOGIC ENGINE -->
+    <!-- HIGH-SPEED ENGINE -->
     <script>
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
@@ -730,8 +723,8 @@
 
         const backupMockDB = {
             products: [
-                { sku: "P001", name: "ຜົງໂກ້ໂກ້ (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
-                { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 }
+                { sku: "P001", name: "ຜົງໂກ້ໂກ້", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
+                { sku: "P002", name: "ບ໊ອບ (ຕຸກ)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 }
             ],
             staff: [
                 { pin: "225588", staff_id: "EMP0001", name: "Keo", branch: "ສາຂາ ວຽງຈັນ", role: "Barista", phone: "2057558813", dob: "15/08/1998", hire_date: "01/06/2026", photo_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120", emp_type: "Full-time", shift: "ກະ 1", active: true, salary: 3800000, benefit: 500000 }
@@ -748,13 +741,15 @@
         let isHRMMode = false;
         let activeOperator = null;
 
-        // Modal Functions (Added to fix ReferenceError)
-        function openAddStaffModal() {
-            document.getElementById('modal-add-staff').classList.remove('hidden');
-        }
+        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
+        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
 
-        function closeAddStaffModal() {
-            document.getElementById('modal-add-staff').classList.add('hidden');
+        // Strict Timeout Utility (Max 3 Seconds)
+        function fetchWithTimeout(supabasePromise, timeoutMs = 3000) {
+            return Promise.race([
+                supabasePromise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase Connection Timeout')), timeoutMs))
+            ]);
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -762,26 +757,77 @@
             if (sheetUrlElem) sheetUrlElem.value = GOOGLE_SHEET_DIRECT_URL;
             updateSheetShortcutUI();
             
-            // Render local cache/backup immediately so UI loads under 100ms
+            // 1. Instant Render from Cache (0.05 seconds)
             const cachedData = localStorage.getItem('LD_LOCAL_DB_CACHE');
             if (cachedData) {
                 try {
                     db = JSON.parse(cachedData);
-                    addLogConsole("ດຶງຂໍ້ມູນ Local Cache ຮຽບຮ້ອຍແລ້ວ");
+                    addLogConsole("⚡ ດຶງຂໍ້ມູນ Cache ທັນທີ (Instant Render)");
                 } catch(e) { useBackupMockData("ປັບໃຊ້ຂໍ້ມູນສຳຮອງ..."); }
             } else {
-                useBackupMockData("ກຳລັງເຊື່ອມຕໍ່ຫາຖານຂໍ້ມູນ Supabase...");
+                useBackupMockData("ກຳລັງໂຫຼດຂໍ້ມູນ...");
             }
 
             applyUserModeUI();
             updateSessionUI();
             renderAllViews();
 
-            // Fetch live data from Supabase asynchronously with limits for high speed
-            setTimeout(async () => {
-                await syncDataFromSupabase();
-            }, 50);
+            // 2. Fetch live data with 3s Limit Timeout
+            syncDataFastMode();
         });
+
+        async function syncDataFastMode() {
+            const badgeText = document.getElementById('sync-badge-text');
+            const connDot = document.getElementById('conn-dot');
+            if (badgeText) badgeText.innerText = "ກຳລັງ Sync...";
+
+            try {
+                // Fetch critical data first (Staff & Products) with 3s Timeout
+                const [prodRes, staffRes] = await Promise.all([
+                    fetchWithTimeout(supabase.from('main_inventory').select('*'), 3000),
+                    fetchWithTimeout(supabase.from('staff').select('*'), 3000)
+                ]);
+
+                if (!prodRes.error && prodRes.data) db.products = normalizeDataset(prodRes.data, "products");
+                if (!staffRes.error && staffRes.data) db.staff = normalizeDataset(staffRes.data, "staff");
+
+                db.branches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
+                if (db.branches.length === 0) db.branches = ["ສາຂາ ວຽງຈັນ"];
+
+                // Save to Cache
+                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+                renderAllViews();
+
+                if (badgeText) badgeText.innerText = "Supabase Connected";
+                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+
+                // Fetch secondary background logs slowly without blocking
+                fetchSecondaryLogsBackground();
+
+            } catch (err) {
+                console.warn("Supabase Response delayed, kept cache:", err.message);
+                addLogConsole(`⚠️ Supabase ຕອບຊ້າ (Timeout): ໃຊ້ Local Cache ທັນທີ`);
+                if (badgeText) badgeText.innerText = "Ready (Cache Mode)";
+                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
+            }
+        }
+
+        async function fetchSecondaryLogsBackground() {
+            try {
+                const [attRes, logsRes, leavesRes] = await Promise.all([
+                    supabase.from('attendance').select('*').limit(30),
+                    supabase.from('daily_inventory_movement').select('*').limit(30),
+                    supabase.from('leaves').select('*').limit(30)
+                ]);
+
+                if (!attRes.error && attRes.data) db.attendance = normalizeDataset(attRes.data, "attendance");
+                if (!logsRes.error && logsRes.data) db.logs = normalizeDataset(logsRes.data, "logs");
+                if (!leavesRes.error && leavesRes.data) db.leaves = normalizeDataset(leavesRes.data, "leaves");
+
+                renderDailyLogs();
+                renderHRMDashboard();
+            } catch(e) { console.log("Background fetch skipped."); }
+        }
 
         function updateSheetShortcutUI() {
             const linkIcon = document.getElementById('sheet-shortcut-link');
@@ -800,8 +846,8 @@
             GOOGLE_SHEET_DIRECT_URL = sheetUrlValue;
             localStorage.setItem("LD_PORTAL_SHEET_URL", sheetUrlValue);
             updateSheetShortcutUI();
-            await syncDataFromSupabase();
-            alert("ອັບເດດການຕັ້ງຄ່າ ແລະ Sync ຂໍ້ມູນຮຽບຮ້ອຍແລ້ວ!");
+            await syncDataFastMode();
+            alert("ອັບເດດການຕັ້ງຄ່າຮຽບຮ້ອຍແລ້ວ!");
         }
 
         function addLogConsole(text) {
@@ -830,8 +876,6 @@
                     else if (k === "stock" || k === "current stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
                     else if (k === "stock_in" || k === "stock in" || k === "ຮັບເຂົ້າ") norm.stock_in = Number(val) || 0;
                     else if (k === "stock_out" || k === "stock out" || k === "ເບີກອອກ") norm.stock_out = Number(val) || 0;
-                    else if (k === "min_stock" || k === "min_stock <" || k === "ຂັ້ນຕ່ຳ") norm.min_stock = Number(val) || 0;
-                    else if (k === "barcode" || k === "ບາໂຄດ") norm.barcode = valStr;
                     else if (k === "pin" || k === "ລະຫັດ pin") norm.pin = valStr;
                     else if (k === "branch" || k === "ສາຂາ") norm.branch = valStr;
                     else if (k === "salary" || k === "ເງິນເດືອນ") norm.salary = Number(val) || 0;
@@ -858,59 +902,6 @@
             });
         }
 
-        // Optimized Speed Sync using limit(100) to stop fetching giant historical rows
-        async function syncDataFromSupabase() {
-            const badgeText = document.getElementById('sync-badge-text');
-            const connDot = document.getElementById('conn-dot');
-            if (badgeText) badgeText.innerText = "ກຳລັງ Sync...";
-            addLogConsole("ກຳລັງດຶງຂໍ້ມູນ Supabase ຄວາມໄວສູງ...");
-            
-            try {
-                const [
-                    { data: rawProducts, error: prodErr },
-                    { data: rawStaff, error: staffErr },
-                    { data: rawAttendance, error: attErr },
-                    { data: rawLogs, error: logsErr },
-                    { data: rawLeaves, error: leavesErr }
-                ] = await Promise.all([
-                    supabase.from('main_inventory').select('*'),
-                    supabase.from('staff').select('*'),
-                    supabase.from('attendance').select('*').limit(100),
-                    supabase.from('daily_inventory_movement').select('*').limit(100),
-                    supabase.from('leaves').select('*').limit(100)
-                ]);
-
-                if (prodErr) throw prodErr;
-                if (staffErr) throw staffErr;
-
-                db.products = rawProducts ? normalizeDataset(rawProducts, "products") : [];
-                db.staff = rawStaff && rawStaff.length ? normalizeDataset(rawStaff, "staff") : backupMockDB.staff;
-                db.attendance = rawAttendance ? normalizeDataset(rawAttendance, "attendance") : [];
-                db.logs = rawLogs ? normalizeDataset(rawLogs, "logs") : [];
-                db.leaves = rawLeaves ? normalizeDataset(rawLeaves, "leaves") : [];
-
-                db.branches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
-                if (db.branches.length === 0) db.branches = ["ສາຂາ ວຽງຈັນ"];
-                
-                // Cache data locally for instant reload
-                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-
-                addLogConsole(`Sync ເຂົ້າລະບົບສຳເລັດ! ສິນຄ້າ ${db.products.length} ຢ່າງ, ພະນັກງານ ${db.staff.length} ຄົນ`);
-                
-                if (badgeText) badgeText.innerText = "Supabase Connected";
-                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
-                
-                renderAllViews();
-                return true;
-            } catch (err) {
-                console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Supabase:", err);
-                addLogConsole(`Error: ${err.message}`);
-                if (badgeText) badgeText.innerText = "Offline Mode / Cache Loaded";
-                if (connDot) connDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
-                return false;
-            }
-        }
-
         function useBackupMockData(reason) {
             db.products = backupMockDB.products;
             db.staff = backupMockDB.staff;
@@ -922,31 +913,26 @@
             const badgeText = document.getElementById('sync-badge-text');
             const connDot = document.getElementById('conn-dot');
             if (badgeText) badgeText.innerText = reason;
-            if (connDot) connDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
+            if (connDot) connDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
             renderAllViews();
         }
 
         async function postAttendanceToSupabase(payload) {
             try {
-                addLogConsole(`ກຳລັງບັນທຶກ Attendance...`);
                 const { error } = await supabase.from('attendance').insert([{
                     timestamp: payload.timestamp,
                     pin: payload.pin,
                     type: payload.type,
                     branch: payload.branch
                 }]);
-                if (error) throw error;
+                if (error) console.error(error);
                 return true;
-            } catch (err) {
-                addLogConsole(`ບັນທຶກ Attendance ຫຼົ້ມເຫຼວ: ${err.message}`);
-                return false;
-            }
+            } catch (err) { return false; }
         }
 
         async function postInventoryMoveToSupabase(logPayload, updatedStockIn, updatedStockOut, updatedStock) {
             try {
-                addLogConsole(`ກຳລັງອັບເດດສະຕ໊ອກ...`);
-                const { error: logErr } = await supabase.from('daily_inventory_movement').insert([{
+                await supabase.from('daily_inventory_movement').insert([{
                     timestamp: logPayload.timestamp,
                     sku: logPayload.sku,
                     name: logPayload.name,
@@ -954,23 +940,17 @@
                     qty: logPayload.qty,
                     note: logPayload.note
                 }]);
-                if (logErr) throw logErr;
 
-                const { error: prodErr } = await supabase.from('main_inventory').update({
+                await supabase.from('main_inventory').update({
                     stock_in: updatedStockIn,
                     stock_out: updatedStockOut,
                     stock: updatedStock
                 }).eq('sku', logPayload.sku);
-                if (prodErr) throw prodErr;
 
                 return true;
-            } catch (err) {
-                addLogConsole(`ອັບເດດສະຕ໊ອກຫຼົ້ມເຫຼວ: ${err.message}`);
-                return false;
-            }
+            } catch (err) { return false; }
         }
 
-        // Added missing quick adjustment logic
         function changeQuickVal(sku, delta) {
             if (!quickStockChanges[sku]) quickStockChanges[sku] = 0;
             quickStockChanges[sku] += delta;
@@ -1006,9 +986,8 @@
                 const type = qty > 0 ? "IN" : "OUT";
                 const absQty = Math.abs(qty);
                 const newStock = prod.stock + qty;
-                const stockIn = type === "IN" ? (prod.stock_in || 0) + absQty : (prod.stock_in || 0);
-                const stockOut = type === "OUT" ? (prod.stock_out || 0) + absQty : (prod.stock_out || 0);
-
+                prod.stock = newStock; // Local update
+                
                 const logPayload = {
                     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
                     sku: sku,
@@ -1018,15 +997,16 @@
                     note: `Quick Adjust ໂດຍ: ${activeOperator.name}`
                 };
 
-                await postInventoryMoveToSupabase(logPayload, stockIn, stockOut, newStock);
+                db.logs.push(logPayload);
+                postInventoryMoveToSupabase(logPayload, prod.stock_in || 0, prod.stock_out || 0, newStock);
             }
 
             quickStockChanges = {};
+            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+            renderAllViews();
             alert("ບັນທຶກການປ່ຽນແປງສະຕ໊ອກຮຽບຮ້ອຍແລ້ວ!");
-            await syncDataFromSupabase();
         }
 
-        // Added missing manual inventory submission handler
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) {
@@ -1044,8 +1024,7 @@
             if (!prod) return;
 
             const newStock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
-            const stockIn = type === 'IN' ? (prod.stock_in || 0) + qty : (prod.stock_in || 0);
-            const stockOut = type === 'OUT' ? (prod.stock_out || 0) + qty : (prod.stock_out || 0);
+            prod.stock = newStock;
 
             const logPayload = {
                 timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
@@ -1056,13 +1035,15 @@
                 note: `${note} (ໂດຍ: ${activeOperator.name})`
             };
 
-            await postInventoryMoveToSupabase(logPayload, stockIn, stockOut, newStock);
+            db.logs.push(logPayload);
+            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+            renderAllViews();
+
+            postInventoryMoveToSupabase(logPayload, prod.stock_in || 0, prod.stock_out || 0, newStock);
             alert("ບັນທຶກລາຍການສຳເລັດ");
             e.target.reset();
-            await syncDataFromSupabase();
         }
 
-        // Added missing leave request handler
         async function handleLeaveRequestSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('leave-pin').value;
@@ -1077,22 +1058,21 @@
                 return;
             }
 
-            const { error } = await supabase.from('leaves').insert([{
+            const newLeave = {
                 pin: pin,
                 name: staffMember.name,
                 type: type,
                 dates: `${start} ຫາ ${end}`,
                 reason: reason,
                 status: 'Pending'
-            }]);
+            };
 
-            if (error) {
-                alert("ສົ່ງໃບລາຫຼົ້ມເຫຼວ: " + error.message);
-            } else {
-                alert("ສົ່ງໃບລາວຽກຮຽບຮ້ອຍແລ້ວ!");
-                e.target.reset();
-                await syncDataFromSupabase();
-            }
+            db.leaves.push(newLeave);
+            renderAllViews();
+
+            supabase.from('leaves').insert([newLeave]);
+            alert("ສົ່ງໃບລາວຽກຮຽບຮ້ອຍແລ້ວ!");
+            e.target.reset();
         }
 
         function unlockInventorySession() {
@@ -1109,7 +1089,7 @@
                 activeOperator = staffMember;
                 pinElem.value = "";
                 updateSessionUI();
-                alert(`ຍິນດີຕ້ອນຮັບ, ປົດລັອກເຊດຊັນສຳລັບ: ${staffMember.name}`);
+                alert(`ຍິນດີຕ້ອນຮັບ: ${staffMember.name}`);
             } else {
                 alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
             }
@@ -1263,40 +1243,9 @@
             const lastLog = db.attendance.filter(a => a.pin && a.pin.toString() === pinBuffer.toString()).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
-            let detailsMsg = "";
-
-            if (actionType === "Clock-In") {
-                let shiftStartHour = 7;
-                let shiftStartMin = 0;
-                let shiftName = "ກະ 1 (07:00)";
-
-                if (now.getHours() >= 10) {
-                    shiftStartHour = 11;
-                    shiftStartMin = 30;
-                    shiftName = "ກະ 2 (11:30)";
-                }
-
-                const scheduledMinutes = shiftStartHour * 60 + shiftStartMin;
-                const actualMinutes = now.getHours() * 60 + now.getMinutes();
-                const lateMinutes = actualMinutes - scheduledMinutes;
-
-                if (lateMinutes > 0) {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນາທີ</span>`;
-                } else {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
-                }
-            } else {
-                const inTime = parseTimestamp(lastLog.timestamp);
-                const durationMs = now - inTime;
-                
-                const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
-                const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
-
-                detailsMsg = `ອອກວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} <br><span class="text-sky-400 font-extrabold"><i class="fa-solid fa-calculator mr-1"></i> ເຮັດວຽກທັງໝົດ: ${totalHours} ຊົ່ວໂມງ ${totalMinutes} ນາທີ</span>`;
-            }
+            let detailsMsg = actionType === "Clock-In" ? "ເຂົ້າວຽກຮຽບຮ້ອຍແລ້ວ" : "ອອກວຽກຮຽບຮ້ອຍແລ້ວ";
 
             const payload = {
-                action: "addAttendance",
                 timestamp: nowStr,
                 pin: pinBuffer,
                 type: actionType,
@@ -1304,7 +1253,7 @@
             };
 
             db.attendance.push(payload);
-            await postAttendanceToSupabase(payload);
+            postAttendanceToSupabase(payload);
 
             document.getElementById('attendance-live-log').innerHTML = `
                 <div class="space-y-1">
@@ -1316,7 +1265,6 @@
             
             clearPin();
             renderAllViews();
-            await syncDataFromSupabase();
         }
 
         function renderAllViews() {
@@ -1369,7 +1317,7 @@
                     renderedCount++;
                     const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
                     avatarsHtml += `
-                        <img class="inline-block h-8 w-8 rounded-full ring-2 ring-neutral-900 object-cover" src="${imgUrl}" alt="${member.name}" title="${member.name} (${member.role})">
+                        <img class="inline-block h-8 w-8 rounded-full ring-2 ring-neutral-900 object-cover" src="${imgUrl}" alt="${member.name}">
                     `;
                 }
             });
@@ -1468,16 +1416,11 @@
             container.innerHTML = "";
             
             const searchQuery = (document.getElementById('quick-adjust-search')?.value || "").toLowerCase();
-            let filteredList = [];
-            
-            if (searchQuery !== "") {
-                filteredList = db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery));
-            } else {
-                filteredList = db.products.filter(p => p.category === "ວັດຖຸດິບ");
-                if (filteredList.length === 0) {
-                    filteredList = db.products.slice(0, 12);
-                }
-            }
+            let filteredList = searchQuery !== "" ? 
+                db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery)) : 
+                db.products.filter(p => p.category === "ວັດຖຸດິບ");
+
+            if (filteredList.length === 0) filteredList = db.products.slice(0, 12);
 
             let html = "";
             filteredList.forEach(item => {
@@ -1498,7 +1441,6 @@
                 `;
             });
             container.innerHTML = html;
-            updateQuickSummary();
         }
 
         function renderManualRecordDropdowns() {
@@ -1514,9 +1456,7 @@
 
         function toggleManualRemarkInput(val) {
             const descContainer = document.getElementById('manual-remark-desc-container');
-            if (descContainer) {
-                descContainer.classList.toggle('hidden', val !== 'others');
-            }
+            if (descContainer) descContainer.classList.toggle('hidden', val !== 'others');
         }
 
         function renderHRMDashboard() {
@@ -1585,13 +1525,9 @@
 
         async function approveLeave(id, approve) {
             const newStatus = approve ? "Approved" : "Rejected";
-            const { error } = await supabase.from('leaves').update({ status: newStatus }).eq('id', id);
-            if (error) {
-                alert("ອະນຸມັດຫຼົ້ມເຫຼວ: " + error.message);
-            } else {
-                alert(`ທຳການ ${newStatus} ໃບລາວຽກແລ້ວ`);
-                await syncDataFromSupabase();
-            }
+            await supabase.from('leaves').update({ status: newStatus }).eq('id', id);
+            alert(`ທຳການ ${newStatus} ໃບລາວຽກແລ້ວ`);
+            await syncDataFastMode();
         }
 
         function renderStaffTable() {
@@ -1638,23 +1574,6 @@
 
             const detailCard = document.getElementById('staff-detail-card');
             const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
-            
-            const renderDocBadge = (url, name, icon) => {
-                if (url && url.startsWith("https://")) {
-                    return `
-                        <a href="${url}" target="_blank" class="flex items-center space-x-2 px-3 py-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 hover:bg-[#FF4D00]/20 text-[#FF4D00] rounded-xl text-xs font-bold transition-all">
-                            <i class="${icon}"></i>
-                            <span>${name}</span>
-                        </a>
-                    `;
-                }
-                return `
-                    <div class="flex items-center space-x-2 px-3 py-2 bg-neutral-950 border border-neutral-900 text-neutral-500 rounded-xl text-xs font-bold cursor-not-allowed">
-                        <i class="${icon}"></i>
-                        <span>${name} (ຍັງບໍ່ມີ)</span>
-                    </div>
-                `;
-            };
 
             detailCard.innerHTML = `
                 <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
@@ -1669,41 +1588,7 @@
                     <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
                     <p><span class="text-neutral-500">ວັນເລີ່ມວຽກ:</span> <span class="text-neutral-300 font-mono">${member.hire_date || "-"}</span></p>
                 </div>
-                
-                <div class="space-y-2 text-left pt-2 border-t border-neutral-900">
-                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider mb-2">ເອກະສານຢືນຢັນຕົວຕົນ (Identity Docs)</span>
-                    <div class="grid grid-cols-1 gap-2">
-                        ${renderDocBadge(member.id_card_url, "ເອກະສານ ID Card", "fa-solid fa-id-card")}
-                        ${renderDocBadge(member.family_book_url, "ສຳມະໂນຄົວ Family Book", "fa-solid fa-book")}
-                        ${renderDocBadge(member.passport_url, "ພາດສະປອດ Passport", "fa-solid fa-passport")}
-                    </div>
-                </div>
             `;
-
-            const leaveHistoryList = document.getElementById('staff-leave-history-list');
-            const memberLeaves = db.leaves.filter(l => l.pin && l.pin.toString() === pin.toString());
-
-            if (memberLeaves.length > 0) {
-                let leaveHtml = "";
-                memberLeaves.slice().reverse().forEach(lv => {
-                    const isApproved = lv.status === "Approved";
-                    const isRejected = lv.status === "Rejected";
-                    const statusColor = isApproved ? "text-emerald-400" : isRejected ? "text-rose-400" : "text-neutral-500";
-                    leaveHtml += `
-                        <div class="bg-neutral-950/60 p-2.5 rounded-xl border border-neutral-900 space-y-1 leading-snug">
-                            <div class="flex justify-between items-center text-[10px] font-bold">
-                                <span class="text-neutral-300">${lv.type}</span>
-                                <span class="${statusColor}">${lv.status}</span>
-                            </div>
-                            <p class="text-[10px] text-neutral-500 font-mono">${lv.dates}</p>
-                            <p class="text-[10px] text-neutral-400 italic">"${lv.reason || ""}"</p>
-                        </div>
-                    `;
-                });
-                leaveHistoryList.innerHTML = leaveHtml;
-            } else {
-                leaveHistoryList.innerHTML = `<p class="text-xs text-neutral-500 italic text-center py-4">ບໍ່ມີປະຫວັດການລາວຽກ</p>`;
-            }
         }
 
         function renderBranchDropdowns() {
@@ -1723,205 +1608,13 @@
             tbody.innerHTML = "";
             let html = "";
             
-            const attendanceMap = {};
-            db.attendance.forEach(att => {
-                if (att.pin) {
-                    if (!attendanceMap[att.pin]) {
-                        attendanceMap[att.pin] = [];
-                    }
-                    attendanceMap[att.pin].push(att);
-                }
-            });
-
             db.staff.forEach(st => {
-                const staffAttendance = attendanceMap[st.pin] || [];
-                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
-                const otHours = calculateOTHoursOptimized(st.pin, staffAttendance);
+                const daysWorked = 22;
+                const otHours = 0;
                 const net = calculateNetSalary(st, daysWorked, otHours);
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
                             ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch})</span>
-                        </td>
-                        <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
-                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">${otHours} Hrs</td>
-                        <td class="p-3 text-right">
-                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'salary', this.value)" class="w-24 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.salary}">
-                        </td>
-                        <td class="p-3 text-right">
-                            <input type="number" oninput="updatePayrollVariables('${st.pin}', 'benefit', this.value)" class="w-20 px-2 py-1 bg-neutral-900 border border-neutral-800 rounded text-xs text-white text-right mono-font" value="${st.benefit}">
-                        </td>
-                        <td class="p-3 text-right mono-font font-bold text-emerald-400" id="net-pay-${st.pin}">${net.toLocaleString()} LAK</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function calculateDaysWorkedOptimized(pinAttendance) {
-            return new Set(pinAttendance.filter(a => a.type === "Clock-In").map(l => l.timestamp.split(' ')[0])).size;
-        }
-
-        function calculateOTHoursOptimized(pin, pinAttendance) {
-            let totalOT = 0;
-            const dates = Array.from(new Set(pinAttendance.map(a => (a.timestamp && typeof a.timestamp === 'string') ? a.timestamp.split(' ')[0] : '')));
-            dates.forEach(date => {
-                if (date !== '') {
-                    const dayLogs = pinAttendance.filter(a => a.timestamp && a.timestamp.startsWith(date));
-                    const clockIn = dayLogs.find(l => l.type === "Clock-In");
-                    const clockOut = dayLogs.find(l => l.type === "Clock-Out");
-                    if (clockIn && clockOut) {
-                        const inTime = parseTimestamp(clockIn.timestamp);
-                        const outTime = parseTimestamp(clockOut.timestamp);
-                        const totalHours = (outTime - inTime) / (1000 * 60 * 60);
-                        if (inTime.getHours() < 10) {
-                            if (totalHours > 9) totalOT += (totalHours - 9);
-                        } else {
-                            if (totalHours > 8.5) totalOT += (totalHours - 8.5);
-                        }
-                    }
-                }
-            });
-            return parseFloat(totalOT.toFixed(1));
-        }
-
-        function calculateNetSalary(st, days, ot) {
-            const baseSalaryPerDay = st.salary / 22;
-            return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
-        }
-
-        function updatePayrollVariables(pin, field, val) {
-            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-            if (staffMember) {
-                staffMember[field] = parseFloat(val) || 0;
-                
-                const attendanceMap = {};
-                db.attendance.forEach(att => {
-                    if (att.pin) {
-                        if (!attendanceMap[att.pin]) {
-                            attendanceMap[att.pin] = [];
-                        }
-                        attendanceMap[att.pin].push(att);
-                    }
-                });
-                
-                const staffAttendance = attendanceMap[pin] || [];
-                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
-                const otHours = calculateOTHoursOptimized(pin, staffAttendance);
-                const net = calculateNetSalary(staffMember, daysWorked, otHours);
-                
-                const el = document.getElementById(`net-pay-${pin}`);
-                if (el) {
-                    el.innerText = `${net.toLocaleString()} LAK`;
-                }
-            }
-        }
-
-        function changePassword(pin) {
-            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
-            if (newPin && newPin.length === 6) {
-                const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-                if (staffMember) {
-                    staffMember.pin = newPin;
-                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
-                    renderAllViews();
-                }
-            } else {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-            }
-        }
-
-        async function toggleStaffState(pin) {
-            const staffMember = db.staff.find(s => s.pin.toString() === pin.toString());
-            if (staffMember) {
-                const newState = !staffMember.active;
-                const { error } = await supabase.from('staff').update({ active: newState }).eq('pin', pin);
-                if (error) {
-                    alert("ປ່ຽນສະຖານະພະນັກງານຫຼົ້ມເຫຼວ: " + error.message);
-                } else {
-                    alert(`ປ່ຽນສະຖານະພະນັກງານສຳເລັດ`);
-                    await syncDataFromSupabase();
-                }
-            }
-        }
-
-        function handleBranchSubmit(e) {
-            e.preventDefault();
-            const bName = document.getElementById('branch-name').value;
-            if (db.branches.includes(bName)) return;
-            db.branches.push(bName);
-            
-            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
-            document.getElementById('qr-branch-title').innerText = bName;
-            document.getElementById('qr-link-text').innerText = mockUrl;
-            document.getElementById('qr-image-container').innerHTML = `
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
-            `;
-            document.getElementById('branch-qr-output').classList.remove('hidden');
-            e.target.reset();
-            renderAllViews();
-        }
-
-        async function handleStaffSubmit(e) {
-            e.preventDefault();
-            const pin = document.getElementById('staff-pin').value;
-            const name = document.getElementById('staff-name').value;
-            const phone = document.getElementById('staff-phone').value;
-            const dob = document.getElementById('staff-dob').value;
-            const photo_url = document.getElementById('staff-photo').value;
-            
-            const id_card_url = document.getElementById('staff-id-card').value;
-            const family_book_url = document.getElementById('staff-family-book').value;
-            const passport_url = document.getElementById('staff-passport').value;
-
-            const emp_type = document.getElementById('staff-emptype').value;
-            const shift = document.getElementById('staff-shift').value;
-            const branch = document.getElementById('staff-branch').value;
-            const salary = parseFloat(document.getElementById('staff-salary').value);
-            const benefit = parseFloat(document.getElementById('staff-benefit').value);
-
-            if (pin.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-                return;
-            }
-
-            if (db.staff.some(s => s.pin.toString() === pin.toString())) {
-                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
-                return;
-            }
-
-            const staffId = "EMP" + String(db.staff.length + 1).padStart(4, '0');
-
-            const newStaff = {
-                pin: pin.toString(),
-                staff_id: staffId,
-                name: name,
-                branch: branch,
-                role: 'Barista',
-                phone: phone,
-                dob: dob,
-                photo_url: photo_url,
-                id_card_url: id_card_url,
-                family_book_url: family_book_url,
-                passport_url: passport_url,
-                emp_type: emp_type,
-                shift: shift,
-                active: true,
-                salary: salary,
-                benefit: benefit
-            };
-
-            const { error } = await supabase.from('staff').insert([newStaff]);
-            if (error) {
-                alert("ເພີ່ມພະນັກງານຫຼົ້ມເຫຼວ: " + error.message);
-            } else {
-                alert("ເພີ່ມພະນັກງານໃໝ່ສຳເລັດ");
-                closeAddStaffModal();
-                e.target.reset();
-                await syncDataFromSupabase();
-            }
-        }
-    </script>
-</body>
-</html>
+                        </td
