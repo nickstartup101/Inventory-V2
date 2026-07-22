@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - V2 Production</title>
+    <title>La Dolce Portal - V2 Production Stable</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -161,10 +161,14 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <div id="connection-status-badge" class="flex items-center space-x-2 text-[10px] text-neutral-400">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span id="sync-badge-text">Sheets Sync Connected</span>
+            <!-- Connection Diagnostics Console -->
+            <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
+                <div class="flex items-center space-x-2 text-[10px]">
+                    <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+                    <span id="sync-badge-text">ກຳລັງກວດສອບການເຊື່ອມຕໍ່ Sheets...</span>
+                </div>
             </div>
+            
             <div id="user-info-bar" class="flex items-center space-x-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>
@@ -186,7 +190,6 @@
                 <p class="text-xs text-neutral-400 mt-1">ຂໍ້ມູນຕິດຕາມສິນຄ້າຄົງເຫຼືອ ແລະ ໝວດໝູ່ທີ່ເຄື່ອນໄຫວຖີ່ສຳລັບພະນັກງານ</p>
             </div>
 
-            <!-- High-Frequency Trackers -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -240,10 +243,10 @@
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍມີລະບົບຢືນຢັນຕົວຕົນພະນັກງານ</p>
+                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
             </div>
 
-            <!-- Active Operator Session status bar -->
+            <!-- Operator Session Status Bar -->
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div class="flex items-center space-x-3 text-xs">
                     <div id="session-status-dot" class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
@@ -255,6 +258,7 @@
                 </div>
             </div>
 
+            <!-- Action Area (Disabled by default until session unlocked) -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Quick tools -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
@@ -270,7 +274,7 @@
                             <div id="quick-summary-text" class="mono-font text-xs font-bold text-neutral-400">ບໍ່ມີການປ່ຽນແປງ</div>
                         </div>
                         <button onclick="submitQuickInventory()" class="w-full sm:w-auto px-5 py-2.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl active:scale-95 transition-all">
-                            ຢືນຢັນ ແລະ ບັນທຶກທັງໝົດ
+                            ບັນທຶກສະຕ໊ອກດ່ວນທັງໝົດ
                         </button>
                     </div>
                 </div>
@@ -538,7 +542,7 @@
                         <label class="block text-[10px] text-neutral-500 font-bold mb-1">ເລືອກປະຈຳເດືອນ</label>
                         <select id="payroll-month-select" onchange="updatePayrollPeriodDisplay()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:outline-none">
                             <option value="ພະຈິກ 2024">ພະຈິກ 2024</option>
-                            <option value="ທັນວา 2024">ທັນວາ 2024</option>
+                            <option value="ທັນວາ 2024">ທັນວາ 2024</option>
                             <option value="ມັງກອນ 2025">ມັງກອນ 2025</option>
                         </select>
                     </div>
@@ -665,7 +669,7 @@
     <!-- MAIN LOGIC ENGINE -->
     <script>
         // ດຶງຄ່າ API URL ຈາກ LocalStorage ຫາກມີການບັນທຶກໄວ້ກ່ອນໜ້ານີ້
-        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "";
+        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "https://script.google.com/macros/s/AKfycby0_nCG4gAK7-TQdt3uVRw6eBD7GjM93WeHDAcrI-CVkQ2_jNtvctQg0itpOFRfgb_1RQ/exec";
 
         let db = {
             products: [],
@@ -678,9 +682,9 @@
         // ຂໍ້ມູນ Mockup ສຳຮອງ (ຈະສະແດງສະເພາະເວລາທີ່ດຶງຂໍ້ມູນຈາກ Google Sheet ບໍ່ສຳເລັດເທົ່ານັ້ນ)
         const backupMockDB = {
             products: [
-                { sku: "P001", name: "ຜົງໂກໂກ້ (ຖົງ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
-                { sku: "P002", name: "ບ໊ວຍ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
-                { sku: "P010", name: "ເບຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
+                { sku: "P001", name: "ຜົງໂກໂກ້ (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
+                { sku: "P002", name: "ບ໊ອບ (ตຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
+                { sku: "P010", name: "ເນີຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
             ],
             staff: [
                 { pin: "100100", name: "ສົມສັກ ພົມມະວົງ", branch: "ສາຂາ ວຽງຈັນ", salary: 5000000, benefit: 600000, active: true },
@@ -724,23 +728,26 @@
             
             const success = await syncDataFromGoogleSheet();
             if (success) {
-                alert("ເຊື່ອມຕໍ່ Google Sheets ສຳເລັດແລ້ວ! ຂໍ້ມູນທັງໝົດໄດ້ຖືກ Sync ລົງໃນລະບົບ.");
+                alert("ເຊື່ອມຕໍ່ Google Sheets ສຳເລັດແລ້ວ!");
             } else {
-                alert("ການເຊື່ອມຕໍ່ຫຼົ້ມເຫຼວ! ກະລຸນາກວດສອບ Console Log ດ້ານລຸ່ມ ເພື່ອເບິ່ງສາເຫດ.");
+                alert("ການເຊື່ອມຕໍ່ຫຼົ້ມເຫຼວ! ກະລຸນາກວດສອບ Console Log.");
             }
         }
 
         function addLogConsole(text) {
             const consoleEl = document.getElementById('api-sync-log');
-            const now = new Date().toLocaleTimeString();
-            consoleEl.innerHTML += `\n[${now}] ${text}`;
-            consoleEl.scrollTop = consoleEl.scrollHeight;
+            if (consoleEl) {
+                const now = new Date().toLocaleTimeString();
+                consoleEl.innerHTML += `\n[${now}] ${text}`;
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
         }
 
         // ຟັງຊັນສຳລັບດຶງຂໍ້ມູນຈາກ Google Sheet
         async function syncDataFromGoogleSheet() {
-            const badge = document.getElementById('sync-badge-text');
-            badge.innerText = "ກຳລັງ Sync ຂໍ້ມູນ...";
+            const badgeText = document.getElementById('sync-badge-text');
+            const connDot = document.getElementById('conn-dot');
+            if (badgeText) badgeText.innerText = "ກຳລັງ Sync ຂໍ້ມູນ...";
             addLogConsole("ກຳລັງສົ່ງ Request ໄປຫາ Google API...");
             
             try {
@@ -750,9 +757,8 @@
                 const data = await res.json();
                 
                 if (data) {
-                    // ກວດສອບຄວາມຖືກຕ້ອງຂອງຂໍ້ມູນທີ່ດຶງມາໄດ້
                     if (!data.products || data.products.length === 0) {
-                        throw new Error("ດຶງຂໍ້ມູນສຳເລັດແຕ່ບໍ່ພົບແຖວຂໍ້ມູນໃນ Tab 'Main inventory'. ກະລຸນາກວດສອບຊື່ຫົວຖັນ.");
+                        throw new Error("ບໍ່ພົບຂໍ້ມູນໃນ 'Main inventory'.");
                     }
                     
                     db.products = data.products;
@@ -760,20 +766,21 @@
                     db.attendance = data.attendance || [];
                     db.logs = data.logs || [];
                     
-                    addLogConsole(`ດຶງຂໍ້ມູນສຳເລັດ!`);
                     addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
                     addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
+                    addLogConsole(`ດຶງຂໍ້ມູນສຳເລັດ!`);
                     
-                    badge.innerText = "Sheets Sync Connected (Online)";
-                    badge.parentElement.classList.remove('text-neutral-400', 'text-rose-400');
-                    badge.parentElement.classList.add('text-emerald-400');
+                    if (badgeText) badgeText.innerText = "Sheets Sync Connected (Online)";
+                    if (connDot) {
+                        connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+                    }
                     renderAllViews();
                     return true;
                 }
             } catch (err) {
                 console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets:", err);
                 addLogConsole(`Error: ${err.message}`);
-                useBackupMockData(`Connection Error: ລະບົບປ່ຽນມາໃຊ້ຂໍ້ມູນສຳຮອງ`);
+                useBackupMockData(`Error: ລະບົບປ່ຽນມາໃຊ້ຂໍ້ມູນສຳຮອງ`);
                 return false;
             }
         }
@@ -783,16 +790,18 @@
             db.staff = backupMockDB.staff;
             db.branches = backupMockDB.branches;
             
-            const badge = document.getElementById('sync-badge-text');
-            badge.innerText = reason;
-            badge.parentElement.classList.remove('text-emerald-400');
-            badge.parentElement.classList.add('text-rose-400');
+            const badgeText = document.getElementById('sync-badge-text');
+            const connDot = document.getElementById('conn-dot');
+            if (badgeText) badgeText.innerText = reason;
+            if (connDot) {
+                connDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
+            }
             renderAllViews();
         }
 
         // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Google Sheet (POST)
         async function postToGoogleSheet(payload) {
-            if (GOOGLE_SHEET_API_URL === "") return true;
+            if (GOOGLE_SHEET_API_URL === "" || !GOOGLE_SHEET_API_URL.startsWith("https://")) return true;
             try {
                 addLogConsole(`ກຳລັງສົ່ງຂໍ້ມູນທຸລະກຳລົງ Sheet...`);
                 await fetch(GOOGLE_SHEET_API_URL, {
@@ -1029,8 +1038,22 @@
             renderAllViews();
         }
 
+        // Master Renders
+        function renderAllViews() {
+            renderHighFreqTrackers();
+            renderStockTable();
+            renderDailyLogs();
+            renderQuickAdjustments();
+            renderManualRecordDropdowns();
+            renderHRMDashboard();
+            renderStaffTable();
+            renderBranchDropdowns();
+            renderPayroll();
+        }
+
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
+            if (!container) return;
             container.innerHTML = "";
             db.products.filter(p => p.frequency === "High").forEach(item => {
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
@@ -1057,6 +1080,7 @@
 
         function renderStockTable() {
             const tbody = document.getElementById('stock-table-body');
+            if (!tbody) return;
             tbody.innerHTML = "";
             db.products.forEach(item => {
                 tbody.innerHTML += `
@@ -1075,8 +1099,16 @@
             });
         }
 
+        function filterStockTable() {
+            const search = document.getElementById('stock-search').value.toLowerCase();
+            document.querySelectorAll('#stock-table-body tr').forEach(row => {
+                row.classList.toggle('hidden', !row.innerText.toLowerCase().includes(search));
+            });
+        }
+
         function renderDailyLogs() {
             const tbody = document.getElementById('daily-log-body');
+            if (!tbody) return;
             tbody.innerHTML = "";
             db.logs.slice().reverse().forEach(log => {
                 const isOut = log.type === "OUT";
@@ -1098,6 +1130,7 @@
 
         function renderQuickAdjustments() {
             const container = document.getElementById('quick-adjust-grid');
+            if (!container) return;
             container.innerHTML = "";
             db.products.forEach(item => {
                 const qtyValue = quickStockChanges[item.sku] || 0;
@@ -1118,47 +1151,9 @@
             });
         }
 
-        async function submitQuickInventory() {
-            if (!activeOperator) {
-                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນບັນທຶກສະຕ໊ອກ");
-                return;
-            }
-
-            let changeMade = false;
-            const now = new Date().toISOString().replace('T', ' ').substring(0, 16);
-            for (let sku in quickStockChanges) {
-                const amt = quickStockChanges[sku];
-                if (amt !== 0) {
-                    const prod = db.products.find(p => p.sku === sku);
-                    if (prod) {
-                        prod.stock = amt > 0 ? prod.stock + amt : prod.stock + amt;
-                        const logPayload = {
-                            action: "addInventoryLog",
-                            timestamp: now,
-                            sku: sku,
-                            name: prod.name,
-                            type: amt > 0 ? "IN" : "OUT",
-                            qty: Math.abs(amt),
-                            note: "Quick Adjustment"
-                        };
-                        db.logs.push(logPayload);
-                        await postToGoogleSheet(logPayload);
-                        changeMade = true;
-                    }
-                }
-            }
-            if (changeMade) {
-                alert(`ບັນທຶກສະຕ໊ອກດ່ວນສຳເລັດ ໂດຍ: ${activeOperator.name}`);
-                quickStockChanges = {};
-                renderAllViews();
-                updateQuickText();
-            } else {
-                alert("ບໍ່ມີຂໍ້ມູນການປ່ຽນແປງ");
-            }
-        }
-
         function renderManualRecordDropdowns() {
             const select = document.getElementById('manual-sku');
+            if (!select) return;
             select.innerHTML = "";
             db.products.forEach(p => {
                 select.innerHTML += `<option value="${p.sku}">${p.name} (${p.sku})</option>`;
@@ -1166,112 +1161,48 @@
         }
 
         function toggleManualRemarkInput(val) {
-            document.getElementById('manual-remark-desc-container').classList.toggle('hidden', val !== 'others');
-        }
-
-        async function handleManualRecordSubmit(e) {
-            e.preventDefault();
-            if (!activeOperator) {
-                alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນທຳການບັນທຶກ");
-                return;
+            const descContainer = document.getElementById('manual-remark-desc-container');
+            if (descContainer) {
+                descContainer.classList.toggle('hidden', val !== 'others');
             }
-
-            const sku = document.getElementById('manual-sku').value;
-            const type = document.getElementById('manual-type').value;
-            const qty = parseInt(document.getElementById('manual-qty').value);
-            let remark = document.getElementById('manual-remark').value;
-            if (remark === 'others') remark = document.getElementById('manual-remark-desc').value || "ອື່ນໆ";
-
-            const prod = db.products.find(p => p.sku === sku);
-            if (prod) {
-                if (type === "OUT" && prod.stock < qty) {
-                    alert("ສິນຄ້າໃນຄັງບໍ່ພຽງພໍ");
-                    return;
-                }
-                
-                const logPayload = {
-                    action: "addInventoryLog",
-                    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                    sku: sku,
-                    name: prod.name,
-                    type: type,
-                    qty: qty,
-                    note: remark
-                };
-
-                db.logs.push(logPayload);
-                await postToGoogleSheet(logPayload);
-
-                alert(`ບັນທຶກສຳເລັດ ໂດຍ: ${activeOperator.name}`);
-                e.target.reset();
-                document.getElementById('manual-remark-desc-container').classList.add('hidden');
-                renderAllViews();
-            }
-        }
-
-        async function handleLeaveRequestSubmit(e) {
-            e.preventDefault();
-            const pin = document.getElementById('leave-pin').value;
-            const type = document.getElementById('leave-type').value;
-            const start = document.getElementById('leave-start').value;
-            const end = document.getElementById('leave-end').value;
-            const reason = document.getElementById('leave-reason').value;
-
-            if (pin.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີ 6 ຫຼັກ");
-                return;
-            }
-
-            const staffMember = db.staff.find(s => s.pin === pin && s.active);
-            if (!staffMember) {
-                alert("ບໍ່ພົບຂໍ້ມູນພະນັກງານ");
-                return;
-            }
-
-            const leavePayload = {
-                action: "addLeave",
-                pin: pin,
-                name: staffMember.name,
-                type: type,
-                dates: `${start} ຫາ ${end}`,
-                reason: reason,
-                status: "Pending"
-            };
-
-            await postToGoogleSheet(leavePayload);
-            alert("ສົ່ງໃບລາວຽກແລ້ວ");
-            e.target.reset();
-            renderAllViews();
         }
 
         function renderHRMDashboard() {
-            document.getElementById('stat-active-staff').innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
-            document.getElementById('stat-branches').innerText = db.branches.length;
-            document.getElementById('stat-inventory-logs').innerText = db.logs.length;
-            document.getElementById('stat-pending-leaves').innerText = "0";
+            const statActive = document.getElementById('stat-active-staff');
+            const statBranch = document.getElementById('stat-branches');
+            const statInv = document.getElementById('stat-inventory-logs');
+            const statPending = document.getElementById('stat-pending-leaves');
+
+            if (statActive) statActive.innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
+            if (statBranch) statBranch.innerText = db.branches.length;
+            if (statInv) statInv.innerText = db.logs.length;
+            if (statPending) statPending.innerText = "0";
 
             const attBody = document.getElementById('hrm-attendance-body');
-            attBody.innerHTML = "";
-            db.attendance.slice().reverse().forEach(att => {
-                const staffMember = db.staff.find(s => s.pin === att.pin);
-                const name = staffMember ? staffMember.name : "Unknown";
-                attBody.innerHTML += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                        <td class="p-3 text-neutral-400">${att.branch}</td>
-                        <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
-                                ${att.type}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
+            if (attBody) {
+                attBody.innerHTML = "";
+                db.attendance.slice().reverse().forEach(att => {
+                    const staffMember = db.staff.find(s => s.pin === att.pin);
+                    const name = staffMember ? staffMember.name : "Unknown";
+                    attBody.innerHTML += `
+                        <tr class="hover:bg-neutral-950/40">
+                            <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
+                            <td class="p-3 text-neutral-400">${att.branch}</td>
+                            <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                    ${att.type}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
         }
 
         function renderStaffTable() {
             const tbody = document.getElementById('staff-table-body');
+            if (!tbody) return;
             tbody.innerHTML = "";
             db.staff.forEach(st => {
                 tbody.innerHTML += `
@@ -1295,82 +1226,18 @@
             });
         }
 
-        function changePassword(pin) {
-            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
-            if (newPin && newPin.length === 6) {
-                const staffMember = db.staff.find(s => s.pin === pin);
-                if (staffMember) {
-                    staffMember.pin = newPin;
-                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
-                    renderAllViews();
-                }
-            } else {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-            }
-        }
-
-        function toggleStaffState(pin) {
-            const staffMember = db.staff.find(s => s.pin === pin);
-            if (staffMember) {
-                staffMember.active = !staffMember.active;
-                renderAllViews();
-            }
-        }
-
-        function handleBranchSubmit(e) {
-            e.preventDefault();
-            const bName = document.getElementById('branch-name').value;
-            if (db.branches.includes(bName)) return;
-            db.branches.push(bName);
-            
-            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
-            document.getElementById('qr-branch-title').innerText = bName;
-            document.getElementById('qr-link-text').innerText = mockUrl;
-            document.getElementById('qr-image-container').innerHTML = `
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
-            `;
-            document.getElementById('branch-qr-output').classList.remove('hidden');
-            e.target.reset();
-            renderAllViews();
-        }
-
         function renderBranchDropdowns() {
             const select = document.getElementById('staff-branch');
+            if (!select) return;
             select.innerHTML = "";
             db.branches.forEach(b => {
                 select.innerHTML += `<option value="${b}">${b}</option>`;
             });
         }
 
-        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
-        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
-
-        function handleStaffSubmit(e) {
-            e.preventDefault();
-            const pin = document.getElementById('staff-pin').value;
-            const name = document.getElementById('staff-name').value;
-            const branch = document.getElementById('staff-branch').value;
-            const salary = parseFloat(document.getElementById('staff-salary').value);
-            const benefit = parseFloat(document.getElementById('staff-benefit').value);
-
-            if (pin.length !== 6) {
-                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
-                return;
-            }
-
-            if (db.staff.some(s => s.pin === pin)) {
-                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
-                return;
-            }
-
-            db.staff.push({ pin, name, branch, salary, benefit, active: true });
-            closeAddStaffModal();
-            e.target.reset();
-            renderAllViews();
-        }
-
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
+            if (!tbody) return;
             tbody.innerHTML = "";
             db.staff.forEach(st => {
                 const daysWorked = calculateDaysWorked(st.pin);
@@ -1393,47 +1260,6 @@
                     </tr>
                 `;
             });
-        }
-
-        function calculateDaysWorked(pin) {
-            return new Set(db.attendance.filter(a => a.pin === pin && a.type === "Clock-In").map(l => l.timestamp.split(' ')[0])).size;
-        }
-
-        function calculateOTHours(pin) {
-            let totalOT = 0;
-            const dates = Array.from(new Set(db.attendance.filter(a => a.pin === pin).map(a => a.timestamp.split(' ')[0])));
-            dates.forEach(date => {
-                const dayLogs = db.attendance.filter(a => a.pin === pin && a.timestamp.startsWith(date));
-                const clockIn = dayLogs.find(l => l.type === "Clock-In");
-                const clockOut = dayLogs.find(l => l.type === "Clock-Out");
-                if (clockIn && clockOut) {
-                    const inTime = parseTimestamp(clockIn.timestamp);
-                    const outTime = parseTimestamp(clockOut.timestamp);
-                    const totalHours = (outTime - inTime) / (1000 * 60 * 60);
-                    if (inTime.getHours() < 10) {
-                        if (totalHours > 9) totalOT += (totalHours - 9);
-                    } else {
-                        if (totalHours > 8.5) totalOT += (totalHours - 8.5);
-                    }
-                }
-            });
-            return parseFloat(totalOT.toFixed(1));
-        }
-
-        function calculateNetSalary(st, days, ot) {
-            const baseSalaryPerDay = st.salary / 22;
-            return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
-        }
-
-        function updatePayrollVariables(pin, field, val) {
-            const staffMember = db.staff.find(s => s.pin === pin);
-            if (staffMember) {
-                staffMember[field] = parseFloat(val) || 0;
-                const daysWorked = calculateDaysWorked(pin);
-                const otHours = calculateOTHours(pin);
-                const net = calculateNetSalary(staffMember, daysWorked, otHours);
-                document.getElementById(`net-pay-${pin}`).innerText = `${net.toLocaleString()} LAK`;
-            }
         }
     </script>
 </body>
