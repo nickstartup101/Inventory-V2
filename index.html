@@ -16,88 +16,51 @@
             --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
             --color-primary: #FF4D00;
         }
-
         body {
             background-color: #050505;
             color: #ffffff;
             font-family: "Noto Sans Lao", "Inter", sans-serif;
             overflow-x: hidden;
         }
-
-        .mono-font {
-            font-family: "JetBrains Mono", monospace;
-        }
-
+        .mono-font { font-family: "JetBrains Mono", monospace; }
         .glass-panel {
             background: #0a0a0a;
             border: 2px solid #1a1a1a;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
-
         .glass-card {
             background: #111111;
             border: 2px solid #1a1a1a;
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
         .glass-card:hover {
             background: #161616;
             border-color: #FF4D00;
             transform: translateY(-2px);
             box-shadow: 0 12px 24px -10px rgba(255, 77, 0, 0.15);
         }
-
         .text-outline-orange {
             -webkit-text-stroke: 1.5px #FF4D00;
             color: transparent;
         }
-
         .tab-active {
             background-color: #FF4D00 !important;
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
-
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
             75% { transform: translateX(6px); }
         }
-        .shake {
-            animation: shake 0.2s ease-in-out 0s 2;
-        }
-
+        .shake { animation: shake 0.2s ease-in-out 0s 2; }
         @media print {
-            body {
-                background: #ffffff !important;
-                color: #000000 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-area {
-                border: none !important;
-                background: transparent !important;
-                box-shadow: none !important;
-                color: #000000 !important;
-                width: 100% !important;
-                padding: 0 !important;
-            }
-            table {
-                border-collapse: collapse !important;
-                width: 100% !important;
-            }
-            th, td {
-                border: 1px solid #e5e7eb !important;
-                color: #000000 !important;
-                padding: 8px !important;
-            }
-            input {
-                border: none !important;
-                background: transparent !important;
-                color: #000000 !important;
-                text-align: right !important;
-            }
+            body { background: #ffffff !important; color: #000000 !important; }
+            .no-print { display: none !important; }
+            .print-area { border: none !important; background: transparent !important; box-shadow: none !important; color: #000000 !important; width: 100% !important; padding: 0 !important; }
+            table { border-collapse: collapse !important; width: 100% !important; }
+            th, td { border: 1px solid #e5e7eb !important; color: #000000 !important; padding: 8px !important; }
+            input { border: none !important; background: transparent !important; color: #000000 !important; text-align: right !important; }
         }
     </style>
 </head>
@@ -265,7 +228,6 @@
                 </div>
             </div>
 
-            <!-- Action Area (Disabled by default until session unlocked) -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Quick tools with Search Filter to avoid DOM lag -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
@@ -274,7 +236,6 @@
                             <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1">ປັບປ່ຽນຈຳນວນແບບດ່ວນ (Quick In / Out Tools)</h2>
                             <p class="text-[10px] text-neutral-500">ສະແດງສິນຄ້າເຄື່ອນໄຫວຖີ່ເປັນຫຼັກ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອປັບສະຕ໊ອກ</p>
                         </div>
-                        <!-- Quick Adjust Search Filter to prevent 1,124 DOM card lag -->
                         <input type="text" id="quick-adjust-search" oninput="renderQuickAdjustments()" placeholder="ຄົ້ນຫາສິນຄ້າໃນສະຕ໊ອກດ່ວນ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                     </div>
                     
@@ -286,14 +247,14 @@
                             <div id="quick-summary-text" class="mono-font text-xs font-bold text-neutral-400">ບໍ່ມີການປ່ຽນແປງ</div>
                         </div>
                         <button onclick="submitQuickInventory()" class="w-full sm:w-auto px-5 py-2.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl active:scale-95 transition-all">
-                            ບັນທຶກສະຕ໊ອກດ່ວນທັງໝົດ
+                            ຢືນຢັນ ແລະ ບັນທຶກທັງໝົດ
                         </button>
                     </div>
                 </div>
 
                 <!-- Manual record -->
                 <div class="glass-panel p-6 rounded-2xl h-fit">
-                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4">...</h2>
+                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4">ບັນທຶກແບບລະອຽດ (Manual Record)</h2>
                     <form onsubmit="handleManualRecordSubmit(event)" class="space-y-4 text-xs">
                         <div>
                             <label class="block text-neutral-400 font-semibold mb-1">ເລືອກສິນຄ້າ</label>
@@ -473,7 +434,7 @@
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ-ປ່ຽນແປງສະຖານະພະນັກງານ, ຕັ້ງຄ່າສາຂา ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
+                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ-ປ່ຽນແປງສະຖານະພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -535,7 +496,6 @@
                         <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
                     </div>
                     <div>
-                        <!-- Requested Google Sheet shortcut link field -->
                         <label class="block text-neutral-400 font-semibold mb-1">Google Sheet Link (Shortcut ທາງລັດເປີດ Sheet ຕົວຈິງ)</label>
                         <div class="flex gap-2">
                             <input type="text" id="sheet-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://docs.google.com/spreadsheets/d/.../edit">
@@ -685,7 +645,7 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // ດຶງຄ່າ API URL & Sheet URL ຈາກ LocalStorage
+        // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
         let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "https://script.google.com/macros/s/AKfycby0_nCG4gAK7-TQdt3uVRw6eBD7GjM93WeHDAcrI-CVkQ2_jNtvctQg0itpOFRfgb_1RQ/exec"; 
         let GOOGLE_SHEET_DIRECT_URL = localStorage.getItem("LD_PORTAL_SHEET_URL") || "";
 
@@ -736,11 +696,13 @@
         // ລະບົບປັບປຸງປຸ່ມ Icon ທາງລັດເປີດ Sheet ຕົວຈິງ
         function updateSheetShortcutUI() {
             const linkIcon = document.getElementById('sheet-shortcut-link');
-            if (GOOGLE_SHEET_DIRECT_URL && GOOGLE_SHEET_DIRECT_URL.startsWith("https://")) {
-                linkIcon.href = GOOGLE_SHEET_DIRECT_URL;
-                linkIcon.classList.remove('hidden');
-            } else {
-                linkIcon.classList.add('hidden');
+            if (linkIcon) {
+                if (GOOGLE_SHEET_DIRECT_URL && GOOGLE_SHEET_DIRECT_URL.startsWith("https://")) {
+                    linkIcon.href = GOOGLE_SHEET_DIRECT_URL;
+                    linkIcon.classList.remove('hidden');
+                } else {
+                    linkIcon.classList.add('hidden');
+                }
             }
         }
 
@@ -1038,7 +1000,7 @@
                 const lateMinutes = actualMinutes - scheduledMinutes;
 
                 if (lateMinutes > 0) {
-                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນາທີ</span>`;
+                    detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-rose-400 font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ມາຊ້າ ${lateMinutes} ນาທີ</span>`;
                 } else {
                     detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
                 }
@@ -1183,7 +1145,6 @@
             if (searchQuery !== "") {
                 filteredList = db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery));
             } else {
-                // Default view: Focus ONLY on high frequency items to prevent page freezes
                 filteredList = db.products.filter(p => p.frequency === "High");
                 if (filteredList.length === 0) {
                     filteredList = db.products.slice(0, 12);
@@ -1367,6 +1328,116 @@
                 }
             });
             return parseFloat(totalOT.toFixed(1));
+        }
+
+        // ຟັງຊັນຄຳນວນເງິນເດືອນສຸດທິ (Net Salary Calculation)
+        function calculateNetSalary(st, days, ot) {
+            const baseSalaryPerDay = st.salary / 22;
+            return Math.round((baseSalaryPerDay * days) + st.benefit + (ot * 25000));
+        }
+
+        // ຟັງຊັນອັບເດດຄ່າ Payroll ແບບ Real-time (Dynamic updates)
+        function updatePayrollVariables(pin, field, val) {
+            const staffMember = db.staff.find(s => s.pin === pin);
+            if (staffMember) {
+                staffMember[field] = parseFloat(val) || 0;
+                
+                // ຄຳນວນຄືນໃໝ່ສະເພາະແຖວທີ່ປ່ຽນແປງຂໍ້ມູນ
+                const attendanceMap = {};
+                db.attendance.forEach(att => {
+                    if (!attendanceMap[att.pin]) {
+                        attendanceMap[att.pin] = [];
+                    }
+                    attendanceMap[att.pin].push(att);
+                });
+                
+                const staffAttendance = attendanceMap[pin] || [];
+                const daysWorked = calculateDaysWorkedOptimized(staffAttendance);
+                const otHours = calculateOTHoursOptimized(pin, staffAttendance);
+                const net = calculateNetSalary(staffMember, daysWorked, otHours);
+                
+                const el = document.getElementById(`net-pay-${pin}`);
+                if (el) {
+                    el.innerText = `${net.toLocaleString()} LAK`;
+                }
+            }
+        }
+
+        function changePassword(pin) {
+            const newPin = prompt("ປ້ອນ PIN 6 ຕົວເລກໃໝ່:");
+            if (newPin && newPin.length === 6) {
+                const staffMember = db.staff.find(s => s.pin === pin);
+                if (staffMember) {
+                    staffMember.pin = newPin;
+                    alert("ປ່ຽນລະຫັດ PIN ສຳເລັດ");
+                    renderAllViews();
+                }
+            } else {
+                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
+            }
+        }
+
+        function toggleStaffState(pin) {
+            const staffMember = db.staff.find(s => s.pin === pin);
+            if (staffMember) {
+                staffMember.active = !staffMember.active;
+                renderAllViews();
+            }
+        }
+
+        function handleBranchSubmit(e) {
+            e.preventDefault();
+            const bName = document.getElementById('branch-name').value;
+            if (db.branches.includes(bName)) return;
+            db.branches.push(bName);
+            
+            const mockUrl = `https://v2portal.la/clockin?branch=${encodeURIComponent(bName)}`;
+            document.getElementById('qr-branch-title').innerText = bName;
+            document.getElementById('qr-link-text').innerText = mockUrl;
+            document.getElementById('qr-image-container').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(mockUrl)}&color=255-77-0" class="rounded">
+            `;
+            document.getElementById('branch-qr-output').classList.remove('hidden');
+            e.target.reset();
+            renderAllViews();
+        }
+
+        function renderBranchDropdowns() {
+            const select = document.getElementById('staff-branch');
+            if (!select) return;
+            select.innerHTML = "";
+            let html = "";
+            db.branches.forEach(b => {
+                html += `<option value="${b}">${b}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function openAddStaffModal() { document.getElementById('modal-add-staff').classList.remove('hidden'); }
+        function closeAddStaffModal() { document.getElementById('modal-add-staff').classList.add('hidden'); }
+
+        function handleStaffSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('staff-pin').value;
+            const name = document.getElementById('staff-name').value;
+            const branch = document.getElementById('staff-branch').value;
+            const salary = parseFloat(document.getElementById('staff-salary').value);
+            const benefit = parseFloat(document.getElementById('staff-benefit').value);
+
+            if (pin.length !== 6) {
+                alert("ລະຫັດ PIN ຕ້ອງມີຄວາມຍາວ 6 ຕົວເລກ");
+                return;
+            }
+
+            if (db.staff.some(s => s.pin === pin)) {
+                alert("PIN ນີ້ມີໃນລະບົບແລ້ວ");
+                return;
+            }
+
+            db.staff.push({ pin, name, branch, salary, benefit, active: true });
+            closeAddStaffModal();
+            e.target.reset();
+            renderAllViews();
         }
     </script>
 </body>
