@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Dolce Portal - V2 Stable Integration</title>
+    <title>La Dolce Portal - V2 Production</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
@@ -161,12 +161,10 @@
 
         <!-- SWITCH USER BUTTON -->
         <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
-            <!-- Connection Diagnostics Badge -->
             <div id="connection-status-badge" class="flex items-center space-x-2 text-[10px] text-neutral-400">
-                <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                <span>ກຳລັງກວດສອບການເຊື່ອມຕໍ່ Sheets...</span>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span id="sync-badge-text">Sheets Sync Connected</span>
             </div>
-            
             <div id="user-info-bar" class="flex items-center space-x-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                 <span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>
@@ -188,6 +186,7 @@
                 <p class="text-xs text-neutral-400 mt-1">ຂໍ້ມູນຕິດຕາມສິນຄ້າຄົງເຫຼືອ ແລະ ໝວດໝູ່ທີ່ເຄື່ອນໄຫວຖີ່ສຳລັບພະນັກງານ</p>
             </div>
 
+            <!-- High-Frequency Trackers -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -208,7 +207,7 @@
                                 <th class="p-3 border-b border-neutral-800">SKU</th>
                                 <th class="p-3 border-b border-neutral-800">ຊື່ສິນຄ້າ</th>
                                 <th class="p-3 border-b border-neutral-800">ໝວດໝູ່</th>
-                                <th class="p-3 border-b border-neutral-800">ປະເພດເຄື່ອນໄຫວ</th>
+                                <th class="p-3 border-b border-neutral-800 text-center">STATUS</th>
                                 <th class="p-3 border-b border-neutral-800 text-right">ຄົງເຫຼືອໃນສາງ</th>
                             </tr>
                         </thead>
@@ -225,12 +224,10 @@
                         <thead class="bg-neutral-900 text-neutral-500 uppercase">
                             <tr>
                                 <th class="p-3 border-b border-neutral-800">ເວລາ</th>
-                                <th class="p-3 border-b border-neutral-800">SKU</th>
                                 <th class="p-3 border-b border-neutral-800">ຊື່ສິນຄ້າ</th>
                                 <th class="p-3 border-b border-neutral-800">ປະເພດ</th>
                                 <th class="p-3 border-b border-neutral-800">ຈຳນວນ</th>
                                 <th class="p-3 border-b border-neutral-800">ໝາຍເຫດ</th>
-                                <th class="p-3 border-b border-neutral-800">ຜູ້ບັນທຶກ (Operator)</th>
                             </tr>
                         </thead>
                         <tbody id="daily-log-body" class="divide-y divide-neutral-900"></tbody>
@@ -243,10 +240,10 @@
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
+                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍມີລະບົບຢືນຢັນຕົວຕົນພະນັກງານ</p>
             </div>
 
-            <!-- Operator Session Status Bar -->
+            <!-- Active Operator Session status bar -->
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
                 <div class="flex items-center space-x-3 text-xs">
                     <div id="session-status-dot" class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
@@ -258,7 +255,6 @@
                 </div>
             </div>
 
-            <!-- Action Area (Disabled by default until session unlocked) -->
             <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Quick tools -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
@@ -274,7 +270,7 @@
                             <div id="quick-summary-text" class="mono-font text-xs font-bold text-neutral-400">ບໍ່ມີການປ່ຽນແປງ</div>
                         </div>
                         <button onclick="submitQuickInventory()" class="w-full sm:w-auto px-5 py-2.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl active:scale-95 transition-all">
-                            ບັນທຶກສະຕ໊ອກດ່ວນທັງໝົດ
+                            ຢືນຢັນ ແລະ ບັນທຶກທັງໝົດ
                         </button>
                     </div>
                 </div>
@@ -512,6 +508,29 @@
 
         <!-- ================= TAB 6: PAYROLLS REALTIME (La Dolce Payrolls) ================= -->
         <section id="tab-payroll" class="hidden space-y-8">
+            <!-- Connection Setup & API Manager -->
+            <div class="glass-panel p-6 rounded-3xl space-y-4 no-print">
+                <h2 class="font-black text-sm text-neutral-200 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-cloud-arrow-down text-[#FF4D00] mr-2"></i> ຕັ້ງຄ່າການເຊື່ອມຕໍ່ Google Sheets API
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                    <div class="md:col-span-3">
+                        <label class="block text-neutral-400 font-semibold mb-1">Google Apps Script Web App URL</label>
+                        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-white font-mono" placeholder="https://script.google.com/macros/s/.../exec">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="saveAndTestAPIConnection()" class="w-full py-2 bg-[#FF4D00] text-white font-bold rounded-xl transition-all">
+                            Save & Sync API
+                        </button>
+                    </div>
+                </div>
+                <!-- Mini Log Console -->
+                <div class="bg-neutral-950 p-4 border border-neutral-900 rounded-2xl space-y-2">
+                    <span class="text-[9px] text-neutral-500 font-bold block uppercase tracking-wider">Sync Console Output:</span>
+                    <pre id="api-sync-log" class="text-[10px] text-neutral-400 font-mono overflow-x-auto max-h-24 leading-normal">ລໍຖ້າການເຊື່ອມຕໍ່...</pre>
+                </div>
+            </div>
+
             <!-- Filter & Print Config Action Bar -->
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
@@ -519,7 +538,7 @@
                         <label class="block text-[10px] text-neutral-500 font-bold mb-1">ເລືອກປະຈຳເດືອນ</label>
                         <select id="payroll-month-select" onchange="updatePayrollPeriodDisplay()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:outline-none">
                             <option value="ພະຈິກ 2024">ພະຈິກ 2024</option>
-                            <option value="ທັນວາ 2024">ທັນວາ 2024</option>
+                            <option value="ທັນວา 2024">ທັນວາ 2024</option>
                             <option value="ມັງກອນ 2025">ມັງກອນ 2025</option>
                         </select>
                     </div>
@@ -645,105 +664,146 @@
 
     <!-- MAIN LOGIC ENGINE -->
     <script>
-        // *** ຕັ້ງຄ່າເຊື່ອມຕໍ່ GOOGLE SHEETS API ບ່ອນນີ້ ***
-        // ວາງ Web App URL ທີ່ໄດ້ຈາກການ Deploy Google Sheet ໃສ່ລະຫວ່າງເຄື່ອງໝາຍ " " 
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwCHCbPcJBFXNRuag3qbRBWX2V1BHWSX_SbFIZa_2xTN_kXIJ1p5hBT1yAwlfTz6jG83w/exec"; 
+        // ດຶງຄ່າ API URL ຈາກ LocalStorage ຫາກມີການບັນທຶກໄວ້ກ່ອນໜ້ານີ້
+        let GOOGLE_SHEET_API_URL = localStorage.getItem("LD_PORTAL_API_URL") || "";
 
         let db = {
+            products: [],
+            logs: [],
+            staff: [],
+            branches: ["ສາຂາ ວຽງຈັນ"],
+            attendance: []
+        };
+
+        // ຂໍ້ມູນ Mockup ສຳຮອງ (ຈະສະແດງສະເພາະເວລາທີ່ດຶງຂໍ້ມູນຈາກ Google Sheet ບໍ່ສຳເລັດເທົ່ານັ້ນ)
+        const backupMockDB = {
             products: [
-                { sku: "SKU-9901", name: "ເຈ້ຍ A4 Double A", category: "ເຄື່ອງໃຊ້ຫ້ອງການ", frequency: "High", stock: 120 },
-                { sku: "SKU-9902", name: "ນ້ຳດື່ມ ຈຳໂບ້ 1.5L", category: "ສະບຽງອາຫານ", frequency: "High", stock: 240 },
-                { sku: "SKU-9903", name: "ກາເຟຊອງ Espresso", category: "ສະບຽງອາຫານ", frequency: "High", stock: 350 },
-                { sku: "SKU-1024", name: "ປາກກາລູກລື່ນ Blue", category: "ເຄື່ອງໃຊ້ຫ້ອງການ", frequency: "Regular", stock: 45 },
-                { sku: "SKU-1025", name: "ປື້ມບັນທຶກ V2", category: "ເຄື່ອງໃຊ້ຫ້ອງການ", frequency: "Regular", stock: 15 }
-            ],
-            logs: [
-                { timestamp: "2024-11-20 08:30", sku: "SKU-9901", name: "ເຈ້ຍ A4 Double A", type: "IN", qty: 20, note: "ຊື້ເພີ່ມ", user: "ສົມສັກ (100100)" },
-                { timestamp: "2024-11-20 10:15", sku: "SKU-1024", name: "ປາກກາລູກລື່ນ Blue", type: "OUT", qty: 2, note: "ເຄື່ອງເຊື່ອມຄຸນະພາບ", user: "ອາລິສາ (100200)" }
+                { sku: "P001", name: "ຜົງໂກໂກ້ (ຖົງ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 12 },
+                { sku: "P002", name: "ບ໊ອບ (ຕຸກ) (Local Backup)", category: "ວັດຖຸດິບ", frequency: "High", stock: 15 },
+                { sku: "P010", name: "ເນີຍ HNK (Local Backup)", category: "ເຄື່ອງຍ່ອຍ", frequency: "Regular", stock: 45 }
             ],
             staff: [
                 { pin: "100100", name: "ສົມສັກ ພົມມະວົງ", branch: "ສາຂາ ວຽງຈັນ", salary: 5000000, benefit: 600000, active: true },
                 { pin: "100200", name: "ອາລິສາ ຈັນທະລາ", branch: "ສາຂາ ວຽງຈັນ", salary: 4500000, benefit: 500000, active: true }
             ],
             branches: ["ສາຂາ ວຽງຈັນ"],
-            attendance: [
-                { timestamp: "2024-11-20 07:05", pin: "100100", type: "Clock-In", branch: "ສາຂາ ວຽງຈັນ" },
-                { timestamp: "2024-11-20 16:15", pin: "100100", type: "Clock-Out", branch: "ສາຂາ ວຽງຈັນ" }
-            ],
-            leaves: []
+            attendance: [],
+            logs: []
         };
 
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
         let isHRMMode = false;
-        let activeOperator = null; // Session-based operator state
+        let activeOperator = null;
 
         window.addEventListener('DOMContentLoaded', async () => {
+            // ສະແດງ URL ຢູ່ໃນ Input ເມື່ອໂຫຼດໜ້າ
+            document.getElementById('api-url-input').value = GOOGLE_SHEET_API_URL;
+            
             if (GOOGLE_SHEET_API_URL !== "" && GOOGLE_SHEET_API_URL.startsWith("https://")) {
                 await syncDataFromGoogleSheet();
             } else {
-                updateConnectionBadge("offline", "Local Mode (No API URL config)");
-                renderAllViews();
+                useBackupMockData("Local Mode: ຍັງບໍ່ທັນໄດ້ຕັ້ງຄ່າ API URL");
             }
             applyUserModeUI();
             updateSessionUI();
         });
 
-        // ຟັງຊັນປ່ຽນແປງ Badge ສະຖານະການເຊື່ອມຕໍ່ Sheets
-        function updateConnectionBadge(status, message) {
-            const badge = document.getElementById('connection-status-badge');
-            if (status === "connected") {
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-emerald-400 font-bold">Sheets Sync Active</span>`;
-            } else if (status === "error") {
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div><span class="text-rose-400 font-bold" title="${message}">Connection Error (Click for info)</span>`;
-                badge.style.cursor = "pointer";
-                badge.onclick = () => alert(`ລາຍລະອຽດຂໍ້ຜິດພາດ: ${message}\n\nວິທີແກ້ໄຂ:\n1. ກວດສອບວ່າ Google Sheet ຖືກຕັ້ງຄ່າ Deploy ເປັນ 'Anyone' ແລ້ວຫຼືບໍ່\n2. ກວດສອບ URL ຂອງ Web App ໃນ Code ໃຫ້ຖືກຕ້ອງ.`);
-            } else {
-                badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-neutral-600 animate-pulse"></div><span>${message}</span>`;
+        // ຟັງຊັນບັນທຶກ ແລະ ທົດສອບການເຊື່ອມຕໍ່ Sheets ຜ່ານໜ້າຈໍ HRM
+        async function saveAndTestAPIConnection() {
+            const urlValue = document.getElementById('api-url-input').value.trim();
+            if (!urlValue.startsWith("https://")) {
+                alert("ກະລຸນາປ້ອນ URL ທີ່ຂຶ້ນຕົ້ນດ້ວຍ https:// ໃຫ້ຖືກຕ້ອງ");
+                return;
             }
+            
+            GOOGLE_SHEET_API_URL = urlValue;
+            localStorage.setItem("LD_PORTAL_API_URL", urlValue);
+            addLogConsole("ກຳລັງທົດສອບເຊື່ອມຕໍ່: " + urlValue);
+            
+            const success = await syncDataFromGoogleSheet();
+            if (success) {
+                alert("ເຊື່ອມຕໍ່ Google Sheets ສຳເລັດແລ້ວ! ຂໍ້ມູນທັງໝົດໄດ້ຖືກ Sync ລົງໃນລະບົບ.");
+            } else {
+                alert("ການເຊື່ອມຕໍ່ຫຼົ້ມເຫຼວ! ກະລຸນາກວດສອບ Console Log ດ້ານລຸ່ມ ເພື່ອເບິ່ງສາເຫດ.");
+            }
+        }
+
+        function addLogConsole(text) {
+            const consoleEl = document.getElementById('api-sync-log');
+            const now = new Date().toLocaleTimeString();
+            consoleEl.innerHTML += `\n[${now}] ${text}`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
         }
 
         // ຟັງຊັນສຳລັບດຶງຂໍ້ມູນຈາກ Google Sheet
         async function syncDataFromGoogleSheet() {
-            updateConnectionBadge("pending", "ກຳລັງດຶງຂໍ້ມູນຈາກ Google Sheets...");
+            const badge = document.getElementById('sync-badge-text');
+            badge.innerText = "ກຳລັງ Sync ຂໍ້ມູນ...";
+            addLogConsole("ກຳລັງສົ່ງ Request ໄປຫາ Google API...");
+            
             try {
                 const res = await fetch(`${GOOGLE_SHEET_API_URL}?action=loadAllData`);
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                if (!res.ok) throw new Error(`HTTP status: ${res.status}`);
                 
                 const data = await res.json();
+                
                 if (data) {
-                    db.products = data.products.length ? data.products : db.products;
-                    db.staff = data.staff.length ? data.staff : db.staff;
-                    db.branches = data.branches.length ? data.branches : db.branches;
-                    db.attendance = data.attendance.length ? data.attendance : db.attendance;
-                    db.leaves = data.leaves.length ? data.leaves : db.leaves;
-                    
-                    if (data.logs && data.logs.length) {
-                        db.logs = data.logs;
+                    // ກວດສອບຄວາມຖືກຕ້ອງຂອງຂໍ້ມູນທີ່ດຶງມາໄດ້
+                    if (!data.products || data.products.length === 0) {
+                        throw new Error("ດຶງຂໍ້ມູນສຳເລັດແຕ່ບໍ່ພົບແຖວຂໍ້ມູນໃນ Tab 'Main inventory'. ກະລຸນາກວດສອບຊື່ຫົວຖັນ.");
                     }
-                    updateConnectionBadge("connected");
+                    
+                    db.products = data.products;
+                    db.staff = data.staff && data.staff.length ? data.staff : backupMockDB.staff;
+                    db.attendance = data.attendance || [];
+                    db.logs = data.logs || [];
+                    
+                    addLogConsole(`ດຶງຂໍ້ມູນສຳເລັດ!`);
+                    addLogConsole(`• ຈຳນວນສິນຄ້າ: ${db.products.length} ລາຍການ`);
+                    addLogConsole(`• ຈຳນວນພະນັກງານ: ${db.staff.length} ຄົນ`);
+                    
+                    badge.innerText = "Sheets Sync Connected (Online)";
+                    badge.parentElement.classList.remove('text-neutral-400', 'text-rose-400');
+                    badge.parentElement.classList.add('text-emerald-400');
+                    renderAllViews();
+                    return true;
                 }
-                renderAllViews();
             } catch (err) {
                 console.error("ລົ້ມເຫຼວໃນການເຊື່ອມຕໍ່ Google Sheets:", err);
-                updateConnectionBadge("error", err.message);
-                renderAllViews();
+                addLogConsole(`Error: ${err.message}`);
+                useBackupMockData(`Connection Error: ລະບົບປ່ຽນມາໃຊ້ຂໍ້ມູນສຳຮອງ`);
+                return false;
             }
+        }
+
+        function useBackupMockData(reason) {
+            db.products = backupMockDB.products;
+            db.staff = backupMockDB.staff;
+            db.branches = backupMockDB.branches;
+            
+            const badge = document.getElementById('sync-badge-text');
+            badge.innerText = reason;
+            badge.parentElement.classList.remove('text-emerald-400');
+            badge.parentElement.classList.add('text-rose-400');
+            renderAllViews();
         }
 
         // ຟັງຊັນສຳລັບສົ່ງຂໍ້ມູນໄປບັນທຶກໃນ Google Sheet (POST)
         async function postToGoogleSheet(payload) {
-            if (GOOGLE_SHEET_API_URL === "" || !GOOGLE_SHEET_API_URL.startsWith("https://")) return true;
+            if (GOOGLE_SHEET_API_URL === "") return true;
             try {
-                const response = await fetch(GOOGLE_SHEET_API_URL, {
+                addLogConsole(`ກຳລັງສົ່ງຂໍ້ມູນທຸລະກຳລົງ Sheet...`);
+                await fetch(GOOGLE_SHEET_API_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "text/plain" }, // ຫຼີກເວັ້ນ CORS preflight issues
+                    headers: { "Content-Type": "text/plain" },
                     body: JSON.stringify(payload)
                 });
+                addLogConsole(`ບັນທຶກລົງ Sheet ສຳເລັດ!`);
                 return true;
             } catch (err) {
-                console.error("ບໍ່ສາມາດສົ່ງຂໍ້ມູນຫາ Google Sheet ໄດ້:", err);
+                addLogConsole(`ສົ່ງຂໍ້ມູນຫຼົ້ມເຫຼວ: ${err.message}`);
                 return false;
             }
         }
@@ -763,7 +823,7 @@
                 updateSessionUI();
                 alert(`ຍິນດີຕ້ອນຮັບ, ປົດລັອກເຊດຊັນສຳລັບ: ${staffMember.name}`);
             } else {
-                alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ ຫຼື ພະນັກງານບໍ່ມີສິດນຳໃຊ້");
+                alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ");
             }
         }
 
@@ -880,7 +940,6 @@
             document.getElementById('payroll-period-title').innerText = selectedMonth;
         }
 
-        // ຟັງຊັນສຳລັບການແປງວັນທີ-ເວລາໃຫ້ຮອງຮັບທຸກບຣາວເຊີ (Cross-browser compatible date parser)
         function parseTimestamp(tsStr) {
             if (!tsStr) return new Date();
             return new Date(tsStr.replace(" ", "T"));
@@ -898,7 +957,6 @@
             document.getElementById('pin-display').value = "";
         }
 
-        // ຄຳນວນການມາຊ້າ ແລະ ໄລຍະເວລາການເຮັດວຽກ
         async function submitClock() {
             if (pinBuffer.length < 6) {
                 alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ");
@@ -913,15 +971,12 @@
             
             const now = new Date();
             const nowStr = now.toISOString().replace('T', ' ').substring(0, 16);
-            
-            // ກວດສອບປະຫວັດການປ້ຳໂມງຫຼ້າສຸດຂອງພະນັກງານ
             const lastLog = db.attendance.filter(a => a.pin === pinBuffer).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
             let detailsMsg = "";
 
             if (actionType === "Clock-In") {
-                // ກວດສອບກະເຮັດວຽກ
                 let shiftStartHour = 7;
                 let shiftStartMin = 0;
                 let shiftName = "ກະ 1 (07:00)";
@@ -942,11 +997,9 @@
                     detailsMsg = `ເຂົ້າວຽກ: ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')} (${shiftName}) <br><span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ກົງເວລາ</span>`;
                 }
             } else {
-                // ຄຳນວນໄລຍະເວລາການເຮັດວຽກຕົວຈິງ
                 const inTime = parseTimestamp(lastLog.timestamp);
                 const durationMs = now - inTime;
                 
-                // ປ້ອງກັນການຄຳນວນຜິດພາດກໍລະນີເວລາລະບົບມີບັນຫາ
                 const totalHours = Math.max(0, Math.floor(durationMs / (1000 * 60 * 60)));
                 const totalMinutes = Math.max(0, Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)));
 
@@ -974,19 +1027,6 @@
             
             clearPin();
             renderAllViews();
-        }
-
-        // Master Renders
-        function renderAllViews() {
-            renderHighFreqTrackers();
-            renderStockTable();
-            renderDailyLogs();
-            renderQuickAdjustments();
-            renderManualRecordDropdowns();
-            renderHRMDashboard();
-            renderStaffTable();
-            renderBranchDropdowns();
-            renderPayroll();
         }
 
         function renderHighFreqTrackers() {
@@ -1024,21 +1064,14 @@
                         <td class="p-3 font-mono text-xs font-bold text-neutral-400">${item.sku}</td>
                         <td class="p-3 font-semibold text-neutral-200">${item.name}</td>
                         <td class="p-3 text-neutral-400">${item.category}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.frequency === "High" ? 'bg-[#FF4D00]/10 text-[#FF4D00]' : 'bg-neutral-900 text-neutral-500'}">
-                                ${item.frequency === "High" ? 'ເຄື່ອນໄຫວຖີ່' : 'ເຄື່ອນໄຫວບໍ່ຖີ່'}
+                        <td class="p-3 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-[9px] font-bold ${item.stock < 1 ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                ${item.stock < 1 ? 'ສັ່ງດ່ວນ' : 'OK'}
                             </span>
                         </td>
                         <td class="p-3 text-right font-mono font-bold text-white">${item.stock}</td>
                     </tr>
                 `;
-            });
-        }
-
-        function filterStockTable() {
-            const search = document.getElementById('stock-search').value.toLowerCase();
-            document.querySelectorAll('#stock-table-body tr').forEach(row => {
-                row.classList.toggle('hidden', !row.innerText.toLowerCase().includes(search));
             });
         }
 
@@ -1049,17 +1082,15 @@
                 const isOut = log.type === "OUT";
                 tbody.innerHTML += `
                     <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 text-neutral-500 font-mono">${log.timestamp}</td>
-                        <td class="p-3 font-mono text-neutral-400 font-bold">${log.sku}</td>
-                        <td class="p-3 text-neutral-300">${log.name}</td>
+                        <td class="p-3 text-neutral-500 font-mono">${log.timestamp || ""}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${log.name || ""}</td>
                         <td class="p-3">
                             <span class="px-2 py-0.5 rounded text-[9px] font-bold ${isOut ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
-                                ${log.type}
+                                ${log.type || ""}
                             </span>
                         </td>
-                        <td class="p-3 font-mono font-bold text-white">${log.qty}</td>
-                        <td class="p-3 text-neutral-400">${log.note}</td>
-                        <td class="p-3 font-bold text-[#FF4D00]">${log.user}</td>
+                        <td class="p-3 font-mono font-bold text-white">${log.qty || ""}</td>
+                        <td class="p-3 text-neutral-400">${log.note || ""}</td>
                     </tr>
                 `;
             });
@@ -1087,32 +1118,6 @@
             });
         }
 
-        function changeQuickVal(sku, amt) {
-            if (!quickStockChanges[sku]) quickStockChanges[sku] = 0;
-            quickStockChanges[sku] += amt;
-            renderQuickAdjustments();
-            updateQuickText();
-        }
-
-        function updateQuickText() {
-            let changes = [];
-            for (let sku in quickStockChanges) {
-                if (quickStockChanges[sku] !== 0) {
-                    const sym = quickStockChanges[sku] > 0 ? "+" : "";
-                    changes.push(`${sku} (${sym}${quickStockChanges[sku]})`);
-                }
-            }
-            const el = document.getElementById('quick-summary-text');
-            if (changes.length > 0) {
-                el.innerText = changes.join(', ');
-                el.classList.add('text-[#FF4D00]');
-            } else {
-                el.innerText = "ບໍ່ມີການປ່ຽນແປງ";
-                el.classList.remove('text-[#FF4D00]');
-            }
-        }
-
-        // Quick adjust using Active Session instead of requesting PIN every time
         async function submitQuickInventory() {
             if (!activeOperator) {
                 alert("ກະລຸນາປົດລັອກເຊດຊັນກ່ອນບັນທຶກສະຕ໊ອກ");
@@ -1126,7 +1131,7 @@
                 if (amt !== 0) {
                     const prod = db.products.find(p => p.sku === sku);
                     if (prod) {
-                        prod.stock += amt;
+                        prod.stock = amt > 0 ? prod.stock + amt : prod.stock + amt;
                         const logPayload = {
                             action: "addInventoryLog",
                             timestamp: now,
@@ -1134,8 +1139,7 @@
                             name: prod.name,
                             type: amt > 0 ? "IN" : "OUT",
                             qty: Math.abs(amt),
-                            note: "Quick Adjustment",
-                            user: `${activeOperator.name} (${activeOperator.pin})`
+                            note: "Quick Adjustment"
                         };
                         db.logs.push(logPayload);
                         await postToGoogleSheet(logPayload);
@@ -1165,7 +1169,6 @@
             document.getElementById('manual-remark-desc-container').classList.toggle('hidden', val !== 'others');
         }
 
-        // Manual record using Active Session
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) {
@@ -1185,7 +1188,6 @@
                     alert("ສິນຄ້າໃນຄັງບໍ່ພຽງພໍ");
                     return;
                 }
-                prod.stock = type === "IN" ? prod.stock + qty : prod.stock - qty;
                 
                 const logPayload = {
                     action: "addInventoryLog",
@@ -1194,8 +1196,7 @@
                     name: prod.name,
                     type: type,
                     qty: qty,
-                    note: remark,
-                    user: `${activeOperator.name} (${activeOperator.pin})`
+                    note: remark
                 };
 
                 db.logs.push(logPayload);
@@ -1232,14 +1233,12 @@
                 pin: pin,
                 name: staffMember.name,
                 type: type,
-                dates: `${start} 配合 ${end}`,
+                dates: `${start} ຫາ ${end}`,
                 reason: reason,
                 status: "Pending"
             };
 
-            db.leaves.push(leavePayload);
             await postToGoogleSheet(leavePayload);
-
             alert("ສົ່ງໃບລາວຽກແລ້ວ");
             e.target.reset();
             renderAllViews();
@@ -1249,7 +1248,7 @@
             document.getElementById('stat-active-staff').innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
             document.getElementById('stat-branches').innerText = db.branches.length;
             document.getElementById('stat-inventory-logs').innerText = db.logs.length;
-            document.getElementById('stat-pending-leaves').innerText = db.leaves.filter(l => l.status === "Pending").length;
+            document.getElementById('stat-pending-leaves').innerText = "0";
 
             const attBody = document.getElementById('hrm-attendance-body');
             attBody.innerHTML = "";
@@ -1269,34 +1268,6 @@
                     </tr>
                 `;
             });
-
-            const leaveBody = document.getElementById('hrm-leaves-body');
-            leaveBody.innerHTML = "";
-            db.leaves.forEach((lv, index) => {
-                leaveBody.innerHTML += `
-                    <tr class="hover:bg-neutral-950/40">
-                        <td class="p-3 font-semibold text-neutral-200">${lv.name} (${lv.pin})</td>
-                        <td class="p-3 text-neutral-400">${lv.type}</td>
-                        <td class="p-3 text-neutral-500 font-mono">${lv.dates}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${lv.status === 'Approved' ? 'bg-emerald-950 text-emerald-300' : lv.status === 'Rejected' ? 'bg-rose-950 text-rose-300' : 'bg-neutral-900 text-neutral-400'}">
-                                ${lv.status}
-                            </span>
-                        </td>
-                        <td class="p-3 text-right space-x-1">
-                            ${lv.status === 'Pending' ? `
-                                <button onclick="approveLeave(${index}, true)" class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 hover:bg-emerald-900 rounded text-[10px]">ອະນຸມັດ</button>
-                                <button onclick="approveLeave(${index}, false)" class="px-1.5 py-0.5 bg-rose-950 text-rose-300 hover:bg-rose-900 rounded text-[10px]">ປະຕິເສດ</button>
-                            ` : '-'}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function approveLeave(index, approve) {
-            db.leaves[index].status = approve ? "Approved" : "Rejected";
-            renderAllViews();
         }
 
         function renderStaffTable() {
