@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Multi-Branch System</title>
+    <title>La Dolce Portal - Live Supabase System</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -88,7 +88,6 @@
                         </span>
                     </div>
                 </div>
-                <!-- ACTIVE BRANCH DISPLAY WITH EDIT BUTTON -->
                 <div class="mt-3 p-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-xl flex items-center justify-between">
                     <span class="text-[10px] text-neutral-400 font-bold uppercase">ສາຂາ:</span>
                     <div class="flex items-center space-x-1.5">
@@ -142,7 +141,7 @@
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງກວດສອບ...</span>
+                        <span id="sync-badge-text">ກຳລັງເຊື່ອມຕໍ່ Supabase...</span>
                     </div>
                 </div>
             </div>
@@ -756,9 +755,9 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        // --- SMART BRANCH NAME ALIAS RESOLVER (Pulls legacy items into "ສາຂານ້ຳພຸ") ---
+        // --- SMART LEGACY BRANCH RESOLVER (ALIASED TO "ສາຂານ້ຳພຸ") ---
         function normalizeBranchName(b) {
-            if (!b || b === "ສາຂາ 1" || b === "ສາຂາ ວຽງຈັນ" || b === "undefined" || b === "null") {
+            if (!b || b === "ສາຂາ 1" || b === "ສາຂາ ວຽງຈັນ" || b === "undefined" || b === "null" || b === "") {
                 return "ສາຂານ້ຳພຸ";
             }
             return b.toString().trim();
@@ -781,19 +780,6 @@
 
         const laoMonths = ["ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ", "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"];
 
-        const DEFAULT_MASTER_CATALOG = [
-            { sku: "P001", name: "ຜົງໂກ້ໂກ້ (Cocoa Powder)", category: "ວັດຖຸດິບ" },
-            { sku: "P002", name: "ບ໊ອບຕຸກ (Boba Pearls)", category: "ວັດຖຸດິບ" },
-            { sku: "P003", name: "ເມັດກາເຟ (Coffee Beans)", category: "ວັດຖຸດິບ" },
-            { sku: "P004", name: "ນົມຂົ້ນ (Condensed Milk)", category: "ວັດຖຸດິບ" },
-            { sku: "P005", name: "ນົມສົດ (Fresh Milk)", category: "ວັດຖຸດິບ" },
-            { sku: "P006", name: "ຊາຂຽວ (Green Tea)", category: "ວັດຖຸດິບ" },
-            { sku: "P007", name: "ຊາໄທ (Thai Tea)", category: "ວັດຖຸດິບ" },
-            { sku: "P008", name: "ແກ້ວ 16oz (Cups 16oz)", category: "ອຸປະກອນ" },
-            { sku: "P009", name: "ຝາແກ້ວ (Lids)", category: "ອຸປະກອນ" },
-            { sku: "P010", name: "ຫຼອດ (Straws)", category: "ອຸປະກອນ" }
-        ];
-
         let db = {
             products: [],
             staff: [],
@@ -802,6 +788,36 @@
             logs: [],
             leaves: []
         };
+
+        // --- DYNAMIC FIELD NORMALIZERS FOR SUPABASE ---
+        function normalizeProduct(p) {
+            return {
+                id: p.id,
+                sku: p.sku || p.SKU || p.id || "",
+                name: p.name || p.Name || p.item || p.title || "ບໍ່ມີຊື່",
+                category: p.category || p.Category || "ວັດຖຸດິບ",
+                stock: Number(p.stock !== undefined ? p.stock : (p.Current_Stock || p.qty || 0)),
+                branch: normalizeBranchName(p.branch)
+            };
+        }
+
+        function normalizeStaff(s) {
+            return {
+                id: s.id,
+                pin: (s.pin || "").toString(),
+                staff_id: s.staff_id || "",
+                name: s.name || "ບໍ່ມີຊື່",
+                phone: s.phone || "",
+                dob: s.dob || "",
+                photo_url: s.photo_url || "",
+                emp_type: s.emp_type || "Full-time",
+                shift: s.shift || "ກະ 1",
+                branch: normalizeBranchName(s.branch),
+                active: s.active !== false,
+                salary: Number(s.salary || 3500000),
+                benefit: Number(s.benefit || 400000)
+            };
+        }
 
         function promptEditBranchName() {
             const newName = prompt(`ແກ້ໄຂຊື່ສາຂາປັດຈຸບັນ ("${currentBranch}"):`, currentBranch);
@@ -1122,7 +1138,7 @@
 
         function getBranchProducts() {
             let filtered = db.products.filter(p => normalizeBranchName(p.branch) === currentBranch);
-            // Fallback: If "ສາຂານ້ຳພຸ" returns empty, return all products
+            // Fallback: If "ສາຂານ້ຳພຸ" returns empty, show all items from db.products so screen is never blank
             if (filtered.length === 0 && currentBranch === "ສາຂານ້ຳພຸ") {
                 return db.products;
             }
@@ -1162,7 +1178,6 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
-        // --- HIGH FREQUENCY TRACKERS (DYNAMIC GREEN / ORANGE) ---
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1560,8 +1575,6 @@
             db.branches.push(bName);
 
             let sourceProducts = db.products.filter(p => normalizeBranchName(p.branch) === "ສາຂານ້ຳພຸ");
-            if (sourceProducts.length === 0) sourceProducts = DEFAULT_MASTER_CATALOG;
-
             const masterProductsMap = new Map();
             sourceProducts.forEach(p => { if (!masterProductsMap.has(p.sku)) masterProductsMap.set(p.sku, p); });
 
@@ -1814,7 +1827,7 @@
             e.target.reset();
         }
 
-        // --- SAFE SUPABASE INITIALIZATION & ALIAS MAPPING ---
+        // --- DIRECT SUPABASE FETCH ENGINE WITH SMART NORMALIZER ---
         let supabaseClient = null;
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
@@ -1838,27 +1851,16 @@
                     const [prodRes, staffRes, attRes, logRes, leaveRes] = await Promise.all([
                         supabaseClient.from('main_inventory').select('*'),
                         supabaseClient.from('staff').select('*'),
-                        supabaseClient.from('attendance').select('*').limit(50),
-                        supabaseClient.from('daily_inventory_movement').select('*').limit(50),
-                        supabaseClient.from('leaves').select('*').limit(50)
+                        supabaseClient.from('attendance').select('*').limit(100),
+                        supabaseClient.from('daily_inventory_movement').select('*').limit(100),
+                        supabaseClient.from('leaves').select('*').limit(100)
                     ]);
 
                     if (prodRes.data && prodRes.data.length > 0) {
-                        // AUTO-MAP ALL LEGACY ITEMS TO "ສາຂານ້ຳພຸ"
-                        db.products = prodRes.data.map(p => ({
-                            ...p,
-                            branch: normalizeBranchName(p.branch)
-                        }));
-                    } else {
-                        db.products = DEFAULT_MASTER_CATALOG.map(p => ({ ...p, stock: 0, branch: "ສາຂານ້ຳພຸ" }));
-                        await supabaseClient.from('main_inventory').insert(db.products);
+                        db.products = prodRes.data.map(normalizeProduct);
                     }
-
                     if (staffRes.data && staffRes.data.length > 0) {
-                        db.staff = staffRes.data.map(s => ({
-                            ...s,
-                            branch: normalizeBranchName(s.branch)
-                        }));
+                        db.staff = staffRes.data.map(normalizeStaff);
                     }
                     if (attRes.data) db.attendance = attRes.data.map(a => ({ ...a, branch: normalizeBranchName(a.branch) }));
                     if (logRes.data) db.logs = logRes.data.map(l => ({ ...l, branch: normalizeBranchName(l.branch) }));
@@ -1867,17 +1869,14 @@
                     const extractedBranches = Array.from(new Set(db.products.map(p => p.branch).concat(db.staff.map(s => s.branch)).filter(Boolean)));
                     if (extractedBranches.length) db.branches = extractedBranches;
 
-                    if (badgeText) badgeText.innerText = "Supabase Live Connected";
+                    if (badgeText) badgeText.innerText = `Supabase ຂໍ້ມູນຈິງ: ${db.products.length} ສິນຄ້າ, ${db.staff.length} ພະນັກງານ`;
                     if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
 
                     localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
                 } catch(e) {
                     console.error("Error loading live Supabase data:", e);
-                    if (badgeText) badgeText.innerText = "Supabase Offline (Cache)";
-                }
-            } else {
-                if (db.products.length === 0) {
-                    db.products = DEFAULT_MASTER_CATALOG.map(p => ({ ...p, stock: 0, branch: "ສາຂານ້ຳພຸ" }));
+                    if (badgeText) badgeText.innerText = "Supabase Error: " + e.message;
+                    if (connDot) connDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
                 }
             }
 
