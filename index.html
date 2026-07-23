@@ -55,6 +55,10 @@
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
+        /* SMOOTH MODAL TRANSITION ANIMATION */
+        .modal-animate {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
@@ -85,10 +89,13 @@
                         </span>
                     </div>
                 </div>
-                <!-- ACTIVE BRANCH BADGE DISPLAY -->
+                <!-- ACTIVE BRANCH DISPLAY WITH EDIT BUTTON -->
                 <div class="mt-3 p-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-xl flex items-center justify-between">
-                    <span class="text-[10px] text-neutral-400 font-bold uppercase">ສາຂາປັດຈຸບັນ:</span>
-                    <span id="active-branch-indicator" class="text-xs font-extrabold text-[#FF4D00]">ສາຂາ 1</span>
+                    <span class="text-[10px] text-neutral-400 font-bold uppercase">ສາຂາ:</span>
+                    <div class="flex items-center space-x-1.5">
+                        <span id="active-branch-indicator" class="text-xs font-extrabold text-[#FF4D00]">ສາຂານ້ຳພຸ</span>
+                        <button onclick="promptEditBranchName()" class="text-[10px] text-neutral-500 hover:text-white" title="ແກ້ໄຂຊື່ສາຂາ"><i class="fa-solid fa-[#FF4D00] fa-pen"></i></button>
+                    </div>
                 </div>
             </div>
 
@@ -136,7 +143,7 @@
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງກວດສອບ Supabase...</span>
+                        <span id="sync-badge-text">ກຳລັງກວດສອບ...</span>
                     </div>
                 </div>
             </div>
@@ -179,7 +186,7 @@
                 </div>
             </div>
 
-            <!-- HIGH FREQUENCY TRACKERS (BIG NUMBERS) -->
+            <!-- HIGH FREQUENCY TRACKERS (DYNAMIC COLOR BADGES) -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -187,17 +194,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CURRENT INVENTORY STOCK (BRANCH ISOLATED CARDS) -->
+            <!-- CURRENT INVENTORY STOCK (COMPACT CARDS + CATEGORY TABS) -->
             <div class="glass-panel p-6 rounded-2xl space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-900 pb-4">
                     <div>
-                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (<span id="stock-branch-header-title" class="text-[#FF4D00]">ສາຂາ 1</span>)</h2>
+                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (<span id="stock-branch-header-title" class="text-[#FF4D00]">ສາຂານ້ຳພຸ</span>)</h2>
                         <p class="text-[10px] text-neutral-500 mt-0.5">ເລືອກໝວດໝູ່ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອເບິ່ງຍອດຄົງເຫຼືອ</p>
                     </div>
                     <input type="text" id="stock-search" oninput="renderStockCategoryGrid()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <!-- CATEGORY FILTER BUTTONS -->
+                <!-- CATEGORY FILTER TABS -->
                 <div id="stock-category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"></div>
 
                 <!-- CARDS GRID VIEW -->
@@ -228,7 +235,7 @@
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ປະຈຳ <span class="text-[#FF4D00] font-bold" id="action-branch-title">ສາຂາ 1</span></p>
+                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ປະຈຳ <span class="text-[#FF4D00] font-bold" id="action-branch-title">ສາຂານ້ຳພຸ</span></p>
             </div>
 
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -306,7 +313,7 @@
         <section id="tab-attendance" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ປະຈຳ <span class="text-[#FF4D00] font-bold" id="attendance-branch-title">ສາຂາ 1</span></p>
+                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ປະຈຳ <span class="text-[#FF4D00] font-bold" id="attendance-branch-title">ສາຂານ້ຳພຸ</span></p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -446,25 +453,28 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- BRANCH ACTIVATION & QR GENERATOR CARD -->
-                <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <!-- COMPACT BRANCH ACTIVATION CARD -->
+                <div class="glass-panel p-5 rounded-2xl space-y-4">
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-store text-[#FF4D00] mr-2"></i>ເປີດນຳໃຊ້ສາຂາໃໝ່ (Activate Branch)</h2>
-                    <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
+                    <form onsubmit="handleBranchSubmit(event)" class="space-y-3 text-xs">
                         <div>
                             <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາໃໝ່</label>
                             <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ເຊັ່ນ: ສາຂາ 2 (ຫຼວງພະບາງ)">
                         </div>
-                        <button type="submit" class="w-full py-2.5 bg-[#FF4D00] text-white font-bold rounded-xl active:scale-95 transition-all">
-                            + Active ສາຂານີ້ (Reset Stock = 0)
+                        <button type="submit" class="w-full py-2 bg-[#FF4D00] text-white font-bold rounded-xl active:scale-95 transition-all text-xs">
+                            + Active ສາຂານີ້
                         </button>
                     </form>
 
-                    <!-- QR OUTPUT CONTAINER -->
-                    <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-3 bg-neutral-950/80">
-                        <span id="qr-branch-title" class="text-xs font-black text-[#FF4D00]"></span>
-                        <div id="qr-image-container" class="w-36 h-36 flex items-center justify-center border border-neutral-800 rounded-xl bg-white p-2"></div>
-                        <p class="text-[10px] text-neutral-400 text-center">ສະແກນ QR ຫຼື ໃຊ້ Link ນີ້ເພື່ອກົດເຂົ້າສາຂາ:</p>
-                        <a id="qr-link-url" href="#" target="_blank" class="text-[9px] text-[#FF4D00] underline font-mono break-all text-center"></a>
+                    <!-- COMPACT QR TRIGGER BUTTON -->
+                    <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-xl p-3 bg-neutral-950 flex justify-between items-center">
+                        <div>
+                            <span id="qr-branch-title" class="text-xs font-black text-[#FF4D00] block"></span>
+                            <span class="text-[9px] text-neutral-500">Duplicate Stock = 0 ແລ້ວ</span>
+                        </div>
+                        <button onclick="openBranchQRModal()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-[#FF4D00] font-bold text-xs rounded-lg transition-all">
+                            📱 ເບິ່ງ QR Code
+                        </button>
                     </div>
                 </div>
 
@@ -527,11 +537,11 @@
                         <thead class="bg-neutral-900 text-neutral-400 uppercase">
                             <tr>
                                 <th class="p-3">ພະນັກງານ (PIN)</th>
-                                <th class="p-3 text-center">ວັນເຮັດວຽກ</th>
+                                <th class="p-3 text-center">ວັນມາວຽກຕົວຈິງ</th>
                                 <th class="p-3 text-center">ຊົ່ວໂມງ OT</th>
                                 <th class="p-3 text-right">ເງິນເດືອນພື້ນຖານ (LAK)</th>
                                 <th class="p-3 text-right">ສະຫວັດດິການ (LAK)</th>
-                                <th class="p-3 text-right text-white">ລາຍຮັບລວມທັງໝົດ (LAK)</th>
+                                <th class="p-3 text-right text-white">ລາຍຮັບລວມຄຳນວນໄດ້ (LAK)</th>
                             </tr>
                         </thead>
                         <tbody id="payroll-table-body" class="divide-y divide-neutral-900"></tbody>
@@ -552,6 +562,36 @@
         </section>
 
     </main>
+
+    <!-- MODAL STAFF DETAIL PROFILE (SMOOTH OVERLAY CARD) -->
+    <div id="modal-staff-detail" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-3xl max-w-lg w-full space-y-6 border border-neutral-800 modal-animate scale-95 opacity-0" id="staff-detail-popup">
+            <div class="flex justify-between items-start border-b border-neutral-800 pb-4">
+                <h3 class="text-xs font-black uppercase text-[#FF4D00] tracking-wider"><i class="fa-solid fa-id-card mr-2"></i>ໂປຣໄຟລ໌ ແລະ ປະຫວັດພະນັກງານ</h3>
+                <button onclick="closeStaffDetailModal()" class="text-neutral-500 hover:text-white text-base font-bold">&times;</button>
+            </div>
+            
+            <div id="staff-detail-card-body" class="text-center space-y-4"></div>
+
+            <div class="border-t border-neutral-900 pt-4">
+                <h4 class="font-bold text-[10px] text-neutral-500 uppercase tracking-widest mb-2 text-left">ປະຫວັດການລາພັກສ່ວນຕົວ</h4>
+                <div id="staff-leave-history-list" class="space-y-1.5 max-h-36 overflow-y-auto text-[11px] text-neutral-400 text-left"></div>
+            </div>
+
+            <button onclick="closeStaffDetailModal()" class="w-full py-2 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 font-bold rounded-xl text-xs">ປິດໜ້າຈໍ</button>
+        </div>
+    </div>
+
+    <!-- MODAL BRANCH QR CODE POPUP -->
+    <div id="modal-branch-qr" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-3xl max-w-sm w-full space-y-4 text-center border border-neutral-800">
+            <h3 id="pop-qr-title" class="text-sm font-black text-[#FF4D00]"></h3>
+            <div id="pop-qr-image" class="w-48 h-48 bg-white p-3 rounded-2xl mx-auto flex items-center justify-center"></div>
+            <p class="text-[10px] text-neutral-400">ສະແກນ QR Code ນີ້ເພື່ອເຂົ້າໃຊ້ງານສາຂານີ້ໂດຍກົງ:</p>
+            <a id="pop-qr-link" href="#" target="_blank" class="text-[9px] text-[#FF4D00] underline font-mono break-all block"></a>
+            <button onclick="closeBranchQRModal()" class="w-full py-2 bg-neutral-900 text-neutral-300 text-xs font-bold rounded-xl">ປິດ</button>
+        </div>
+    </div>
 
     <!-- MODAL ADD STAFF -->
     <div id="modal-add-staff" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -720,13 +760,11 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        // --- MULTI-BRANCH AUTO-DETECTOR FROM URL PARAMETERS ---
-        let currentBranch = "ສາຂາ ນ້ຳພຸ";
+        // DEFAULT BRANCH SET TO "ສາຂານ້ຳພຸ"
+        let currentBranch = "ສາຂານ້ຳພຸ";
         const urlParams = new URLSearchParams(window.location.search);
         const urlBranch = urlParams.get('branch');
-        if (urlBranch) {
-            currentBranch = decodeURIComponent(urlBranch);
-        }
+        if (urlBranch) { currentBranch = decodeURIComponent(urlBranch); }
 
         let isHRMMode = false;
         let activeOperator = null;
@@ -736,17 +774,49 @@
         let addPhotoBase64 = "";
         let editPhotoBase64 = "";
         let activeCategoryFilter = "ທັງໝົດ";
+        let activeBranchQRUrl = "";
 
         const laoMonths = ["ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ", "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"];
+
+        const DEFAULT_MASTER_CATALOG = [
+            { sku: "P001", name: "ຜົງໂກ້ໂກ້ (Cocoa Powder)", category: "ວັດຖຸດິບ" },
+            { sku: "P002", name: "ບ໊ອບຕຸກ (Boba Pearls)", category: "ວັດຖຸດິບ" },
+            { sku: "P003", name: "ເມັດກາເຟ (Coffee Beans)", category: "ວັດຖຸດິບ" },
+            { sku: "P004", name: "ນົມຂົ້ນ (Condensed Milk)", category: "ວັດຖຸດິບ" },
+            { sku: "P005", name: "ນົມສົດ (Fresh Milk)", category: "ວັດຖຸດິບ" },
+            { sku: "P006", name: "ຊາຂຽວ (Green Tea)", category: "ວັດຖຸດິບ" },
+            { sku: "P007", name: "ຊາໄທ (Thai Tea)", category: "ວັດຖຸດິບ" },
+            { sku: "P008", name: "ແກ້ວ 16oz (Cups 16oz)", category: "ອຸປະກອນ" },
+            { sku: "P009", name: "ຝາແກ້ວ (Lids)", category: "ອຸປະກອນ" },
+            { sku: "P010", name: "ຫຼອດ (Straws)", category: "ອຸປະກອນ" }
+        ];
 
         let db = {
             products: [],
             staff: [],
-            branches: ["ສາຂາ ນ້ຳພຸ"],
+            branches: ["ສາຂານ້ຳພຸ"],
             attendance: [],
             logs: [],
             leaves: []
         };
+
+        // --- EDIT BRANCH NAME CAPABILITY ---
+        function promptEditBranchName() {
+            const newName = prompt(`ແກ້ໄຂຊື່ສາຂາປັດຈຸບັນ ("${currentBranch}"):`, currentBranch);
+            if (newName && newName.trim() !== "" && newName !== currentBranch) {
+                const oldName = currentBranch;
+                currentBranch = newName.trim();
+
+                // Update Local Array
+                db.products.forEach(p => { if (p.branch === oldName) p.branch = currentBranch; });
+                db.staff.forEach(s => { if (s.branch === oldName) s.branch = currentBranch; });
+                db.branches = db.branches.map(b => b === oldName ? currentBranch : b);
+
+                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
+                renderAllViews();
+                alert(`✅ ປ່ຽນຊື່ສາຂາເປັນ "${currentBranch}" ຮຽບຮ້ອຍແລ້ວ!`);
+            }
+        }
 
         // --- IMAGE COMPRESSOR FUNCTION ---
         function compressAndResizeImage(file, callback) {
@@ -1035,7 +1105,7 @@
             }
         }
 
-        // --- RENDER ENGINE (STRICT BRANCH ISOLATION) ---
+        // --- RENDER ENGINE ---
         function renderAllViews() {
             try {
                 updateBranchIndicators();
@@ -1053,7 +1123,6 @@
         }
 
         function getBranchProducts() {
-            // Strictly filter by currentBranch
             return db.products.filter(p => p.branch === currentBranch);
         }
 
@@ -1090,6 +1159,7 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
+        // --- HIGH FREQUENCY TRACKERS (DYNAMIC GREEN / ORANGE COLORS) ---
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1097,7 +1167,11 @@
             let html = "";
 
             getBranchProducts().filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
+                const isOk = item.stock > 0;
+                const textColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
+                const barColor = isOk ? "bg-emerald-500" : "bg-[#FF4D00]";
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
+
                 html += `
                     <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
                         <div class="space-y-1">
@@ -1109,16 +1183,17 @@
                             <div>
                                 <span class="text-[10px] text-neutral-500 font-bold block mb-1">ຄົງເຫຼືອ:</span>
                                 <div class="w-20 bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                                    <div class="bg-[#FF4D00] h-full" style="width: ${percentage}%"></div>
+                                    <div class="${barColor} h-full" style="width: ${percentage}%"></div>
                                 </div>
                             </div>
-                            <span class="mono-font text-2xl md:text-3xl font-black text-[#FF4D00] tracking-tight">${item.stock}</span>
+                            <span class="mono-font text-2xl md:text-3xl font-black ${textColor} tracking-tight">${item.stock}</span>
                         </div>
                     </div>`;
             });
-            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full py-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch} (ຍອດຄົງເຫຼືອ = 0)</p>`;
+            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full py-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch}</p>`;
         }
 
+        // --- CATEGORY GRID (GREEN IF OK, ORANGE IF LOW) ---
         function filterStockByCategory(cat) {
             activeCategoryFilter = cat;
             renderStockCategoryGrid();
@@ -1154,6 +1229,10 @@
 
             let gridHtml = "";
             filtered.forEach(p => {
+                const isOk = p.stock > 0;
+                const numColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
+                const badgeColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
+                
                 gridHtml += `
                     <div class="glass-card p-3 rounded-xl border border-neutral-800/80 flex flex-col justify-between hover:border-[#FF4D00]">
                         <div>
@@ -1162,13 +1241,13 @@
                             <span class="text-[9px] text-neutral-500 block">${p.category || "-"}</span>
                         </div>
                         <div class="mt-3 pt-2 border-t border-neutral-900 flex justify-between items-baseline">
-                            <span class="text-[9px] font-bold ${p.stock < 1 ? 'text-rose-400' : 'text-emerald-400'}">${p.stock < 1 ? 'ສັ່ງດ່ວນ' : 'OK'}</span>
-                            <span class="mono-font text-base md:text-lg font-black text-[#FF4D00]">${p.stock}</span>
+                            <span class="text-[9px] font-bold ${badgeColor}">${isOk ? 'OK' : 'ສັ່ງດ່ວນ'}</span>
+                            <span class="mono-font text-base md:text-lg font-black ${numColor}">${p.stock}</span>
                         </div>
                     </div>`;
             });
 
-            gridContainer.innerHTML = gridHtml || `<div class="col-span-full py-8 text-center text-xs text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນສິນຄ້າໃນ ${currentBranch} (ກະລຸນາເພີ່ມ ຫຼື ນຳເຂົ້າສະຕ໊ອກ)</div>`;
+            gridContainer.innerHTML = gridHtml || `<div class="col-span-full py-8 text-center text-xs text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນສິນຄ້າໃນ ${currentBranch}</div>`;
         }
 
         function renderDailyLogs() {
@@ -1283,7 +1362,7 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂາ ນ້ຳພຸ"}</td>
+                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂານ້ຳພຸ"}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
@@ -1339,7 +1418,7 @@
                                 <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id || "EMP0000"} | PIN: ${st.pin}</p>
                             </div>
                         </td>
-                        <td class="p-3 text-neutral-400 font-mono">${st.branch || "ສາຂາ ນ້ຳພຸ"}</td>
+                        <td class="p-3 text-neutral-400 font-mono">${st.branch || "ສາຂານ້ຳພຸ"}</td>
                         <td class="p-3 text-center">
                             <span class="px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 text-[10px] font-bold">${st.shift || "ກະ 1"}</span>
                         </td>
@@ -1357,28 +1436,73 @@
             tbody.innerHTML = html;
         }
 
+        // --- SMOOTH POPUP OVERLAY FOR STAFF PROFILE ---
         function viewStaffProfile(pin) {
             if (!pin) return;
             const member = db.staff.find(s => s.pin && s.pin.toString() === pin.toString());
             if (!member) return;
 
-            const detailCard = document.getElementById('staff-detail-card');
+            const cardBody = document.getElementById('staff-detail-card-body');
             const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
 
-            if (detailCard) {
-                detailCard.innerHTML = `
-                    <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
+            if (cardBody) {
+                cardBody.innerHTML = `
+                    <img class="h-24 w-24 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border border-neutral-800" src="${imgUrl}" alt="${member.name}">
                     <div>
-                        <h3 class="font-black text-white text-base">${member.name}</h3>
-                        <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
+                        <h3 class="font-black text-white text-lg">${member.name}</h3>
+                        <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider mt-0.5">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
                         <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id || "EMP0001"} | PIN: ${member.pin}</p>
                     </div>
-                    <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
-                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-300 font-bold">${member.branch || "ສາຂາ ນ້ຳພຸ"}</span></p>
-                        <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
-                        <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
-                        <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
+                    <div class="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 text-left space-y-2 text-xs leading-relaxed">
+                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-200 font-bold">${member.branch || "ສາຂານ້ຳພຸ"}</span></p>
+                        <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-200 font-mono">${member.dob || "-"}</span></p>
+                        <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-200 font-mono">${member.phone || "-"}</span></p>
+                        <p><span class="text-neutral-500">ກະເຮັດວຽກ:</span> <span class="text-neutral-200 font-bold">${member.shift || "ກະ 1"}</span></p>
+                        <p><span class="text-neutral-500">ເງິນເດືອນພື້ນຖານ:</span> <span class="text-emerald-400 font-bold font-mono">${(member.salary || 3500000).toLocaleString()} LAK</span></p>
                     </div>`;
+            }
+
+            const leaveHistoryList = document.getElementById('staff-leave-history-list');
+            const memberLeaves = db.leaves.filter(l => l.pin && l.pin.toString() === pin.toString());
+
+            if (leaveHistoryList) {
+                if (memberLeaves.length > 0) {
+                    let leaveHtml = "";
+                    memberLeaves.slice().reverse().forEach(lv => {
+                        leaveHtml += `
+                            <div class="bg-neutral-950 p-2.5 rounded-xl border border-neutral-900 space-y-1">
+                                <div class="flex justify-between items-center text-[10px] font-bold">
+                                    <span class="text-neutral-300">${lv.type}</span>
+                                    <span class="${lv.status === 'Approved' ? 'text-emerald-400' : 'text-rose-400'}">${lv.status}</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-500 font-mono">${lv.dates}</p>
+                            </div>`;
+                    });
+                    leaveHistoryList.innerHTML = leaveHtml;
+                } else {
+                    leaveHistoryList.innerHTML = `<p class="text-xs text-neutral-500 italic py-2">ບໍ່ມີປະຫວັດການລາວຽກ</p>`;
+                }
+            }
+
+            // Open Modal with Smooth Animation
+            const modal = document.getElementById('modal-staff-detail');
+            const popup = document.getElementById('staff-detail-popup');
+            if (modal && popup) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    popup.classList.remove('scale-95', 'opacity-0');
+                    popup.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+        }
+
+        function closeStaffDetailModal() {
+            const modal = document.getElementById('modal-staff-detail');
+            const popup = document.getElementById('staff-detail-popup');
+            if (modal && popup) {
+                popup.classList.remove('scale-100', 'opacity-100');
+                popup.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 200);
             }
         }
 
@@ -1391,6 +1515,7 @@
             select.innerHTML = html;
         }
 
+        // --- ACCURATE REALTIME PAYROLL (CLOCK-IN DAYS BASED FORMULA) ---
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -1398,25 +1523,35 @@
             let html = "";
             
             db.staff.forEach(st => {
-                const daysWorked = 22;
-                const net = Math.round(((st.salary || 3500000) / 22 * daysWorked) + (st.benefit || 400000));
+                // Calculate actual unique Clock-In days from attendance logs
+                const staffClocks = db.attendance.filter(a => a.pin && a.pin.toString() === st.pin.toString() && a.type === "Clock-In");
+                const daysWorked = new Set(staffClocks.map(c => (c.timestamp || "").split(' ')[0])).size;
+
+                // Base daily rate = Base Salary / 22 days
+                const baseSalary = st.salary || 3500000;
+                const benefit = st.benefit || 400000;
+                const dailyRate = baseSalary / 22;
+                
+                // Earned Salary = Daily Rate * Days Worked
+                const earnedBaseSalary = Math.round(dailyRate * daysWorked);
+                const netTotal = earnedBaseSalary + benefit;
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂາ ນ້ຳພຸ"})</span>
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂານ້ຳພຸ"})</span>
                         </td>
                         <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
                         <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
-                        <td class="p-3 text-right font-mono text-white">${(st.salary || 3500000).toLocaleString()}</td>
-                        <td class="p-3 text-right font-mono text-white">${(st.benefit || 400000).toLocaleString()}</td>
-                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${net.toLocaleString()} LAK</td>
+                        <td class="p-3 text-right font-mono text-neutral-300">${baseSalary.toLocaleString()}</td>
+                        <td class="p-3 text-right font-mono text-neutral-300">${benefit.toLocaleString()}</td>
+                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${netTotal.toLocaleString()} LAK</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         }
 
-        // --- BRANCH CREATION & AUTO STOCK RESET (STOCK = 0) ---
+        // --- BRANCH CREATION & COMPRACT QR MODAL ---
         async function handleBranchSubmit(e) {
             e.preventDefault();
             const bName = document.getElementById('branch-name').value.trim();
@@ -1429,50 +1564,46 @@
 
             db.branches.push(bName);
 
-            // 1. Get Unique Master Product Structure (SKU, Name, Category)
-            const masterProductsMap = new Map();
-            db.products.forEach(p => {
-                if (!masterProductsMap.has(p.sku)) {
-                    masterProductsMap.set(p.sku, p);
-                }
-            });
+            let sourceProducts = db.products.filter(p => p.branch === "ສາຂານ້ຳພຸ");
+            if (sourceProducts.length === 0) sourceProducts = DEFAULT_MASTER_CATALOG;
 
-            // 2. DUPLICATE CATALOG ONLY & RESET STOCKS TO 0 FOR NEW BRANCH
+            const masterProductsMap = new Map();
+            sourceProducts.forEach(p => { if (!masterProductsMap.has(p.sku)) masterProductsMap.set(p.sku, p); });
+
             const newBranchProducts = Array.from(masterProductsMap.values()).map(mp => ({
-                sku: mp.sku,
-                name: mp.name,
-                category: mp.category,
-                stock: 0,      // RESET TO ZERO
-                stock_in: 0,   // RESET TO ZERO
-                stock_out: 0,  // RESET TO ZERO
-                branch: bName
+                sku: mp.sku, name: mp.name, category: mp.category || "ວັດຖຸດິບ", stock: 0, stock_in: 0, stock_out: 0, branch: bName
             }));
 
-            // Append to Local DB Array
             db.products.push(...newBranchProducts);
             localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
 
-            // Sync New Zero-Stock Catalog to Supabase
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('main_inventory').insert(newBranchProducts);
-                if (error) console.error("Error creating branch stock in Supabase:", error);
+                await supabaseClient.from('main_inventory').insert(newBranchProducts);
             }
 
-            // GENERATE BRANCH SPECIFIC URL & REAL QR CODE
             const baseUrl = window.location.origin + window.location.pathname;
-            const branchUrl = `${baseUrl}?branch=${encodeURIComponent(bName)}`;
+            activeBranchQRUrl = `${baseUrl}?branch=${encodeURIComponent(bName)}`;
 
             document.getElementById('qr-branch-title').innerText = bName;
-            document.getElementById('qr-link-url').innerText = branchUrl;
-            document.getElementById('qr-link-url').href = branchUrl;
-            document.getElementById('qr-image-container').innerHTML = `
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(branchUrl)}&color=255-77-0" alt="Branch QR" class="w-full h-full object-contain">
-            `;
             document.getElementById('branch-qr-output').classList.remove('hidden');
 
             renderAllViews();
-            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n\nລະບົບໄດ້ກັອບປີໂຄງສ້າງສິນຄ້າ ພ້ອມຕັ້ງຍອດຄົງເຫຼືອເລີ່ມຕົ້ນເປັນ 0 ທຸກລາຍການຮຽບຮ້ອຍແລ້ວ.`);
+            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ! ຍອດສະຕ໊ອກເລີ່ມຕົ້ນ = 0.`);
             e.target.reset();
+        }
+
+        function openBranchQRModal() {
+            document.getElementById('pop-qr-title').innerText = document.getElementById('qr-branch-title').innerText;
+            document.getElementById('pop-qr-link').innerText = activeBranchQRUrl;
+            document.getElementById('pop-qr-link').href = activeBranchQRUrl;
+            document.getElementById('pop-qr-image').innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(activeBranchQRUrl)}&color=255-77-0" class="w-full h-full object-contain">
+            `;
+            document.getElementById('modal-branch-qr').classList.remove('hidden');
+        }
+
+        function closeBranchQRModal() {
+            document.getElementById('modal-branch-qr').classList.add('hidden');
         }
 
         // --- DIRECT SUPABASE HANDLERS ---
@@ -1689,7 +1820,7 @@
             e.target.reset();
         }
 
-        // --- SAFE SUPABASE INITIALIZATION ---
+        // --- SAFE SUPABASE INITIALIZATION & INITIAL SEEDING ---
         let supabaseClient = null;
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
@@ -1718,12 +1849,16 @@
                         supabaseClient.from('leaves').select('*').limit(50)
                     ]);
 
-                    if (prodRes.data && prodRes.data.length) {
-                        // Default empty branch fields to "ສາຂາ 1" for legacy compatibility
-                        db.products = prodRes.data.map(p => ({ ...p, branch: p.branch || "ສາຂາ 1" }));
+                    if (prodRes.data && prodRes.data.length > 0) {
+                        db.products = prodRes.data.map(p => ({ ...p, branch: p.branch || "ສາຂານ້ຳພຸ" }));
+                    } else {
+                        // AUTO-SEED DEFAULT MASTER CATALOG IF EMPTY
+                        db.products = DEFAULT_MASTER_CATALOG.map(p => ({ ...p, stock: 0, branch: "ສາຂານ້ຳພຸ" }));
+                        await supabaseClient.from('main_inventory').insert(db.products);
                     }
-                    if (staffRes.data && staffRes.data.length) {
-                        db.staff = staffRes.data.map(s => ({ ...s, branch: s.branch || "ສາຂາ 1" }));
+
+                    if (staffRes.data && staffRes.data.length > 0) {
+                        db.staff = staffRes.data.map(s => ({ ...s, branch: s.branch || "ສາຂານ້ຳພຸ" }));
                     }
                     if (attRes.data) db.attendance = attRes.data;
                     if (logRes.data) db.logs = logRes.data;
@@ -1739,6 +1874,10 @@
                 } catch(e) {
                     console.error("Error loading live Supabase data:", e);
                     if (badgeText) badgeText.innerText = "Supabase Offline (Cache)";
+                }
+            } else {
+                if (db.products.length === 0) {
+                    db.products = DEFAULT_MASTER_CATALOG.map(p => ({ ...p, stock: 0, branch: "ສາຂານ້ຳພຸ" }));
                 }
             }
 
