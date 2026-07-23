@@ -721,7 +721,7 @@
     <!-- CORE SCRIPT ENGINE -->
     <script>
         // --- MULTI-BRANCH AUTO-DETECTOR FROM URL PARAMETERS ---
-        let currentBranch = "ສາຂາ 1";
+        let currentBranch = "ສາຂາ ນ້ຳພຸ";
         const urlParams = new URLSearchParams(window.location.search);
         const urlBranch = urlParams.get('branch');
         if (urlBranch) {
@@ -742,7 +742,7 @@
         let db = {
             products: [],
             staff: [],
-            branches: ["ສາຂາ 1"],
+            branches: ["ສາຂາ ນ້ຳພຸ"],
             attendance: [],
             logs: [],
             leaves: []
@@ -1283,7 +1283,7 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂາ 1"}</td>
+                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂາ ນ້ຳພຸ"}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
@@ -1339,7 +1339,7 @@
                                 <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id || "EMP0000"} | PIN: ${st.pin}</p>
                             </div>
                         </td>
-                        <td class="p-3 text-neutral-400 font-mono">${st.branch || "ສາຂາ 1"}</td>
+                        <td class="p-3 text-neutral-400 font-mono">${st.branch || "ສາຂາ ນ້ຳພຸ"}</td>
                         <td class="p-3 text-center">
                             <span class="px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 text-[10px] font-bold">${st.shift || "ກະ 1"}</span>
                         </td>
@@ -1374,7 +1374,7 @@
                         <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id || "EMP0001"} | PIN: ${member.pin}</p>
                     </div>
                     <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
-                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-300 font-bold">${member.branch || "ສາຂາ 1"}</span></p>
+                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-300 font-bold">${member.branch || "ສາຂາ ນ້ຳພຸ"}</span></p>
                         <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
                         <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
                         <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
@@ -1404,7 +1404,7 @@
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂາ 1"})</span>
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂາ ນ້ຳພຸ"})</span>
                         </td>
                         <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
                         <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
