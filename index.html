@@ -55,7 +55,6 @@
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
-        /* SMOOTH MODAL TRANSITION ANIMATION */
         .modal-animate {
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -94,7 +93,7 @@
                     <span class="text-[10px] text-neutral-400 font-bold uppercase">ສາຂາ:</span>
                     <div class="flex items-center space-x-1.5">
                         <span id="active-branch-indicator" class="text-xs font-extrabold text-[#FF4D00]">ສາຂານ້ຳພຸ</span>
-                        <button onclick="promptEditBranchName()" class="text-[10px] text-neutral-500 hover:text-white" title="ແກ້ໄຂຊື່ສາຂາ"><i class="fa-solid fa-[#FF4D00] fa-pen"></i></button>
+                        <button onclick="promptEditBranchName()" class="text-[10px] text-neutral-500 hover:text-white" title="ແກ້ໄຂຊື່ສາຂາ"><i class="fa-solid fa-pen"></i></button>
                     </div>
                 </div>
             </div>
@@ -186,7 +185,7 @@
                 </div>
             </div>
 
-            <!-- HIGH FREQUENCY TRACKERS (DYNAMIC COLOR BADGES) -->
+            <!-- HIGH FREQUENCY TRACKERS -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -194,7 +193,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CURRENT INVENTORY STOCK (COMPACT CARDS + CATEGORY TABS) -->
+            <!-- CURRENT INVENTORY STOCK -->
             <div class="glass-panel p-6 rounded-2xl space-y-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-900 pb-4">
                     <div>
@@ -204,10 +203,8 @@
                     <input type="text" id="stock-search" oninput="renderStockCategoryGrid()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <!-- CATEGORY FILTER TABS -->
                 <div id="stock-category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"></div>
 
-                <!-- CARDS GRID VIEW -->
                 <div id="stock-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[480px] overflow-y-auto pr-1"></div>
             </div>
 
@@ -466,7 +463,6 @@
                         </button>
                     </form>
 
-                    <!-- COMPACT QR TRIGGER BUTTON -->
                     <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-xl p-3 bg-neutral-950 flex justify-between items-center">
                         <div>
                             <span id="qr-branch-title" class="text-xs font-black text-[#FF4D00] block"></span>
@@ -563,7 +559,7 @@
 
     </main>
 
-    <!-- MODAL STAFF DETAIL PROFILE (SMOOTH OVERLAY CARD) -->
+    <!-- MODAL STAFF DETAIL PROFILE -->
     <div id="modal-staff-detail" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
         <div class="glass-panel p-6 rounded-3xl max-w-lg w-full space-y-6 border border-neutral-800 modal-animate scale-95 opacity-0" id="staff-detail-popup">
             <div class="flex justify-between items-start border-b border-neutral-800 pb-4">
@@ -760,11 +756,18 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        // DEFAULT BRANCH SET TO "ສາຂານ້ຳພຸ"
+        // --- SMART BRANCH NAME ALIAS RESOLVER (Pulls legacy items into "ສາຂານ້ຳພຸ") ---
+        function normalizeBranchName(b) {
+            if (!b || b === "ສາຂາ 1" || b === "ສາຂາ ວຽງຈັນ" || b === "undefined" || b === "null") {
+                return "ສາຂານ້ຳພຸ";
+            }
+            return b.toString().trim();
+        }
+
         let currentBranch = "ສາຂານ້ຳພຸ";
         const urlParams = new URLSearchParams(window.location.search);
         const urlBranch = urlParams.get('branch');
-        if (urlBranch) { currentBranch = decodeURIComponent(urlBranch); }
+        if (urlBranch) { currentBranch = normalizeBranchName(decodeURIComponent(urlBranch)); }
 
         let isHRMMode = false;
         let activeOperator = null;
@@ -800,17 +803,15 @@
             leaves: []
         };
 
-        // --- EDIT BRANCH NAME CAPABILITY ---
         function promptEditBranchName() {
             const newName = prompt(`ແກ້ໄຂຊື່ສາຂາປັດຈຸບັນ ("${currentBranch}"):`, currentBranch);
             if (newName && newName.trim() !== "" && newName !== currentBranch) {
                 const oldName = currentBranch;
                 currentBranch = newName.trim();
 
-                // Update Local Array
-                db.products.forEach(p => { if (p.branch === oldName) p.branch = currentBranch; });
-                db.staff.forEach(s => { if (s.branch === oldName) s.branch = currentBranch; });
-                db.branches = db.branches.map(b => b === oldName ? currentBranch : b);
+                db.products.forEach(p => { if (normalizeBranchName(p.branch) === oldName) p.branch = currentBranch; });
+                db.staff.forEach(s => { if (normalizeBranchName(s.branch) === oldName) s.branch = currentBranch; });
+                db.branches = db.branches.map(b => normalizeBranchName(b) === oldName ? currentBranch : b);
 
                 localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
                 renderAllViews();
@@ -818,7 +819,6 @@
             }
         }
 
-        // --- IMAGE COMPRESSOR FUNCTION ---
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -868,7 +868,6 @@
             }
         }
 
-        // --- DYNAMIC CALENDAR ---
         function populatePayrollMonthDropdown() {
             const select = document.getElementById('payroll-month-select');
             if (!select) return;
@@ -893,7 +892,6 @@
             if (select && titleSpan) titleSpan.innerText = select.value;
         }
 
-        // --- CORE UI FUNCTIONS ---
         function switchTab(tabId) {
             document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
             const target = document.getElementById(tabId);
@@ -1030,7 +1028,7 @@
             if (branchSelect) {
                 branchSelect.innerHTML = "";
                 db.branches.forEach(b => {
-                    branchSelect.innerHTML += `<option value="${b}" ${b === member.branch ? 'selected' : ''}>${b}</option>`;
+                    branchSelect.innerHTML += `<option value="${b}" ${normalizeBranchName(b) === normalizeBranchName(member.branch) ? 'selected' : ''}>${b}</option>`;
                 });
             }
 
@@ -1105,7 +1103,7 @@
             }
         }
 
-        // --- RENDER ENGINE ---
+        // --- RENDER ENGINE WITH FALLBACK PROTECTION ---
         function renderAllViews() {
             try {
                 updateBranchIndicators();
@@ -1123,7 +1121,12 @@
         }
 
         function getBranchProducts() {
-            return db.products.filter(p => p.branch === currentBranch);
+            let filtered = db.products.filter(p => normalizeBranchName(p.branch) === currentBranch);
+            // Fallback: If "ສາຂານ້ຳພຸ" returns empty, return all products
+            if (filtered.length === 0 && currentBranch === "ສາຂານ້ຳພຸ") {
+                return db.products;
+            }
+            return filtered;
         }
 
         function renderActiveShiftCard() {
@@ -1139,7 +1142,7 @@
 
             const activeStaffPins = [];
             const staffClockState = {};
-            db.attendance.filter(a => a.branch === currentBranch).forEach(att => {
+            db.attendance.filter(a => normalizeBranchName(a.branch) === currentBranch).forEach(att => {
                 if (att.pin) staffClockState[att.pin.toString()] = att.type;
             });
             for (let pin in staffClockState) { if (staffClockState[pin] === "Clock-In") activeStaffPins.push(pin); }
@@ -1159,7 +1162,7 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
-        // --- HIGH FREQUENCY TRACKERS (DYNAMIC GREEN / ORANGE COLORS) ---
+        // --- HIGH FREQUENCY TRACKERS (DYNAMIC GREEN / ORANGE) ---
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1167,7 +1170,7 @@
             let html = "";
 
             getBranchProducts().filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
-                const isOk = item.stock > 0;
+                const isOk = Number(item.stock) > 0;
                 const textColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
                 const barColor = isOk ? "bg-emerald-500" : "bg-[#FF4D00]";
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
@@ -1193,7 +1196,6 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full py-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch}</p>`;
         }
 
-        // --- CATEGORY GRID (GREEN IF OK, ORANGE IF LOW) ---
         function filterStockByCategory(cat) {
             activeCategoryFilter = cat;
             renderStockCategoryGrid();
@@ -1229,7 +1231,7 @@
 
             let gridHtml = "";
             filtered.forEach(p => {
-                const isOk = p.stock > 0;
+                const isOk = Number(p.stock) > 0;
                 const numColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
                 const badgeColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
                 
@@ -1255,7 +1257,7 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
-            db.logs.filter(l => l.branch === currentBranch).slice().reverse().forEach(log => {
+            db.logs.filter(l => normalizeBranchName(l.branch) === currentBranch).slice().reverse().forEach(log => {
                 const isOut = log.type === "OUT";
                 html += `
                     <tr class="hover:bg-neutral-950/40">
@@ -1362,7 +1364,7 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂານ້ຳພຸ"}</td>
+                                <td class="p-3 text-neutral-400">${normalizeBranchName(att.branch)}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
@@ -1418,7 +1420,7 @@
                                 <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id || "EMP0000"} | PIN: ${st.pin}</p>
                             </div>
                         </td>
-                        <td class="p-3 text-neutral-400 font-mono">${st.branch || "ສາຂານ້ຳພຸ"}</td>
+                        <td class="p-3 text-neutral-400 font-mono">${normalizeBranchName(st.branch)}</td>
                         <td class="p-3 text-center">
                             <span class="px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 text-[10px] font-bold">${st.shift || "ກະ 1"}</span>
                         </td>
@@ -1436,7 +1438,6 @@
             tbody.innerHTML = html;
         }
 
-        // --- SMOOTH POPUP OVERLAY FOR STAFF PROFILE ---
         function viewStaffProfile(pin) {
             if (!pin) return;
             const member = db.staff.find(s => s.pin && s.pin.toString() === pin.toString());
@@ -1447,14 +1448,14 @@
 
             if (cardBody) {
                 cardBody.innerHTML = `
-                    <img class="h-24 w-24 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border border-neutral-800" src="${imgUrl}" alt="${member.name}">
+                    <img class="h-24 w-24 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
                     <div>
                         <h3 class="font-black text-white text-lg">${member.name}</h3>
                         <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider mt-0.5">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
                         <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id || "EMP0001"} | PIN: ${member.pin}</p>
                     </div>
                     <div class="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 text-left space-y-2 text-xs leading-relaxed">
-                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-200 font-bold">${member.branch || "ສາຂານ້ຳພຸ"}</span></p>
+                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-200 font-bold">${normalizeBranchName(member.branch)}</span></p>
                         <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-200 font-mono">${member.dob || "-"}</span></p>
                         <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-200 font-mono">${member.phone || "-"}</span></p>
                         <p><span class="text-neutral-500">ກະເຮັດວຽກ:</span> <span class="text-neutral-200 font-bold">${member.shift || "ກະ 1"}</span></p>
@@ -1484,7 +1485,6 @@
                 }
             }
 
-            // Open Modal with Smooth Animation
             const modal = document.getElementById('modal-staff-detail');
             const popup = document.getElementById('staff-detail-popup');
             if (modal && popup) {
@@ -1515,7 +1515,6 @@
             select.innerHTML = html;
         }
 
-        // --- ACCURATE REALTIME PAYROLL (CLOCK-IN DAYS BASED FORMULA) ---
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -1523,23 +1522,20 @@
             let html = "";
             
             db.staff.forEach(st => {
-                // Calculate actual unique Clock-In days from attendance logs
                 const staffClocks = db.attendance.filter(a => a.pin && a.pin.toString() === st.pin.toString() && a.type === "Clock-In");
                 const daysWorked = new Set(staffClocks.map(c => (c.timestamp || "").split(' ')[0])).size;
 
-                // Base daily rate = Base Salary / 22 days
                 const baseSalary = st.salary || 3500000;
                 const benefit = st.benefit || 400000;
                 const dailyRate = baseSalary / 22;
                 
-                // Earned Salary = Daily Rate * Days Worked
                 const earnedBaseSalary = Math.round(dailyRate * daysWorked);
                 const netTotal = earnedBaseSalary + benefit;
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂານ້ຳພຸ"})</span>
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${normalizeBranchName(st.branch)})</span>
                         </td>
                         <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
                         <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
@@ -1551,7 +1547,6 @@
             tbody.innerHTML = html;
         }
 
-        // --- BRANCH CREATION & COMPRACT QR MODAL ---
         async function handleBranchSubmit(e) {
             e.preventDefault();
             const bName = document.getElementById('branch-name').value.trim();
@@ -1564,7 +1559,7 @@
 
             db.branches.push(bName);
 
-            let sourceProducts = db.products.filter(p => p.branch === "ສາຂານ້ຳພຸ");
+            let sourceProducts = db.products.filter(p => normalizeBranchName(p.branch) === "ສາຂານ້ຳພຸ");
             if (sourceProducts.length === 0) sourceProducts = DEFAULT_MASTER_CATALOG;
 
             const masterProductsMap = new Map();
@@ -1606,7 +1601,6 @@
             document.getElementById('modal-branch-qr').classList.add('hidden');
         }
 
-        // --- DIRECT SUPABASE HANDLERS ---
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1740,11 +1734,11 @@
             if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
 
             for (const [sku, qty] of entries) {
-                const prod = db.products.find(p => p.sku === sku && p.branch === currentBranch);
+                const prod = db.products.find(p => p.sku === sku && normalizeBranchName(p.branch) === currentBranch);
                 if (!prod) continue;
                 const type = qty > 0 ? "IN" : "OUT";
                 const absQty = Math.abs(qty);
-                prod.stock = prod.stock + qty;
+                prod.stock = Number(prod.stock) + qty;
                 
                 const logPayload = {
                     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
@@ -1774,10 +1768,10 @@
             const remarkDesc = document.getElementById('manual-remark-desc').value;
             const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
 
-            const prod = db.products.find(p => p.sku === sku && p.branch === currentBranch);
+            const prod = db.products.find(p => p.sku === sku && normalizeBranchName(p.branch) === currentBranch);
             if (!prod) return;
 
-            prod.stock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
+            prod.stock = type === 'IN' ? Number(prod.stock) + qty : Number(prod.stock) - qty;
             const logPayload = {
                 timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
                 sku: sku, name: prod.name, type: type, qty: qty, note: `${note} (ໂດຍ: ${activeOperator.name})`, branch: currentBranch
@@ -1820,7 +1814,7 @@
             e.target.reset();
         }
 
-        // --- SAFE SUPABASE INITIALIZATION & INITIAL SEEDING ---
+        // --- SAFE SUPABASE INITIALIZATION & ALIAS MAPPING ---
         let supabaseClient = null;
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
@@ -1850,19 +1844,25 @@
                     ]);
 
                     if (prodRes.data && prodRes.data.length > 0) {
-                        db.products = prodRes.data.map(p => ({ ...p, branch: p.branch || "ສາຂານ້ຳພຸ" }));
+                        // AUTO-MAP ALL LEGACY ITEMS TO "ສາຂານ້ຳພຸ"
+                        db.products = prodRes.data.map(p => ({
+                            ...p,
+                            branch: normalizeBranchName(p.branch)
+                        }));
                     } else {
-                        // AUTO-SEED DEFAULT MASTER CATALOG IF EMPTY
                         db.products = DEFAULT_MASTER_CATALOG.map(p => ({ ...p, stock: 0, branch: "ສາຂານ້ຳພຸ" }));
                         await supabaseClient.from('main_inventory').insert(db.products);
                     }
 
                     if (staffRes.data && staffRes.data.length > 0) {
-                        db.staff = staffRes.data.map(s => ({ ...s, branch: s.branch || "ສາຂານ້ຳພຸ" }));
+                        db.staff = staffRes.data.map(s => ({
+                            ...s,
+                            branch: normalizeBranchName(s.branch)
+                        }));
                     }
-                    if (attRes.data) db.attendance = attRes.data;
-                    if (logRes.data) db.logs = logRes.data;
-                    if (leaveRes.data) db.leaves = leaveRes.data;
+                    if (attRes.data) db.attendance = attRes.data.map(a => ({ ...a, branch: normalizeBranchName(a.branch) }));
+                    if (logRes.data) db.logs = logRes.data.map(l => ({ ...l, branch: normalizeBranchName(l.branch) }));
+                    if (leaveRes.data) db.leaves = leaveRes.data.map(lv => ({ ...lv, branch: normalizeBranchName(lv.branch) }));
 
                     const extractedBranches = Array.from(new Set(db.products.map(p => p.branch).concat(db.staff.map(s => s.branch)).filter(Boolean)));
                     if (extractedBranches.length) db.branches = extractedBranches;
