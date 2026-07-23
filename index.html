@@ -2,8 +2,8 @@
 <html lang="lo">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Live Supabase System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Dolce Portal - ສາຂານ້ຳພຸ V2 Stable</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -26,9 +26,7 @@
             color: #ffffff;
             font-family: "Noto Sans Lao", "Inter", sans-serif;
             overflow-x: hidden;
-            touch-action: manipulation;
         }
-        button, input, select { touch-action: manipulation; }
         .mono-font { font-family: "JetBrains Mono", monospace; }
         .glass-panel {
             background: #0a0a0a;
@@ -55,9 +53,6 @@
             color: #ffffff !important;
             border-color: #FF4D00 !important;
         }
-        .modal-animate {
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
@@ -73,26 +68,19 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row md:h-screen md:overflow-hidden">
+<body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- FIXED SIDEBAR NAVIGATION -->
-    <aside class="w-full md:w-64 md:h-screen md:sticky md:top-0 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print overflow-y-auto">
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-full md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print">
         <div>
             <div class="p-6 border-b border-neutral-800">
                 <div class="flex items-center space-x-3">
                     <span class="text-2xl font-black text-outline-orange">V2</span>
                     <div>
                         <h2 class="font-extrabold text-sm tracking-wider uppercase">La Dolce</h2>
-                        <span id="mode-badge" class="text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit">
-                            Employee Mode
+                        <span id="mode-badge" class="text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit border border-[#FF4D00]/20">
+                            📍 ສາຂານ້ຳພຸ
                         </span>
-                    </div>
-                </div>
-                <div class="mt-3 p-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-xl flex items-center justify-between">
-                    <span class="text-[10px] text-neutral-400 font-bold uppercase">ສາຂາ:</span>
-                    <div class="flex items-center space-x-1.5">
-                        <span id="active-branch-indicator" class="text-xs font-extrabold text-[#FF4D00]">ສາຂານ້ຳພຸ</span>
-                        <button onclick="promptEditBranchName()" class="text-[10px] text-neutral-500 hover:text-white" title="ແກ້ໄຂຊື່ສາຂາ"><i class="fa-solid fa-pen"></i></button>
                     </div>
                 </div>
             </div>
@@ -141,7 +129,7 @@
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
                         <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງເຊື່ອມຕໍ່ Supabase...</span>
+                        <span id="sync-badge-text">ກຳລັງກວດສອບ Supabase...</span>
                     </div>
                 </div>
             </div>
@@ -158,7 +146,19 @@
     </aside>
 
     <!-- MAIN VIEWPORT -->
-    <main class="flex-1 min-w-0 p-4 md:p-8 lg:p-10 space-y-8 md:h-screen md:overflow-y-auto">
+    <main class="flex-1 min-w-0 p-4 md:p-8 lg:p-10 space-y-8 overflow-y-auto">
+
+        <!-- GLOBAL BRANCH FILTER BAR -->
+        <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-store text-[#FF4D00] text-sm"></i>
+                <span class="text-xs font-bold text-neutral-300">ເລືອກສາຂາທີ່ຕ້ອງການສະແດງ:</span>
+            </div>
+            <select id="global-branch-select" onchange="changeGlobalBranch(this.value)" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs font-bold text-[#FF4D00] focus:outline-none focus:border-[#FF4D00]">
+                <option value="ສາຂານ້ຳພຸ" selected>📍 ສາຂານ້ຳພຸ (ສາຂາຫຼັກ)</option>
+                <option value="ALL">🌐 ສະແດງທຸກສາຂາ</option>
+            </select>
+        </div>
 
         <!-- ================= TAB 1: DASHBOARD & STOCK ================= -->
         <section id="tab-dashboard" class="space-y-8">
@@ -174,7 +174,7 @@
 
                 <div class="glass-panel p-6 rounded-2xl flex justify-between items-center">
                     <div>
-                        <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານໃນກະປັດຈຸບັນ</span>
+                        <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານໃນກະ (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>)</span>
                         <div class="flex items-center space-x-2 mt-2">
                             <div id="active-avatars-row" class="flex -space-x-2 overflow-hidden"></div>
                             <span id="active-staff-count" class="text-xs font-bold text-neutral-300 ml-1">0 ຄົນ</span>
@@ -184,7 +184,6 @@
                 </div>
             </div>
 
-            <!-- HIGH FREQUENCY TRACKERS -->
             <div class="space-y-4">
                 <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
                     <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
@@ -192,22 +191,27 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CURRENT INVENTORY STOCK -->
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-900 pb-4">
-                    <div>
-                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (<span id="stock-branch-header-title" class="text-[#FF4D00]">ສາຂານ້ຳພຸ</span>)</h2>
-                        <p class="text-[10px] text-neutral-500 mt-0.5">ເລືອກໝວດໝູ່ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອເບິ່ງຍອດຄົງເຫຼືອ</p>
-                    </div>
-                    <input type="text" id="stock-search" oninput="renderStockCategoryGrid()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Inventory Stock)</h2>
+                    <input type="text" id="stock-search" oninput="filterStockTable()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-48">
                 </div>
-
-                <div id="stock-category-tabs" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"></div>
-
-                <div id="stock-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[480px] overflow-y-auto pr-1"></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-neutral-300">
+                        <thead class="bg-neutral-900 text-neutral-400 uppercase">
+                            <tr>
+                                <th class="p-3 border-b border-neutral-800">SKU</th>
+                                <th class="p-3 border-b border-neutral-800">ຊື່ສິນຄ້າ</th>
+                                <th class="p-3 border-b border-neutral-800">ໝວດໝູ່</th>
+                                <th class="p-3 border-b border-neutral-800 text-center">STATUS</th>
+                                <th class="p-3 border-b border-neutral-800 text-right">ຄົງເຫຼືອໃນສາງ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-table-body" class="divide-y divide-neutral-900"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- DAILY LOGS -->
             <div class="glass-panel p-6 rounded-2xl space-y-4">
                 <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
                 <div class="overflow-x-auto">
@@ -230,8 +234,8 @@
         <!-- ================= TAB 2: INVENTORY ACTIONS ================= -->
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ປະຈຳ <span class="text-[#FF4D00] font-bold" id="action-branch-title">ສາຂານ້ຳພຸ</span></p>
+                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>)</h1>
+                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
             </div>
 
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -308,8 +312,8 @@
         <!-- ================= TAB 3: ATTENDANCE & LEAVE ================= -->
         <section id="tab-attendance" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ປະຈຳ <span class="text-[#FF4D00] font-bold" id="attendance-branch-title">ສາຂານ້ຳພຸ</span></p>
+                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>)</h1>
+                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ແລະ ສົ່ງຄຳຮ້ອງຂໍລາວຽກ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -380,7 +384,7 @@
         <!-- ================= TAB 4: HRM ADMIN DASHBOARD ================= -->
         <section id="tab-hrm-dash" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ</h1>
+                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>)</h1>
                 <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ</p>
             </div>
 
@@ -445,40 +449,15 @@
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
+                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ ປະຈຳ <span class="text-[#FF4D00] font-bold">ສາຂານ້ຳພຸ</span></p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- COMPACT BRANCH ACTIVATION CARD -->
-                <div class="glass-panel p-5 rounded-2xl space-y-4">
-                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-store text-[#FF4D00] mr-2"></i>ເປີດນຳໃຊ້ສາຂາໃໝ່ (Activate Branch)</h2>
-                    <form onsubmit="handleBranchSubmit(event)" class="space-y-3 text-xs">
-                        <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາໃໝ່</label>
-                            <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ເຊັ່ນ: ສາຂາ 2 (ຫຼວງພະບາງ)">
-                        </div>
-                        <button type="submit" class="w-full py-2 bg-[#FF4D00] text-white font-bold rounded-xl active:scale-95 transition-all text-xs">
-                            + Active ສາຂານີ້
-                        </button>
-                    </form>
-
-                    <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-xl p-3 bg-neutral-950 flex justify-between items-center">
-                        <div>
-                            <span id="qr-branch-title" class="text-xs font-black text-[#FF4D00] block"></span>
-                            <span class="text-[9px] text-neutral-500">Duplicate Stock = 0 ແລ້ວ</span>
-                        </div>
-                        <button onclick="openBranchQRModal()" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-[#FF4D00] font-bold text-xs rounded-lg transition-all">
-                            📱 ເບິ່ງ QR Code
-                        </button>
-                    </div>
-                </div>
-
-                <!-- STAFF LIST TABLE -->
                 <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
                     <div class="flex justify-between items-center">
-                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ລາຍຊື່ພະນັກງານທັງໝົດ</h2>
+                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ລາຍຊື່ພະນັກງານ (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>)</h2>
                         <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl whitespace-nowrap hover:bg-[#FF4D00]/20 transition-all">
-                            + ເພີ່ມພະນັກງານໃໝ່
+                            + ເພີ່ມພະນັກງານໃໝ່ (ສາຂານ້ຳພຸ)
                         </button>
                     </div>
                     <div class="overflow-x-auto">
@@ -487,14 +466,47 @@
                                 <tr>
                                     <th class="p-3">ຮູບ/ຊື່ພະນັກງານ</th>
                                     <th class="p-3">ສາຂາ</th>
+                                    <th class="p-3">เບີໂທ</th>
                                     <th class="p-3 text-center">ກະວຽກ</th>
-                                    <th class="p-3">ປະເພດວຽກ</th>
                                     <th class="p-3 text-right">ຈັດການ</th>
                                 </tr>
                             </thead>
                             <tbody id="staff-table-body" class="divide-y divide-neutral-900"></tbody>
                         </table>
                     </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div>
+                        <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4"><i class="fa-solid fa-user-shield text-[#FF4D00] mr-2"></i>ປະຫວັດ ແລະ ໂປຣໄຟລ໌ລະອຽດ</h2>
+                        <div id="staff-detail-card" class="text-center py-4 space-y-3">
+                            <p class="text-xs text-neutral-500">ເລືອກລາຍຊື່ພະນັກງານເພື່ອເບິ່ງໂປຣໄຟລ໌ ແລະ ປະຫວັດການລາວຽກ</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-neutral-900 pt-4">
+                        <h3 class="font-bold text-[10px] text-neutral-500 uppercase tracking-widest mb-2">ປະຫວັດການລາພັກສ່ວນຕົວ</h3>
+                        <div id="staff-leave-history-list" class="space-y-1.5 max-h-36 overflow-y-auto text-[11px] text-neutral-400">
+                            <p class="text-xs text-neutral-500 italic text-center">ບໍ່ມີປະຫວັດການລາວຽກ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-md">
+                <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ເປີດນຳໃຊ້ສາຂາໃໝ່</h2>
+                <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາ</label>
+                        <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ສາຂາໃໝ່...">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 font-bold rounded-xl transition-all">Active ສາຂານີ້</button>
+                </form>
+
+                <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-4 bg-neutral-950/60">
+                    <span id="qr-branch-title" class="text-xs font-bold text-neutral-300"></span>
+                    <div id="qr-image-container" class="w-32 h-32 flex items-center justify-center border border-neutral-800 rounded-lg bg-neutral-900"></div>
+                    <p id="qr-link-text" class="text-[9px] text-neutral-500 break-all select-all font-mono text-center"></p>
                 </div>
             </div>
         </section>
@@ -518,7 +530,7 @@
                 <div class="flex justify-between items-start border-b border-neutral-800 pb-6 flex-wrap gap-4">
                     <div class="space-y-1">
                         <span class="mono-font text-xs text-[#FF4D00] font-black tracking-widest uppercase">Official Payroll Statement</span>
-                        <h2 class="text-xl font-black text-white tracking-tight">La Dolce Payrolls ປະຈຳເດືອນ <span id="payroll-period-title" class="text-[#FF4D00]"></span></h2>
+                        <h2 class="text-xl font-black text-white tracking-tight">La Dolce Payrolls (<span class="text-[#FF4D00] active-branch-label">ສາຂານ້ຳພຸ</span>) <span id="payroll-period-title" class="text-[#FF4D00]"></span></h2>
                         <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ</p>
                     </div>
                     <div class="text-right text-xs text-neutral-400 font-medium">
@@ -532,11 +544,11 @@
                         <thead class="bg-neutral-900 text-neutral-400 uppercase">
                             <tr>
                                 <th class="p-3">ພະນັກງານ (PIN)</th>
-                                <th class="p-3 text-center">ວັນມາວຽກຕົວຈິງ</th>
+                                <th class="p-3 text-center">ວັນເຮັດວຽກ</th>
                                 <th class="p-3 text-center">ຊົ່ວໂມງ OT</th>
                                 <th class="p-3 text-right">ເງິນເດືອນພື້ນຖານ (LAK)</th>
                                 <th class="p-3 text-right">ສະຫວັດດິການ (LAK)</th>
-                                <th class="p-3 text-right text-white">ລາຍຮັບລວມຄຳນວນໄດ້ (LAK)</th>
+                                <th class="p-3 text-right text-white">ລາຍຮັບລວມທັງໝົດ (LAK)</th>
                             </tr>
                         </thead>
                         <tbody id="payroll-table-body" class="divide-y divide-neutral-900"></tbody>
@@ -558,40 +570,10 @@
 
     </main>
 
-    <!-- MODAL STAFF DETAIL PROFILE -->
-    <div id="modal-staff-detail" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel p-6 rounded-3xl max-w-lg w-full space-y-6 border border-neutral-800 modal-animate scale-95 opacity-0" id="staff-detail-popup">
-            <div class="flex justify-between items-start border-b border-neutral-800 pb-4">
-                <h3 class="text-xs font-black uppercase text-[#FF4D00] tracking-wider"><i class="fa-solid fa-id-card mr-2"></i>ໂປຣໄຟລ໌ ແລະ ປະຫວັດພະນັກງານ</h3>
-                <button onclick="closeStaffDetailModal()" class="text-neutral-500 hover:text-white text-base font-bold">&times;</button>
-            </div>
-            
-            <div id="staff-detail-card-body" class="text-center space-y-4"></div>
-
-            <div class="border-t border-neutral-900 pt-4">
-                <h4 class="font-bold text-[10px] text-neutral-500 uppercase tracking-widest mb-2 text-left">ປະຫວັດການລາພັກສ່ວນຕົວ</h4>
-                <div id="staff-leave-history-list" class="space-y-1.5 max-h-36 overflow-y-auto text-[11px] text-neutral-400 text-left"></div>
-            </div>
-
-            <button onclick="closeStaffDetailModal()" class="w-full py-2 bg-neutral-900 hover:bg-neutral-850 text-neutral-300 font-bold rounded-xl text-xs">ປິດໜ້າຈໍ</button>
-        </div>
-    </div>
-
-    <!-- MODAL BRANCH QR CODE POPUP -->
-    <div id="modal-branch-qr" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel p-6 rounded-3xl max-w-sm w-full space-y-4 text-center border border-neutral-800">
-            <h3 id="pop-qr-title" class="text-sm font-black text-[#FF4D00]"></h3>
-            <div id="pop-qr-image" class="w-48 h-48 bg-white p-3 rounded-2xl mx-auto flex items-center justify-center"></div>
-            <p class="text-[10px] text-neutral-400">ສະແກນ QR Code ນີ້ເພື່ອເຂົ້າໃຊ້ງານສາຂານີ້ໂດຍກົງ:</p>
-            <a id="pop-qr-link" href="#" target="_blank" class="text-[9px] text-[#FF4D00] underline font-mono break-all block"></a>
-            <button onclick="closeBranchQRModal()" class="w-full py-2 bg-neutral-900 text-neutral-300 text-xs font-bold rounded-xl">ປິດ</button>
-        </div>
-    </div>
-
     <!-- MODAL ADD STAFF -->
     <div id="modal-add-staff" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider">ເພີ່ມພະນັກງານໃໝ່</h3>
+            <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider">ເພີ່ມພະນັກງານໃໝ່ (<span class="text-[#FF4D00]">ສາຂານ້ຳພຸ</span>)</h3>
             <form onsubmit="handleStaffSubmit(event)" class="space-y-4 text-xs">
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ລະຫັດ PIN (6 ຕົວເລກ)</label>
@@ -633,8 +615,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-neutral-400 font-semibold mb-1">ກຳນົດສາຂາ</label>
-                    <select id="staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"></select>
+                    <label class="block text-neutral-400 font-semibold mb-1">ສາຂາ</label>
+                    <select id="staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold text-[#FF4D00]"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -648,7 +630,7 @@
                 </div>
                 <div class="flex justify-end space-x-2 pt-2">
                     <button type="button" onclick="closeAddStaffModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
-                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ບັນທຶກ</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ບັນທຶກລົງ Supabase</button>
                 </div>
             </form>
         </div>
@@ -700,7 +682,7 @@
                 </div>
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ສາຂາ</label>
-                    <select id="edit-staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"></select>
+                    <select id="edit-staff-branch" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold text-[#FF4D00]"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -714,7 +696,7 @@
                 </div>
                 <div class="flex justify-end space-x-2 pt-2">
                     <button type="button" onclick="closeEditStaffModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
-                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ອັບເດດຂໍ້ມູນ</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ອັບເດດລົງ Supabase</button>
                 </div>
             </form>
         </div>
@@ -755,84 +737,32 @@
 
     <!-- CORE SCRIPT ENGINE -->
     <script>
-        // --- SMART LEGACY BRANCH RESOLVER (ALIASED TO "ສາຂານ້ຳພຸ") ---
-        function normalizeBranchName(b) {
-            if (!b || b === "ສາຂາ 1" || b === "ສາຂາ ວຽງຈັນ" || b === "undefined" || b === "null" || b === "") {
-                return "ສາຂານ້ຳພຸ";
-            }
-            return b.toString().trim();
-        }
-
-        let currentBranch = "ສາຂານ້ຳພຸ";
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlBranch = urlParams.get('branch');
-        if (urlBranch) { currentBranch = normalizeBranchName(decodeURIComponent(urlBranch)); }
-
         let isHRMMode = false;
         let activeOperator = null;
+        let currentSelectedBranch = "ສາຂານ້ຳພຸ"; // DEFAULT PRIMARY BRANCH
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
         let addPhotoBase64 = "";
         let editPhotoBase64 = "";
-        let activeCategoryFilter = "ທັງໝົດ";
-        let activeBranchQRUrl = "";
 
         const laoMonths = ["ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ", "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"];
 
         let db = {
             products: [],
             staff: [],
-            branches: ["ສາຂານ້ຳພຸ"],
+            branches: ["ສາຂານ້ຳພຸ", "ສາຂາ ວຽງຈັນ"],
             attendance: [],
             logs: [],
             leaves: []
         };
 
-        // --- DYNAMIC FIELD NORMALIZERS FOR SUPABASE ---
-        function normalizeProduct(p) {
-            return {
-                id: p.id,
-                sku: p.sku || p.SKU || p.id || "",
-                name: p.name || p.Name || p.item || p.title || "ບໍ່ມີຊື່",
-                category: p.category || p.Category || "ວັດຖຸດິບ",
-                stock: Number(p.stock !== undefined ? p.stock : (p.Current_Stock || p.qty || 0)),
-                branch: normalizeBranchName(p.branch)
-            };
-        }
-
-        function normalizeStaff(s) {
-            return {
-                id: s.id,
-                pin: (s.pin || "").toString(),
-                staff_id: s.staff_id || "",
-                name: s.name || "ບໍ່ມີຊື່",
-                phone: s.phone || "",
-                dob: s.dob || "",
-                photo_url: s.photo_url || "",
-                emp_type: s.emp_type || "Full-time",
-                shift: s.shift || "ກະ 1",
-                branch: normalizeBranchName(s.branch),
-                active: s.active !== false,
-                salary: Number(s.salary || 3500000),
-                benefit: Number(s.benefit || 400000)
-            };
-        }
-
-        function promptEditBranchName() {
-            const newName = prompt(`ແກ້ໄຂຊື່ສາຂາປັດຈຸບັນ ("${currentBranch}"):`, currentBranch);
-            if (newName && newName.trim() !== "" && newName !== currentBranch) {
-                const oldName = currentBranch;
-                currentBranch = newName.trim();
-
-                db.products.forEach(p => { if (normalizeBranchName(p.branch) === oldName) p.branch = currentBranch; });
-                db.staff.forEach(s => { if (normalizeBranchName(s.branch) === oldName) s.branch = currentBranch; });
-                db.branches = db.branches.map(b => normalizeBranchName(b) === oldName ? currentBranch : b);
-
-                localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-                renderAllViews();
-                alert(`✅ ປ່ຽນຊື່ສາຂາເປັນ "${currentBranch}" ຮຽບຮ້ອຍແລ້ວ!`);
-            }
+        function changeGlobalBranch(branchVal) {
+            currentSelectedBranch = branchVal;
+            document.querySelectorAll('.active-branch-label').forEach(el => {
+                el.innerText = branchVal === 'ALL' ? 'ທຸກສາຂາ' : branchVal;
+            });
+            renderAllViews();
         }
 
         function compressAndResizeImage(file, callback) {
@@ -853,8 +783,7 @@
                     } else {
                         if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('canvas');
                     ctx.drawImage(img, 0, 0, width, height);
                     callback(canvas.toDataURL('image/jpeg', 0.7));
@@ -863,9 +792,8 @@
         }
 
         function previewAddStaffImage(input) {
-            const file = input.files[0];
-            if (file) {
-                compressAndResizeImage(file, (compressedBase64) => {
+            if (input.files && input.files[0]) {
+                compressAndResizeImage(input.files[0], (compressedBase64) => {
                     addPhotoBase64 = compressedBase64;
                     const preview = document.getElementById('add-photo-preview');
                     if (preview) { preview.src = compressedBase64; preview.classList.remove('hidden'); }
@@ -874,9 +802,8 @@
         }
 
         function previewEditStaffImage(input) {
-            const file = input.files[0];
-            if (file) {
-                compressAndResizeImage(file, (compressedBase64) => {
+            if (input.files && input.files[0]) {
+                compressAndResizeImage(input.files[0], (compressedBase64) => {
                     editPhotoBase64 = compressedBase64;
                     const preview = document.getElementById('edit-photo-preview');
                     if (preview) preview.src = compressedBase64;
@@ -889,11 +816,8 @@
             if (!select) return;
             select.innerHTML = "";
             const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonthIdx = now.getMonth();
-
             for (let i = 0; i < 12; i++) {
-                let d = new Date(currentYear, currentMonthIdx - i, 1);
+                let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 let label = `${laoMonths[d.getMonth()]} ${d.getFullYear()}`;
                 let option = document.createElement('option');
                 option.value = label; option.innerText = label;
@@ -960,10 +884,7 @@
                 switchTab('tab-hrm-dash');
             } else {
                 const card = document.getElementById('auth-panel-card');
-                if (card) {
-                    card.classList.add('shake');
-                    setTimeout(() => card.classList.remove('shake'), 300);
-                }
+                if (card) { card.classList.add('shake'); setTimeout(() => card.classList.remove('shake'), 300); }
                 clearAuthPin();
             }
         }
@@ -981,7 +902,7 @@
                 if (hrmMenu) hrmMenu.classList.remove('hidden');
                 if (modeBadge) {
                     modeBadge.innerText = "HRM Admin Mode";
-                    modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
+                    modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit border border-[#FF4D00]/20";
                 }
                 if (switchBtnText) switchBtnText.innerText = "Switch to Employee";
                 if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
@@ -990,25 +911,13 @@
                 if (empMenu) empMenu.classList.remove('hidden');
                 if (hrmMenu) hrmMenu.classList.add('hidden');
                 if (modeBadge) {
-                    modeBadge.innerText = "Employee Mode";
-                    modeBadge.className = "text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
+                    modeBadge.innerText = "📍 ສາຂານ້ຳພຸ";
+                    modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit border border-[#FF4D00]/20";
                 }
                 if (switchBtnText) switchBtnText.innerText = "Switch to HRM Admin";
                 if (switchIcon) switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
                 if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
             }
-        }
-
-        function updateBranchIndicators() {
-            const badge = document.getElementById('active-branch-indicator');
-            const stockTitle = document.getElementById('stock-branch-header-title');
-            const actionTitle = document.getElementById('action-branch-title');
-            const attendanceTitle = document.getElementById('attendance-branch-title');
-
-            if (badge) badge.innerText = currentBranch;
-            if (stockTitle) stockTitle.innerText = currentBranch;
-            if (actionTitle) actionTitle.innerText = currentBranch;
-            if (attendanceTitle) attendanceTitle.innerText = currentBranch;
         }
 
         function openAddStaffModal() {
@@ -1044,7 +953,7 @@
             if (branchSelect) {
                 branchSelect.innerHTML = "";
                 db.branches.forEach(b => {
-                    branchSelect.innerHTML += `<option value="${b}" ${normalizeBranchName(b) === normalizeBranchName(member.branch) ? 'selected' : ''}>${b}</option>`;
+                    branchSelect.innerHTML += `<option value="${b}" ${b === member.branch ? 'selected' : ''}>${b}</option>`;
                 });
             }
 
@@ -1119,13 +1028,12 @@
             }
         }
 
-        // --- RENDER ENGINE WITH FALLBACK PROTECTION ---
+        // --- RENDER ENGINE WITH NAM PHOU FILTERING ---
         function renderAllViews() {
             try {
-                updateBranchIndicators();
                 renderActiveShiftCard();
                 renderHighFreqTrackers();
-                renderStockCategoryGrid();
+                renderStockTable();
                 renderDailyLogs();
                 renderQuickAdjustments();
                 renderManualRecordDropdowns();
@@ -1136,13 +1044,9 @@
             } catch(e) { console.error("Error rendering views:", e); }
         }
 
-        function getBranchProducts() {
-            let filtered = db.products.filter(p => normalizeBranchName(p.branch) === currentBranch);
-            // Fallback: If "ສາຂານ້ຳພຸ" returns empty, show all items from db.products so screen is never blank
-            if (filtered.length === 0 && currentBranch === "ສາຂານ້ຳພຸ") {
-                return db.products;
-            }
-            return filtered;
+        function getFilteredStaff() {
+            if (currentSelectedBranch === "ALL") return db.staff;
+            return db.staff.filter(s => s.branch === currentSelectedBranch || !s.branch);
         }
 
         function renderActiveShiftCard() {
@@ -1158,15 +1062,15 @@
 
             const activeStaffPins = [];
             const staffClockState = {};
-            db.attendance.filter(a => normalizeBranchName(a.branch) === currentBranch).forEach(att => {
-                if (att.pin) staffClockState[att.pin.toString()] = att.type;
-            });
+            db.attendance.forEach(att => { if (att.pin) staffClockState[att.pin.toString()] = att.type; });
             for (let pin in staffClockState) { if (staffClockState[pin] === "Clock-In") activeStaffPins.push(pin); }
 
             let avatarsHtml = "";
             let renderedCount = 0;
+            const filteredStaff = getFilteredStaff();
+
             activeStaffPins.forEach(pin => {
-                const member = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
+                const member = filteredStaff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
                 if (member) {
                     renderedCount++;
                     const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
@@ -1183,88 +1087,56 @@
             if (!container) return;
             container.innerHTML = "";
             let html = "";
-
-            getBranchProducts().filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
-                const isOk = Number(item.stock) > 0;
-                const textColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
-                const barColor = isOk ? "bg-emerald-500" : "bg-[#FF4D00]";
+            db.products.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
                 const percentage = Math.min(100, Math.max(0, (item.stock / 500) * 100));
-
                 html += `
                     <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
                         <div class="space-y-1">
                             <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
-                            <h3 class="font-bold text-neutral-200 text-sm leading-tight">${item.name}</h3>
+                            <h3 class="font-bold text-neutral-200 text-sm">${item.name}</h3>
                             <p class="text-[11px] text-neutral-400">${item.category}</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-neutral-900 flex justify-between items-end">
-                            <div>
-                                <span class="text-[10px] text-neutral-500 font-bold block mb-1">ຄົງເຫຼືອ:</span>
-                                <div class="w-20 bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                                    <div class="${barColor} h-full" style="width: ${percentage}%"></div>
-                                </div>
+                        <div class="mt-4 pt-2 border-t border-neutral-900">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-neutral-500 font-bold">ຄົງເຫຼືອ:</span>
+                                <span class="mono-font text-xs font-bold text-[#FF4D00]">${item.stock}</span>
                             </div>
-                            <span class="mono-font text-2xl md:text-3xl font-black ${textColor} tracking-tight">${item.stock}</span>
+                            <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-[#FF4D00] h-full" style="width: ${percentage}%"></div>
+                            </div>
                         </div>
                     </div>`;
             });
-            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full py-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch}</p>`;
+            container.innerHTML = html;
         }
 
-        function filterStockByCategory(cat) {
-            activeCategoryFilter = cat;
-            renderStockCategoryGrid();
+        function renderStockTable() {
+            const tbody = document.getElementById('stock-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            let html = "";
+            db.products.forEach(item => {
+                html += `
+                    <tr class="hover:bg-neutral-950/40">
+                        <td class="p-3 font-mono text-xs font-bold text-neutral-400">${item.sku}</td>
+                        <td class="p-3 font-semibold text-neutral-200">${item.name}</td>
+                        <td class="p-3 text-neutral-400">${item.category}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-[9px] font-bold ${item.stock < 1 ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
+                                ${item.stock < 1 ? 'ສັ່ງດ່ວນ' : 'OK'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right font-mono font-bold text-white">${item.stock}</td>
+                    </tr>`;
+            });
+            tbody.innerHTML = html;
         }
 
-        function renderStockCategoryGrid() {
-            const tabsContainer = document.getElementById('stock-category-tabs');
-            const gridContainer = document.getElementById('stock-cards-grid');
-            const searchVal = (document.getElementById('stock-search')?.value || "").toLowerCase();
-
-            if (!tabsContainer || !gridContainer) return;
-
-            const branchProds = getBranchProducts();
-            const categories = ["ທັງໝົດ", ...Array.from(new Set(branchProds.map(p => p.category).filter(Boolean)))];
-            
-            let tabsHtml = "";
-            categories.forEach(cat => {
-                const isActive = cat === activeCategoryFilter;
-                tabsHtml += `
-                    <button onclick="filterStockByCategory('${cat}')" class="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${isActive ? 'bg-[#FF4D00] text-white' : 'bg-neutral-900 text-neutral-400 hover:bg-neutral-800'}">
-                        ${cat}
-                    </button>`;
+        function filterStockTable() {
+            const search = document.getElementById('stock-search').value.toLowerCase();
+            document.querySelectorAll('#stock-table-body tr').forEach(row => {
+                row.classList.toggle('hidden', !row.innerText.toLowerCase().includes(search));
             });
-            tabsContainer.innerHTML = tabsHtml;
-
-            let filtered = branchProds;
-            if (activeCategoryFilter !== "ທັງໝົດ") {
-                filtered = filtered.filter(p => p.category === activeCategoryFilter);
-            }
-            if (searchVal !== "") {
-                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchVal) || p.sku.toLowerCase().includes(searchVal));
-            }
-
-            let gridHtml = "";
-            filtered.forEach(p => {
-                const isOk = Number(p.stock) > 0;
-                const numColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
-                const badgeColor = isOk ? "text-emerald-400" : "text-[#FF4D00]";
-                
-                gridHtml += `
-                    <div class="glass-card p-3 rounded-xl border border-neutral-800/80 flex flex-col justify-between hover:border-[#FF4D00]">
-                        <div>
-                            <span class="mono-font text-[9px] text-neutral-500 font-bold block">${p.sku}</span>
-                            <h4 class="font-bold text-xs text-neutral-200 line-clamp-1 mt-0.5">${p.name}</h4>
-                            <span class="text-[9px] text-neutral-500 block">${p.category || "-"}</span>
-                        </div>
-                        <div class="mt-3 pt-2 border-t border-neutral-900 flex justify-between items-baseline">
-                            <span class="text-[9px] font-bold ${badgeColor}">${isOk ? 'OK' : 'ສັ່ງດ່ວນ'}</span>
-                            <span class="mono-font text-base md:text-lg font-black ${numColor}">${p.stock}</span>
-                        </div>
-                    </div>`;
-            });
-
-            gridContainer.innerHTML = gridHtml || `<div class="col-span-full py-8 text-center text-xs text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນສິນຄ້າໃນ ${currentBranch}</div>`;
         }
 
         function renderDailyLogs() {
@@ -1272,7 +1144,7 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
-            db.logs.filter(l => normalizeBranchName(l.branch) === currentBranch).slice().reverse().forEach(log => {
+            db.logs.slice().reverse().forEach(log => {
                 const isOut = log.type === "OUT";
                 html += `
                     <tr class="hover:bg-neutral-950/40">
@@ -1295,13 +1167,12 @@
             if (!container) return;
             container.innerHTML = "";
             
-            const branchProds = getBranchProducts();
             const searchQuery = (document.getElementById('quick-adjust-search')?.value || "").toLowerCase();
             let filteredList = searchQuery !== "" ? 
-                branchProds.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery)) : 
-                branchProds.filter(p => p.category === "ວັດຖຸດິບ");
+                db.products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.sku.toLowerCase().includes(searchQuery)) : 
+                db.products.filter(p => p.category === "ວັດຖຸດິບ");
 
-            if (filteredList.length === 0) filteredList = branchProds.slice(0, 12);
+            if (filteredList.length === 0) filteredList = db.products.slice(0, 12);
 
             let html = "";
             filteredList.forEach(item => {
@@ -1346,7 +1217,7 @@
             if (!select) return;
             select.innerHTML = "";
             let html = "";
-            getBranchProducts().forEach(p => {
+            db.products.forEach(p => {
                 html += `<option value="${p.sku}">${p.name} (${p.sku})</option>`;
             });
             select.innerHTML = html;
@@ -1358,12 +1229,13 @@
         }
 
         function renderHRMDashboard() {
+            const filteredStaff = getFilteredStaff();
             const statActive = document.getElementById('stat-active-staff');
             const statBranch = document.getElementById('stat-branches');
             const statInv = document.getElementById('stat-inventory-logs');
             const statPending = document.getElementById('stat-pending-leaves');
 
-            if (statActive) statActive.innerText = `${db.staff.filter(s => s.active).length} / ${db.staff.length}`;
+            if (statActive) statActive.innerText = `${filteredStaff.filter(s => s.active).length} / ${filteredStaff.length}`;
             if (statBranch) statBranch.innerText = db.branches.length;
             if (statInv) statInv.innerText = db.logs.length;
             if (statPending) statPending.innerText = db.leaves.filter(l => l.status === 'Pending').length;
@@ -1379,7 +1251,7 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${normalizeBranchName(att.branch)}</td>
+                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂານ້ຳພຸ"}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
@@ -1424,7 +1296,9 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
-            db.staff.forEach(st => {
+            const filteredStaff = getFilteredStaff();
+
+            filteredStaff.forEach(st => {
                 const imgUrl = st.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80";
                 html += `
                     <tr onclick="viewStaffProfile('${st.pin}')" class="hover:bg-neutral-950/40 cursor-pointer">
@@ -1435,14 +1309,10 @@
                                 <p class="text-[10px] text-neutral-500 font-mono">${st.staff_id || "EMP0000"} | PIN: ${st.pin}</p>
                             </div>
                         </td>
-                        <td class="p-3 text-neutral-400 font-mono">${normalizeBranchName(st.branch)}</td>
+                        <td class="p-3 font-semibold text-[#FF4D00]">${st.branch || "ສາຂານ້ຳພຸ"}</td>
+                        <td class="p-3 text-neutral-400 font-mono">${st.phone || "-"}</td>
                         <td class="p-3 text-center">
                             <span class="px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 text-[10px] font-bold">${st.shift || "ກະ 1"}</span>
-                        </td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${st.emp_type === 'Full-time' ? 'bg-[#FF4D00]/10 text-[#FF4D00]' : 'bg-neutral-900 text-neutral-400'}">
-                                ${st.emp_type || "Full-time"}
-                            </span>
                         </td>
                         <td class="p-3 text-right space-x-2 no-print" onclick="event.stopPropagation();">
                             <button onclick="openEditStaffModal('${st.pin}')" class="text-xs text-sky-400 hover:underline"><i class="fa-solid fa-pen-to-square"></i> ແກ້ໄຂ</button>
@@ -1458,66 +1328,23 @@
             const member = db.staff.find(s => s.pin && s.pin.toString() === pin.toString());
             if (!member) return;
 
-            const cardBody = document.getElementById('staff-detail-card-body');
+            const detailCard = document.getElementById('staff-detail-card');
             const imgUrl = member.photo_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120";
 
-            if (cardBody) {
-                cardBody.innerHTML = `
-                    <img class="h-24 w-24 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
+            if (detailCard) {
+                detailCard.innerHTML = `
+                    <img class="h-20 w-20 rounded-full object-cover mx-auto ring-4 ring-neutral-900 border border-neutral-800" src="${imgUrl}" alt="${member.name}">
                     <div>
-                        <h3 class="font-black text-white text-lg">${member.name}</h3>
-                        <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider mt-0.5">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
+                        <h3 class="font-black text-white text-base">${member.name}</h3>
+                        <p class="text-xs text-[#FF4D00] font-bold uppercase tracking-wider">${member.role || "Barista"} | ${member.emp_type || "Full-time"}</p>
                         <p class="text-[10px] text-neutral-500 font-mono mt-1">ID: ${member.staff_id || "EMP0001"} | PIN: ${member.pin}</p>
                     </div>
-                    <div class="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 text-left space-y-2 text-xs leading-relaxed">
-                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-neutral-200 font-bold">${normalizeBranchName(member.branch)}</span></p>
-                        <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-200 font-mono">${member.dob || "-"}</span></p>
-                        <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-200 font-mono">${member.phone || "-"}</span></p>
-                        <p><span class="text-neutral-500">ກະເຮັດວຽກ:</span> <span class="text-neutral-200 font-bold">${member.shift || "ກະ 1"}</span></p>
-                        <p><span class="text-neutral-500">ເງິນເດືອນພື້ນຖານ:</span> <span class="text-emerald-400 font-bold font-mono">${(member.salary || 3500000).toLocaleString()} LAK</span></p>
+                    <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-900 text-left space-y-1.5 text-[11px] leading-relaxed">
+                        <p><span class="text-neutral-500">ສາຂາ:</span> <span class="text-[#FF4D00] font-bold">${member.branch || "ສາຂານ້ຳພຸ"}</span></p>
+                        <p><span class="text-neutral-500">ວັນເກີດ:</span> <span class="text-neutral-300 font-mono">${member.dob || "-"}</span></p>
+                        <p><span class="text-neutral-500">ເບີໂທ:</span> <span class="text-neutral-300 font-mono">${member.phone || "-"}</span></p>
+                        <p><span class="text-neutral-500">ກະວຽກ:</span> <span class="text-neutral-300 font-bold">${member.shift || "ກະ 1"}</span></p>
                     </div>`;
-            }
-
-            const leaveHistoryList = document.getElementById('staff-leave-history-list');
-            const memberLeaves = db.leaves.filter(l => l.pin && l.pin.toString() === pin.toString());
-
-            if (leaveHistoryList) {
-                if (memberLeaves.length > 0) {
-                    let leaveHtml = "";
-                    memberLeaves.slice().reverse().forEach(lv => {
-                        leaveHtml += `
-                            <div class="bg-neutral-950 p-2.5 rounded-xl border border-neutral-900 space-y-1">
-                                <div class="flex justify-between items-center text-[10px] font-bold">
-                                    <span class="text-neutral-300">${lv.type}</span>
-                                    <span class="${lv.status === 'Approved' ? 'text-emerald-400' : 'text-rose-400'}">${lv.status}</span>
-                                </div>
-                                <p class="text-[10px] text-neutral-500 font-mono">${lv.dates}</p>
-                            </div>`;
-                    });
-                    leaveHistoryList.innerHTML = leaveHtml;
-                } else {
-                    leaveHistoryList.innerHTML = `<p class="text-xs text-neutral-500 italic py-2">ບໍ່ມີປະຫວັດການລາວຽກ</p>`;
-                }
-            }
-
-            const modal = document.getElementById('modal-staff-detail');
-            const popup = document.getElementById('staff-detail-popup');
-            if (modal && popup) {
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    popup.classList.remove('scale-95', 'opacity-0');
-                    popup.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            }
-        }
-
-        function closeStaffDetailModal() {
-            const modal = document.getElementById('modal-staff-detail');
-            const popup = document.getElementById('staff-detail-popup');
-            if (modal && popup) {
-                popup.classList.remove('scale-100', 'opacity-100');
-                popup.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => modal.classList.add('hidden'), 200);
             }
         }
 
@@ -1525,9 +1352,9 @@
             const select = document.getElementById('staff-branch');
             if (!select) return;
             select.innerHTML = "";
-            let html = "";
-            db.branches.forEach(b => { html += `<option value="${b}">${b}</option>`; });
-            select.innerHTML = html;
+            db.branches.forEach(b => {
+                select.innerHTML += `<option value="${b}">${b}</option>`;
+            });
         }
 
         function renderPayroll() {
@@ -1535,85 +1362,28 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
+            const filteredStaff = getFilteredStaff();
             
-            db.staff.forEach(st => {
-                const staffClocks = db.attendance.filter(a => a.pin && a.pin.toString() === st.pin.toString() && a.type === "Clock-In");
-                const daysWorked = new Set(staffClocks.map(c => (c.timestamp || "").split(' ')[0])).size;
-
-                const baseSalary = st.salary || 3500000;
-                const benefit = st.benefit || 400000;
-                const dailyRate = baseSalary / 22;
-                
-                const earnedBaseSalary = Math.round(dailyRate * daysWorked);
-                const netTotal = earnedBaseSalary + benefit;
+            filteredStaff.forEach(st => {
+                const daysWorked = 22;
+                const net = Math.round(((st.salary || 3500000) / 22 * daysWorked) + (st.benefit || 400000));
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
-                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${normalizeBranchName(st.branch)})</span>
+                            ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂານ້ຳພຸ"})</span>
                         </td>
                         <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
                         <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
-                        <td class="p-3 text-right font-mono text-neutral-300">${baseSalary.toLocaleString()}</td>
-                        <td class="p-3 text-right font-mono text-neutral-300">${benefit.toLocaleString()}</td>
-                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${netTotal.toLocaleString()} LAK</td>
+                        <td class="p-3 text-right font-mono text-white">${(st.salary || 3500000).toLocaleString()}</td>
+                        <td class="p-3 text-right font-mono text-white">${(st.benefit || 400000).toLocaleString()}</td>
+                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${net.toLocaleString()} LAK</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         }
 
-        async function handleBranchSubmit(e) {
-            e.preventDefault();
-            const bName = document.getElementById('branch-name').value.trim();
-            if (!bName) return;
-
-            if (db.branches.includes(bName)) {
-                alert("ສາຂານີ້ມີໃນລະບົບແລ້ວ");
-                return;
-            }
-
-            db.branches.push(bName);
-
-            let sourceProducts = db.products.filter(p => normalizeBranchName(p.branch) === "ສາຂານ້ຳພຸ");
-            const masterProductsMap = new Map();
-            sourceProducts.forEach(p => { if (!masterProductsMap.has(p.sku)) masterProductsMap.set(p.sku, p); });
-
-            const newBranchProducts = Array.from(masterProductsMap.values()).map(mp => ({
-                sku: mp.sku, name: mp.name, category: mp.category || "ວັດຖຸດິບ", stock: 0, stock_in: 0, stock_out: 0, branch: bName
-            }));
-
-            db.products.push(...newBranchProducts);
-            localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
-
-            if (supabaseClient) {
-                await supabaseClient.from('main_inventory').insert(newBranchProducts);
-            }
-
-            const baseUrl = window.location.origin + window.location.pathname;
-            activeBranchQRUrl = `${baseUrl}?branch=${encodeURIComponent(bName)}`;
-
-            document.getElementById('qr-branch-title').innerText = bName;
-            document.getElementById('branch-qr-output').classList.remove('hidden');
-
-            renderAllViews();
-            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ! ຍອດສະຕ໊ອກເລີ່ມຕົ້ນ = 0.`);
-            e.target.reset();
-        }
-
-        function openBranchQRModal() {
-            document.getElementById('pop-qr-title').innerText = document.getElementById('qr-branch-title').innerText;
-            document.getElementById('pop-qr-link').innerText = activeBranchQRUrl;
-            document.getElementById('pop-qr-link').href = activeBranchQRUrl;
-            document.getElementById('pop-qr-image').innerHTML = `
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(activeBranchQRUrl)}&color=255-77-0" class="w-full h-full object-contain">
-            `;
-            document.getElementById('modal-branch-qr').classList.remove('hidden');
-        }
-
-        function closeBranchQRModal() {
-            document.getElementById('modal-branch-qr').classList.add('hidden');
-        }
-
+        // --- DIRECT SUPABASE HANDLERS ---
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1628,7 +1398,7 @@
                 pin: pin.toString(),
                 staff_id: "EMP" + String(db.staff.length + 1).padStart(4, '0'),
                 name: name,
-                branch: document.getElementById('staff-branch').value || currentBranch,
+                branch: document.getElementById('staff-branch').value || "ສາຂານ້ຳພຸ",
                 role: 'Barista',
                 phone: document.getElementById('staff-phone').value,
                 dob: document.getElementById('staff-dob').value,
@@ -1720,7 +1490,7 @@
             const lastLog = db.attendance.filter(a => a.pin && a.pin.toString() === pinBuffer.toString()).pop();
             const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
-            const payload = { timestamp: nowStr, pin: pinBuffer, type: actionType, branch: currentBranch };
+            const payload = { timestamp: nowStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || "ສາຂານ້ຳພຸ" };
 
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('attendance').insert([payload]);
@@ -1734,7 +1504,7 @@
                 logEl.innerHTML = `
                     <div class="space-y-1">
                         <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
-                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">${actionType} Success [${currentBranch}]</p>
+                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">${actionType} Success</p>
                     </div>`;
             }
             clearPin();
@@ -1747,28 +1517,28 @@
             if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
 
             for (const [sku, qty] of entries) {
-                const prod = db.products.find(p => p.sku === sku && normalizeBranchName(p.branch) === currentBranch);
+                const prod = db.products.find(p => p.sku === sku);
                 if (!prod) continue;
                 const type = qty > 0 ? "IN" : "OUT";
                 const absQty = Math.abs(qty);
-                prod.stock = Number(prod.stock) + qty;
+                prod.stock = prod.stock + qty;
                 
                 const logPayload = {
                     timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                    sku: sku, name: prod.name, type: type, qty: absQty, note: `Quick Adjust ໂດຍ: ${activeOperator.name}`, branch: currentBranch
+                    sku: sku, name: prod.name, type: type, qty: absQty, note: `Quick Adjust ໂດຍ: ${activeOperator.name}`
                 };
                 db.logs.push(logPayload);
 
                 if (supabaseClient) {
                     await supabaseClient.from('daily_inventory_movement').insert([logPayload]);
-                    await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku).eq('branch', currentBranch);
+                    await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku);
                 }
             }
 
             quickStockChanges = {};
             localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
             renderAllViews();
-            alert(`✅ ບັນທຶກສະຕ໊ອກ ${currentBranch} ລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!`);
+            alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
         async function handleManualRecordSubmit(e) {
@@ -1781,25 +1551,25 @@
             const remarkDesc = document.getElementById('manual-remark-desc').value;
             const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
 
-            const prod = db.products.find(p => p.sku === sku && normalizeBranchName(p.branch) === currentBranch);
+            const prod = db.products.find(p => p.sku === sku);
             if (!prod) return;
 
-            prod.stock = type === 'IN' ? Number(prod.stock) + qty : Number(prod.stock) - qty;
+            prod.stock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
             const logPayload = {
                 timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                sku: sku, name: prod.name, type: type, qty: qty, note: `${note} (ໂດຍ: ${activeOperator.name})`, branch: currentBranch
+                sku: sku, name: prod.name, type: type, qty: qty, note: `${note} (ໂດຍ: ${activeOperator.name})`
             };
 
             db.logs.push(logPayload);
 
             if (supabaseClient) {
                 await supabaseClient.from('daily_inventory_movement').insert([logPayload]);
-                await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku).eq('branch', currentBranch);
+                await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku);
             }
 
             localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
             renderAllViews();
-            alert(`✅ ບັນທຶກລາຍການ ${currentBranch} ສຳເລັດ!`);
+            alert("✅ ບັນທຶກລາຍການລົງ Supabase ສຳເລັດ!");
             e.target.reset();
         }
 
@@ -1814,7 +1584,7 @@
             const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ"); return; }
 
-            const newLeave = { pin: pin, name: staffMember.name, type: type, dates: `${start} ຫາ ${end}`, reason: reason, status: 'Pending', branch: currentBranch };
+            const newLeave = { pin: pin, name: staffMember.name, type: type, dates: `${start} ຫາ ${end}`, reason: reason, status: 'Pending' };
 
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('leaves').insert([newLeave]);
@@ -1827,7 +1597,16 @@
             e.target.reset();
         }
 
-        // --- DIRECT SUPABASE FETCH ENGINE WITH SMART NORMALIZER ---
+        function handleBranchSubmit(e) {
+            e.preventDefault();
+            const bName = document.getElementById('branch-name').value;
+            if (db.branches.includes(bName)) return;
+            db.branches.push(bName);
+            e.target.reset();
+            renderAllViews();
+        }
+
+        // --- SUPABASE CLIENT INITIALIZATION & LIVE FETCH ---
         let supabaseClient = null;
         const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
@@ -1846,37 +1625,41 @@
                 }
             } catch(e) { console.warn("Supabase init error:", e); }
 
+            // Fetch LIVE Data from Supabase
             if (supabaseClient) {
                 try {
                     const [prodRes, staffRes, attRes, logRes, leaveRes] = await Promise.all([
                         supabaseClient.from('main_inventory').select('*'),
                         supabaseClient.from('staff').select('*'),
-                        supabaseClient.from('attendance').select('*').limit(100),
-                        supabaseClient.from('daily_inventory_movement').select('*').limit(100),
-                        supabaseClient.from('leaves').select('*').limit(100)
+                        supabaseClient.from('attendance').select('*').limit(50),
+                        supabaseClient.from('daily_inventory_movement').select('*').limit(50),
+                        supabaseClient.from('leaves').select('*').limit(50)
                     ]);
 
-                    if (prodRes.data && prodRes.data.length > 0) {
-                        db.products = prodRes.data.map(normalizeProduct);
+                    if (prodRes.data && prodRes.data.length) db.products = prodRes.data;
+                    if (staffRes.data && staffRes.data.length) {
+                        // Ensure all fetched staff have branch or default to 'ສາຂານ້ຳພຸ'
+                        db.staff = staffRes.data.map(s => ({
+                            ...s,
+                            branch: s.branch || "ສາຂານ້ຳພຸ"
+                        }));
                     }
-                    if (staffRes.data && staffRes.data.length > 0) {
-                        db.staff = staffRes.data.map(normalizeStaff);
-                    }
-                    if (attRes.data) db.attendance = attRes.data.map(a => ({ ...a, branch: normalizeBranchName(a.branch) }));
-                    if (logRes.data) db.logs = logRes.data.map(l => ({ ...l, branch: normalizeBranchName(l.branch) }));
-                    if (leaveRes.data) db.leaves = leaveRes.data.map(lv => ({ ...lv, branch: normalizeBranchName(lv.branch) }));
+                    if (attRes.data) db.attendance = attRes.data;
+                    if (logRes.data) db.logs = logRes.data;
+                    if (leaveRes.data) db.leaves = leaveRes.data;
 
-                    const extractedBranches = Array.from(new Set(db.products.map(p => p.branch).concat(db.staff.map(s => s.branch)).filter(Boolean)));
-                    if (extractedBranches.length) db.branches = extractedBranches;
+                    // Ensure 'ສາຂານ້ຳພຸ' is always in branches array at top
+                    const fetchedBranches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
+                    if (!fetchedBranches.includes("ສາຂານ້ຳພຸ")) fetchedBranches.unshift("ສາຂານ້ຳພຸ");
+                    db.branches = fetchedBranches;
 
-                    if (badgeText) badgeText.innerText = `Supabase ຂໍ້ມູນຈິງ: ${db.products.length} ສິນຄ້າ, ${db.staff.length} ພະນັກງານ`;
+                    if (badgeText) badgeText.innerText = "Supabase 📍 ສາຂານ້ຳພຸ Connected";
                     if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
 
                     localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
                 } catch(e) {
                     console.error("Error loading live Supabase data:", e);
-                    if (badgeText) badgeText.innerText = "Supabase Error: " + e.message;
-                    if (connDot) connDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
+                    if (badgeText) badgeText.innerText = "Supabase Offline (Cache)";
                 }
             }
 
