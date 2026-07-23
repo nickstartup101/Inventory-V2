@@ -438,11 +438,11 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: STAFF & BRANCHES (MULTI-BRANCH ACTIVATION) ================= -->
+        <!-- ================= TAB 5: STAFF & BRANCHES ================= -->
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມສາຂາໃໝ່, ສະແກນ QR Code ເພື່ອເຂົ້າໃຊ້ງານສາຂາ ແລະ ຈັດການພະນັກງານ</p>
+                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ, ຕັ້ງຄ່າສາຂາ ແລະ ຜະລິດ QR Code ປະຈຳສາຂາ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -455,15 +455,15 @@
                             <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ເຊັ່ນ: ສາຂາ 2 (ຫຼວງພະບາງ)">
                         </div>
                         <button type="submit" class="w-full py-2.5 bg-[#FF4D00] text-white font-bold rounded-xl active:scale-95 transition-all">
-                            + Active ສາຂານີ້ (Duplicate Stock Auto)
+                            + Active ສາຂານີ້ (Reset Stock = 0)
                         </button>
                     </form>
 
                     <!-- QR OUTPUT CONTAINER -->
                     <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-3 bg-neutral-950/80">
                         <span id="qr-branch-title" class="text-xs font-black text-[#FF4D00]"></span>
-                        <div id="qr-image-container" class="w-36 h-32 flex items-center justify-center border border-neutral-800 rounded-xl bg-white p-2"></div>
-                        <p class="text-[10px] text-neutral-400 text-center">ສະແກນ QR ດ້ານເທິງນີ້ ຫຼື ໃຊ້ Link ນີ້ເພື່ອກົດເຂົ້າສາຂາ:</p>
+                        <div id="qr-image-container" class="w-36 h-36 flex items-center justify-center border border-neutral-800 rounded-xl bg-white p-2"></div>
+                        <p class="text-[10px] text-neutral-400 text-center">ສະແກນ QR ຫຼື ໃຊ້ Link ນີ້ເພື່ອກົດເຂົ້າສາຂາ:</p>
                         <a id="qr-link-url" href="#" target="_blank" class="text-[9px] text-[#FF4D00] underline font-mono break-all text-center"></a>
                     </div>
                 </div>
@@ -721,7 +721,7 @@
     <!-- CORE SCRIPT ENGINE -->
     <script>
         // --- MULTI-BRANCH AUTO-DETECTOR FROM URL PARAMETERS ---
-        let currentBranch = "ສາຂາ 1"; // Default branch
+        let currentBranch = "ສາຂາ 1";
         const urlParams = new URLSearchParams(window.location.search);
         const urlBranch = urlParams.get('branch');
         if (urlBranch) {
@@ -1035,7 +1035,7 @@
             }
         }
 
-        // --- RENDER ENGINE (FILTERED BY CURRENT BRANCH) ---
+        // --- RENDER ENGINE (STRICT BRANCH ISOLATION) ---
         function renderAllViews() {
             try {
                 updateBranchIndicators();
@@ -1053,7 +1053,8 @@
         }
 
         function getBranchProducts() {
-            return db.products.filter(p => !p.branch || p.branch === currentBranch);
+            // Strictly filter by currentBranch
+            return db.products.filter(p => p.branch === currentBranch);
         }
 
         function renderActiveShiftCard() {
@@ -1069,7 +1070,7 @@
 
             const activeStaffPins = [];
             const staffClockState = {};
-            db.attendance.filter(a => !a.branch || a.branch === currentBranch).forEach(att => {
+            db.attendance.filter(a => a.branch === currentBranch).forEach(att => {
                 if (att.pin) staffClockState[att.pin.toString()] = att.type;
             });
             for (let pin in staffClockState) { if (staffClockState[pin] === "Clock-In") activeStaffPins.push(pin); }
@@ -1115,7 +1116,7 @@
                         </div>
                     </div>`;
             });
-            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch}</p>`;
+            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-full py-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນ ${currentBranch} (ຍອດຄົງເຫຼືອ = 0)</p>`;
         }
 
         function filterStockByCategory(cat) {
@@ -1167,7 +1168,7 @@
                     </div>`;
             });
 
-            gridContainer.innerHTML = gridHtml || `<div class="col-span-full py-8 text-center text-xs text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນສິນຄ້າໃນ ${currentBranch}</div>`;
+            gridContainer.innerHTML = gridHtml || `<div class="col-span-full py-8 text-center text-xs text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນສິນຄ້າໃນ ${currentBranch} (ກະລຸນາເພີ່ມ ຫຼື ນຳເຂົ້າສະຕ໊ອກ)</div>`;
         }
 
         function renderDailyLogs() {
@@ -1175,7 +1176,7 @@
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
-            db.logs.filter(l => !l.branch || l.branch === currentBranch).slice().reverse().forEach(log => {
+            db.logs.filter(l => l.branch === currentBranch).slice().reverse().forEach(log => {
                 const isOut = log.type === "OUT";
                 html += `
                     <tr class="hover:bg-neutral-950/40">
@@ -1282,7 +1283,7 @@
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
-                                <td class="p-3 text-neutral-400">${att.branch || "-"}</td>
+                                <td class="p-3 text-neutral-400">${att.branch || "ສາຂາ 1"}</td>
                                 <td class="p-3 text-neutral-500 font-mono">${att.timestamp}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
@@ -1415,7 +1416,7 @@
             tbody.innerHTML = html;
         }
 
-        // --- BRANCH CREATION & AUTO STOCK DUPLICATION ---
+        // --- BRANCH CREATION & AUTO STOCK RESET (STOCK = 0) ---
         async function handleBranchSubmit(e) {
             e.preventDefault();
             const bName = document.getElementById('branch-name').value.trim();
@@ -1428,27 +1429,36 @@
 
             db.branches.push(bName);
 
-            // AUTO DUPLICATE MASTER STOCK PRODUCTS TO NEW BRANCH
-            const masterProducts = db.products.filter(p => !p.branch || p.branch === "ສາຂາ 1");
-            const newBranchProducts = masterProducts.map(mp => ({
-                sku: `${mp.sku}`,
+            // 1. Get Unique Master Product Structure (SKU, Name, Category)
+            const masterProductsMap = new Map();
+            db.products.forEach(p => {
+                if (!masterProductsMap.has(p.sku)) {
+                    masterProductsMap.set(p.sku, p);
+                }
+            });
+
+            // 2. DUPLICATE CATALOG ONLY & RESET STOCKS TO 0 FOR NEW BRANCH
+            const newBranchProducts = Array.from(masterProductsMap.values()).map(mp => ({
+                sku: mp.sku,
                 name: mp.name,
                 category: mp.category,
-                stock: 0, // Reset stock for new branch
+                stock: 0,      // RESET TO ZERO
+                stock_in: 0,   // RESET TO ZERO
+                stock_out: 0,  // RESET TO ZERO
                 branch: bName
             }));
 
-            // Append to Local DB
+            // Append to Local DB Array
             db.products.push(...newBranchProducts);
             localStorage.setItem('LD_LOCAL_DB_CACHE', JSON.stringify(db));
 
-            // Sync to Supabase
+            // Sync New Zero-Stock Catalog to Supabase
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('main_inventory').insert(newBranchProducts);
-                if (error) console.error("Error duplicating branch stock to Supabase:", error);
+                if (error) console.error("Error creating branch stock in Supabase:", error);
             }
 
-            // GENERATE BRANCH SPECIFIC URL & QR CODE
+            // GENERATE BRANCH SPECIFIC URL & REAL QR CODE
             const baseUrl = window.location.origin + window.location.pathname;
             const branchUrl = `${baseUrl}?branch=${encodeURIComponent(bName)}`;
 
@@ -1461,7 +1471,7 @@
             document.getElementById('branch-qr-output').classList.remove('hidden');
 
             renderAllViews();
-            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ! ລະບົບໄດ້ Duplicate Stock ເຂົ້າສາຂາໃໝ່ຮຽບຮ້ອຍແລ້ວ.`);
+            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n\nລະບົບໄດ້ກັອບປີໂຄງສ້າງສິນຄ້າ ພ້ອມຕັ້ງຍອດຄົງເຫຼືອເລີ່ມຕົ້ນເປັນ 0 ທຸກລາຍການຮຽບຮ້ອຍແລ້ວ.`);
             e.target.reset();
         }
 
@@ -1599,7 +1609,7 @@
             if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
 
             for (const [sku, qty] of entries) {
-                const prod = db.products.find(p => p.sku === sku && (!p.branch || p.branch === currentBranch));
+                const prod = db.products.find(p => p.sku === sku && p.branch === currentBranch);
                 if (!prod) continue;
                 const type = qty > 0 ? "IN" : "OUT";
                 const absQty = Math.abs(qty);
@@ -1633,7 +1643,7 @@
             const remarkDesc = document.getElementById('manual-remark-desc').value;
             const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
 
-            const prod = db.products.find(p => p.sku === sku && (!p.branch || p.branch === currentBranch));
+            const prod = db.products.find(p => p.sku === sku && p.branch === currentBranch);
             if (!prod) return;
 
             prod.stock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
@@ -1708,13 +1718,17 @@
                         supabaseClient.from('leaves').select('*').limit(50)
                     ]);
 
-                    if (prodRes.data && prodRes.data.length) db.products = prodRes.data;
-                    if (staffRes.data && staffRes.data.length) db.staff = staffRes.data;
+                    if (prodRes.data && prodRes.data.length) {
+                        // Default empty branch fields to "ສາຂາ 1" for legacy compatibility
+                        db.products = prodRes.data.map(p => ({ ...p, branch: p.branch || "ສາຂາ 1" }));
+                    }
+                    if (staffRes.data && staffRes.data.length) {
+                        db.staff = staffRes.data.map(s => ({ ...s, branch: s.branch || "ສາຂາ 1" }));
+                    }
                     if (attRes.data) db.attendance = attRes.data;
                     if (logRes.data) db.logs = logRes.data;
                     if (leaveRes.data) db.leaves = leaveRes.data;
 
-                    // Extract all branches dynamically
                     const extractedBranches = Array.from(new Set(db.products.map(p => p.branch).concat(db.staff.map(s => s.branch)).filter(Boolean)));
                     if (extractedBranches.length) db.branches = extractedBranches;
 
