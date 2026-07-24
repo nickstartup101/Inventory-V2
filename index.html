@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Smart Stock & Branch Management</title>
+    <title>La Dolce Portal - Clean Dashboard Stable</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -213,10 +213,7 @@
                     <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <!-- CATEGORY PILLS FILTER BUTTONS -->
                 <div id="stock-category-pills" class="flex flex-wrap gap-2 py-1"></div>
-
-                <!-- COMPACT CARDS CONTAINER -->
                 <div id="stock-cards-container" class="pt-2"></div>
             </div>
 
@@ -453,7 +450,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: STAFF & BRANCHES (WITH BRANCH EDIT & DELETE) ================= -->
+        <!-- ================= TAB 5: STAFF & BRANCHES (WITH EDIT/DELETE BRANCHES) ================= -->
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
@@ -501,7 +498,7 @@
                 </div>
             </div>
 
-            <!-- BRANCH MANAGEMENT CARD (WITH BRANCH LIST, EDIT & DELETE) -->
+            <!-- BRANCH MANAGEMENT CARD (WITH BRANCH EDIT & DELETE) -->
             <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-md">
                 <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-code-branch text-[#FF4D00] mr-2"></i>ຈັດການສາຂາ (Branch Management)</h2>
                 
@@ -799,7 +796,7 @@
             return { dailyBurn: parseFloat(dailyBurn.toFixed(1)), daysLeft: daysLeft };
         }
 
-        // --- KEY TRANSLATOR / NORMALIZER FOR SUPABASE DATA ---
+        // --- TRANSLATOR / NORMALIZER FOR SUPABASE DATA ---
         function normalizeDataset(rawArray) {
             if (!rawArray || !Array.isArray(rawArray)) return [];
             return rawArray.map(item => {
@@ -811,7 +808,7 @@
                     let valStr = (val !== null && val !== undefined) ? val.toString().trim() : "";
                     let valLower = valStr.toLowerCase();
 
-                    if (k === "sku" || k === "ระຫັດ") norm.sku = valStr;
+                    if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
                     else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
                     else if (k === "category" || k === "ໝວດໝູ່") norm.category = valStr;
                     else if (k === "stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
@@ -850,6 +847,7 @@
             renderAllViews();
         }
 
+        // HIGH-SPEED COMPRESSOR (<25KB Base64)
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -988,7 +986,7 @@
                     modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
                 }
                 if (switchBtnText) switchBtnText.innerText = "Switch to Employee";
-                if (switchIcon) switchIcon.className = "fa-solid fa-[#FF4D00] fa-users text-white";
+                if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
                 if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
             } else {
                 if (empMenu) empMenu.classList.remove('hidden');
@@ -1224,10 +1222,8 @@
             const filteredProds = getFilteredProducts();
             const search = (document.getElementById('stock-search')?.value || "").toLowerCase();
 
-            // Extract unique categories
             const categories = ["ALL", ...Array.from(new Set(filteredProds.map(p => p.category || "ອື່ນໆ")))];
 
-            // Render Pills
             if (pillsContainer) {
                 pillsContainer.innerHTML = categories.map(cat => {
                     const isActive = activeCategoryFilter === cat;
@@ -1235,7 +1231,6 @@
                 }).join('');
             }
 
-            // Filter products by search and category
             const displayProds = filteredProds.filter(p => {
                 const matchCat = activeCategoryFilter === "ALL" || (p.category || "ອື່ນໆ") === activeCategoryFilter;
                 const matchSearch = !search || p.name.toLowerCase().includes(search) || p.sku.toLowerCase().includes(search);
@@ -1350,19 +1345,15 @@
             summaryEl.innerText = entries.map(([sku, qty]) => `${sku}: ${qty > 0 ? '+' : ''}${qty}`).join(', ');
         }
 
-        // MASTER CATALOG DROPDOWN IN MANUAL RECORD
         function renderManualRecordDropdowns() {
             const select = document.getElementById('manual-sku');
             if (!select) return;
             select.innerHTML = "";
             let html = "";
             
-            // Derive unique master items catalog
             const masterCatalog = [];
             db.products.forEach(p => {
-                if (!masterCatalog.some(m => m.name === p.name)) {
-                    masterCatalog.push(p);
-                }
+                if (!masterCatalog.some(m => m.name === p.name)) masterCatalog.push(p);
             });
 
             masterCatalog.forEach(p => {
@@ -1513,7 +1504,6 @@
             }
         }
 
-        // RENDER ACTIVE BRANCH LIST WITH EDIT & DELETE IN TAB 5
         function renderBranchList() {
             const listEl = document.getElementById('hrm-branch-list');
             if (!listEl) return;
@@ -1594,7 +1584,6 @@
             tbody.innerHTML = html;
         }
 
-        // MULTI-BRANCH LINK GENERATION
         async function handleBranchSubmit(e) {
             e.preventDefault();
             const bName = document.getElementById('branch-name').value.trim();
@@ -1618,7 +1607,7 @@
             e.target.reset();
         }
 
-        // DIRECT SUPABASE HANDLERS (ON-DEMAND BRANCH STOCK CREATION)
+        // AUTO-CALCULATE HIGHEST STAFF_ID (Guarantees NO duplicate key errors!)
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1629,9 +1618,19 @@
                 return;
             }
 
+            // Find highest staff_id number to prevent duplicates
+            let maxNum = 0;
+            db.staff.forEach(s => {
+                if (s.staff_id) {
+                    const num = parseInt(s.staff_id.replace(/\D/g, ''));
+                    if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            const staffId = "EMP" + String(maxNum + 1).padStart(4, '0');
+
             const newStaff = {
                 pin: pin.toString(),
-                staff_id: "EMP" + String(db.staff.length + 1).padStart(4, '0'),
+                staff_id: staffId,
                 name: name,
                 branch: document.getElementById('staff-branch').value || currentSelectedBranch,
                 role: 'Barista',
@@ -1651,7 +1650,7 @@
                     alert("❌ ບັນທຶກລົງ Supabase ບໍ່ສຳເລັດ: " + error.message);
                     return;
                 }
-                alert("✅ ເພີ່ມພະນັກງານເຂົ້າ Supabase ສຳເລັດ!");
+                alert(`✅ ເພີ່ມພະນັກງານ (${staffId}) ເຂົ້າ Supabase ສຳເລັດ!`);
             }
 
             db.staff.push(newStaff);
@@ -1791,11 +1790,9 @@
 
             if (!prod) return;
 
-            // Check if product exists for current active branch
             let branchProd = db.products.find(p => p.name === prod.name && p.branch === activeBranch);
 
             if (!branchProd) {
-                // Create item on-demand for this branch
                 const suffix = getBranchSuffix(activeBranch);
                 branchProd = {
                     sku: `${prod.sku}-${suffix}`,
