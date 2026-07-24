@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Multi-Branch BurnRate Stable</title>
+    <title>La Dolce Portal - Clean Dashboard Stable</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -28,7 +28,6 @@
             overflow-x: hidden;
             touch-action: manipulation;
         }
-        /* DISABLE DOUBLE TAP ZOOM ON ALL CLICKABLE ELEMENTS */
         button, input, select, textarea, a, .glass-card, .glass-panel {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
@@ -170,6 +169,7 @@
 
         <!-- ================= TAB 1: DASHBOARD & STOCK ================= -->
         <section id="tab-dashboard" class="space-y-8">
+            <!-- SHIFT & ACTIVE STAFF ROW -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-panel p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
                     <div>
@@ -192,25 +192,28 @@
                 </div>
             </div>
 
-            <!-- HIGH FREQUENCY CARDS -->
-            <div class="space-y-4">
-                <h2 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center">
-                    <span class="w-2 h-2 rounded-full bg-[#FF4D00] mr-2"></span> ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)
-                </h2>
+            <!-- HERO SECTION: HIGH FREQUENCY TRACKERS (Clean & Highlighted) -->
+            <div class="glass-panel p-6 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl relative overflow-hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] text-[#FF4D00] font-black uppercase tracking-widest block"><i class="fa-solid fa-fire text-[#FF4D00] mr-1"></i> Hero Section</span>
+                        <h2 class="text-base font-black text-white">ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)</h2>
+                    </div>
+                    <span class="text-[10px] text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full font-mono">Realtime Live</span>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CATEGORY-GROUPED COMPACT GRID CARDS (WITH BURN RATE PREDICTION) -->
+            <!-- CATEGORY-GROUPED COMPACT GRID CARDS (CLEAN & NON-CLUTTERED) -->
             <div class="glass-panel p-6 rounded-2xl space-y-6">
                 <div class="flex justify-between items-center flex-wrap gap-2 border-b border-neutral-800 pb-4">
                     <div>
-                        <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock - Grouped Grid Cards)</h2>
-                        <p class="text-[10px] text-neutral-500 mt-0.5">ສະແດງເປັນ Card ນ້ອຍໆ ແຍກຕາມໝວດໝູ່ ພ້ອມຄາດການ Burn Rate (ຈຳນວນວັນທີ່ໃຊ້ໄດ້ເຫຼືອ)</p>
+                        <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock - Compact Grid)</h2>
+                        <p class="text-[10px] text-neutral-500 mt-0.5">ສະແດງເປັນ Card ນ້ອຍໆ ແຍກຕາມໝວດໝູ່ ພ້ອມຄາດການ Burn Rate ວັນທີ່ໃຊ້ໄດ້ເຫຼືອ</p>
                     </div>
                     <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <!-- CATEGORY CARDS GRID CONTAINER -->
                 <div id="stock-cards-container" class="space-y-8"></div>
             </div>
 
@@ -319,7 +322,6 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- PIN PAD WITH DOUBLE TAP ZOOM PREVENTION -->
                 <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
                     <div>
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1"><i class="fa-solid fa-clock text-[#FF4D00] mr-2"></i>Clock In/Out PIN Pad</h2>
@@ -766,9 +768,7 @@
         // --- BURN RATE CALCULATION ENGINE ---
         function calculateItemBurnRate(sku) {
             const outLogs = db.logs.filter(l => l.sku === sku && l.type === "OUT");
-            if (outLogs.length < 2) {
-                return { dailyBurn: 0, daysLeft: null };
-            }
+            if (outLogs.length < 2) return { dailyBurn: 0, daysLeft: null };
 
             const totalQty = outLogs.reduce((sum, l) => sum + (Number(l.qty) || 0), 0);
             const timestamps = outLogs.map(l => new Date(l.timestamp).getTime()).filter(t => !isNaN(t));
@@ -785,13 +785,10 @@
             const stock = currentProd ? currentProd.stock : 0;
             const daysLeft = Math.round(stock / dailyBurn);
 
-            return {
-                dailyBurn: parseFloat(dailyBurn.toFixed(1)),
-                daysLeft: daysLeft
-            };
+            return { dailyBurn: parseFloat(dailyBurn.toFixed(1)), daysLeft: daysLeft };
         }
 
-        // --- KEY TRANSLATOR / NORMALIZER FOR SUPABASE ---
+        // --- TRANSLATOR / NORMALIZER FOR SUPABASE DATA ---
         function normalizeDataset(rawArray) {
             if (!rawArray || !Array.isArray(rawArray)) return [];
             return rawArray.map(item => {
@@ -842,6 +839,7 @@
             renderAllViews();
         }
 
+        // --- ENHANCED HIGH-SPEED IMAGE COMPRESSOR (<20KB for guaranteed Supabase acceptance) ---
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -850,20 +848,18 @@
                 img.src = event.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 250;
-                    const MAX_HEIGHT = 250;
-                    let width = img.width;
-                    let height = img.height;
+                    const MAX = 180;
+                    let width = img.width, height = img.height;
 
                     if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        if (width > MAX) { height *= MAX / width; width = MAX; }
                     } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        if (height > MAX) { width *= MAX / height; height = MAX; }
                     }
                     canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('canvas');
+                    const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL('image/jpeg', 0.7));
+                    callback(canvas.toDataURL('image/jpeg', 0.6));
                 };
             };
         }
@@ -1105,7 +1101,6 @@
             }
         }
 
-        // --- FILTER HELPERS ---
         function getFilteredProducts() {
             if (currentSelectedBranch === "ALL") return db.products;
             return db.products.filter(p => p.branch === currentSelectedBranch || !p.branch);
@@ -1165,6 +1160,7 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
+        // HERO SECTION: HIGH-FREQUENCY CARDS
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1203,7 +1199,7 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
         }
 
-        // --- NEW: CATEGORY-GROUPED COMPACT GRID CARDS (WITH BURN RATE ESTIMATION) ---
+        // COMPACT CATEGORY GRID CARDS WITH BURN RATE
         function renderStockTable() {
             const container = document.getElementById('stock-cards-container');
             if (!container) return;
@@ -1212,7 +1208,6 @@
             const filteredProds = getFilteredProducts();
             const search = (document.getElementById('stock-search')?.value || "").toLowerCase();
 
-            // Group products by Category
             const grouped = {};
             filteredProds.forEach(item => {
                 if (search && !item.name.toLowerCase().includes(search) && !item.sku.toLowerCase().includes(search)) {
@@ -1271,10 +1266,6 @@
             }
 
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic p-4 text-center">ບໍ່ມີສິນຄ້າໃນໝວດໝູ່ທີ່ຄົ້ນຫາ</p>`;
-        }
-
-        function filterStockTable() {
-            renderStockTable();
         }
 
         function renderDailyLogs() {
@@ -1543,7 +1534,6 @@
 
             const branchSuffix = getBranchSuffix(bName);
 
-            // Copy inventory items for the new branch with 0 quantity and appended SKU suffix
             const baseProducts = db.products.filter(p => !p.branch || p.branch === "ສາຂາ ວຽງຈັນ");
             const clonedProducts = [];
 
@@ -1580,7 +1570,7 @@
             e.target.reset();
         }
 
-        // --- DIRECT SUPABASE HANDLERS ---
+        // --- DIRECT SUPABASE HANDLERS (WITH FIXED PROFILE PHOTO UPDATE) ---
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1639,7 +1629,9 @@
                     benefit: parseFloat(document.getElementById('edit-staff-benefit').value) || 400000
                 };
 
-                if (editPhotoBase64) updatedData.photo_url = editPhotoBase64;
+                if (editPhotoBase64) {
+                    updatedData.photo_url = editPhotoBase64;
+                }
 
                 if (supabaseClient) {
                     const { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
@@ -1647,11 +1639,12 @@
                         alert("❌ ອັບເດດ Supabase ບໍ່ສຳເລັດ: " + error.message);
                         return;
                     }
-                    alert("✅ ອັບເດດ Supabase ສຳເລັດ!");
+                    alert("✅ ອັບເດດຂໍ້ມູນ ແລະ ຮູບ Profile ເຂົ້າ Supabase ສຳເລັດ!");
                 }
 
                 Object.assign(db.staff[staffIndex], updatedData);
                 renderAllViews();
+                viewStaffProfile(pin); // Refresh profile card view
                 closeEditStaffModal();
             }
         }
@@ -1835,7 +1828,7 @@
                     const fetchedBranches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
                     if (fetchedBranches.length) db.branches = fetchedBranches;
 
-                    if (badgeText) badgeText.innerText = `Supabase Connected (${db.staff.length} ຄົນ)`;
+                    if (badgeText) badgeText.innerText = `Supabase Live (${db.staff.length} ຄົນ)`;
                     if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
                 } catch(e) {
                     console.error("Error loading live Supabase data:", e);
