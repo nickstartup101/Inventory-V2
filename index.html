@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Clean Dashboard Stable</title>
+    <title>La Dolce Portal - Smart Stock & Branch Management</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -169,7 +169,6 @@
 
         <!-- ================= TAB 1: DASHBOARD & STOCK ================= -->
         <section id="tab-dashboard" class="space-y-8">
-            <!-- SHIFT & ACTIVE STAFF ROW -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-panel p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
                     <div>
@@ -192,7 +191,7 @@
                 </div>
             </div>
 
-            <!-- HERO SECTION: HIGH FREQUENCY TRACKERS (Clean & Highlighted) -->
+            <!-- HERO SECTION: HIGH FREQUENCY TRACKERS -->
             <div class="glass-panel p-6 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl relative overflow-hidden space-y-4">
                 <div class="flex justify-between items-center">
                     <div>
@@ -204,17 +203,21 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CATEGORY-GROUPED COMPACT GRID CARDS (CLEAN & NON-CLUTTERED) -->
-            <div class="glass-panel p-6 rounded-2xl space-y-6">
-                <div class="flex justify-between items-center flex-wrap gap-2 border-b border-neutral-800 pb-4">
+            <!-- CURRENT STOCK: COMPACT RECTANGLE ROUNDED CARDS + CATEGORY PILLS -->
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <div class="flex justify-between items-center flex-wrap gap-3 border-b border-neutral-800 pb-4">
                     <div>
-                        <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock - Compact Grid)</h2>
-                        <p class="text-[10px] text-neutral-500 mt-0.5">ສະແດງເປັນ Card ນ້ອຍໆ ແຍກຕາມໝວດໝູ່ ພ້ອມຄາດການ Burn Rate ວັນທີ່ໃຊ້ໄດ້ເຫຼືອ</p>
+                        <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock)</h2>
+                        <p class="text-[10px] text-neutral-500">ກົດເລືອກໝວດໝູ່ເພື່ອເບິ່ງສິນຄ້າແບບ Rectangle Cards ກະທັດຮັດ ບໍ່ກິນພື້ນທີ່</p>
                     </div>
                     <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <div id="stock-cards-container" class="space-y-8"></div>
+                <!-- CATEGORY PILLS FILTER BUTTONS -->
+                <div id="stock-category-pills" class="flex flex-wrap gap-2 py-1"></div>
+
+                <!-- COMPACT CARDS CONTAINER -->
+                <div id="stock-cards-container" class="pt-2"></div>
             </div>
 
             <div class="glass-panel p-6 rounded-2xl space-y-4">
@@ -240,7 +243,7 @@
         <section id="tab-quick-action" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ບັນທຶກການນຳເຂົ້າ ແລະ ເບີກອອກສິນຄ້າ ໂດຍປົດລັອກເຊດຊັນພຽງຄັ້ງດຽວ</p>
+                <p class="text-xs text-neutral-400 mt-1">ເລືອກສິນຄ້າຈາກ Master Catalog ເພື່ອບັນທຶກສະຕ໊ອກເຂົ້າສາຂາປັດຈຸບັນອັດຕະໂນມັດ</p>
             </div>
 
             <div class="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -259,9 +262,9 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
                             <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1">ປັບປ່ຽນຈຳນວນແບບດ່ວນ (Quick In / Out Tools)</h2>
-                            <p class="text-[10px] text-neutral-500">ສະແດງສິນຄ້າໝວດໝູ່ "ວັດຖຸດິບ" ເປັນຫຼັກ ຫຼື ຄົ້ນຫາສິນຄ້າເພື່ອປັບສະຕ໊ອກ</p>
+                            <p class="text-[10px] text-neutral-500">ສະແດງສິນຄ້າໃນສະຕ໊ອກ ຫຼື ຄົ້ນຫາສິນຄ້າ Master ເພື່ອເພີ່ມເຂົ້າສະຕ໊ອກ</p>
                         </div>
-                        <input type="text" id="quick-adjust-search" oninput="renderQuickAdjustments()" placeholder="ຄົ້ນຫາສິນຄ້າໃນສະຕ໊ອກດ່ວນ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
+                        <input type="text" id="quick-adjust-search" oninput="renderQuickAdjustments()" placeholder="ຄົ້ນຫາສິນຄ້າດ່ວນ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[380px] overflow-y-auto pr-1" id="quick-adjust-grid"></div>
@@ -281,8 +284,8 @@
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4">ບັນທຶກແບບລະອຽດ (Manual Record)</h2>
                     <form onsubmit="handleManualRecordSubmit(event)" class="space-y-4 text-xs">
                         <div>
-                            <label class="block text-neutral-400 font-semibold mb-1">ເລືອກສິນຄ້າ</label>
-                            <select id="manual-sku" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"></select>
+                            <label class="block text-neutral-400 font-semibold mb-1">ເລືອກສິນຄ້າ (ຈາກ Master Catalog)</label>
+                            <select id="manual-sku" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold"></select>
                         </div>
                         <div>
                             <label class="block text-neutral-400 font-semibold mb-1">ປະເພດ In/Out</label>
@@ -450,11 +453,11 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: STAFF & BRANCHES ================= -->
+        <!-- ================= TAB 5: STAFF & BRANCHES (WITH BRANCH EDIT & DELETE) ================= -->
         <section id="tab-staff-branch" class="hidden space-y-8">
             <div class="border-b border-neutral-800 pb-5">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ ແລະ ເປີດສາຂາໃໝ່ພ້ອມ Generate Link</p>
+                <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ ແລະ ຈັດການສາຂາ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -498,18 +501,25 @@
                 </div>
             </div>
 
-            <!-- BRANCH MANAGEMENT CARD -->
+            <!-- BRANCH MANAGEMENT CARD (WITH BRANCH LIST, EDIT & DELETE) -->
             <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-md">
-                <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-code-branch text-[#FF4D00] mr-2"></i>ເປີດນຳໃຊ້ສາຂາໃໝ່ & Clone ສະຕ໊ອກ</h2>
+                <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-code-branch text-[#FF4D00] mr-2"></i>ຈັດການສາຂາ (Branch Management)</h2>
+                
                 <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
                     <div>
-                        <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສາຂາໃໝ່ (ເຊັ່ນ: ສາຂາໄຊເສດຖາ, ສາຂານ້ຳພຸ)</label>
-                        <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ລະບຸຊື່ສາຂາ...">
+                        <label class="block text-neutral-400 font-semibold mb-1">ເປີດນຳໃຊ້ສາຂາໃໝ່</label>
+                        <input type="text" id="branch-name" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white focus:border-[#FF4D00] outline-none" placeholder="ເຊັ່ນ: ສາຂາໄຊເສດຖາ, ສາຂານ້ຳພຸ...">
                     </div>
                     <button type="submit" class="w-full py-2.5 bg-[#FF4D00] hover:bg-[#FF4D00]/80 text-white font-bold rounded-xl transition-all shadow-lg shadow-[#FF4D00]/20">
-                        ⚡ Active ສາຂານີ້ & Copy ຕາຕະລາງ Inventory
+                        ⚡ Active ສາຂາໃໝ່ & Generate Link
                     </button>
                 </form>
+
+                <!-- ACTIVE BRANCH LIST WITH EDIT/DELETE BUTTONS -->
+                <div class="space-y-2 border-t border-neutral-900 pt-4">
+                    <span class="text-[10px] text-neutral-500 font-bold block uppercase tracking-wider">ລາຍຊື່ສາຂາທັງໝົດໃນລະບົບ:</span>
+                    <div id="hrm-branch-list" class="space-y-2"></div>
+                </div>
 
                 <div id="branch-qr-output" class="hidden border border-neutral-800 rounded-2xl p-4 flex flex-col items-center justify-center space-y-4 bg-neutral-950/80">
                     <span id="qr-branch-title" class="text-xs font-bold text-[#FF4D00]"></span>
@@ -601,7 +611,7 @@
                 </div>
                 
                 <div>
-                    <label class="block text-neutral-400 font-semibold mb-1"><i class="fa-solid fa-image text-[#FF4D00] mr-1"></i> ເລືອກຮູບພະນັກງານ (ຈາກ Device/ມືຖື)</label>
+                    <label class="block text-neutral-400 font-semibold mb-1"><i class="fa-solid fa-image text-[#FF4D00] mr-1"></i> ເລືອກຮູບພະນັກງານ (ຈາກ Device)</label>
                     <input type="file" id="staff-photo-file" accept="image/*" onchange="previewAddStaffImage(this)" class="w-full text-xs text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FF4D00]/10 file:text-[#FF4D00] hover:file:bg-[#FF4D00]/20 bg-neutral-900 border border-neutral-800 rounded-xl cursor-pointer">
                     <img id="add-photo-preview" class="hidden h-20 w-20 object-cover rounded-full mt-3 border border-neutral-700 mx-auto">
                 </div>
@@ -748,6 +758,7 @@
         let isHRMMode = false;
         let activeOperator = null;
         let currentSelectedBranch = "ALL";
+        let activeCategoryFilter = "ALL";
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
@@ -788,7 +799,7 @@
             return { dailyBurn: parseFloat(dailyBurn.toFixed(1)), daysLeft: daysLeft };
         }
 
-        // --- TRANSLATOR / NORMALIZER FOR SUPABASE DATA ---
+        // --- KEY TRANSLATOR / NORMALIZER FOR SUPABASE DATA ---
         function normalizeDataset(rawArray) {
             if (!rawArray || !Array.isArray(rawArray)) return [];
             return rawArray.map(item => {
@@ -800,7 +811,7 @@
                     let valStr = (val !== null && val !== undefined) ? val.toString().trim() : "";
                     let valLower = valStr.toLowerCase();
 
-                    if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
+                    if (k === "sku" || k === "ระຫັດ") norm.sku = valStr;
                     else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
                     else if (k === "category" || k === "ໝວດໝູ່") norm.category = valStr;
                     else if (k === "stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
@@ -839,7 +850,6 @@
             renderAllViews();
         }
 
-        // --- ENHANCED HIGH-SPEED IMAGE COMPRESSOR (<20KB for guaranteed Supabase acceptance) ---
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -978,7 +988,7 @@
                     modeBadge.className = "text-[9px] bg-[#FF4D00]/10 text-[#FF4D00] px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit";
                 }
                 if (switchBtnText) switchBtnText.innerText = "Switch to Employee";
-                if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
+                if (switchIcon) switchIcon.className = "fa-solid fa-[#FF4D00] fa-users text-white";
                 if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
             } else {
                 if (empMenu) empMenu.classList.remove('hidden');
@@ -1123,6 +1133,7 @@
                 renderHRMDashboard();
                 renderStaffTable();
                 renderBranchDropdowns();
+                renderBranchList();
                 renderPayroll();
             } catch(e) { console.error("Error rendering views:", e); }
         }
@@ -1160,7 +1171,7 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
-        // HERO SECTION: HIGH-FREQUENCY CARDS
+        // HERO SECTION RENDERER
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1176,18 +1187,18 @@
                 const percentage = Math.min(100, Math.max(0, (item.stock / 200) * 100));
 
                 html += `
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border border-neutral-800">
+                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border border-neutral-800 shadow-xl">
                         <div class="space-y-1">
                             <div class="flex justify-between items-center">
                                 <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
                                 <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold border ${bgBadgeClass}">${statusText}</span>
                             </div>
-                            <h3 class="font-bold text-neutral-200 text-sm leading-snug">${item.name}</h3>
+                            <h3 class="font-bold text-neutral-100 text-sm leading-snug">${item.name}</h3>
                             <p class="text-[10px] text-neutral-500">${item.branch || "ສາຂາ ວຽງຈັນ"}</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-neutral-900 flex justify-between items-end">
                             <div>
-                                <span class="text-[10px] text-neutral-500 font-bold block uppercase">ຄົງເຫຼືອໃນສາງ:</span>
+                                <span class="text-[10px] text-neutral-500 font-bold block uppercase">ຄົງເຫຼືອ:</span>
                                 <span class="mono-font text-3xl font-black ${colorClass}">${item.stock}</span>
                             </div>
                             <div class="w-16 bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800 mb-1">
@@ -1199,73 +1210,69 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
         }
 
-        // COMPACT CATEGORY GRID CARDS WITH BURN RATE
+        // COMPACT RECTANGLE ROUNDED CARDS WITH CATEGORY PILLS FILTER
+        function setCategoryFilter(cat) {
+            activeCategoryFilter = cat;
+            renderStockTable();
+        }
+
         function renderStockTable() {
             const container = document.getElementById('stock-cards-container');
+            const pillsContainer = document.getElementById('stock-category-pills');
             if (!container) return;
-            container.innerHTML = "";
 
             const filteredProds = getFilteredProducts();
             const search = (document.getElementById('stock-search')?.value || "").toLowerCase();
 
-            const grouped = {};
-            filteredProds.forEach(item => {
-                if (search && !item.name.toLowerCase().includes(search) && !item.sku.toLowerCase().includes(search)) {
-                    return;
-                }
-                const cat = item.category || "ອື່ນໆ";
-                if (!grouped[cat]) grouped[cat] = [];
-                grouped[cat].push(item);
-            });
+            // Extract unique categories
+            const categories = ["ALL", ...Array.from(new Set(filteredProds.map(p => p.category || "ອື່ນໆ")))];
 
-            let html = "";
-            for (let cat in grouped) {
-                html += `
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-2 border-b border-neutral-800 pb-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-[#FF4D00]"></span>
-                            <h3 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">${cat} (${grouped[cat].length} ລາຍການ)</h3>
-                        </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                `;
-
-                grouped[cat].forEach(item => {
-                    const isOk = item.stock > 0;
-                    const burnInfo = calculateItemBurnRate(item.sku);
-                    
-                    let burnBadge = "";
-                    if (burnInfo.daysLeft !== null) {
-                        burnBadge = `<span class="text-[9px] text-amber-400 block font-mono font-bold">🔥 ໃຊ້ໄດ້ອີກ ~${burnInfo.daysLeft} ວັນ</span>`;
-                    } else {
-                        burnBadge = `<span class="text-[9px] text-neutral-600 block">🔥 ປະຫວັດບໍ່ພໍຄາດການ</span>`;
-                    }
-
-                    html += `
-                        <div class="bg-neutral-900/60 border border-neutral-800 p-3 rounded-xl flex flex-col justify-between hover:border-[#FF4D00] transition-all">
-                            <div>
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="mono-font text-[9px] text-neutral-500 font-bold">${item.sku}</span>
-                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-bold ${isOk ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}">
-                                        ${isOk ? 'OK' : 'ສັ່ງດ່ວນ'}
-                                    </span>
-                                </div>
-                                <h4 class="font-bold text-xs text-neutral-200 truncate" title="${item.name}">${item.name}</h4>
-                                <p class="text-[9px] text-neutral-500 truncate">${item.branch || "ສາຂາ ວຽງຈັນ"}</p>
-                            </div>
-                            <div class="mt-3 pt-2 border-t border-neutral-950 flex justify-between items-end">
-                                <div>
-                                    <span class="mono-font text-2xl font-black ${isOk ? 'text-emerald-400' : 'text-[#FF4D00]'}">${item.stock}</span>
-                                    ${burnBadge}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `</div></div>`;
+            // Render Pills
+            if (pillsContainer) {
+                pillsContainer.innerHTML = categories.map(cat => {
+                    const isActive = activeCategoryFilter === cat;
+                    return `<button onclick="setCategoryFilter('${cat}')" class="px-3 py-1 rounded-xl text-xs font-bold transition-all ${isActive ? 'bg-[#FF4D00] text-white shadow-lg shadow-[#FF4D00]/20' : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white'}">${cat === 'ALL' ? '🌐 ທັງໝົດ' : cat}</button>`;
+                }).join('');
             }
 
-            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic p-4 text-center">ບໍ່ມີສິນຄ້າໃນໝວດໝູ່ທີ່ຄົ້ນຫາ</p>`;
+            // Filter products by search and category
+            const displayProds = filteredProds.filter(p => {
+                const matchCat = activeCategoryFilter === "ALL" || (p.category || "ອື່ນໆ") === activeCategoryFilter;
+                const matchSearch = !search || p.name.toLowerCase().includes(search) || p.sku.toLowerCase().includes(search);
+                return matchCat && matchSearch;
+            });
+
+            if (displayProds.length === 0) {
+                container.innerHTML = `<p class="text-xs text-neutral-500 italic p-6 text-center w-full">ບໍ່ມີສິນຄ້າໃນໝວດໝູ່ ຫຼື ສາຂານີ້</p>`;
+                return;
+            }
+
+            let html = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5">`;
+
+            displayProds.forEach(item => {
+                const isOk = item.stock > 0;
+                const burnInfo = calculateItemBurnRate(item.sku);
+                const burnBadge = burnInfo.daysLeft !== null ? `🔥 ~${burnInfo.daysLeft}ວັນ` : '';
+
+                html += `
+                    <div class="bg-neutral-900/80 border border-neutral-800 p-2.5 rounded-2xl flex items-center justify-between hover:border-[#FF4D00] transition-all group">
+                        <div class="min-w-0 pr-2">
+                            <div class="flex items-center space-x-1">
+                                <span class="mono-font text-[9px] text-neutral-500 font-bold">${item.sku}</span>
+                                ${burnBadge ? `<span class="text-[8px] text-amber-400 font-mono">${burnBadge}</span>` : ''}
+                            </div>
+                            <h4 class="font-bold text-xs text-neutral-200 truncate group-hover:text-[#FF4D00] transition-colors" title="${item.name}">${item.name}</h4>
+                            <span class="text-[8px] text-neutral-500 font-semibold block truncate">${item.category || 'ວັດຖຸດິບ'} (${item.branch || 'ວຽງຈັນ'})</span>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="mono-font text-xl font-black ${isOk ? 'text-emerald-400' : 'text-[#FF4D00]'}">${item.stock}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
         }
 
         function renderDailyLogs() {
@@ -1343,13 +1350,23 @@
             summaryEl.innerText = entries.map(([sku, qty]) => `${sku}: ${qty > 0 ? '+' : ''}${qty}`).join(', ');
         }
 
+        // MASTER CATALOG DROPDOWN IN MANUAL RECORD
         function renderManualRecordDropdowns() {
             const select = document.getElementById('manual-sku');
             if (!select) return;
             select.innerHTML = "";
             let html = "";
-            getFilteredProducts().forEach(p => {
-                html += `<option value="${p.sku}">${p.name} (${p.sku})</option>`;
+            
+            // Derive unique master items catalog
+            const masterCatalog = [];
+            db.products.forEach(p => {
+                if (!masterCatalog.some(m => m.name === p.name)) {
+                    masterCatalog.push(p);
+                }
+            });
+
+            masterCatalog.forEach(p => {
+                html += `<option value="${p.sku}">${p.name} (${p.category || 'ວັດຖຸດິບ'})</option>`;
             });
             select.innerHTML = html;
         }
@@ -1496,6 +1513,61 @@
             }
         }
 
+        // RENDER ACTIVE BRANCH LIST WITH EDIT & DELETE IN TAB 5
+        function renderBranchList() {
+            const listEl = document.getElementById('hrm-branch-list');
+            if (!listEl) return;
+            listEl.innerHTML = "";
+
+            db.branches.forEach(b => {
+                listEl.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-store text-[#FF4D00]"></i>
+                            <span class="font-bold text-neutral-200">${b}</span>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="editBranchName('${b}')" class="text-sky-400 hover:underline text-[11px] font-semibold"><i class="fa-solid fa-pen"></i> ແກ້ໄຂ</button>
+                            <button onclick="deleteBranch('${b}')" class="text-rose-500 hover:underline text-[11px] font-semibold"><i class="fa-solid fa-trash"></i> ລົບ</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function editBranchName(oldName) {
+            const newName = prompt(`ແກ້ໄຂຊື່ສາຂາ "${oldName}" ເປັນ:`, oldName);
+            if (newName && newName.trim() !== "" && newName.trim() !== oldName) {
+                const trimmed = newName.trim();
+                
+                const idx = db.branches.indexOf(oldName);
+                if (idx !== -1) db.branches[idx] = trimmed;
+
+                db.staff.forEach(s => { if (s.branch === oldName) s.branch = trimmed; });
+                db.products.forEach(p => { if (p.branch === oldName) p.branch = trimmed; });
+
+                if (currentSelectedBranch === oldName) currentSelectedBranch = trimmed;
+
+                if (supabaseClient) {
+                    await supabaseClient.from('staff').update({ branch: trimmed }).eq('branch', oldName);
+                    await supabaseClient.from('main_inventory').update({ branch: trimmed }).eq('branch', oldName);
+                }
+
+                renderAllViews();
+                alert(`✅ ອັບເດດຊື່ສາຂາເປັນ "${trimmed}" ຮຽບຮ້ອຍແລ້ວ!`);
+            }
+        }
+
+        async function deleteBranch(bName) {
+            if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບສາຂາ "${bName}"?`)) {
+                db.branches = db.branches.filter(b => b !== bName);
+                if (currentSelectedBranch === bName) currentSelectedBranch = "ALL";
+
+                renderAllViews();
+                alert(`✅ ລົບສາຂາ "${bName}" ຮຽບຮ້ອຍແລ້ວ!`);
+            }
+        }
+
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -1522,7 +1594,7 @@
             tbody.innerHTML = html;
         }
 
-        // --- MULTI-BRANCH ACTIVATION & INVENTORY CLONING HANDLER ---
+        // MULTI-BRANCH LINK GENERATION
         async function handleBranchSubmit(e) {
             e.preventDefault();
             const bName = document.getElementById('branch-name').value.trim();
@@ -1530,30 +1602,6 @@
 
             if (!db.branches.includes(bName)) {
                 db.branches.push(bName);
-            }
-
-            const branchSuffix = getBranchSuffix(bName);
-
-            const baseProducts = db.products.filter(p => !p.branch || p.branch === "ສາຂາ ວຽງຈັນ");
-            const clonedProducts = [];
-
-            baseProducts.forEach(base => {
-                const newSku = `${base.sku}-${branchSuffix}`;
-                if (!db.products.some(p => p.sku === newSku)) {
-                    const cloned = {
-                        sku: newSku,
-                        name: `${base.name}`,
-                        category: base.category || "ວັດຖຸດິບ",
-                        stock: 0,
-                        branch: bName
-                    };
-                    clonedProducts.push(cloned);
-                    db.products.push(cloned);
-                }
-            });
-
-            if (supabaseClient && clonedProducts.length > 0) {
-                await supabaseClient.from('main_inventory').insert(clonedProducts);
             }
 
             const branchLink = `${window.location.origin}${window.location.pathname}?branch=${encodeURIComponent(bName)}`;
@@ -1566,11 +1614,11 @@
             document.getElementById('branch-qr-output').classList.remove('hidden');
 
             renderAllViews();
-            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n• Copy ຕາຕະລາງສະຕ໊ອກ (SKU: -${branchSuffix})\n• ສ້າງ Link ເຂົ້າໃຊ້ງານຮຽບຮ້ອຍແລ້ວ.`);
+            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n• ສ້າງ Link ແລະ QR Code ເຂົ້າໃຊ້ງານຮຽບຮ້ອຍແລ້ວ.`);
             e.target.reset();
         }
 
-        // --- DIRECT SUPABASE HANDLERS (WITH FIXED PROFILE PHOTO UPDATE) ---
+        // DIRECT SUPABASE HANDLERS (ON-DEMAND BRANCH STOCK CREATION)
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1644,7 +1692,7 @@
 
                 Object.assign(db.staff[staffIndex], updatedData);
                 renderAllViews();
-                viewStaffProfile(pin); // Refresh profile card view
+                viewStaffProfile(pin);
                 closeEditStaffModal();
             }
         }
@@ -1704,7 +1752,7 @@
             if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
 
             for (const [sku, qty] of entries) {
-                const prod = db.products.find(p => p.sku === sku);
+                let prod = db.products.find(p => p.sku === sku);
                 if (!prod) continue;
                 const type = qty > 0 ? "IN" : "OUT";
                 const absQty = Math.abs(qty);
@@ -1727,34 +1775,58 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
+        // ON-DEMAND MANUAL RECORD (Creates branch item row automatically if first time)
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
-            const sku = document.getElementById('manual-sku').value;
+            const selectedSku = document.getElementById('manual-sku').value;
             const type = document.getElementById('manual-type').value;
             const qty = parseInt(document.getElementById('manual-qty').value);
             const remarkSelect = document.getElementById('manual-remark').value;
             const remarkDesc = document.getElementById('manual-remark-desc').value;
             const note = remarkSelect === 'others' ? remarkDesc : remarkSelect;
 
-            const prod = db.products.find(p => p.sku === sku);
+            let prod = db.products.find(p => p.sku === selectedSku);
+            const activeBranch = currentSelectedBranch === 'ALL' ? 'ສາຂາ ວຽງຈັນ' : currentSelectedBranch;
+
             if (!prod) return;
 
-            prod.stock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
+            // Check if product exists for current active branch
+            let branchProd = db.products.find(p => p.name === prod.name && p.branch === activeBranch);
+
+            if (!branchProd) {
+                // Create item on-demand for this branch
+                const suffix = getBranchSuffix(activeBranch);
+                branchProd = {
+                    sku: `${prod.sku}-${suffix}`,
+                    name: prod.name,
+                    category: prod.category || "ວັດຖຸດິບ",
+                    stock: type === 'IN' ? qty : -qty,
+                    branch: activeBranch
+                };
+                db.products.push(branchProd);
+                if (supabaseClient) {
+                    await supabaseClient.from('main_inventory').insert([branchProd]);
+                }
+            } else {
+                branchProd.stock = type === 'IN' ? branchProd.stock + qty : branchProd.stock - qty;
+                if (supabaseClient) {
+                    await supabaseClient.from('main_inventory').update({ stock: branchProd.stock }).eq('sku', branchProd.sku);
+                }
+            }
+
             const logPayload = {
                 timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
-                sku: sku, name: prod.name, type: type, qty: qty, note: `${note} (ໂດຍ: ${activeOperator.name})`
+                sku: branchProd.sku, name: branchProd.name, type: type, qty: qty, note: `${note} (${activeBranch} - ໂດຍ: ${activeOperator.name})`
             };
 
             db.logs.push(logPayload);
-
             if (supabaseClient) {
                 await supabaseClient.from('daily_inventory_movement').insert([logPayload]);
-                await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', sku);
             }
 
             renderAllViews();
-            alert("✅ ບັນທຶກລາຍການລົງ Supabase ສຳເລັດ!");
+            alert(`✅ ບັນທຶກສະຕ໊ອກ (${activeBranch}) ລົງ Supabase ສຳເລັດ!`);
             e.target.reset();
         }
 
@@ -1825,10 +1897,10 @@
                     if (logRes.data) db.logs = normalizeDataset(logRes.data);
                     if (leaveRes.data) db.leaves = normalizeDataset(leaveRes.data);
 
-                    const fetchedBranches = Array.from(new Set(db.staff.map(s => s.branch).filter(Boolean)));
+                    const fetchedBranches = Array.from(new Set(db.staff.map(s => s.branch).concat(db.products.map(p => p.branch)).filter(Boolean)));
                     if (fetchedBranches.length) db.branches = fetchedBranches;
 
-                    if (badgeText) badgeText.innerText = `Supabase Live (${db.staff.length} ຄົນ)`;
+                    if (badgeText) badgeText.innerText = `Supabase Connected (${db.staff.length} ຄົນ)`;
                     if (connDot) connDot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
                 } catch(e) {
                     console.error("Error loading live Supabase data:", e);
