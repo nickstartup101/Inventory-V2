@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Clean Dashboard Stable</title>
+    <title>La Dolce Portal - Tablet & Desktop Optimized</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -73,12 +73,12 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row">
+<body class="min-h-screen flex flex-col sm:flex-row">
 
     <!-- FIXED STICKY SIDEBAR NAVIGATION -->
-    <aside class="w-full md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print md:sticky md:top-0 md:h-screen">
+    <aside class="w-full sm:w-56 md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print sm:sticky sm:top-0 sm:h-screen">
         <div>
-            <div class="p-6 border-b border-neutral-800">
+            <div class="p-4 md:p-6 border-b border-neutral-800">
                 <div class="flex items-center space-x-3">
                     <span class="text-2xl font-black text-outline-orange">V2</span>
                     <div>
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <div class="p-4 space-y-6">
+            <div class="p-3 md:p-4 space-y-6">
                 <div id="group-employee-menu" class="space-y-2">
                     <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest px-3 block mb-2">ພະນັກງານ (Employee)</span>
                     <nav class="space-y-1">
@@ -120,7 +120,7 @@
                             <i class="fa-solid fa-users-gear w-4"></i>
                             <span>ພະນັກງານ & ສາຂາ</span>
                         </button>
-                        <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                        <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="w-full text-left px-[#3] py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
                             <i class="fa-solid fa-calculator w-4"></i>
                             <span>ຄຳນວນ Payrolls Realtime</span>
                         </button>
@@ -129,7 +129,7 @@
             </div>
         </div>
 
-        <div class="p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
+        <div class="p-3 md:p-4 border-t border-neutral-800 bg-black/40 space-y-3 no-print">
             <div id="connection-status-badge" class="p-2.5 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
@@ -151,35 +151,37 @@
     </aside>
 
     <!-- MAIN VIEWPORT -->
-    <main class="flex-1 min-w-0 p-4 md:p-8 lg:p-10 space-y-8 overflow-y-auto">
+    <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 overflow-y-auto">
 
-        <!-- GLOBAL BRANCH FILTER BAR -->
+        <!-- GLOBAL BRANCH FILTER BAR (Updated: Hidden Dropdown for Employee) -->
         <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
             <div class="flex items-center space-x-2">
                 <i class="fa-solid fa-store text-[#FF4D00] text-sm"></i>
                 <span class="text-xs font-bold text-neutral-300">ສາຂາປັດຈຸບັນ:</span>
                 <span id="url-branch-indicator" class="text-xs font-black text-[#FF4D00] bg-[#FF4D00]/10 px-2.5 py-1 rounded-lg border border-[#FF4D00]/20">ສາຂາ ວຽງຈັນ</span>
             </div>
-            <div class="flex items-center space-x-2">
-                <span class="text-[11px] text-neutral-500">ປ່ຽນມຸມມອງສາຂາ:</span>
+            
+            <!-- Hidden dropdown container, visible ONLY in HRM Admin Mode -->
+            <div id="global-branch-select-container" class="hidden items-center space-x-2">
+                <span class="text-[11px] text-neutral-500">ປ່ຽນມຸມມອງສາຂາ (HRM):</span>
                 <select id="global-branch-select" onchange="changeGlobalBranch(this.value)" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-[#FF4D00]">
                 </select>
             </div>
         </div>
 
         <!-- ================= TAB 1: DASHBOARD & STOCK ================= -->
-        <section id="tab-dashboard" class="space-y-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
+        <section id="tab-dashboard" class="space-y-6 md:space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl flex justify-between items-center border-l-4 border-l-[#FF4D00]">
                     <div>
                         <span class="text-[10px] text-neutral-500 font-bold block uppercase">ກະເຮັດວຽກປັດຈຸບັນ</span>
-                        <h3 id="current-shift-title" class="text-lg font-black text-white mt-1">ກະ 1 (07:00 - 16:00)</h3>
+                        <h3 id="current-shift-title" class="text-base md:text-lg font-black text-white mt-1">ກະ 1 (07:00 - 16:00)</h3>
                         <p class="text-[10px] text-neutral-500 mt-1">ກະ 1: 07:00-16:00 | ກະ 2: 11:30-20:00</p>
                     </div>
-                    <i class="fa-solid fa-business-time text-3xl text-neutral-800"></i>
+                    <i class="fa-solid fa-business-time text-2xl md:text-3xl text-neutral-800"></i>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl flex justify-between items-center">
                     <div>
                         <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານໃນກະປັດຈຸບັນ</span>
                         <div class="flex items-center space-x-2 mt-2">
@@ -187,12 +189,12 @@
                             <span id="active-staff-count" class="text-xs font-bold text-neutral-300 ml-1">0 ຄົນ</span>
                         </div>
                     </div>
-                    <i class="fa-solid fa-users text-3xl text-neutral-800"></i>
+                    <i class="fa-solid fa-users text-2xl md:text-3xl text-neutral-800"></i>
                 </div>
             </div>
 
             <!-- HERO SECTION: HIGH FREQUENCY TRACKERS -->
-            <div class="glass-panel p-6 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl relative overflow-hidden space-y-4">
+            <div class="glass-panel p-5 md:p-6 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl relative overflow-hidden space-y-4">
                 <div class="flex justify-between items-center">
                     <div>
                         <span class="text-[10px] text-[#FF4D00] font-black uppercase tracking-widest block"><i class="fa-solid fa-fire text-[#FF4D00] mr-1"></i> Hero Section</span>
@@ -200,11 +202,11 @@
                     </div>
                     <span class="text-[10px] text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full font-mono">Realtime Live</span>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
 
-            <!-- CURRENT STOCK: COMPACT RECTANGLE ROUNDED CARDS + CATEGORY PILLS -->
-            <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <!-- CURRENT STOCK -->
+            <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-4">
                 <div class="flex justify-between items-center flex-wrap gap-3 border-b border-neutral-800 pb-4">
                     <div>
                         <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock)</h2>
@@ -217,7 +219,7 @@
                 <div id="stock-cards-container" class="pt-2"></div>
             </div>
 
-            <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-4">
                 <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-neutral-400">
@@ -237,9 +239,9 @@
         </section>
 
         <!-- ================= TAB 2: INVENTORY ACTIONS ================= -->
-        <section id="tab-quick-action" class="hidden space-y-8">
+        <section id="tab-quick-action" class="hidden space-y-6 md:space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-3"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ເລືອກສິນຄ້າຈາກ Master Catalog ເພື່ອບັນທຶກສະຕ໊ອກເຂົ້າສາຂາປັດຈຸບັນອັດຕະໂນມັດ</p>
             </div>
 
@@ -254,8 +256,8 @@
                 </div>
             </div>
 
-            <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
+            <div id="inventory-workspace" class="opacity-40 pointer-events-none transition-all duration-300 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl md:col-span-2 space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
                             <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1">ປັບປ່ຽນຈຳນວນແບບດ່ວນ (Quick In / Out Tools)</h2>
@@ -264,9 +266,9 @@
                         <input type="text" id="quick-adjust-search" oninput="renderQuickAdjustments()" placeholder="ຄົ້ນຫາສິນຄ້າດ່ວນ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[380px] overflow-y-auto pr-1" id="quick-adjust-grid"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[380px] overflow-y-auto pr-1" id="quick-adjust-grid"></div>
                     
-                    <div class="bg-neutral-950 p-5 border border-neutral-900 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="bg-neutral-950 p-4 sm:p-5 border border-neutral-900 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div>
                             <span class="text-[10px] text-neutral-500 font-bold block uppercase">ລາຍການປ່ຽນແປງໄວທັງໝົດ</span>
                             <div id="quick-summary-text" class="mono-font text-xs font-bold text-neutral-400">ບໍ່ມີການປ່ຽນແປງ</div>
@@ -277,7 +279,7 @@
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl h-fit">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl h-fit">
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4">ບັນທຶກແບບລະອຽດ (Manual Record)</h2>
                     <form onsubmit="handleManualRecordSubmit(event)" class="space-y-4 text-xs">
                         <div>
@@ -315,46 +317,46 @@
         </section>
 
         <!-- ================= TAB 3: ATTENDANCE & LEAVE ================= -->
-        <section id="tab-attendance" class="hidden space-y-8">
+        <section id="tab-attendance" class="hidden space-y-6 md:space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ແລະ ສົ່ງຄຳຮ້ອງຂໍລາວຽກ</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl flex flex-col justify-between">
                     <div>
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1"><i class="fa-solid fa-clock text-[#FF4D00] mr-2"></i>Clock In/Out PIN Pad</h2>
                         <p class="text-[10px] text-neutral-500 mb-4">ກົດລະຫັດ PIN 6 ຫຼັກ ເພື່ອປ້ຳໂມງເຮັດວຽກ</p>
                     </div>
                     <div class="space-y-4">
                         <div class="flex justify-center">
-                            <input type="password" id="pin-display" readonly placeholder="******" class="mono-font text-center text-3xl tracking-widest w-48 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white select-none">
+                            <input type="password" id="pin-display" readonly placeholder="******" class="mono-font text-center text-2xl md:text-3xl tracking-widest w-48 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-white select-none">
                         </div>
                         <div class="grid grid-cols-3 gap-2 max-w-[220px] mx-auto">
-                            <button onclick="pressPin('1')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">1</button>
-                            <button onclick="pressPin('2')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">2</button>
-                            <button onclick="pressPin('3')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">3</button>
-                            <button onclick="pressPin('4')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">4</button>
-                            <button onclick="pressPin('5')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">5</button>
-                            <button onclick="pressPin('6')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">6</button>
-                            <button onclick="pressPin('7')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">7</button>
-                            <button onclick="pressPin('8')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">8</button>
-                            <button onclick="pressPin('9')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">9</button>
-                            <button onclick="clearPin()" class="h-12 rounded-xl bg-[#3b0712] text-[#fecdd3] font-bold select-none">C</button>
-                            <button onclick="pressPin('0')" class="h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">0</button>
-                            <button onclick="submitClock()" class="h-12 rounded-xl bg-emerald-950 text-emerald-300 font-bold select-none">OK</button>
+                            <button onclick="pressPin('1')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">1</button>
+                            <button onclick="pressPin('2')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">2</button>
+                            <button onclick="pressPin('3')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">3</button>
+                            <button onclick="pressPin('4')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">4</button>
+                            <button onclick="pressPin('5')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">5</button>
+                            <button onclick="pressPin('6')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">6</button>
+                            <button onclick="pressPin('7')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">7</button>
+                            <button onclick="pressPin('8')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">8</button>
+                            <button onclick="pressPin('9')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">9</button>
+                            <button onclick="clearPin()" class="h-11 md:h-12 rounded-xl bg-[#3b0712] text-[#fecdd3] font-bold select-none">C</button>
+                            <button onclick="pressPin('0')" class="h-11 md:h-12 rounded-xl bg-neutral-900 hover:bg-neutral-850 font-bold active:scale-95 select-none">0</button>
+                            <button onclick="submitClock()" class="h-11 md:h-12 rounded-xl bg-emerald-950 text-emerald-300 font-bold select-none">OK</button>
                         </div>
                     </div>
                     
-                    <div id="attendance-live-log" class="mt-4 p-4 bg-neutral-950 border border-neutral-900 rounded-2xl text-center text-neutral-400 text-xs font-semibold leading-relaxed">
+                    <div id="attendance-live-log" class="mt-4 p-3 md:p-4 bg-neutral-950 border border-neutral-900 rounded-2xl text-center text-neutral-400 text-xs font-semibold leading-relaxed">
                         ລໍຖ້າການສະແກນ PIN ຈາກພະນັກງານ...
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-4">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl md:col-span-2 space-y-4">
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-file-signature text-[#FF4D00] mr-2"></i>ຂຽນໃບລາພັກວຽກ</h2>
-                    <form onsubmit="handleLeaveRequestSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <form onsubmit="handleLeaveRequestSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
                             <label class="block text-neutral-400 font-semibold mb-1">ລະຫັດ PIN ພະນັກງານ (6 ຫຼັກ)</label>
                             <input type="password" id="leave-pin" maxlength="6" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" placeholder="******">
@@ -374,11 +376,11 @@
                             <label class="block text-neutral-400 font-semibold mb-1">ຫາ ວັນທີ</label>
                             <input type="date" id="leave-end" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
                         </div>
-                        <div class="md:col-span-2">
+                        <div class="sm:col-span-2">
                             <label class="block text-neutral-400 font-semibold mb-1">ເຫດຜົນ ແລະ ລາຍລະອຽດ</label>
                             <textarea id="leave-reason" rows="3" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white" placeholder="ລະບຸເຫດຜົນ..."></textarea>
                         </div>
-                        <div class="md:col-span-2 flex justify-end">
+                        <div class="sm:col-span-2 flex justify-end">
                             <button type="submit" class="px-5 py-2.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 font-bold rounded-xl transition-all">ສົ່ງໃບລາວຽກ</button>
                         </div>
                     </form>
@@ -387,33 +389,33 @@
         </section>
 
         <!-- ================= TAB 4: HRM ADMIN DASHBOARD ================= -->
-        <section id="tab-hrm-dash" class="hidden space-y-8">
+        <section id="tab-hrm-dash" class="hidden space-y-6 md:space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ</h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="glass-panel p-6 rounded-2xl">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ພະນັກງານ Active</span>
-                    <h3 id="stat-active-staff" class="text-3xl font-black text-outline-orange mt-2">0/0</h3>
+                    <h3 id="stat-active-staff" class="text-2xl md:text-3xl font-black text-outline-orange mt-2">0/0</h3>
                 </div>
-                <div class="glass-panel p-6 rounded-2xl">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ສາຂາເປີດບໍລິການ</span>
-                    <h3 id="stat-branches" class="text-3xl font-black text-white mt-2">1</h3>
+                    <h3 id="stat-branches" class="text-2xl md:text-3xl font-black text-white mt-2">1</h3>
                 </div>
-                <div class="glass-panel p-6 rounded-2xl">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ການເຄື່ອນໄຫວສະຕ໊ອກມື້ນີ້</span>
-                    <h3 id="stat-inventory-logs" class="text-3xl font-black text-white mt-2">0</h3>
+                    <h3 id="stat-inventory-logs" class="text-2xl md:text-3xl font-black text-white mt-2">0</h3>
                 </div>
-                <div class="glass-panel p-6 rounded-2xl">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase">ໃບລາລໍຖ້າກວດສອບ</span>
-                    <h3 id="stat-pending-leaves" class="text-3xl font-black text-white mt-2">0</h3>
+                    <h3 id="stat-pending-leaves" class="text-2xl md:text-3xl font-black text-white mt-2">0</h3>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass-panel p-6 rounded-2xl space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-4">
                     <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ລາຍການປ້ຳໂມງເຂົ້າ-ອອກວຽກ</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-neutral-400">
@@ -430,7 +432,7 @@
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-4">
                     <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ໃບລາວຽກທີ່ສົ່ງເຂົ້າມາ</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-neutral-400">
@@ -450,15 +452,15 @@
             </div>
         </section>
 
-        <!-- ================= TAB 5: STAFF & BRANCHES (WITH EDIT/DELETE BRANCHES) ================= -->
-        <section id="tab-staff-branch" class="hidden space-y-8">
+        <!-- ================= TAB 5: STAFF & BRANCHES ================= -->
+        <section id="tab-staff-branch" class="hidden space-y-6 md:space-y-8">
             <div class="border-b border-neutral-800 pb-5">
-                <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight"><i class="fa-solid fa-users-gear text-[#FF4D00] mr-3"></i>ຈັດການພະນັກງານ & ສາຂາ</h1>
                 <p class="text-xs text-neutral-400 mt-1">ເພີ່ມ, ແກ້ໄຂ, ລົບ ຂໍ້ມູນພະນັກງານ ແລະ ຈັດການສາຂາ</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="glass-panel p-6 rounded-2xl lg:col-span-2 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl md:col-span-2 space-y-6">
                     <div class="flex justify-between items-center">
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ລາຍຊື່ພະນັກງານທັງໝົດ</h2>
                         <button onclick="openAddStaffModal()" class="px-3 py-1.5 bg-[#FF4D00]/10 border border-[#FF4D00]/30 text-[#FF4D00] text-xs font-bold rounded-xl whitespace-nowrap hover:bg-[#FF4D00]/20 transition-all">
@@ -481,7 +483,7 @@
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-2xl space-y-6 flex flex-col justify-between">
+                <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-6 flex flex-col justify-between">
                     <div>
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-4"><i class="fa-solid fa-user-shield text-[#FF4D00] mr-2"></i>ປະຫວັດ ແລະ ໂປຣໄຟລ໌ລະອຽດ</h2>
                         <div id="staff-detail-card" class="text-center py-4 space-y-3">
@@ -498,8 +500,8 @@
                 </div>
             </div>
 
-            <!-- BRANCH MANAGEMENT CARD (WITH BRANCH EDIT & DELETE) -->
-            <div class="glass-panel p-6 rounded-2xl space-y-6 max-w-md">
+            <!-- BRANCH MANAGEMENT CARD -->
+            <div class="glass-panel p-5 md:p-6 rounded-2xl space-y-6 max-w-md">
                 <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider"><i class="fa-solid fa-code-branch text-[#FF4D00] mr-2"></i>ຈັດການສາຂາ (Branch Management)</h2>
                 
                 <form onsubmit="handleBranchSubmit(event)" class="space-y-4 text-xs">
@@ -512,7 +514,6 @@
                     </button>
                 </form>
 
-                <!-- ACTIVE BRANCH LIST WITH EDIT/DELETE BUTTONS -->
                 <div class="space-y-2 border-t border-neutral-900 pt-4">
                     <span class="text-[10px] text-neutral-500 font-bold block uppercase tracking-wider">ລາຍຊື່ສາຂາທັງໝົດໃນລະບົບ:</span>
                     <div id="hrm-branch-list" class="space-y-2"></div>
@@ -527,7 +528,7 @@
         </section>
 
         <!-- ================= TAB 6: PAYROLLS REALTIME ================= -->
-        <section id="tab-payroll" class="hidden space-y-8">
+        <section id="tab-payroll" class="hidden space-y-6 md:space-y-8">
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
                     <div>
@@ -541,7 +542,7 @@
                 </button>
             </div>
 
-            <div class="glass-panel p-8 rounded-3xl space-y-6 print-area bg-neutral-950/40">
+            <div class="glass-panel p-6 md:p-8 rounded-3xl space-y-6 print-area bg-neutral-950/40">
                 <div class="flex justify-between items-start border-b border-neutral-800 pb-6 flex-wrap gap-4">
                     <div class="space-y-1">
                         <span class="mono-font text-xs text-[#FF4D00] font-black tracking-widest uppercase">Official Payroll Statement</span>
@@ -754,7 +755,7 @@
     <script>
         let isHRMMode = false;
         let activeOperator = null;
-        let currentSelectedBranch = "ALL";
+        let currentSelectedBranch = "ສາຂາ ວຽງຈັນ"; // Default for Employee
         let activeCategoryFilter = "ALL";
         let pinBuffer = "";
         let authPinBuffer = "";
@@ -970,6 +971,7 @@
             }
         }
 
+        // Updated Function: Controls visibility of Branch Selector based on HRM Mode
         function applyUserModeUI() {
             const empMenu = document.getElementById('group-employee-menu');
             const hrmMenu = document.getElementById('group-hrm-menu');
@@ -977,6 +979,7 @@
             const switchBtnText = document.getElementById('btn-switch-text');
             const switchIcon = document.querySelector('#btn-switch-user i');
             const userInfo = document.getElementById('user-info-bar');
+            const branchSelectContainer = document.getElementById('global-branch-select-container');
 
             if (isHRMMode) {
                 if (empMenu) empMenu.classList.add('hidden');
@@ -988,6 +991,12 @@
                 if (switchBtnText) switchBtnText.innerText = "Switch to Employee";
                 if (switchIcon) switchIcon.className = "fa-solid fa-users text-white";
                 if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-[#FF4D00] animate-pulse"></div><span class="text-[11px] text-neutral-300 font-bold">Admin Connected</span>`;
+                
+                // SHOW Branch Selector for HRM Admin
+                if (branchSelectContainer) {
+                    branchSelectContainer.classList.remove('hidden');
+                    branchSelectContainer.classList.add('flex');
+                }
             } else {
                 if (empMenu) empMenu.classList.remove('hidden');
                 if (hrmMenu) hrmMenu.classList.add('hidden');
@@ -998,6 +1007,20 @@
                 if (switchBtnText) switchBtnText.innerText = "Switch to HRM Admin";
                 if (switchIcon) switchIcon.className = "fa-solid fa-user-gear text-[#FF4D00]";
                 if (userInfo) userInfo.innerHTML = `<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div><span class="text-[11px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>`;
+                
+                // HIDE Branch Selector for Employees
+                if (branchSelectContainer) {
+                    branchSelectContainer.classList.add('hidden');
+                    branchSelectContainer.classList.remove('flex');
+                }
+                
+                // Reset Employee View back to URL Branch or default branch if "ALL" was selected by HRM
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlBranch = urlParams.get('branch');
+                currentSelectedBranch = urlBranch || "ສາຂາ ວຽງຈັນ";
+                const indicator = document.getElementById('url-branch-indicator');
+                if (indicator) indicator.innerText = currentSelectedBranch;
+                renderAllViews();
             }
         }
 
@@ -1097,7 +1120,7 @@
                 statusDot.className = "w-3 h-3 rounded-full bg-emerald-500 animate-pulse";
                 statusText.innerHTML = `ຜູ້ບັນທຶກປັດຈຸບັນ (Active): <span class="text-[#FF4D00] font-bold">${activeOperator.name} (${activeOperator.pin})</span>`;
                 actionArea.innerHTML = `<button onclick="lockInventorySession()" class="px-4 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-rose-400 text-xs font-bold rounded-xl whitespace-nowrap transition-all">ປ່ຽນຜູ້ບັນທຶກ / Lock</button>`;
-                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-100 pointer-events-auto transition-all duration-300";
+                workspace.className = "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 opacity-100 pointer-events-auto transition-all duration-300";
             } else {
                 statusDot.className = "w-3 h-3 rounded-full bg-rose-500 animate-pulse";
                 statusText.innerText = "ເຊດຊັນຍັງຖືກລັອກ (ກະລຸນາປົດລັອກເພື່ອບັນທຶກສະຕ໊ອກ)";
@@ -1105,7 +1128,7 @@
                     <input type="password" id="session-pin-input" maxlength="6" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl focus:outline-none focus:border-[#FF4D00] text-xs text-white placeholder-neutral-500 w-full sm:w-32" placeholder="PIN 6 ຫຼັກ">
                     <button onclick="unlockInventorySession()" class="px-4 py-1.5 bg-[#FF4D00] text-white text-xs font-bold rounded-xl whitespace-nowrap active:scale-95 transition-all">ປົດລັອກ</button>
                 `;
-                workspace.className = "grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-40 pointer-events-none transition-all duration-300";
+                workspace.className = "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 opacity-40 pointer-events-none transition-all duration-300";
             }
         }
 
@@ -1185,7 +1208,7 @@
                 const percentage = Math.min(100, Math.max(0, (item.stock / 200) * 100));
 
                 html += `
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border border-neutral-800 shadow-xl">
+                    <div class="glass-card p-4 md:p-5 rounded-2xl flex flex-col justify-between border border-neutral-800 shadow-xl">
                         <div class="space-y-1">
                             <div class="flex justify-between items-center">
                                 <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
@@ -1197,7 +1220,7 @@
                         <div class="mt-4 pt-3 border-t border-neutral-900 flex justify-between items-end">
                             <div>
                                 <span class="text-[10px] text-neutral-500 font-bold block uppercase">ຄົງເຫຼືອ:</span>
-                                <span class="mono-font text-3xl font-black ${colorClass}">${item.stock}</span>
+                                <span class="mono-font text-2xl md:text-3xl font-black ${colorClass}">${item.stock}</span>
                             </div>
                             <div class="w-16 bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800 mb-1">
                                 <div class="${isOk ? 'bg-emerald-500' : 'bg-[#FF4D00]'} h-full" style="width: ${percentage}%"></div>
@@ -1208,7 +1231,6 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
         }
 
-        // COMPACT RECTANGLE ROUNDED CARDS WITH CATEGORY PILLS FILTER
         function setCategoryFilter(cat) {
             activeCategoryFilter = cat;
             renderStockTable();
@@ -1260,7 +1282,7 @@
                             <span class="text-[8px] text-neutral-500 font-semibold block truncate">${item.category || 'ວັດຖຸດິບ'} (${item.branch || 'ວຽງຈັນ'})</span>
                         </div>
                         <div class="text-right shrink-0">
-                            <span class="mono-font text-xl font-black ${isOk ? 'text-emerald-400' : 'text-[#FF4D00]'}">${item.stock}</span>
+                            <span class="mono-font text-lg md:text-xl font-black ${isOk ? 'text-emerald-400' : 'text-[#FF4D00]'}">${item.stock}</span>
                         </div>
                     </div>
                 `;
@@ -1311,13 +1333,13 @@
             filteredList.forEach(item => {
                 const qtyValue = quickStockChanges[item.sku] || 0;
                 html += `
-                    <div class="bg-neutral-900/40 border border-neutral-900 p-4 rounded-xl flex justify-between items-center">
+                    <div class="bg-neutral-900/40 border border-neutral-900 p-3.5 rounded-xl flex justify-between items-center">
                         <div>
                             <span class="mono-font text-[10px] text-neutral-500">${item.sku}</span>
                             <h4 class="font-bold text-xs text-neutral-300">${item.name}</h4>
                             <p class="text-[10px] text-neutral-500">ປັດຈຸບັນ: <span class="text-[#FF4D00] font-bold">${item.stock}</span></p>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 md:space-x-3">
                             <button onclick="changeQuickVal('${item.sku}', -1)" class="w-8 h-8 rounded-lg bg-[#3b0712] text-rose-300 font-black text-sm select-none">-</button>
                             <span class="mono-font text-sm font-extrabold text-white min-w-[18px] text-center">${qtyValue}</span>
                             <button onclick="changeQuickVal('${item.sku}', 1)" class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-300 font-black text-sm select-none">+</button>
@@ -1551,7 +1573,7 @@
         async function deleteBranch(bName) {
             if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບສາຂາ "${bName}"?`)) {
                 db.branches = db.branches.filter(b => b !== bName);
-                if (currentSelectedBranch === bName) currentSelectedBranch = "ALL";
+                if (currentSelectedBranch === bName) currentSelectedBranch = "ສາຂາ ວຽງຈັນ";
 
                 renderAllViews();
                 alert(`✅ ລົບສາຂາ "${bName}" ຮຽບຮ້ອຍແລ້ວ!`);
@@ -1607,7 +1629,6 @@
             e.target.reset();
         }
 
-        // AUTO-CALCULATE HIGHEST STAFF_ID (Guarantees NO duplicate key errors!)
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1618,7 +1639,6 @@
                 return;
             }
 
-            // Find highest staff_id number to prevent duplicates
             let maxNum = 0;
             db.staff.forEach(s => {
                 if (s.staff_id) {
@@ -1774,7 +1794,6 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
-        // ON-DEMAND MANUAL RECORD (Creates branch item row automatically if first time)
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
@@ -1861,9 +1880,10 @@
             const urlBranch = urlParams.get('branch');
             if (urlBranch) {
                 currentSelectedBranch = urlBranch;
-                const indicator = document.getElementById('url-branch-indicator');
-                if (indicator) indicator.innerText = `📍 ${urlBranch}`;
             }
+            
+            const indicator = document.getElementById('url-branch-indicator');
+            if (indicator) indicator.innerText = currentSelectedBranch;
 
             populatePayrollMonthDropdown();
             applyUserModeUI();
