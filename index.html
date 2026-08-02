@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Smart Tablet & Payroll Realtime</title>
+    <title>La Dolce Portal - GMT+7 & Smart Attendance HRM</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -204,7 +204,7 @@
                         <span class="text-[10px] text-[#FF4D00] font-black uppercase tracking-widest block"><i class="fa-solid fa-fire text-[#FF4D00] mr-1"></i> Hero Section</span>
                         <h2 class="text-base font-black text-white">ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)</h2>
                     </div>
-                    <span class="text-[10px] text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full font-mono">Realtime Live</span>
+                    <span class="text-[10px] text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full font-mono">GMT+7 Bangkok</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
             </div>
@@ -229,7 +229,7 @@
                     <table class="w-full text-left text-xs text-neutral-400">
                         <thead class="bg-neutral-900 text-neutral-500 uppercase">
                             <tr>
-                                <th class="p-3 border-b border-neutral-800">ເວລາ</th>
+                                <th class="p-3 border-b border-neutral-800">ເວລາ (GMT+7)</th>
                                 <th class="p-3 border-b border-neutral-800">ຊື່ສິນຄ້າ</th>
                                 <th class="p-3 border-b border-neutral-800">ປະເພດ</th>
                                 <th class="p-3 border-b border-neutral-800">ຈຳນວນ</th>
@@ -324,7 +324,7 @@
         <section id="tab-attendance" class="hidden space-y-6">
             <div class="border-b border-neutral-800 pb-4">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ແລະ ສົ່ງຄຳຮ້ອງຂໍລາວຽກ</p>
+                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ເວລາ GMT+7 Bangkok</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -393,11 +393,11 @@
             </div>
         </section>
 
-        <!-- ================= TAB 4: HRM ADMIN DASHBOARD ================= -->
+        <!-- ================= TAB 4: HRM ADMIN DASHBOARD (WITH ATTENDANCE EDIT & DELETE) ================= -->
         <section id="tab-hrm-dash" class="hidden space-y-6">
             <div class="border-b border-neutral-800 pb-4">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ</p>
+                <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ (GMT+7 Bangkok)</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -420,16 +420,18 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- ATTENDANCE TABLE WITH EDIT & DELETE BUTTONS -->
                 <div class="glass-panel p-5 rounded-2xl space-y-4">
-                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ລາຍການປ້ຳໂມງເຂົ້າ-ອອກວຽກ</h2>
+                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ລາຍການປ້ຳໂມງເຂົ້າ-ອອກວຽກ (ຈັດການ EDIT / DELETE ໄດ້)</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-neutral-400">
                             <thead class="bg-neutral-900 text-neutral-500 uppercase">
                                 <tr>
                                     <th class="p-3">ພະນັກງານ</th>
                                     <th class="p-3">ສາຂາ</th>
-                                    <th class="p-3">ເວລາເຂົ້າ-ອອກ</th>
+                                    <th class="p-3">ເວລາ (GMT+7)</th>
                                     <th class="p-3">ປະເພດ</th>
+                                    <th class="p-3 text-right">ຈັດການ</th>
                                 </tr>
                             </thead>
                             <tbody id="hrm-attendance-body" class="divide-y divide-neutral-900"></tbody>
@@ -532,7 +534,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 6: PAYROLLS REALTIME (6 DAYS/WEEK = 26 DAYS BASE, 17K OT) ================= -->
+        <!-- ================= TAB 6: PAYROLLS REALTIME ================= -->
         <section id="tab-payroll" class="hidden space-y-6">
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
@@ -590,6 +592,34 @@
         </section>
 
     </main>
+
+    <!-- MODAL EDIT ATTENDANCE LOG (NEW) -->
+    <div id="modal-edit-attendance" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider"><i class="fa-solid fa-clock-rotate-left text-[#FF4D00] mr-2"></i>ແກ້ໄຂເວລາປ້ຳໂມງ</h3>
+                <button onclick="closeEditAttendanceModal()" class="text-neutral-500 hover:text-white text-base">&times;</button>
+            </div>
+            <form onsubmit="handleAttendanceEditSubmit(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="edit-att-id">
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ເວລາປ້ຳໂມງ (GMT+7 Bangkok)</label>
+                    <input type="text" id="edit-att-timestamp" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-mono" placeholder="YYYY-MM-DD HH:mm">
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ປະເພດການປ້ຳໂມງ</label>
+                    <select id="edit-att-type" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold">
+                        <option value="Clock-In">Clock-In (ເຂົ້າວຽກ)</option>
+                        <option value="Clock-Out">Clock-Out (ອອກວຽກ)</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeEditAttendanceModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ອັບເດດ</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- MODAL ADD STAFF -->
     <div id="modal-add-staff" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -779,6 +809,21 @@
             leaves: []
         };
 
+        // --- TIMEZONE GMT+7 BANGKOK/VIENTIANE HELPER ---
+        function getGMT7Timestamp(date = new Date()) {
+            const options = {
+                timeZone: 'Asia/Bangkok',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            const formatter = new Intl.DateTimeFormat('sv-SE', options);
+            return formatter.format(date).replace('T', ' ');
+        }
+
         // --- BURN RATE CALCULATION ENGINE ---
         function calculateItemBurnRate(sku) {
             const outLogs = db.logs.filter(l => l.sku === sku && l.type === "OUT");
@@ -814,7 +859,8 @@
                     let valStr = (val !== null && val !== undefined) ? val.toString().trim() : "";
                     let valLower = valStr.toLowerCase();
 
-                    if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
+                    if (k === "id") norm.id = val;
+                    else if (k === "sku" || k === "ລະຫັດ") norm.sku = valStr;
                     else if (k === "name" || k === "ຊື່ສິນຄ້າ" || k === "item" || k === "ຊື່" || k === "ພະນັກງານ") norm.name = valStr;
                     else if (k === "category" || k === "ໝວດໝູ່") norm.category = valStr;
                     else if (k === "stock" || k === "ຄົງເຫຼືອ" || k === "current_stock") norm.stock = Number(val) || 0;
@@ -848,13 +894,13 @@
 
         function changeGlobalBranch(branchVal) {
             currentSelectedBranch = branchVal;
-            localStorage.setItem('LD_DEVICE_ACTIVE_BRANCH', branchVal); // SAVE DEVICE MEMORY
+            localStorage.setItem('LD_DEVICE_ACTIVE_BRANCH', branchVal);
             const indicator = document.getElementById('url-branch-indicator');
             if (indicator) indicator.innerText = branchVal === 'ALL' ? '🌐 ທຸກສາຂາ' : `📍 ${branchVal}`;
             renderAllViews();
         }
 
-        // HIGH-SPEED COMPRESSOR (<20KB Base64)
+        // HIGH-SPEED COMPRESSOR
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1058,6 +1104,73 @@
             if (m) m.classList.add('hidden');
         }
 
+        // --- ATTENDANCE EDIT & DELETE FUNCTIONS IN HRM ADMIN ---
+        function openEditAttendanceModal(idOrIndex) {
+            const att = db.attendance.find(a => (a.id && a.id.toString() === idOrIndex.toString()) || a.temp_id === idOrIndex);
+            if (!att) return;
+
+            document.getElementById('edit-att-id').value = att.id || att.temp_id;
+            document.getElementById('edit-att-timestamp').value = att.timestamp || "";
+            document.getElementById('edit-att-type').value = att.type || "Clock-In";
+
+            const m = document.getElementById('modal-edit-attendance');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeEditAttendanceModal() {
+            const m = document.getElementById('modal-edit-attendance');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function handleAttendanceEditSubmit(e) {
+            e.preventDefault();
+            const attId = document.getElementById('edit-att-id').value;
+            const newTs = document.getElementById('edit-att-timestamp').value.trim();
+            const newType = document.getElementById('edit-att-type').value;
+
+            const attIndex = db.attendance.findIndex(a => (a.id && a.id.toString() === attId.toString()) || a.temp_id === attId);
+
+            if (attIndex !== -1) {
+                db.attendance[attIndex].timestamp = newTs;
+                db.attendance[attIndex].type = newType;
+
+                if (supabaseClient && db.attendance[attIndex].id) {
+                    const { error } = await supabaseClient.from('attendance').update({
+                        timestamp: newTs,
+                        type: newType
+                    }).eq('id', db.attendance[attIndex].id);
+
+                    if (error) {
+                        alert("❌ ອັບເດດໃນ Supabase ບໍ່ສຳເລັດ: " + error.message);
+                        return;
+                    }
+                }
+
+                renderAllViews();
+                closeEditAttendanceModal();
+                alert("✅ ອັບເດດເວລາປ້ຳໂມງສຳເລັດ!");
+            }
+        }
+
+        async function deleteAttendance(idOrIndex) {
+            const att = db.attendance.find(a => (a.id && a.id.toString() === idOrIndex.toString()) || a.temp_id === idOrIndex);
+            if (!att) return;
+
+            if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບລາຍການປ້ຳໂມງຂອງ "${att.pin}" ເວລາ ${att.timestamp}?`)) {
+                if (supabaseClient && att.id) {
+                    const { error } = await supabaseClient.from('attendance').delete().eq('id', att.id);
+                    if (error) {
+                        alert("❌ ລົບໃນ Supabase ບໍ່ສຳເລັດ: " + error.message);
+                        return;
+                    }
+                }
+
+                db.attendance = db.attendance.filter(a => (a.id && a.id.toString() !== idOrIndex.toString()) && a.temp_id !== idOrIndex);
+                renderAllViews();
+                alert("✅ ລົບລາຍການປ້ຳໂມງຮຽບຮ້ອຍ!");
+            }
+        }
+
         function pressPin(num) {
             if (pinBuffer.length < 6) {
                 pinBuffer += num;
@@ -1176,7 +1289,6 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
-        // HERO SECTION RENDERER
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1215,7 +1327,6 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
         }
 
-        // COMPACT RECTANGLE ROUNDED CARDS WITH CATEGORY PILLS FILTER
         function setCategoryFilter(cat) {
             activeCategoryFilter = cat;
             renderStockTable();
@@ -1374,6 +1485,7 @@
             if (descContainer) descContainer.classList.toggle('hidden', val !== 'others');
         }
 
+        // RENDER HRM DASHBOARD WITH ATTENDANCE EDIT & DELETE BUTTONS
         function renderHRMDashboard() {
             const filteredStaff = getFilteredStaff();
             const statActive = document.getElementById('stat-active-staff');
@@ -1390,10 +1502,11 @@
             if (attBody) {
                 attBody.innerHTML = "";
                 let html = "";
-                db.attendance.slice().reverse().forEach(att => {
+                db.attendance.slice().reverse().forEach((att, idx) => {
                     if (att.pin) {
                         const staffMember = db.staff.find(s => s.pin && s.pin.toString() === att.pin.toString());
                         const name = staffMember ? staffMember.name : "Unknown";
+                        const attIdentifier = att.id || att.temp_id || idx;
                         html += `
                             <tr class="hover:bg-neutral-950/40">
                                 <td class="p-3 font-semibold text-neutral-200">${name} (${att.pin})</td>
@@ -1403,6 +1516,10 @@
                                     <span class="px-2 py-0.5 rounded text-[9px] font-bold ${att.type === 'Clock-Out' ? 'bg-rose-950 text-rose-300' : 'bg-emerald-950 text-emerald-300'}">
                                         ${att.type}
                                     </span>
+                                </td>
+                                <td class="p-3 text-right space-x-2 no-print">
+                                    <button onclick="openEditAttendanceModal('${attIdentifier}')" class="text-xs text-sky-400 hover:underline"><i class="fa-solid fa-pen"></i> ແກ້ໄຂ</button>
+                                    <button onclick="deleteAttendance('${attIdentifier}')" class="text-xs text-rose-500 hover:underline"><i class="fa-solid fa-trash"></i> ລົບ</button>
                                 </td>
                             </tr>`;
                     }
@@ -1600,7 +1717,6 @@
                         const outTime = new Date(clockOut.timestamp.replace(" ", "T"));
                         const hrs = (outTime - inTime) / (1000 * 60 * 60);
 
-                        // Work > 9 hours = OT
                         if (hrs > 9) totalOTHours += (hrs - 9);
                     } else if (clockIn) {
                         daysWorked++;
@@ -1758,15 +1874,15 @@
             }
         }
 
-        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC
+        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC (GMT+7 BANGKOK TIME)
         async function submitClock() {
             if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
             const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ"); clearPin(); return; }
 
             const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            const nowTimeStr = now.toISOString().replace('T', ' ').substring(0, 16);
+            const gmt7TimeStr = getGMT7Timestamp(now); // GMT+7 Time
+            const todayStr = gmt7TimeStr.split(' ')[0]; // YYYY-MM-DD in GMT+7
 
             const todayLogs = db.attendance.filter(a => 
                 a.pin && a.pin.toString() === pinBuffer.toString() && 
@@ -1781,12 +1897,13 @@
 
             if (!hasClockIn) {
                 actionType = "Clock-In";
-                logMsg = `⏰ <b>${staffMember.name}</b>: Clock-In ເຂົ້າວຽກສຳເລັດ (${now.toLocaleTimeString('lo-LA', {hour:'2-digit', minute:'2-digit'})})`;
+                logMsg = `⏰ <b>${staffMember.name}</b>: Clock-In ເຂົ້າວຽກສຳເລັດ (${gmt7TimeStr.split(' ')[1]})`;
             } else if (hasClockIn && !hasClockOut) {
                 actionType = "Clock-Out";
                 const clockInLog = todayLogs.find(a => a.type === "Clock-In");
                 const inTime = new Date(clockInLog.timestamp.replace(" ", "T"));
-                const diffMs = now - inTime;
+                const outTime = new Date(gmt7TimeStr.replace(" ", "T"));
+                const diffMs = outTime - inTime;
                 const hours = Math.floor(diffMs / (1000 * 60 * 60));
                 const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
@@ -1805,14 +1922,24 @@
                 return;
             }
 
-            const payload = { timestamp: nowTimeStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || currentSelectedBranch };
+            const tempId = "att_" + Date.now();
+            const payload = { temp_id: tempId, timestamp: gmt7TimeStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || currentSelectedBranch };
             db.attendance.push(payload);
 
             const logEl = document.getElementById('attendance-live-log');
             if (logEl) { logEl.innerHTML = logMsg; }
 
             if (supabaseClient) {
-                await supabaseClient.from('attendance').insert([payload]);
+                const { data, error } = await supabaseClient.from('attendance').insert([{
+                    timestamp: gmt7TimeStr,
+                    pin: pinBuffer,
+                    type: actionType,
+                    branch: payload.branch
+                }]).select();
+
+                if (data && data.length) {
+                    payload.id = data[0].id;
+                }
             }
 
             clearPin();
@@ -1824,6 +1951,8 @@
             const entries = Object.entries(quickStockChanges).filter(([_, qty]) => qty !== 0);
             if (entries.length === 0) { alert("ບໍ່ມີລາຍການປ່ຽນແປງ"); return; }
 
+            const nowTimeStr = getGMT7Timestamp();
+
             for (const [sku, qty] of entries) {
                 let prod = db.products.find(p => p.sku === sku);
                 if (!prod) continue;
@@ -1832,7 +1961,7 @@
                 prod.stock = prod.stock + qty;
                 
                 const logPayload = {
-                    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                    timestamp: nowTimeStr,
                     sku: sku, name: prod.name, type: type, qty: absQty, note: `Quick Adjust ໂດຍ: ${activeOperator.name}`
                 };
                 db.logs.push(logPayload);
@@ -1848,7 +1977,7 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
-        // ON-DEMAND MANUAL RECORD
+        // ON-DEMAND MANUAL RECORD (GMT+7)
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
@@ -1886,8 +2015,9 @@
                 }
             }
 
+            const nowTimeStr = getGMT7Timestamp();
             const logPayload = {
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                timestamp: nowTimeStr,
                 sku: branchProd.sku, name: branchProd.name, type: type, qty: qty, note: `${note} (${activeBranch} - ໂດຍ: ${activeOperator.name})`
             };
 
