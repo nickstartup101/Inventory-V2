@@ -532,7 +532,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 6: PAYROLLS REALTIME (DYNAMIC DURATION & OT) ================= -->
+        <!-- ================= TAB 6: PAYROLLS REALTIME (6 DAYS/WEEK = 26 DAYS BASE, 17K OT) ================= -->
         <section id="tab-payroll" class="hidden space-y-6">
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
@@ -552,11 +552,11 @@
                     <div class="space-y-1">
                         <span class="mono-font text-xs text-[#FF4D00] font-black tracking-widest uppercase">Official Payroll Statement</span>
                         <h2 class="text-xl font-black text-white tracking-tight">La Dolce Payrolls ປະຈຳເດືອນ <span id="payroll-period-title" class="text-[#FF4D00]"></span></h2>
-                        <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ (ຄຳນວນຈາກ Clock-In/Out ຕົວຈິງ)</p>
+                        <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ</p>
                     </div>
                     <div class="text-right text-xs text-neutral-400 font-medium">
                         <p class="font-bold text-neutral-200">ບໍລິສັດ ລາໂດເຊ ຈຳກັດ</p>
-                        <p class="text-[10px] font-mono text-neutral-500 mt-1">ກະວຽກ: 9 ຊົ່ວໂມງ/ວັນ | OT 17,000 ກີບ/ຊມ</p>
+                        <p class="text-[10px] font-mono text-neutral-500 mt-1">ກະວຽກ: 9 ຊົ່ວໂມງ/ວັນ (6 ວັນ/ອາທິດ = 26 ວັນ/ເດືອນ) | OT 17,000 ກີບ/ຊມ</p>
                     </div>
                 </div>
 
@@ -1565,7 +1565,7 @@
             }
         }
 
-        // DYNAMIC REALTIME PAYROLL CALCULATION (9 HOURS / DAY & 17,000 LAK / OT HOUR)
+        // DYNAMIC REALTIME PAYROLL CALCULATION (6 DAYS/WEEK = 26 DAYS BASE, 9 HOURS/DAY, 17,000 LAK/OT HOUR)
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -1588,7 +1588,7 @@
                     }
                 });
 
-                // Calculate actual days worked and OT hours (Base shift: 9 Hours / Day)
+                // Calculate actual days worked & OT hours (Base shift: 9 Hours / Day, Standard Month: 26 Days)
                 for (let dateKey in logsByDate) {
                     const dayLogs = logsByDate[dateKey];
                     const clockIn = dayLogs.find(l => l.type === "Clock-In");
@@ -1600,7 +1600,7 @@
                         const outTime = new Date(clockOut.timestamp.replace(" ", "T"));
                         const hrs = (outTime - inTime) / (1000 * 60 * 60);
 
-                        // If worked > 9 hours, extra is OT
+                        // Work > 9 hours = OT
                         if (hrs > 9) totalOTHours += (hrs - 9);
                     } else if (clockIn) {
                         daysWorked++;
@@ -1611,7 +1611,7 @@
                 const baseSalary = st.salary || 3500000;
                 const benefit = st.benefit || 400000;
                 const otPay = totalOTHours * 17000; // 17,000 LAK per OT Hour
-                const netPay = Math.round(((baseSalary / 22) * daysWorked) + benefit + otPay);
+                const netPay = Math.round(((baseSalary / 26) * daysWorked) + benefit + otPay); // 26 Days Base
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
@@ -1848,6 +1848,7 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
+        // ON-DEMAND MANUAL RECORD
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
