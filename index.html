@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Perfect Fit Viewport</title>
+    <title>La Dolce Portal - Smart Tablet & Payroll Realtime</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -79,10 +79,10 @@
         }
     </style>
 </head>
-<body class="h-screen max-h-screen flex flex-col md:flex-row overflow-hidden bg-[#050505]">
+<body class="h-screen max-h-screen flex flex-col sm:flex-row overflow-hidden bg-[#050505]">
 
-    <!-- PERFECT FIT SIDEBAR NAVIGATION -->
-    <aside class="w-full md:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print md:h-screen md:max-h-screen overflow-y-auto">
+    <!-- PERFECT FIT SIDEBAR NAVIGATION (ALWAYS VISIBLE ON TABLET & DESKTOP) -->
+    <aside class="w-full sm:w-64 glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print sm:h-screen sm:max-h-screen overflow-y-auto">
         <div>
             <div class="p-5 border-b border-neutral-800">
                 <div class="flex items-center space-x-3">
@@ -157,17 +157,17 @@
     </aside>
 
     <!-- MAIN VIEWPORT (INNER SCROLL ONLY, PERFECT FIT) -->
-    <main class="flex-1 min-w-0 h-full max-h-screen overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
+    <main class="flex-1 min-w-0 h-full max-h-screen overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-        <!-- GLOBAL BRANCH FILTER BAR -->
+        <!-- GLOBAL BRANCH FILTER BAR WITH LOCALSTORAGE MEMORY -->
         <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
             <div class="flex items-center space-x-2">
                 <i class="fa-solid fa-store text-[#FF4D00] text-sm"></i>
-                <span class="text-xs font-bold text-neutral-300">ສາຂາປັດຈຸບັນ:</span>
+                <span class="text-xs font-bold text-neutral-300">ສາຂາປະຈຳເຄື່ອງນີ້:</span>
                 <span id="url-branch-indicator" class="text-xs font-black text-[#FF4D00] bg-[#FF4D00]/10 px-2.5 py-1 rounded-lg border border-[#FF4D00]/20">ສາຂາ ວຽງຈັນ</span>
             </div>
             <div class="flex items-center space-x-2">
-                <span class="text-[11px] text-neutral-500">ປ່ຽນມຸມມອງສາຂາ:</span>
+                <span class="text-[11px] text-neutral-500">ປ່ຽນສາຂາ:</span>
                 <select id="global-branch-select" onchange="changeGlobalBranch(this.value)" class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs font-bold text-white focus:outline-none focus:border-[#FF4D00]">
                 </select>
             </div>
@@ -532,7 +532,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 6: PAYROLLS REALTIME ================= -->
+        <!-- ================= TAB 6: PAYROLLS REALTIME (DYNAMIC DURATION & OT) ================= -->
         <section id="tab-payroll" class="hidden space-y-6">
             <div class="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
                 <div class="flex items-center space-x-3 text-xs">
@@ -552,11 +552,11 @@
                     <div class="space-y-1">
                         <span class="mono-font text-xs text-[#FF4D00] font-black tracking-widest uppercase">Official Payroll Statement</span>
                         <h2 class="text-xl font-black text-white tracking-tight">La Dolce Payrolls ປະຈຳເດືອນ <span id="payroll-period-title" class="text-[#FF4D00]"></span></h2>
-                        <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ</p>
+                        <p class="text-[10px] text-neutral-400">ບົດສະຫຼຸບລາຍຮັບ, ຄ່າຈ້າງ ແລະ ຄ່າລ່ວງເວລາ (OT) ພະນັກງານທັງໝົດ (ຄຳນວນຈາກ Clock-In/Out ຕົວຈິງ)</p>
                     </div>
                     <div class="text-right text-xs text-neutral-400 font-medium">
                         <p class="font-bold text-neutral-200">ບໍລິສັດ ລາໂດເຊ ຈຳກັດ</p>
-                        <p class="text-[10px] font-mono text-neutral-500 mt-1">ລາຍງານເຮັດວຽກ: ກະ 1 & ກະ 2</p>
+                        <p class="text-[10px] font-mono text-neutral-500 mt-1">ກະວຽກ: 9 ຊົ່ວໂມງ/ວັນ | OT 17,000 ກີບ/ຊມ</p>
                     </div>
                 </div>
 
@@ -565,7 +565,7 @@
                         <thead class="bg-neutral-900 text-neutral-400 uppercase">
                             <tr>
                                 <th class="p-3">ພະນັກງານ (PIN)</th>
-                                <th class="p-3 text-center">ວັນເຮັດວຽກ</th>
+                                <th class="p-3 text-center">ວັນເຮັດວຽກຕົວຈິງ</th>
                                 <th class="p-3 text-center">ຊົ່ວໂມງ OT</th>
                                 <th class="p-3 text-right">ເງິນເດືອນພື້ນຖານ (LAK)</th>
                                 <th class="p-3 text-right">ສະຫວັດດິການ (LAK)</th>
@@ -848,8 +848,9 @@
 
         function changeGlobalBranch(branchVal) {
             currentSelectedBranch = branchVal;
+            localStorage.setItem('LD_DEVICE_ACTIVE_BRANCH', branchVal); // SAVE DEVICE MEMORY
             const indicator = document.getElementById('url-branch-indicator');
-            if (indicator) indicator.innerText = branchVal === 'ALL' ? '🌐 ທຸກສາຂາ' : branchVal;
+            if (indicator) indicator.innerText = branchVal === 'ALL' ? '🌐 ທຸກສາຂາ' : `📍 ${branchVal}`;
             renderAllViews();
         }
 
@@ -1542,7 +1543,7 @@
                 db.staff.forEach(s => { if (s.branch === oldName) s.branch = trimmed; });
                 db.products.forEach(p => { if (p.branch === oldName) p.branch = trimmed; });
 
-                if (currentSelectedBranch === oldName) currentSelectedBranch = trimmed;
+                if (currentSelectedBranch === oldName) changeGlobalBranch(trimmed);
 
                 if (supabaseClient) {
                     await supabaseClient.from('staff').update({ branch: trimmed }).eq('branch', oldName);
@@ -1557,13 +1558,14 @@
         async function deleteBranch(bName) {
             if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບສາຂາ "${bName}"?`)) {
                 db.branches = db.branches.filter(b => b !== bName);
-                if (currentSelectedBranch === bName) currentSelectedBranch = "ALL";
+                if (currentSelectedBranch === bName) changeGlobalBranch("ALL");
 
                 renderAllViews();
                 alert(`✅ ລົບສາຂາ "${bName}" ຮຽບຮ້ອຍແລ້ວ!`);
             }
         }
 
+        // DYNAMIC REALTIME PAYROLL CALCULATION (9 HOURS / DAY & 17,000 LAK / OT HOUR)
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -1572,22 +1574,59 @@
             const filteredStaff = getFilteredStaff();
             
             filteredStaff.forEach(st => {
-                const daysWorked = 22;
-                const net = Math.round(((st.salary || 3500000) / 22 * daysWorked) + (st.benefit || 400000));
+                let daysWorked = 0;
+                let totalOTHours = 0;
+
+                const staffLogs = db.attendance.filter(a => a.pin && a.pin.toString() === st.pin.toString());
+
+                const logsByDate = {};
+                staffLogs.forEach(a => {
+                    if (a.timestamp) {
+                        const datePart = a.timestamp.split(' ')[0];
+                        if (!logsByDate[datePart]) logsByDate[datePart] = [];
+                        logsByDate[datePart].push(a);
+                    }
+                });
+
+                // Calculate actual days worked and OT hours (Base shift: 9 Hours / Day)
+                for (let dateKey in logsByDate) {
+                    const dayLogs = logsByDate[dateKey];
+                    const clockIn = dayLogs.find(l => l.type === "Clock-In");
+                    const clockOut = dayLogs.find(l => l.type === "Clock-Out");
+
+                    if (clockIn && clockOut) {
+                        daysWorked++;
+                        const inTime = new Date(clockIn.timestamp.replace(" ", "T"));
+                        const outTime = new Date(clockOut.timestamp.replace(" ", "T"));
+                        const hrs = (outTime - inTime) / (1000 * 60 * 60);
+
+                        // If worked > 9 hours, extra is OT
+                        if (hrs > 9) totalOTHours += (hrs - 9);
+                    } else if (clockIn) {
+                        daysWorked++;
+                    }
+                }
+
+                totalOTHours = parseFloat(totalOTHours.toFixed(1));
+                const baseSalary = st.salary || 3500000;
+                const benefit = st.benefit || 400000;
+                const otPay = totalOTHours * 17000; // 17,000 LAK per OT Hour
+                const netPay = Math.round(((baseSalary / 22) * daysWorked) + benefit + otPay);
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 font-semibold text-neutral-200">
                             ${st.name} <span class="mono-font text-[#FF4D00] block text-[10px]">${st.pin} (${st.branch || "ສາຂາ ວຽງຈັນ"})</span>
                         </td>
-                        <td class="p-3 text-center mono-font font-bold text-white">${daysWorked} ວັນ</td>
-                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00]">0 Hrs</td>
-                        <td class="p-3 text-right font-mono text-white">${(st.salary || 3500000).toLocaleString()}</td>
-                        <td class="p-3 text-right font-mono text-white">${(st.benefit || 400000).toLocaleString()}</td>
-                        <td class="p-3 text-right mono-font font-bold text-emerald-400">${net.toLocaleString()} LAK</td>
+                        <td class="p-3 text-center mono-font font-bold text-emerald-400 text-sm">${daysWorked} ວັນ</td>
+                        <td class="p-3 text-center mono-font font-bold text-[#FF4D00] text-sm">${totalOTHours} Hrs</td>
+                        <td class="p-3 text-right font-mono text-white">${baseSalary.toLocaleString()} LAK</td>
+                        <td class="p-3 text-right font-mono text-white">${benefit.toLocaleString()} LAK</td>
+                        <td class="p-3 text-right mono-font font-bold text-emerald-400 text-sm">${netPay.toLocaleString()} LAK</td>
                     </tr>`;
             });
-            tbody.innerHTML = html;
+
+            tbody.innerHTML = html || `<tr><td colspan="6" class="p-4 text-center text-neutral-500 italic">ບໍ່ມີຂໍ້ມູນພະນັກງານ</td></tr>`;
         }
 
         async function handleBranchSubmit(e) {
@@ -1613,7 +1652,6 @@
             e.target.reset();
         }
 
-        // AUTO-CALCULATE HIGHEST STAFF_ID
         async function handleStaffSubmit(e) {
             e.preventDefault();
             const pin = document.getElementById('staff-pin').value;
@@ -1720,32 +1758,63 @@
             }
         }
 
+        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC
         async function submitClock() {
             if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
             const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ"); clearPin(); return; }
-            
-            const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 16);
-            const lastLog = db.attendance.filter(a => a.pin && a.pin.toString() === pinBuffer.toString()).pop();
-            const actionType = (!lastLog || lastLog.type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
-            const payload = { timestamp: nowStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || currentSelectedBranch };
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0];
+            const nowTimeStr = now.toISOString().replace('T', ' ').substring(0, 16);
+
+            const todayLogs = db.attendance.filter(a => 
+                a.pin && a.pin.toString() === pinBuffer.toString() && 
+                a.timestamp && a.timestamp.startsWith(todayStr)
+            );
+
+            const hasClockIn = todayLogs.some(a => a.type === "Clock-In");
+            const hasClockOut = todayLogs.some(a => a.type === "Clock-Out");
+
+            let actionType = "";
+            let logMsg = "";
+
+            if (!hasClockIn) {
+                actionType = "Clock-In";
+                logMsg = `⏰ <b>${staffMember.name}</b>: Clock-In ເຂົ້າວຽກສຳເລັດ (${now.toLocaleTimeString('lo-LA', {hour:'2-digit', minute:'2-digit'})})`;
+            } else if (hasClockIn && !hasClockOut) {
+                actionType = "Clock-Out";
+                const clockInLog = todayLogs.find(a => a.type === "Clock-In");
+                const inTime = new Date(clockInLog.timestamp.replace(" ", "T"));
+                const diffMs = now - inTime;
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                logMsg = `✅ <b>${staffMember.name}</b>: Clock-Out ອອກວຽກສຳເລັດ!<br><span class="text-emerald-400 font-bold">⏱️ ລວມເວລາເຮັດວຽກມື້ນີ້: ${hours} ຊົ່ວໂມງ ${mins} ນາທີ</span>`;
+            } else {
+                const clockInLog = todayLogs.find(a => a.type === "Clock-In");
+                const clockOutLog = todayLogs.find(a => a.type === "Clock-Out");
+                const inTime = new Date(clockInLog.timestamp.replace(" ", "T"));
+                const outTime = new Date(clockOutLog.timestamp.replace(" ", "T"));
+                const diffMs = outTime - inTime;
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                alert(`⚠️ ${staffMember.name} ໄດ້ສຳເລັດການປ້ຳໂມງ ເຂົ້າ-ອອກ ວຽກປະຈຳວັນນີ້ແລ້ວ!\n⏱️ ລວມເວລາເຮັດວຽກມື້ນີ້: ${hours} ຊົ່ວໂມງ ${mins} ນາທີ`);
+                clearPin();
+                return;
+            }
+
+            const payload = { timestamp: nowTimeStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || currentSelectedBranch };
+            db.attendance.push(payload);
+
+            const logEl = document.getElementById('attendance-live-log');
+            if (logEl) { logEl.innerHTML = logMsg; }
 
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('attendance').insert([payload]);
-                if (error) console.error("Attendance Sync Error:", error.message);
+                await supabaseClient.from('attendance').insert([payload]);
             }
 
-            db.attendance.push(payload);
-            
-            const logEl = document.getElementById('attendance-live-log');
-            if (logEl) {
-                logEl.innerHTML = `
-                    <div class="space-y-1">
-                        <p class="text-white font-black text-sm">${staffMember.name} (${staffMember.pin})</p>
-                        <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">${actionType} Success</p>
-                    </div>`;
-            }
             clearPin();
             renderAllViews();
         }
@@ -1779,7 +1848,6 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
-        // ON-DEMAND MANUAL RECORD (Creates branch item row automatically if first time)
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
@@ -1862,12 +1930,18 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const storedBranch = localStorage.getItem('LD_DEVICE_ACTIVE_BRANCH');
+            if (storedBranch) {
+                currentSelectedBranch = storedBranch;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const urlBranch = urlParams.get('branch');
             if (urlBranch) {
-                currentSelectedBranch = urlBranch;
+                changeGlobalBranch(urlBranch);
+            } else {
                 const indicator = document.getElementById('url-branch-indicator');
-                if (indicator) indicator.innerText = `📍 ${urlBranch}`;
+                if (indicator) indicator.innerText = currentSelectedBranch === 'ALL' ? '🌐 ທຸກສາຂາ' : `📍 ${currentSelectedBranch}`;
             }
 
             populatePayrollMonthDropdown();
@@ -1888,9 +1962,9 @@
                     const [prodRes, staffRes, attRes, logRes, leaveRes] = await Promise.all([
                         supabaseClient.from('main_inventory').select('*'),
                         supabaseClient.from('staff').select('*'),
-                        supabaseClient.from('attendance').select('*').limit(50),
-                        supabaseClient.from('daily_inventory_movement').select('*').limit(50),
-                        supabaseClient.from('leaves').select('*').limit(50)
+                        supabaseClient.from('attendance').select('*').limit(100),
+                        supabaseClient.from('daily_inventory_movement').select('*').limit(100),
+                        supabaseClient.from('leaves').select('*').limit(100)
                     ]);
 
                     if (prodRes.data && prodRes.data.length) db.products = normalizeDataset(prodRes.data);
