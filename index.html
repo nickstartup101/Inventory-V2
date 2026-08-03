@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - GMT+7 & Smart Attendance HRM</title>
+    <title>La Dolce Portal - Unified Stock & Smart Leave HRM</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -159,7 +159,7 @@
     <!-- MAIN VIEWPORT (INNER SCROLL ONLY, PERFECT FIT) -->
     <main class="flex-1 min-w-0 h-full max-h-screen overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-        <!-- GLOBAL BRANCH FILTER BAR WITH LOCALSTORAGE MEMORY -->
+        <!-- GLOBAL BRANCH FILTER BAR -->
         <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
             <div class="flex items-center space-x-2">
                 <i class="fa-solid fa-store text-[#FF4D00] text-sm"></i>
@@ -197,34 +197,29 @@
                 </div>
             </div>
 
-            <!-- HERO SECTION: HIGH FREQUENCY TRACKERS -->
-            <div class="glass-panel p-5 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl relative overflow-hidden space-y-4">
-                <div class="flex justify-between items-center">
+            <!-- UNIFIED HERO STOCK SECTION (HIGH-FREQUENCY + CATEGORY FILTER CARDS) -->
+            <div class="glass-panel p-6 rounded-3xl border-2 border-[#FF4D00]/30 shadow-2xl space-y-5">
+                <div class="flex justify-between items-center flex-wrap gap-3 border-b border-neutral-800 pb-4">
                     <div>
-                        <span class="text-[10px] text-[#FF4D00] font-black uppercase tracking-widest block"><i class="fa-solid fa-fire text-[#FF4D00] mr-1"></i> Hero Section</span>
-                        <h2 class="text-base font-black text-white">ໝວດໝູ່ເຄື່ອນໄຫວຖີ່ (High-Frequency Trackers)</h2>
-                    </div>
-                    <span class="text-[10px] text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full font-mono">GMT+7 Bangkok</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="high-freq-trackers"></div>
-            </div>
-
-            <!-- CURRENT STOCK: COMPACT RECTANGLE ROUNDED CARDS + CATEGORY PILLS -->
-            <div class="glass-panel p-5 rounded-2xl space-y-4">
-                <div class="flex justify-between items-center flex-wrap gap-3 border-b border-neutral-800 pb-3">
-                    <div>
-                        <h2 class="font-bold text-xs text-neutral-200 uppercase tracking-wider">ຄັງສິນຄ້າປັດຈຸບັນ (Current Stock)</h2>
-                        <p class="text-[10px] text-neutral-500">ກົດເລືອກໝວດໝູ່ເພື່ອເບິ່ງສິນຄ້າແບບ Rectangle Cards ກະທັດຮັດ ບໍ່ກິນພື້ນທີ່</p>
+                        <span class="text-[10px] text-[#FF4D00] font-black uppercase tracking-widest block"><i class="fa-solid fa-fire text-[#FF4D00] mr-1"></i> Hero Stock Section</span>
+                        <h2 class="text-base font-black text-white">ຄັງສິນຄ້າປັດຈຸບັນ (Current Inventory Stock)</h2>
                     </div>
                     <input type="text" id="stock-search" oninput="renderStockTable()" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="px-3 py-1.5 bg-neutral-900 border border-neutral-800 rounded-xl text-xs focus:outline-none focus:border-[#FF4D00] text-white w-full sm:w-56">
                 </div>
 
-                <div id="stock-category-pills" class="flex flex-wrap gap-2 py-1"></div>
-                <div id="stock-cards-container" class="pt-1"></div>
+                <!-- CATEGORY PILLS BUTTONS -->
+                <div id="stock-category-pills" class="flex flex-wrap gap-2"></div>
+
+                <!-- CARDS CONTAINER -->
+                <div id="stock-cards-container" class="pt-2"></div>
             </div>
 
+            <!-- DAILY LOGS WITH EDIT & DELETE BUTTONS -->
             <div class="glass-panel p-5 rounded-2xl space-y-4">
-                <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
+                    <span class="text-[10px] text-neutral-500">ສາມາດແກ້ໄຂ / ລົບ ລາຍການຄີຜິດໄດ້</span>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-neutral-400">
                         <thead class="bg-neutral-900 text-neutral-500 uppercase">
@@ -234,6 +229,7 @@
                                 <th class="p-3 border-b border-neutral-800">ປະເພດ</th>
                                 <th class="p-3 border-b border-neutral-800">ຈຳນວນ</th>
                                 <th class="p-3 border-b border-neutral-800">ໝາຍເຫດ</th>
+                                <th class="p-3 border-b border-neutral-800 text-right no-print">ຈັດການ</th>
                             </tr>
                         </thead>
                         <tbody id="daily-log-body" class="divide-y divide-neutral-900"></tbody>
@@ -324,7 +320,7 @@
         <section id="tab-attendance" class="hidden space-y-6">
             <div class="border-b border-neutral-800 pb-4">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-user-clock text-[#FF4D00] mr-3"></i>ລົງເວລາເຮັດວຽກ & ຂໍລາວຽກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ເວລາ GMT+7 Bangkok</p>
+                <p class="text-xs text-neutral-400 mt-1">ປ້ຳໂມງເຂົ້າ-ອອກວຽກ ຜ່ານລະບົບ PIN Pad (6 ຫຼັກ) ແລະ ສົ່ງຄຳຮ້ອງຂໍລາວຽກ</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -393,11 +389,11 @@
             </div>
         </section>
 
-        <!-- ================= TAB 4: HRM ADMIN DASHBOARD (WITH ATTENDANCE EDIT & DELETE) ================= -->
+        <!-- ================= TAB 4: HRM ADMIN DASHBOARD ================= -->
         <section id="tab-hrm-dash" class="hidden space-y-6">
             <div class="border-b border-neutral-800 pb-4">
                 <h1 class="text-2xl font-black tracking-tight"><i class="fa-solid fa-shield-halved text-[#FF4D00] mr-3"></i>ລາຍງານ HRM ຫຼັກ</h1>
-                <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ (GMT+7 Bangkok)</p>
+                <p class="text-xs text-neutral-400 mt-1">ລາຍງານການເຄື່ອນໄຫວທັງໝົດຂອງພະນັກງານ ແລະ ການເຄື່ອນໄຫວຄັງສິນຄ້າ</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -422,7 +418,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- ATTENDANCE TABLE WITH EDIT & DELETE BUTTONS -->
                 <div class="glass-panel p-5 rounded-2xl space-y-4">
-                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ລາຍການປ້ຳໂມງເຂົ້າ-ອອກວຽກ (ຈັດການ EDIT / DELETE ໄດ້)</h2>
+                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ລາຍການປ້ຳໂມງເຂົ້າ-ອອກວຽກ</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-neutral-400">
                             <thead class="bg-neutral-900 text-neutral-500 uppercase">
@@ -439,8 +435,9 @@
                     </div>
                 </div>
 
+                <!-- LEAVE REQUESTS TABLE (CLICK ROW TO VIEW DETAILS & APPROVE/REJECT) -->
                 <div class="glass-panel p-5 rounded-2xl space-y-4">
-                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ໃບລາວຽກທີ່ສົ່ງເຂົ້າມາ</h2>
+                    <h2 class="font-bold text-xs text-neutral-400 uppercase tracking-wider">ໃບລາວຽກ (ກົດໃສ່ແຖວເພື່ອເບິ່ງລາຍລະອຽດ & ອະນຸມັດ)</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-neutral-400">
                             <thead class="bg-neutral-900 text-neutral-500 uppercase">
@@ -593,7 +590,63 @@
 
     </main>
 
-    <!-- MODAL EDIT ATTENDANCE LOG (NEW) -->
+    <!-- MODAL EDIT INVENTORY LOG (NEW) -->
+    <div id="modal-edit-inv-log" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl max-w-sm w-full p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider"><i class="fa-solid fa-pen-to-square text-[#FF4D00] mr-2"></i>ແກ້ໄຂປະຫວັດສະຕ໊ອກ</h3>
+                <button onclick="closeEditInvLogModal()" class="text-neutral-500 hover:text-white text-base">&times;</button>
+            </div>
+            <form onsubmit="handleInvLogEditSubmit(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="edit-log-id">
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສິນຄ້າ</label>
+                    <input type="text" id="edit-log-name" readonly class="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-xl text-neutral-400 font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ປະເພດ</label>
+                        <select id="edit-log-type" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold">
+                            <option value="IN">ນຳເຂົ້າ (IN)</option>
+                            <option value="OUT">ເບີກອອກ (OUT)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-neutral-400 font-semibold mb-1">ຈຳນວນ</label>
+                        <input type="number" id="edit-log-qty" required min="1" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-neutral-400 font-semibold mb-1">ໝາຍເຫດ</label>
+                    <input type="text" id="edit-log-note" class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeEditInvLogModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold">ຍົກເລີກ</button>
+                    <button type="submit" class="px-5 py-2 bg-[#FF4D00] text-white rounded-xl font-bold">ອັບເດດ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL LEAVE DETAIL & APPROVAL (NEW) -->
+    <div id="modal-leave-detail" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl max-w-md w-full p-6 space-y-5 border border-neutral-800">
+            <div class="flex justify-between items-center border-b border-neutral-800 pb-3">
+                <h3 class="text-xs font-extrabold text-neutral-200 uppercase tracking-wider"><i class="fa-solid fa-file-signature text-[#FF4D00] mr-2"></i>ລາຍລະອຽດໃບລາພັກວຽກ</h3>
+                <button onclick="closeLeaveDetailModal()" class="text-neutral-500 hover:text-white text-base">&times;</button>
+            </div>
+            
+            <div id="leave-detail-content" class="space-y-3 text-xs"></div>
+
+            <div class="flex justify-end space-x-2 pt-2 border-t border-neutral-900">
+                <button type="button" onclick="closeLeaveDetailModal()" class="px-4 py-2 border border-neutral-800 rounded-xl hover:bg-neutral-900 font-bold text-xs">ປິດ</button>
+                <button type="button" id="btn-reject-leave" onclick="processLeaveStatus(false)" class="px-4 py-2 bg-rose-950 text-rose-300 border border-rose-800 hover:bg-rose-900 rounded-xl font-bold text-xs">❌ ປະຕິເສດ</button>
+                <button type="button" id="btn-approve-leave" onclick="processLeaveStatus(true)" class="px-5 py-2 bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 rounded-xl font-bold text-xs">✅ ອະນຸມັດ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT ATTENDANCE LOG -->
     <div id="modal-edit-attendance" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl max-w-sm w-full p-6 space-y-4">
             <div class="flex justify-between items-center">
@@ -791,7 +844,8 @@
         let isHRMMode = false;
         let activeOperator = null;
         let currentSelectedBranch = "ALL";
-        let activeCategoryFilter = "ALL";
+        let activeCategoryFilter = "ວັດຖຸດິບ"; // DEFAULT HERO CATEGORY
+        let currentActiveLeaveId = null;
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
@@ -872,7 +926,8 @@
                     else if (k === "timestamp" || k === "ເວລາ") norm.timestamp = valStr;
                     else if (k === "type" || k === "ປະເພດ") norm.type = valStr;
                     else if (k === "qty" || k === "ຈຳນວນ") norm.qty = Number(val) || 0;
-                    else if (k === "note" || k === "ໝາຍເຫດ") norm.note = valStr;
+                    else if (k === "note" || k === "ໝາຍເຫດ" || k === "reason") norm.note = valStr;
+                    else if (k === "dates" || k === "ວັນທີ") norm.dates = valStr;
                     else if (k === "dob" || k === "ວັນເດືອນປີເກີດ") norm.dob = valStr;
                     else if (k === "photo_url" || k === "ຮູບພາບ") norm.photo_url = valStr;
                     else if (k === "emp_type" || k === "ປະເພດວຽກ") norm.emp_type = valStr;
@@ -900,7 +955,6 @@
             renderAllViews();
         }
 
-        // HIGH-SPEED COMPRESSOR
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1171,6 +1225,163 @@
             }
         }
 
+        // --- INVENTORY LOGS EDIT & DELETE HANDLERS ---
+        function openEditInvLogModal(logIndex) {
+            const log = db.logs[logIndex];
+            if (!log) return;
+
+            document.getElementById('edit-log-id').value = logIndex;
+            document.getElementById('edit-log-name').value = log.name || "";
+            document.getElementById('edit-log-type').value = log.type || "IN";
+            document.getElementById('edit-log-qty').value = log.qty || 1;
+            document.getElementById('edit-log-note').value = log.note || "";
+
+            const m = document.getElementById('modal-edit-inv-log');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeEditInvLogModal() {
+            const m = document.getElementById('modal-edit-inv-log');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function handleInvLogEditSubmit(e) {
+            e.preventDefault();
+            const logIdx = parseInt(document.getElementById('edit-log-id').value);
+            const newType = document.getElementById('edit-log-type').value;
+            const newQty = parseInt(document.getElementById('edit-log-qty').value);
+            const newNote = document.getElementById('edit-log-note').value;
+
+            const oldLog = db.logs[logIdx];
+            if (!oldLog) return;
+
+            const prod = db.products.find(p => p.sku === oldLog.sku);
+            if (prod) {
+                // Revert old stock impact
+                if (oldLog.type === 'IN') prod.stock -= oldLog.qty;
+                else prod.stock += oldLog.qty;
+
+                // Apply new stock impact
+                if (newType === 'IN') prod.stock += newQty;
+                else prod.stock -= newQty;
+
+                if (supabaseClient) {
+                    await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', prod.sku);
+                }
+            }
+
+            oldLog.type = newType;
+            oldLog.qty = newQty;
+            oldLog.note = newNote;
+
+            if (supabaseClient && oldLog.id) {
+                await supabaseClient.from('daily_inventory_movement').update({
+                    type: newType,
+                    qty: newQty,
+                    note: newNote
+                }).eq('id', oldLog.id);
+            }
+
+            renderAllViews();
+            closeEditInvLogModal();
+            alert("✅ ອັບເດດປະຫວັດ ແລະ ຄຳນວນສະຕ໊ອກໃໝ່ສຳເລັດ!");
+        }
+
+        async function deleteInvLog(logIndex) {
+            const log = db.logs[logIndex];
+            if (!log) return;
+
+            if (confirm(`ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບປະຫວັດ: "${log.name}" (${log.type} ${log.qty})?`)) {
+                const prod = db.products.find(p => p.sku === log.sku);
+                if (prod) {
+                    // Revert stock
+                    if (log.type === 'IN') prod.stock -= log.qty;
+                    else prod.stock += log.qty;
+
+                    if (supabaseClient) {
+                        await supabaseClient.from('main_inventory').update({ stock: prod.stock }).eq('sku', prod.sku);
+                    }
+                }
+
+                if (supabaseClient && log.id) {
+                    await supabaseClient.from('daily_inventory_movement').delete().eq('id', log.id);
+                }
+
+                db.logs.splice(logIndex, 1);
+                renderAllViews();
+                alert("✅ ລົບປະຫວັດ ແລະ ປັບສະຕ໊ອກຄືນຮຽບຮ້ອຍ!");
+            }
+        }
+
+        // --- LEAVE REQUEST DETAILS & APPROVAL MODAL HANDLERS ---
+        function openLeaveDetailModal(leaveId) {
+            const lv = db.leaves.find(l => (l.id && l.id.toString() === leaveId.toString()) || l.temp_id === leaveId);
+            if (!lv) return;
+
+            currentActiveLeaveId = leaveId;
+            const content = document.getElementById('leave-detail-content');
+            if (content) {
+                const isApproved = lv.status === "Approved";
+                const isRejected = lv.status === "Rejected";
+                const statusColor = isApproved ? "text-emerald-400 bg-emerald-950/80 border-emerald-800" : isRejected ? "text-rose-400 bg-rose-950/80 border-rose-800" : "text-amber-400 bg-amber-950/80 border-amber-800";
+
+                content.innerHTML = `
+                    <div class="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-400 font-bold">ພະນັກງານ:</span>
+                            <span class="text-white font-black text-sm">${lv.name} (PIN: ${lv.pin})</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-400 font-bold">ປະເພດການລາ:</span>
+                            <span class="text-[#FF4D00] font-bold">${lv.type}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-400 font-bold">ໄລຍະເວລາ:</span>
+                            <span class="font-mono text-neutral-200">${lv.dates}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-neutral-400 font-bold">ສະຖານະ:</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${statusColor}">${lv.status}</span>
+                        </div>
+                    </div>
+                    <div class="bg-neutral-950 p-4 rounded-2xl border border-neutral-900 space-y-1">
+                        <span class="text-neutral-400 font-bold block mb-1">ເຫດຜົນການລາ:</span>
+                        <p class="text-neutral-200 leading-relaxed italic bg-neutral-900/60 p-3 rounded-xl border border-neutral-800">"${lv.reason || lv.note || "ບໍ່ມີລະບຸ"}"</p>
+                    </div>
+                `;
+            }
+
+            const modal = document.getElementById('modal-leave-detail');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeLeaveDetailModal() {
+            const modal = document.getElementById('modal-leave-detail');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function processLeaveStatus(isApprove) {
+            if (!currentActiveLeaveId) return;
+            const newStatus = isApprove ? "Approved" : "Rejected";
+
+            const lv = db.leaves.find(l => (l.id && l.id.toString() === currentActiveLeaveId.toString()) || l.temp_id === currentActiveLeaveId);
+            if (lv) {
+                lv.status = newStatus;
+
+                if (supabaseClient && lv.id) {
+                    const { error } = await supabaseClient.from('leaves').update({ status: newStatus }).eq('id', lv.id);
+                    if (error) {
+                        alert("❌ ອັບເດດ Supabase ບໍ່ສຳເລັດ: " + error.message);
+                        return;
+                    }
+                }
+
+                renderAllViews();
+                closeLeaveDetailModal();
+                alert(`✅ ທຳການ ${newStatus} ໃບລາວຽກຮຽບຮ້ອຍແລ້ວ!`);
+            }
+        }
+
         function pressPin(num) {
             if (pinBuffer.length < 6) {
                 pinBuffer += num;
@@ -1289,6 +1500,7 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
+        // HERO SECTION RENDERER
         function renderHighFreqTrackers() {
             const container = document.getElementById('high-freq-trackers');
             if (!container) return;
@@ -1327,6 +1539,7 @@
             container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
         }
 
+        // UNIFIED HERO STOCK RENDERER WITH CATEGORY PILLS FILTER
         function setCategoryFilter(cat) {
             activeCategoryFilter = cat;
             renderStockTable();
@@ -1340,12 +1553,15 @@
             const filteredProds = getFilteredProducts();
             const search = (document.getElementById('stock-search')?.value || "").toLowerCase();
 
-            const categories = ["ALL", ...Array.from(new Set(filteredProds.map(p => p.category || "ອື່ນໆ")))];
+            // Unique categories list
+            const rawCategories = Array.from(new Set(filteredProds.map(p => p.category || "ອື່ນໆ")));
+            const categories = ["ວັດຖຸດິບ", ...rawCategories.filter(c => c !== "ວັດຖຸດິບ"), "ALL"];
 
             if (pillsContainer) {
                 pillsContainer.innerHTML = categories.map(cat => {
                     const isActive = activeCategoryFilter === cat;
-                    return `<button onclick="setCategoryFilter('${cat}')" class="px-3 py-1 rounded-xl text-xs font-bold transition-all ${isActive ? 'bg-[#FF4D00] text-white shadow-lg shadow-[#FF4D00]/20' : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white'}">${cat === 'ALL' ? '🌐 ທັງໝົດ' : cat}</button>`;
+                    const catLabel = cat === 'ວັດຖຸດິບ' ? '📦 ວັດຖຸດິບ (High Frequency)' : cat === 'ALL' ? '🌐 ສະແດງທັງໝົດ' : `📍 ${cat}`;
+                    return `<button onclick="setCategoryFilter('${cat}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${isActive ? 'bg-[#FF4D00] text-white shadow-lg shadow-[#FF4D00]/20' : 'bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-white'}">${catLabel}</button>`;
                 }).join('');
             }
 
@@ -1360,7 +1576,7 @@
                 return;
             }
 
-            let html = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5">`;
+            let html = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">`;
 
             displayProds.forEach(item => {
                 const isOk = item.stock > 0;
@@ -1368,11 +1584,11 @@
                 const burnBadge = burnInfo.daysLeft !== null ? `🔥 ~${burnInfo.daysLeft}ວັນ` : '';
 
                 html += `
-                    <div class="bg-neutral-900/80 border border-neutral-800 p-2.5 rounded-2xl flex items-center justify-between hover:border-[#FF4D00] transition-all group">
+                    <div class="bg-neutral-900/80 border border-neutral-800 p-3 rounded-2xl flex items-center justify-between hover:border-[#FF4D00] transition-all group">
                         <div class="min-w-0 pr-2">
                             <div class="flex items-center space-x-1">
                                 <span class="mono-font text-[9px] text-neutral-500 font-bold">${item.sku}</span>
-                                ${burnBadge ? `<span class="text-[8px] text-amber-400 font-mono">${burnBadge}</span>` : ''}
+                                ${burnBadge ? `<span class="text-[8px] text-amber-400 font-mono font-bold">${burnBadge}</span>` : ''}
                             </div>
                             <h4 class="font-bold text-xs text-neutral-200 truncate group-hover:text-[#FF4D00] transition-colors" title="${item.name}">${item.name}</h4>
                             <span class="text-[8px] text-neutral-500 font-semibold block truncate">${item.category || 'ວັດຖຸດິບ'} (${item.branch || 'ວຽງຈັນ'})</span>
@@ -1388,13 +1604,15 @@
             container.innerHTML = html;
         }
 
+        // DAILY LOGS WITH EDIT & DELETE BUTTONS
         function renderDailyLogs() {
             const tbody = document.getElementById('daily-log-body');
             if (!tbody) return;
             tbody.innerHTML = "";
             let html = "";
-            db.logs.slice().reverse().forEach(log => {
+            db.logs.slice().reverse().forEach((log, idx) => {
                 const isOut = log.type === "OUT";
+                const realLogIdx = db.logs.length - 1 - idx; // Original index in array
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 text-neutral-500 font-mono">${log.timestamp || ""}</td>
@@ -1406,6 +1624,10 @@
                         </td>
                         <td class="p-3 font-mono font-bold text-white">${log.qty || ""}</td>
                         <td class="p-3 text-neutral-400">${log.note || ""}</td>
+                        <td class="p-3 text-right space-x-2 no-print">
+                            <button onclick="openEditInvLogModal(${realLogIdx})" class="text-xs text-sky-400 hover:underline"><i class="fa-solid fa-pen"></i> ແກ້ໄຂ</button>
+                            <button onclick="deleteInvLog(${realLogIdx})" class="text-xs text-rose-500 hover:underline"><i class="fa-solid fa-trash"></i> ລົບ</button>
+                        </td>
                     </tr>`;
             });
             tbody.innerHTML = html;
@@ -1485,7 +1707,7 @@
             if (descContainer) descContainer.classList.toggle('hidden', val !== 'others');
         }
 
-        // RENDER HRM DASHBOARD WITH ATTENDANCE EDIT & DELETE BUTTONS
+        // HRM DASHBOARD WITH LEAVE REQUEST CLICKABLE ROW HANDLER
         function renderHRMDashboard() {
             const filteredStaff = getFilteredStaff();
             const statActive = document.getElementById('stat-active-staff');
@@ -1531,22 +1753,26 @@
             if (leaveBody) {
                 leaveBody.innerHTML = "";
                 let html = "";
-                db.leaves.slice().reverse().forEach(lv => {
+                db.leaves.slice().reverse().forEach((lv, idx) => {
+                    const leaveIdentifier = lv.id || lv.temp_id || idx;
+                    const isApproved = lv.status === "Approved";
+                    const isRejected = lv.status === "Rejected";
+                    const statusColor = isApproved ? "text-emerald-400 bg-emerald-950/80 border-emerald-800" : isRejected ? "text-rose-400 bg-rose-950/80 border-rose-800" : "text-amber-400 bg-amber-950/80 border-amber-800";
+
                     html += `
-                        <tr class="hover:bg-neutral-950/40">
+                        <tr onclick="openLeaveDetailModal('${leaveIdentifier}')" class="hover:bg-neutral-950/40 cursor-pointer transition-colors">
                             <td class="p-3 font-semibold text-neutral-200">${lv.name} (${lv.pin})</td>
                             <td class="p-3 text-neutral-400">${lv.type}</td>
                             <td class="p-3 text-neutral-500 font-mono">${lv.dates}</td>
                             <td class="p-3">
-                                <span class="px-2 py-0.5 rounded text-[9px] font-bold ${lv.status === 'Approved' ? 'bg-emerald-950 text-emerald-300' : lv.status === 'Rejected' ? 'bg-rose-950 text-rose-300' : 'bg-neutral-900 text-neutral-400'}">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold border ${statusColor}">
                                     ${lv.status}
                                 </span>
                             </td>
-                            <td class="p-3 text-right space-x-1">
-                                ${lv.status === 'Pending' ? `
-                                    <button onclick="approveLeave('${lv.id}', true)" class="px-1.5 py-0.5 bg-emerald-950 text-emerald-300 hover:bg-emerald-900 rounded text-[10px]">ອະນຸມັດ</button>
-                                    <button onclick="approveLeave('${lv.id}', false)" class="px-1.5 py-0.5 bg-rose-950 text-rose-300 hover:bg-rose-900 rounded text-[10px]">ປະຕິເສດ</button>
-                                ` : '-'}
+                            <td class="p-3 text-right no-print" onclick="event.stopPropagation();">
+                                <button onclick="openLeaveDetailModal('${leaveIdentifier}')" class="px-2 py-1 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-neutral-300 rounded text-[10px] font-bold">
+                                    <i class="fa-solid fa-eye text-[#FF4D00]"></i> ລາຍລະອຽດ
+                                </button>
                             </td>
                         </tr>`;
                 });
@@ -1705,7 +1931,6 @@
                     }
                 });
 
-                // Calculate actual days worked & OT hours (Base shift: 9 Hours / Day, Standard Month: 26 Days)
                 for (let dateKey in logsByDate) {
                     const dayLogs = logsByDate[dateKey];
                     const clockIn = dayLogs.find(l => l.type === "Clock-In");
@@ -1726,8 +1951,8 @@
                 totalOTHours = parseFloat(totalOTHours.toFixed(1));
                 const baseSalary = st.salary || 3500000;
                 const benefit = st.benefit || 400000;
-                const otPay = totalOTHours * 17000; // 17,000 LAK per OT Hour
-                const netPay = Math.round(((baseSalary / 26) * daysWorked) + benefit + otPay); // 26 Days Base
+                const otPay = totalOTHours * 17000;
+                const netPay = Math.round(((baseSalary / 26) * daysWorked) + benefit + otPay);
                 
                 html += `
                     <tr class="hover:bg-neutral-950/40">
@@ -1874,15 +2099,15 @@
             }
         }
 
-        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC (GMT+7 BANGKOK TIME)
+        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC
         async function submitClock() {
             if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
             const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ"); clearPin(); return; }
 
             const now = new Date();
-            const gmt7TimeStr = getGMT7Timestamp(now); // GMT+7 Time
-            const todayStr = gmt7TimeStr.split(' ')[0]; // YYYY-MM-DD in GMT+7
+            const gmt7TimeStr = getGMT7Timestamp(now);
+            const todayStr = gmt7TimeStr.split(' ')[0];
 
             const todayLogs = db.attendance.filter(a => 
                 a.pin && a.pin.toString() === pinBuffer.toString() && 
@@ -1977,7 +2202,6 @@
             alert("✅ ບັນທຶກສະຕ໊ອກລົງ Supabase ຮຽບຮ້ອຍແລ້ວ!");
         }
 
-        // ON-DEMAND MANUAL RECORD (GMT+7)
         async function handleManualRecordSubmit(e) {
             e.preventDefault();
             if (!activeOperator) { alert("ກະລຸນາປົດລັອກເຊດຊັນ PIN ກ່ອນບັນທຶກ"); return; }
@@ -2042,11 +2266,21 @@
             const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pin.toString() && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ"); return; }
 
-            const newLeave = { pin: pin, name: staffMember.name, type: type, dates: `${start} ຫາ ${end}`, reason: reason, status: 'Pending' };
+            const tempId = "leave_" + Date.now();
+            const newLeave = { temp_id: tempId, pin: pin, name: staffMember.name, type: type, dates: `${start} ຫາ ${end}`, reason: reason, status: 'Pending' };
 
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('leaves').insert([newLeave]);
+                const { data, error } = await supabaseClient.from('leaves').insert([{
+                    pin: pin,
+                    name: staffMember.name,
+                    type: type,
+                    dates: `${start} ຫາ ${end}`,
+                    reason: reason,
+                    status: 'Pending'
+                }]).select();
+
                 if (error) { alert("❌ ສົ່ງໃບລາລົງ Supabase ບໍ່ສຳເລັດ: " + error.message); return; }
+                if (data && data.length) newLeave.id = data[0].id;
             }
 
             db.leaves.push(newLeave);
