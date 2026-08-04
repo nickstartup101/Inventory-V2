@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Collapsible Minimal Sidebar & Auto SKU</title>
+    <title>La Dolce Portal - Isolated Employee Clock Engine</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -34,10 +34,12 @@
             font-family: "Noto Sans Lao", "Inter", sans-serif;
         }
 
-        /* FORCE COMPUTER/TABLET VIEW */
+        /* FORCE COMPUTER/TABLET VIEW (>= 500px) */
         @media (min-width: 500px) {
             body { flex-direction: row !important; }
             aside#app-sidebar {
+                width: 230px !important;
+                min-width: 230px !important;
                 height: 100vh !important;
                 max-height: 100vh !important;
                 display: flex !important;
@@ -49,7 +51,7 @@
             }
         }
 
-        /* SIDEBAR COLLAPSED MINIMAL STYLES */
+        /* SIDEBAR COLLAPSED STYLES */
         aside.sidebar-collapsed {
             width: 70px !important;
             min-width: 70px !important;
@@ -114,7 +116,7 @@
 </head>
 <body class="h-screen max-h-screen flex flex-col overflow-hidden bg-[#050505]">
 
-    <!-- MINIMAL COLLAPSIBLE SIDEBAR NAVIGATION -->
+    <!-- FORCED TABLET COMPUTER SIDEBAR NAVIGATION -->
     <aside id="app-sidebar" class="w-full min-[500px]:w-[230px] glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print overflow-y-auto transition-all duration-300">
         <div>
             <div class="p-4 border-b border-neutral-800 flex items-center justify-between sidebar-header-box">
@@ -127,7 +129,6 @@
                         </span>
                     </div>
                 </div>
-                <!-- COLLAPSE TOGGLE BUTTON -->
                 <button onclick="toggleSidebarCollapse()" class="p-1.5 rounded-lg bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800 transition-all shrink-0" title="ພັບ / ຂະຫຍາຍ Sidebar">
                     <i class="fa-solid fa-angles-left text-xs" id="sidebar-toggle-icon"></i>
                 </button>
@@ -279,7 +280,6 @@
                     <h1 class="text-xl font-black tracking-tight"><i class="fa-solid fa-square-plus text-[#FF4D00] mr-2"></i>ເຄື່ອງມືຈັດການສະຕ໊ອກ</h1>
                     <p class="text-[11px] text-neutral-400 mt-0.5">ເລືອກສິນຄ້າຈາກ Master Catalog ເພື່ອບັນທຶກສະຕ໊ອກເຂົ້າສາຂາປັດຈຸບັນ</p>
                 </div>
-                <!-- ADD NEW MASTER PRODUCT BUTTON -->
                 <button onclick="openAddProductModal()" class="px-4 py-2 bg-[#FF4D00]/10 border border-[#FF4D00]/30 hover:bg-[#FF4D00]/20 text-[#FF4D00] rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-lg shadow-[#FF4D00]/10">
                     <i class="fa-solid fa-plus text-xs"></i>
                     <span>+ ເພີ່ມສິນຄ້າ/ວັດຖຸດິບໃໝ່</span>
@@ -1003,7 +1003,7 @@
         function openAddProductModal() {
             const skuInput = document.getElementById('prod-sku');
             if (skuInput) {
-                skuInput.value = generateNextSKU(); // PRE-FILL AUTO SEQUENTIAL SKU
+                skuInput.value = generateNextSKU();
             }
             const m = document.getElementById('modal-add-product');
             if (m) m.classList.remove('hidden');
@@ -1429,11 +1429,9 @@
 
             const prod = db.products.find(p => p.sku === oldLog.sku);
             if (prod) {
-                // Revert old stock impact
                 if (oldLog.type === 'IN') prod.stock -= oldLog.qty;
                 else prod.stock += oldLog.qty;
 
-                // Apply new stock impact
                 if (newType === 'IN') prod.stock += newQty;
                 else prod.stock -= newQty;
 
@@ -1842,7 +1840,7 @@
             if (descContainer) descContainer.classList.toggle('hidden', val !== 'others');
         }
 
-        // HRM DASHBOARD WITH CLICKABLE LEAVE REQUEST DETAILS & APPROVAL
+        // HRM DASHBOARD WITH LEAVE REQUEST CLICKABLE ROW HANDLER
         function renderHRMDashboard() {
             const filteredStaff = getFilteredStaff();
             const statActive = document.getElementById('stat-active-staff');
@@ -2043,7 +2041,7 @@
             }
         }
 
-        // DYNAMIC REALTIME PAYROLL CALCULATION
+        // DYNAMIC REALTIME PAYROLL CALCULATION (6 DAYS/WEEK = 26 DAYS BASE, 9 HOURS/DAY, 17,000 LAK/OT HOUR)
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -2234,60 +2232,48 @@
             }
         }
 
-        // SMART DAILY CLOCK IN / CLOCK OUT LOOP LOGIC
+        // ISOLATED EMPLOYEE CLOCK IN / CLOCK OUT ENGINE
         async function submitClock() {
             if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
-            const staffMember = db.staff.find(s => s.pin && s.pin.toString() === pinBuffer.toString() && s.active);
+            const currentPin = pinBuffer.toString().trim();
+            const staffMember = db.staff.find(s => s.pin && s.pin.toString().trim() === currentPin && s.active);
             if (!staffMember) { alert("ລະຫັດ PIN 6 ຫຼັກ ບໍ່ຖືກຕ້ອງ"); clearPin(); return; }
 
             const now = new Date();
             const gmt7TimeStr = getGMT7Timestamp(now);
-            const todayStr = gmt7TimeStr.split(' ')[0];
 
-            const todayLogs = db.attendance.filter(a => 
-                a.pin && a.pin.toString() === pinBuffer.toString() && 
-                a.timestamp && a.timestamp.startsWith(todayStr)
-            );
+            // 1. Get ONLY THIS SPECIFIC EMPLOYEE'S logs, sorted by time
+            const myLogs = db.attendance
+                .filter(a => a.pin && a.pin.toString().trim() === currentPin)
+                .sort((a, b) => parseTimestampSafe(a.timestamp) - parseTimestampSafe(b.timestamp));
 
-            const hasClockIn = todayLogs.some(a => a.type === "Clock-In");
-            const hasClockOut = todayLogs.some(a => a.type === "Clock-Out");
+            // 2. Determine last action for THIS SPECIFIC EMPLOYEE ONLY
+            const lastLog = myLogs.length > 0 ? myLogs[myLogs.length - 1] : null;
 
             let actionType = "";
             let logMsg = "";
 
-            if (!hasClockIn) {
+            if (!lastLog || lastLog.type === "Clock-Out") {
                 actionType = "Clock-In";
                 logMsg = `⏰ <b>${staffMember.name}</b>: Clock-In ເຂົ້າວຽກສຳເລັດ (${gmt7TimeStr.split(' ')[1]})`;
-            } else if (hasClockIn && !hasClockOut) {
+            } else {
                 actionType = "Clock-Out";
-                const clockInLog = todayLogs.find(a => a.type === "Clock-In");
-                const inTime = parseTimestampSafe(clockInLog.timestamp);
+                
+                // Match with THIS EMPLOYEE'S OWN last Clock-In
+                const myLastClockIn = lastLog;
+                const inTime = parseTimestampSafe(myLastClockIn.timestamp);
                 const outTime = parseTimestampSafe(gmt7TimeStr);
                 const diffMs = outTime - inTime;
-                
+
                 const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
                 const hours = Math.floor(totalMinutes / 60);
                 const mins = totalMinutes % 60;
 
                 logMsg = `✅ <b>${staffMember.name}</b>: Clock-Out ອອກວຽກສຳເລັດ!<br><span class="text-emerald-400 font-bold">⏱️ ລວມເວລາເຮັດວຽກມື້ນີ້: ${hours} ຊົ່ວໂມງ ${mins} ນາທີ</span>`;
-            } else {
-                const clockInLog = todayLogs.find(a => a.type === "Clock-In");
-                const clockOutLog = todayLogs.find(a => a.type === "Clock-Out");
-                const inTime = parseTimestampSafe(clockInLog.timestamp);
-                const outTime = parseTimestampSafe(clockOutLog.timestamp);
-                const diffMs = outTime - inTime;
-                
-                const totalMinutes = Math.max(0, Math.floor(diffMs / (1000 * 60)));
-                const hours = Math.floor(totalMinutes / 60);
-                const mins = totalMinutes % 60;
-
-                alert(`⚠️ ${staffMember.name} ໄດ້ສຳເລັດການປ້ຳໂມງ ເຂົ້າ-ອອກ ວຽກປະຈຳວັນນີ້ແລ້ວ!\n⏱️ ລວມເວລາເຮັດວຽກມື້ນີ້: ${hours} ຊົ່ວໂມງ ${mins} ນາທີ`);
-                clearPin();
-                return;
             }
 
             const tempId = "att_" + Date.now();
-            const payload = { temp_id: tempId, timestamp: gmt7TimeStr, pin: pinBuffer, type: actionType, branch: staffMember.branch || currentSelectedBranch };
+            const payload = { temp_id: tempId, timestamp: gmt7TimeStr, pin: currentPin, type: actionType, branch: staffMember.branch || currentSelectedBranch };
             db.attendance.push(payload);
 
             const logEl = document.getElementById('attendance-live-log');
@@ -2296,7 +2282,7 @@
             if (supabaseClient) {
                 const { data, error } = await supabaseClient.from('attendance').insert([{
                     timestamp: gmt7TimeStr,
-                    pin: pinBuffer,
+                    pin: currentPin,
                     type: actionType,
                     branch: payload.branch
                 }]).select();
