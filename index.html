@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Precise Time & Master Product Engine</title>
+    <title>La Dolce Portal - Collapsible Minimal Sidebar & Auto SKU</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -34,12 +34,10 @@
             font-family: "Noto Sans Lao", "Inter", sans-serif;
         }
 
-        /* FORCE COMPUTER VIEW ON TABLETS (>= 500px) */
+        /* FORCE COMPUTER/TABLET VIEW */
         @media (min-width: 500px) {
             body { flex-direction: row !important; }
             aside#app-sidebar {
-                width: 230px !important;
-                min-width: 230px !important;
                 height: 100vh !important;
                 max-height: 100vh !important;
                 display: flex !important;
@@ -49,6 +47,24 @@
                 height: 100vh !important;
                 max-height: 100vh !important;
             }
+        }
+
+        /* SIDEBAR COLLAPSED MINIMAL STYLES */
+        aside.sidebar-collapsed {
+            width: 70px !important;
+            min-width: 70px !important;
+        }
+        aside.sidebar-collapsed .sidebar-text {
+            display: none !important;
+        }
+        aside.sidebar-collapsed .sidebar-header-box {
+            justify-content: center !important;
+            padding: 1rem 0.5rem !important;
+        }
+        aside.sidebar-collapsed nav button {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
 
         button, input, select, textarea, a, .glass-card, .glass-panel {
@@ -98,54 +114,58 @@
 </head>
 <body class="h-screen max-h-screen flex flex-col overflow-hidden bg-[#050505]">
 
-    <!-- FORCED TABLET COMPUTER SIDEBAR NAVIGATION -->
-    <aside id="app-sidebar" class="w-full glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print overflow-y-auto">
+    <!-- MINIMAL COLLAPSIBLE SIDEBAR NAVIGATION -->
+    <aside id="app-sidebar" class="w-full min-[500px]:w-[230px] glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print overflow-y-auto transition-all duration-300">
         <div>
-            <div class="p-4 border-b border-neutral-800">
-                <div class="flex items-center space-x-3">
-                    <span class="text-2xl font-black text-outline-orange">V2</span>
-                    <div>
-                        <h2 class="font-extrabold text-sm tracking-wider uppercase">La Dolce</h2>
-                        <span id="mode-badge" class="text-[9px] bg-neutral-900 text-neutral-400 px-2 py-0.5 rounded font-bold uppercase tracking-widest mt-1 block w-fit">
+            <div class="p-4 border-b border-neutral-800 flex items-center justify-between sidebar-header-box">
+                <div class="flex items-center space-x-2.5">
+                    <span class="text-2xl font-black text-outline-orange shrink-0">V2</span>
+                    <div class="sidebar-text min-w-0">
+                        <h2 class="font-extrabold text-xs tracking-wider uppercase truncate">La Dolce</h2>
+                        <span id="mode-badge" class="text-[8px] bg-neutral-900 text-neutral-400 px-1.5 py-0.5 rounded font-bold uppercase tracking-widest mt-0.5 block w-fit truncate">
                             Employee Mode
                         </span>
                     </div>
                 </div>
+                <!-- COLLAPSE TOGGLE BUTTON -->
+                <button onclick="toggleSidebarCollapse()" class="p-1.5 rounded-lg bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800 transition-all shrink-0" title="ພັບ / ຂະຫຍາຍ Sidebar">
+                    <i class="fa-solid fa-angles-left text-xs" id="sidebar-toggle-icon"></i>
+                </button>
             </div>
 
             <div class="p-3 space-y-5">
                 <div id="group-employee-menu" class="space-y-2">
-                    <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest px-2 block mb-1">ພະນັກງານ (Employee)</span>
+                    <span class="text-[9px] font-bold text-neutral-500 uppercase tracking-widest px-2 block mb-1 sidebar-text">ພະນັກງານ (Employee)</span>
                     <nav class="space-y-1">
-                        <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2 tab-active">
-                            <i class="fa-solid fa-chart-pie w-4"></i>
-                            <span>Dashboard & ສະຕ໊ອກ</span>
+                        <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" title="Dashboard & ສະຕ໊ອກ" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5 tab-active">
+                            <i class="fa-solid fa-chart-pie w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">Dashboard & ສະຕ໊ອກ</span>
                         </button>
-                        <button onclick="switchTab('tab-quick-action')" id="btn-tab-quick-action" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-square-plus w-4"></i>
-                            <span>ເຄື່ອງມືຈັດການສະຕ໊ອກ</span>
+                        <button onclick="switchTab('tab-quick-action')" id="btn-tab-quick-action" title="ເຄື່ອງມືຈັດການສະຕ໊ອກ" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                            <i class="fa-solid fa-square-plus w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">ເຄື່ອງມືຈັດການສະຕ໊ອກ</span>
                         </button>
-                        <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-user-clock w-4"></i>
-                            <span>ລົງເວລາ & ການລາວຽກ</span>
+                        <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" title="ລົງເວລາ & ການລາວຽກ" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                            <i class="fa-solid fa-user-clock w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">ລົງເວລາ & ການລາວຽກ</span>
                         </button>
                     </nav>
                 </div>
 
                 <div id="group-hrm-menu" class="hidden space-y-2">
-                    <span class="text-[10px] font-bold text-[#FF4D00] uppercase tracking-widest px-2 block mb-1">ຜູ້ບໍລິຫານ (HRM Admin)</span>
+                    <span class="text-[9px] font-bold text-[#FF4D00] uppercase tracking-widest px-2 block mb-1 sidebar-text">ຜູ້ບໍລິຫານ (HRM Admin)</span>
                     <nav class="space-y-1">
-                        <button onclick="switchTab('tab-hrm-dash')" id="btn-tab-hrm-dash" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-shield-halved w-4"></i>
-                            <span>ລາຍງານ HRM ຫຼັກ</span>
+                        <button onclick="switchTab('tab-hrm-dash')" id="btn-tab-hrm-dash" title="ລາຍງານ HRM ຫຼັກ" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                            <i class="fa-solid fa-shield-halved w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">ລາຍງານ HRM ຫຼັກ</span>
                         </button>
-                        <button onclick="switchTab('tab-staff-branch')" id="btn-tab-staff-branch" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-users-gear w-4"></i>
-                            <span>ພະນັກງານ & ສາຂາ</span>
+                        <button onclick="switchTab('tab-staff-branch')" id="btn-tab-staff-branch" title="ພະນັກງານ & ສາຂາ" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                            <i class="fa-solid fa-users-gear w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">ພະນັກງານ & ສາຂາ</span>
                         </button>
-                        <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-calculator w-4"></i>
-                            <span>ຄຳນວນ Payrolls Realtime</span>
+                        <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" title="ຄຳນວນ Payrolls Realtime" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 border border-transparent transition-all flex items-center space-x-2.5">
+                            <i class="fa-solid fa-calculator w-4 text-center shrink-0"></i>
+                            <span class="sidebar-text truncate">ຄຳນວນ Payrolls Realtime</span>
                         </button>
                     </nav>
                 </div>
@@ -156,19 +176,19 @@
             <div id="connection-status-badge" class="p-2 bg-neutral-950 border border-neutral-900 rounded-xl space-y-1">
                 <div class="flex items-center justify-between text-[10px]">
                     <div class="flex items-center space-x-2">
-                        <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                        <span id="sync-badge-text">ກຳລັງກວດສອບ...</span>
+                        <div id="conn-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0"></div>
+                        <span id="sync-badge-text" class="sidebar-text truncate">ກຳລັງກວດສອບ...</span>
                     </div>
                 </div>
             </div>
             
             <div id="user-info-bar" class="flex items-center space-x-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span class="text-[10px] text-neutral-400">ໂໝດພະນັກງານທົ່ວໄປ</span>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+                <span class="text-[10px] text-neutral-400 sidebar-text truncate">ໂໝດພະນັກງານທົ່ວໄປ</span>
             </div>
-            <button onclick="toggleUserMode()" id="btn-switch-user" class="w-full py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-white text-[11px] font-bold rounded-xl transition-all flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-user-gear text-[#FF4D00]"></i>
-                <span id="btn-switch-text">Switch to HRM Admin</span>
+            <button onclick="toggleUserMode()" id="btn-switch-user" title="Switch User Mode" class="w-full py-1.5 bg-neutral-900 border border-neutral-800 hover:border-[#FF4D00] text-white text-[11px] font-bold rounded-xl transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-user-gear text-[#FF4D00] shrink-0"></i>
+                <span id="btn-switch-text" class="sidebar-text truncate">Switch to HRM Admin</span>
             </button>
         </div>
     </aside>
@@ -252,7 +272,7 @@
             </div>
         </section>
 
-        <!-- ================= TAB 2: INVENTORY ACTIONS (WITH ADD NEW PRODUCT BUTTON) ================= -->
+        <!-- ================= TAB 2: INVENTORY ACTIONS ================= -->
         <section id="tab-quick-action" class="hidden space-y-5">
             <div class="border-b border-neutral-800 pb-3 flex flex-wrap justify-between items-center gap-3">
                 <div>
@@ -609,7 +629,7 @@
 
     </main>
 
-    <!-- MODAL ADD NEW MASTER PRODUCT (NEW) -->
+    <!-- MODAL ADD NEW MASTER PRODUCT -->
     <div id="modal-add-product" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="glass-panel rounded-2xl max-w-sm w-full p-5 space-y-4 border border-neutral-800">
             <div class="flex justify-between items-center">
@@ -618,8 +638,8 @@
             </div>
             <form onsubmit="handleAddProductSubmit(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="block text-neutral-400 font-semibold mb-1">ລະຫັດ SKU (ເຊັ່ນ: P010, M005)</label>
-                    <input type="text" id="prod-sku" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white font-mono uppercase focus:border-[#FF4D00] outline-none" placeholder="P000">
+                    <label class="block text-neutral-400 font-semibold mb-1">ລະຫັດ SKU (ສ້າງຕໍ່ກັນອັດໂຕໂນມັດ)</label>
+                    <input type="text" id="prod-sku" required class="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-[#FF4D00] font-mono font-bold uppercase focus:border-[#FF4D00] outline-none" placeholder="P001">
                 </div>
                 <div>
                     <label class="block text-neutral-400 font-semibold mb-1">ຊື່ສິນຄ້າ / ວັດຖຸດິບ</label>
@@ -902,6 +922,7 @@
         let currentSelectedBranch = "ALL";
         let activeCategoryFilter = "ວັດຖຸດິບ"; // DEFAULT HERO CATEGORY
         let currentActiveLeaveId = null;
+        let isSidebarCollapsed = false;
         let pinBuffer = "";
         let authPinBuffer = "";
         let quickStockChanges = {};
@@ -918,6 +939,39 @@
             logs: [],
             leaves: []
         };
+
+        // --- SIDEBAR MINIMAL COLLAPSE TOGGLE ---
+        function toggleSidebarCollapse() {
+            const sidebar = document.getElementById('app-sidebar');
+            const toggleIcon = document.getElementById('sidebar-toggle-icon');
+            if (!sidebar) return;
+
+            isSidebarCollapsed = !isSidebarCollapsed;
+            sidebar.classList.toggle('sidebar-collapsed', isSidebarCollapsed);
+
+            if (toggleIcon) {
+                toggleIcon.className = isSidebarCollapsed ? "fa-solid fa-angles-right text-xs" : "fa-solid fa-angles-left text-xs";
+            }
+            localStorage.setItem('LD_SIDEBAR_COLLAPSED', isSidebarCollapsed ? 'true' : 'false');
+        }
+
+        // --- AUTO-GENERATE SEQUENTIAL SKU FOR NEW PRODUCTS ---
+        function generateNextSKU() {
+            let maxNum = 0;
+            db.products.forEach(p => {
+                if (p.sku) {
+                    const matches = p.sku.match(/\d+/);
+                    if (matches) {
+                        const num = parseInt(matches[0], 10);
+                        if (!isNaN(num) && num > maxNum) {
+                            maxNum = num;
+                        }
+                    }
+                }
+            });
+            const nextNum = maxNum + 1;
+            return "P" + String(nextNum).padStart(3, '0');
+        }
 
         // --- TIMEZONE GMT+7 BANGKOK/VIENTIANE HELPER ---
         function getGMT7Timestamp(date = new Date()) {
@@ -947,6 +1001,10 @@
 
         // --- ADD NEW MASTER PRODUCT HANDLERS ---
         function openAddProductModal() {
+            const skuInput = document.getElementById('prod-sku');
+            if (skuInput) {
+                skuInput.value = generateNextSKU(); // PRE-FILL AUTO SEQUENTIAL SKU
+            }
             const m = document.getElementById('modal-add-product');
             if (m) m.classList.remove('hidden');
         }
@@ -1069,7 +1127,6 @@
             renderAllViews();
         }
 
-        // HIGH-SPEED COMPRESSOR
         function compressAndResizeImage(file, callback) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1614,43 +1671,8 @@
             countEl.innerText = `${renderedCount} ຄົນ`;
         }
 
-        // HERO SECTION RENDERER
         function renderHighFreqTrackers() {
-            const container = document.getElementById('high-freq-trackers');
-            if (!container) return;
-            container.innerHTML = "";
-            let html = "";
-            
-            const filtered = getFilteredProducts();
-            filtered.filter(p => p.category === "ວັດຖຸດິບ").forEach(item => {
-                const isOk = item.stock > 0;
-                const statusText = isOk ? "OK" : "ສັ່ງດ່ວນ";
-                const colorClass = isOk ? "text-emerald-400" : "text-[#FF4D00]";
-                const bgBadgeClass = isOk ? "bg-emerald-950/80 text-emerald-300 border-emerald-800" : "bg-rose-950/80 text-rose-300 border-rose-800";
-                const percentage = Math.min(100, Math.max(0, (item.stock / 200) * 100));
-
-                html += `
-                    <div class="glass-card p-5 rounded-2xl flex flex-col justify-between border border-neutral-800 shadow-xl">
-                        <div class="space-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="mono-font text-[10px] text-neutral-500 font-bold">${item.sku}</span>
-                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold border ${bgBadgeClass}">${statusText}</span>
-                            </div>
-                            <h3 class="font-bold text-neutral-100 text-sm leading-snug">${item.name}</h3>
-                            <p class="text-[10px] text-neutral-500">${item.branch || "ສາຂາ ວຽງຈັນ"}</p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-neutral-900 flex justify-between items-end">
-                            <div>
-                                <span class="text-[10px] text-neutral-500 font-bold block uppercase">ຄົງເຫຼືອ:</span>
-                                <span class="mono-font text-3xl font-black ${colorClass}">${item.stock}</span>
-                            </div>
-                            <div class="w-16 bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800 mb-1">
-                                <div class="${isOk ? 'bg-emerald-500' : 'bg-[#FF4D00]'} h-full" style="width: ${percentage}%"></div>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-            container.innerHTML = html || `<p class="text-xs text-neutral-500 italic col-span-4">ບໍ່ມີຂໍ້ມູນວັດຖຸດິບໃນສາຂານີ້</p>`;
+            // UNIFIED HERO CARDS HANDLED IN renderStockTable()
         }
 
         // UNIFIED HERO STOCK RENDERER WITH CATEGORY PILLS FILTER
@@ -1820,7 +1842,7 @@
             if (descContainer) descContainer.classList.toggle('hidden', val !== 'others');
         }
 
-        // HRM DASHBOARD WITH LEAVE REQUEST CLICKABLE ROW HANDLER
+        // HRM DASHBOARD WITH CLICKABLE LEAVE REQUEST DETAILS & APPROVAL
         function renderHRMDashboard() {
             const filteredStaff = getFilteredStaff();
             const statActive = document.getElementById('stat-active-staff');
@@ -2021,7 +2043,7 @@
             }
         }
 
-        // DYNAMIC REALTIME PAYROLL CALCULATION (6 DAYS/WEEK = 26 DAYS BASE, 9 HOURS/DAY, 17,000 LAK/OT HOUR)
+        // DYNAMIC REALTIME PAYROLL CALCULATION
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -2102,7 +2124,7 @@
             document.getElementById('branch-qr-output').classList.remove('hidden');
 
             renderAllViews();
-            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n• ສ້າງ Link ແລະ QR Code ເຂົ້າໃຊ້ງານຮຽບຮ້ອຍແລ້ວ.`);
+            alert(`✅ ເປີດນຳໃຊ້ "${bName}" ສຳເລັດ!\n• ສ້າງ Link ແລະ QR Code ເຂົ້າໃຊ້ງານຮຽບຮ້ອຍແນ່ນອນ.`);
             e.target.reset();
         }
 
@@ -2412,6 +2434,15 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const storedCollapsed = localStorage.getItem('LD_SIDEBAR_COLLAPSED');
+            if (storedCollapsed === 'true') {
+                isSidebarCollapsed = true;
+                const sidebar = document.getElementById('app-sidebar');
+                const toggleIcon = document.getElementById('sidebar-toggle-icon');
+                if (sidebar) sidebar.classList.add('sidebar-collapsed');
+                if (toggleIcon) toggleIcon.className = "fa-solid fa-angles-right text-xs";
+            }
+
             const storedBranch = localStorage.getItem('LD_DEVICE_ACTIVE_BRANCH');
             if (storedBranch) {
                 currentSelectedBranch = storedBranch;
