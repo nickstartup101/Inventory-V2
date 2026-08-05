@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal - Isolated Employee Clock Engine</title>
+    <title>La Dolce Portal - Locked Device Branch Engine</title>
     
     <!-- Dynamic Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
@@ -34,7 +34,7 @@
             font-family: "Noto Sans Lao", "Inter", sans-serif;
         }
 
-        /* FORCE COMPUTER/TABLET VIEW (>= 500px) */
+        /* FORCE COMPUTER/TABLET VIEW */
         @media (min-width: 500px) {
             body { flex-direction: row !important; }
             aside#app-sidebar {
@@ -116,7 +116,7 @@
 </head>
 <body class="h-screen max-h-screen flex flex-col overflow-hidden bg-[#050505]">
 
-    <!-- FORCED TABLET COMPUTER SIDEBAR NAVIGATION -->
+    <!-- SIDEBAR NAVIGATION -->
     <aside id="app-sidebar" class="w-full min-[500px]:w-[230px] glass-panel border-r border-neutral-800 flex flex-col justify-between shrink-0 z-40 no-print overflow-y-auto transition-all duration-300">
         <div>
             <div class="p-4 border-b border-neutral-800 flex items-center justify-between sidebar-header-box">
@@ -197,12 +197,13 @@
     <!-- MAIN VIEWPORT -->
     <main id="app-main" class="flex-1 min-w-0 h-full max-h-screen overflow-y-auto p-3 sm:p-5 lg:p-7 space-y-5">
 
-        <!-- GLOBAL BRANCH FILTER BAR -->
-        <div class="glass-panel p-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
-            <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-store text-[#FF4D00] text-sm"></i>
-                <span class="text-xs font-bold text-neutral-300">ສາຂາປະຈຳເຄື່ອງນີ້:</span>
-                <span id="url-branch-indicator" class="text-xs font-black text-[#FF4D00] bg-[#FF4D00]/10 px-2.5 py-1 rounded-lg border border-[#FF4D00]/20">ສາຂາ ວຽງຈັນ</span>
+        <!-- GLOBAL BRANCH FILTER BAR (PROTECTED WITH DEVICE LOCK) -->
+        <div class="glass-panel p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 no-print border-l-4 border-l-[#FF4D00]">
+            <div class="flex items-center space-x-2 min-w-0">
+                <i class="fa-solid fa-lock text-[#FF4D00] text-sm shrink-0"></i>
+                <span class="text-xs font-bold text-neutral-300 shrink-0">ສາຂາປະຈຳເຄື່ອງນີ້:</span>
+                <span id="url-branch-indicator" class="text-xs font-black text-[#FF4D00] bg-[#FF4D00]/10 px-2.5 py-1 rounded-lg border border-[#FF4D00]/20 truncate">ສາຂາ ວຽງຈັນ</span>
+                <span id="branch-lock-notice" class="text-[10px] text-neutral-500 italic hidden sm:inline"></span>
             </div>
             <div class="flex items-center space-x-2">
                 <span class="text-[11px] text-neutral-500">ປ່ຽນສາຂາ:</span>
@@ -251,9 +252,13 @@
 
             <!-- DAILY LOGS -->
             <div class="glass-panel p-4 rounded-2xl space-y-3">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center flex-wrap gap-2 border-b border-neutral-800 pb-2.5">
                     <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider">ປະຫວັດການເຄື່ອນໄຫວປະຈຳວັນ (Daily Inventory Logs)</h2>
-                    <span class="text-[10px] text-neutral-500">ແກ້ໄຂ / ລົບ ໄດ້</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-[10px] text-neutral-400 font-bold">ເລືອກວັນທີ:</span>
+                        <input type="date" id="log-date-filter" onchange="renderDailyLogs()" class="px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-[#FF4D00]">
+                        <button onclick="clearLogDateFilter()" class="px-2 py-1 bg-neutral-900 border border-neutral-800 text-[10px] text-neutral-400 hover:text-white rounded-xl">🌐 ທັງໝົດ</button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-neutral-400">
@@ -365,7 +370,6 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <!-- PIN PAD FIT FOR TABLET -->
                 <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
                     <div>
                         <h2 class="font-bold text-xs text-neutral-300 uppercase tracking-wider mb-1"><i class="fa-solid fa-clock text-[#FF4D00] mr-2"></i>Clock In/Out PIN Pad</h2>
@@ -1737,15 +1741,36 @@
             container.innerHTML = html;
         }
 
-        // DAILY LOGS WITH EDIT & DELETE BUTTONS
+        // DAILY LOGS WITH DATE PICKER FILTER & EDIT/DELETE BUTTONS
+        function clearLogDateFilter() {
+            const dateInput = document.getElementById('log-date-filter');
+            if (dateInput) dateInput.value = "";
+            renderDailyLogs();
+        }
+
         function renderDailyLogs() {
             const tbody = document.getElementById('daily-log-body');
+            const dateFilter = document.getElementById('log-date-filter')?.value || "";
             if (!tbody) return;
             tbody.innerHTML = "";
+
+            let filteredLogs = currentSelectedBranch === 'ALL' ? 
+                db.logs : 
+                db.logs.filter(l => l.note && l.note.includes(currentSelectedBranch));
+
+            if (dateFilter) {
+                filteredLogs = filteredLogs.filter(l => l.timestamp && l.timestamp.startsWith(dateFilter));
+            }
+
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-neutral-500 italic">ບໍ່ມີປະຫວັດການເຄື່ອນໄຫວໃນວັນທີນີ້</td></tr>`;
+                return;
+            }
+
             let html = "";
-            db.logs.slice().reverse().forEach((log, idx) => {
+            filteredLogs.slice().reverse().forEach((log, idx) => {
                 const isOut = log.type === "OUT";
-                const realLogIdx = db.logs.length - 1 - idx;
+                const realLogIdx = db.logs.indexOf(log);
                 html += `
                     <tr class="hover:bg-neutral-950/40">
                         <td class="p-3 text-neutral-500 font-mono">${log.timestamp || ""}</td>
@@ -1984,6 +2009,15 @@
                 db.branches.forEach(b => {
                     globalSelect.innerHTML += `<option value="${b}" ${b === currentSelectedBranch ? 'selected' : ''}>📍 ${b}</option>`;
                 });
+
+                // LOCK BRANCH DROPDOWN IN EMPLOYEE MODE
+                if (!isHRMMode) {
+                    globalSelect.disabled = true;
+                    globalSelect.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    globalSelect.disabled = false;
+                    globalSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             }
         }
 
@@ -2041,7 +2075,7 @@
             }
         }
 
-        // DYNAMIC REALTIME PAYROLL CALCULATION (6 DAYS/WEEK = 26 DAYS BASE, 9 HOURS/DAY, 17,000 LAK/OT HOUR)
+        // DYNAMIC REALTIME PAYROLL CALCULATION
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
             if (!tbody) return;
@@ -2232,7 +2266,7 @@
             }
         }
 
-        // ISOLATED EMPLOYEE CLOCK IN / CLOCK OUT ENGINE
+        // STRICT ISOLATED EMPLOYEE CLOCK IN / CLOCK OUT ENGINE
         async function submitClock() {
             if (pinBuffer.length < 6) { alert("ກະລຸນາໃສ່ PIN ໃຫ້ຄົບ 6 ຫຼັກ"); return; }
             const currentPin = pinBuffer.toString().trim();
@@ -2247,7 +2281,7 @@
                 .filter(a => a.pin && a.pin.toString().trim() === currentPin)
                 .sort((a, b) => parseTimestampSafe(a.timestamp) - parseTimestampSafe(b.timestamp));
 
-            // 2. Determine last action for THIS SPECIFIC EMPLOYEE ONLY
+            // 2. Determine last action for THIS EMPLOYEE ONLY
             const lastLog = myLogs.length > 0 ? myLogs[myLogs.length - 1] : null;
 
             let actionType = "";
@@ -2287,9 +2321,7 @@
                     branch: payload.branch
                 }]).select();
 
-                if (data && data.length) {
-                    payload.id = data[0].id;
-                }
+                if (data && data.length) payload.id = data[0].id;
             }
 
             clearPin();
@@ -2420,6 +2452,11 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const dateInput = document.getElementById('log-date-filter');
+            if (dateInput) {
+                dateInput.value = getGMT7Timestamp().split(' ')[0];
+            }
+
             const storedCollapsed = localStorage.getItem('LD_SIDEBAR_COLLAPSED');
             if (storedCollapsed === 'true') {
                 isSidebarCollapsed = true;
@@ -2461,9 +2498,9 @@
                     const [prodRes, staffRes, attRes, logRes, leaveRes] = await Promise.all([
                         supabaseClient.from('main_inventory').select('*'),
                         supabaseClient.from('staff').select('*'),
-                        supabaseClient.from('attendance').select('*').limit(100),
-                        supabaseClient.from('daily_inventory_movement').select('*').limit(100),
-                        supabaseClient.from('leaves').select('*').limit(100)
+                        supabaseClient.from('attendance').select('*').order('id', { ascending: false }).limit(100),
+                        supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(300),
+                        supabaseClient.from('leaves').select('*').order('id', { ascending: false }).limit(100)
                     ]);
 
                     if (prodRes.data && prodRes.data.length) db.products = normalizeDataset(prodRes.data);
