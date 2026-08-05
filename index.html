@@ -1,320 +1,255 @@
---- START OF FILE ---
 <!DOCTYPE html>
 <html lang="lo">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal V2.1 - HRM & Inventory</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
+    <title>La Dolce Portal V2.2 - ລະບົບຄຸ້ມຄອງພະນັກງານ</title>
     
     <!-- Fonts & Tailwind -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        :root { --color-primary: #FF4D00; }
         body {
             font-family: "Noto Sans Lao", sans-serif;
             background-color: #050505;
             color: #ffffff;
             height: 100vh;
             overflow: hidden;
+            display: flex;
         }
 
-        /* SIDEBAR ANIMATION */
+        /* SIDEBAR STYLE */
         #app-sidebar {
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 260px;
+            background: #0a0a0a;
+            border-right: 1px solid #1a1a1a;
         }
         #app-sidebar.collapsed { width: 80px; }
-        #app-sidebar.collapsed .sidebar-text, 
-        #app-sidebar.collapsed .sidebar-badge { display: none; }
+        #app-sidebar.collapsed .sidebar-text { display: none; }
         #app-sidebar.collapsed .sidebar-header { justify-content: center; }
         #app-sidebar.collapsed nav button { justify-content: center; padding: 12px 0; }
         #app-sidebar.collapsed nav button i { margin-right: 0; font-size: 1.2rem; }
 
-        .glass-panel {
-            background: #0a0a0a;
+        .glass-card {
+            background: #0d0d0d;
             border: 1px solid #1a1a1a;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 20px;
         }
-        .text-orange { color: #FF4D00; }
-        .bg-orange { background-color: #FF4D00; }
-        .border-orange { border-color: #FF4D00; }
         
         .tab-active {
             background-color: #FF4D00 !important;
             color: white !important;
         }
-        
+
         .mono { font-family: "JetBrains Mono", monospace; }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #333; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
         @media print {
             .no-print { display: none !important; }
-            body { background: white; color: black; overflow: visible; }
-            .print-area { width: 100%; border: none; }
+            body { background: white; color: black; display: block; overflow: visible; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #ddd; padding: 8px; color: black !important; }
         }
     </style>
 </head>
-<body class="flex h-screen w-screen">
+<body>
 
-    <!-- SIDEBAR NAVIGATION -->
-    <aside id="app-sidebar" class="h-full glass-panel border-r border-neutral-800 flex flex-col shrink-0 z-50 no-print">
-        <!-- Sidebar Header -->
+    <!-- SIDEBAR -->
+    <aside id="app-sidebar" class="flex flex-col h-full no-print shrink-0">
         <div class="p-5 border-b border-neutral-800 flex items-center justify-between sidebar-header">
             <div class="flex items-center space-x-3">
-                <span class="text-2xl font-black text-orange">V2</span>
-                <div class="sidebar-text">
-                    <h2 class="font-bold text-xs uppercase tracking-tighter">La Dolce Portal</h2>
-                    <p id="mode-label" class="text-[9px] text-neutral-500 font-bold">EMPLOYEE MODE</p>
-                </div>
+                <span class="text-2xl font-black text-[#FF4D00]">V2</span>
+                <span class="sidebar-text font-bold text-sm tracking-tighter">LA DOLCE PORTAL</span>
             </div>
-            <button onclick="toggleSidebar()" class="p-1.5 rounded-lg bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800">
+            <button onclick="toggleSidebar()" class="p-1.5 rounded-lg bg-neutral-900 text-neutral-400 hover:text-white">
                 <i id="toggle-icon" class="fa-solid fa-angles-left text-xs"></i>
             </button>
         </div>
 
-        <!-- Sidebar Menu -->
-        <div class="flex-1 overflow-y-auto p-3 space-y-6">
-            <div id="menu-group-emp">
-                <p class="sidebar-text text-[10px] font-bold text-neutral-500 mb-2 px-3 uppercase">General</p>
-                <nav class="space-y-1">
-                    <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all tab-active">
-                        <i class="fa-solid fa-chart-pie w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">Dashboard</span>
-                    </button>
-                    <button onclick="switchTab('tab-stock')" id="btn-tab-stock" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all">
-                        <i class="fa-solid fa-boxes-stacked w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">ຈັດການສະຕ໊ອກ</span>
-                    </button>
-                    <button onclick="switchTab('tab-clock')" id="btn-tab-clock" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all">
-                        <i class="fa-solid fa-user-clock w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">ລົງເວລາ & ລາວຽກ</span>
-                    </button>
-                </nav>
-            </div>
+        <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+            <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 tab-active">
+                <i class="fa-solid fa-chart-pie w-5 mr-3 text-center"></i>
+                <span class="sidebar-text">Dashboard</span>
+            </button>
+            <button onclick="switchTab('tab-stock')" id="btn-tab-stock" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900">
+                <i class="fa-solid fa-boxes-stacked w-5 mr-3 text-center"></i>
+                <span class="sidebar-text">Stock ສິນຄ້າ</span>
+            </button>
+            <button onclick="switchTab('tab-attendance')" id="btn-tab-attendance" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900">
+                <i class="fa-solid fa-fingerprint w-5 mr-3 text-center"></i>
+                <span class="sidebar-text">ລົງເວລາເຮັດວຽກ</span>
+            </button>
 
-            <div id="menu-group-admin" class="hidden">
-                <p class="sidebar-text text-[10px] font-bold text-orange mb-2 px-3 uppercase">Admin Control</p>
-                <nav class="space-y-1">
-                    <button onclick="switchTab('tab-admin-dash')" id="btn-tab-admin-dash" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all">
-                        <i class="fa-solid fa-shield-halved w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">HRM Overview</span>
-                    </button>
-                    <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all">
-                        <i class="fa-solid fa-calculator w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">ຄຳນວນເງິນເດືອນ</span>
-                    </button>
-                    <button onclick="switchTab('tab-staff')" id="btn-tab-staff" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900 transition-all">
-                        <i class="fa-solid fa-users-gear w-5 mr-3 text-center"></i>
-                        <span class="sidebar-text">ພະນັກງານ & ສາຂາ</span>
-                    </button>
-                </nav>
+            <!-- Admin Section -->
+            <div id="admin-menu" class="hidden pt-4 mt-4 border-t border-neutral-800">
+                <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-900">
+                    <i class="fa-solid fa-calculator w-5 mr-3 text-center"></i>
+                    <span class="sidebar-text text-orange-500">Payroll (ເງິນເດືອນ)</span>
+                </button>
             </div>
-        </div>
+        </nav>
 
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-neutral-800 space-y-3">
-            <div class="flex items-center space-x-2 px-2">
-                <div id="sync-status" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                <span id="sync-text" class="sidebar-text text-[10px] text-neutral-400 font-bold uppercase">Connecting...</span>
-            </div>
-            <button onclick="toggleAdminMode()" id="btn-mode-toggle" class="w-full py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-[10px] font-bold hover:border-orange transition-all flex items-center justify-center">
-                <i class="fa-solid fa-user-shield mr-2 text-orange"></i>
-                <span class="sidebar-text">HRM LOGIN</span>
+        <div class="p-4 border-t border-neutral-800">
+            <button onclick="loginAdmin()" id="admin-btn" class="w-full py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-[10px] font-bold hover:border-[#FF4D00]">
+                <i class="fa-solid fa-lock mr-2 text-[#FF4D00]"></i>
+                <span class="sidebar-text">ADMIN LOGIN</span>
             </button>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 h-full overflow-y-auto p-6 space-y-6">
+    <!-- MAIN -->
+    <main class="flex-1 overflow-y-auto p-6">
         
-        <!-- HEADER BAR -->
-        <header class="flex flex-wrap justify-between items-center gap-4 no-print">
-            <div>
-                <h1 id="page-title" class="text-2xl font-black">Dashboard & Stock</h1>
-                <p class="text-xs text-neutral-500 font-medium">ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບຈັດການ La Dolce</p>
-            </div>
-            <div class="flex items-center space-x-3 bg-neutral-900/50 p-2 rounded-2xl border border-neutral-800">
-                <span class="text-[10px] font-bold text-neutral-500 px-2">ສາຂາປັດຈຸບັນ:</span>
-                <select id="global-branch-select" onchange="updateBranchFilter(this.value)" class="bg-black text-xs font-bold text-orange outline-none border-none cursor-pointer">
+        <!-- Tab 1: Dashboard -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <header class="flex justify-between items-center no-print">
+                <h1 class="text-2xl font-black">Dashboard</h1>
+                <select id="branch-filter" onchange="renderStock()" class="bg-neutral-900 px-4 py-2 rounded-xl text-xs font-bold border-none outline-none text-[#FF4D00]">
                     <option value="ALL">ທຸກສາຂາ</option>
                 </select>
-            </div>
-        </header>
+            </header>
 
-        <!-- TAB: DASHBOARD -->
-        <section id="tab-dashboard" class="tab-content space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="glass-panel p-5 rounded-3xl border-l-4 border-orange">
-                    <p class="text-[10px] text-neutral-500 font-bold uppercase">ສະຖານະຮ້ານ</p>
-                    <h3 id="current-shift" class="text-lg font-black mt-1">ກຳລັງເປີດ (Shift 1)</h3>
-                    <p class="text-[10px] text-neutral-400 mt-1">07:00 - 16:00 (GMT+7)</p>
+                <div class="glass-card p-6 border-l-4 border-[#FF4D00]">
+                    <p class="text-[10px] font-bold text-neutral-500 uppercase">ເວລາປະຈຳວັນ</p>
+                    <div id="live-clock" class="text-xl font-black mt-1">00:00:00</div>
                 </div>
-                <div class="glass-panel p-5 rounded-3xl">
-                    <p class="text-[10px] text-neutral-500 font-bold uppercase">ພະນັກງານທີ່ Active</p>
-                    <div id="active-staff-list" class="flex -space-x-2 mt-2 overflow-hidden">
-                        <!-- Avatars -->
-                    </div>
-                </div>
-                <div class="glass-panel p-5 rounded-3xl">
-                    <p class="text-[10px] text-neutral-500 font-bold uppercase">ລາຍການ Stock ໃກ້ໝົດ</p>
-                    <h3 id="low-stock-count" class="text-lg font-black text-rose-500 mt-1">0 ລາຍການ</h3>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] font-bold text-neutral-500 uppercase">ພະນັກງານໃນຮ້ານ</p>
+                    <div id="active-staff-count" class="text-xl font-black mt-1">0 ຄົນ</div>
                 </div>
             </div>
 
-            <div class="glass-panel rounded-3xl p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="font-black text-lg">Inventory Overview</h2>
-                    <input type="text" oninput="renderStockTable(this.value)" placeholder="ຄົ້ນຫາສິນຄ້າ..." class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-2 text-xs focus:border-orange outline-none">
-                </div>
+            <div class="glass-card p-6">
+                <h3 class="font-bold mb-4">Stock ສິນຄ້າປັດຈຸບັນ</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="text-neutral-500 border-b border-neutral-800">
-                                <th class="pb-4 font-bold">SKU</th>
-                                <th class="pb-4 font-bold">ຊື່ສິນຄ້າ</th>
-                                <th class="pb-4 font-bold text-center">ຄົງເຫຼືອ</th>
-                                <th class="pb-4 font-bold text-center">ສະຖານະ</th>
-                                <th class="pb-4 font-bold text-right">ສາຂາ</th>
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-neutral-500 border-b border-neutral-800">
+                            <tr>
+                                <th class="pb-3">ຊື່ສິນຄ້າ</th>
+                                <th class="pb-3 text-center">ຄົງເຫຼືອ</th>
+                                <th class="pb-3 text-right">ສາຂາ</th>
                             </tr>
                         </thead>
-                        <tbody id="stock-table-body" class="divide-y divide-neutral-900">
-                            <!-- Data -->
-                        </tbody>
+                        <tbody id="stock-list" class="divide-y divide-neutral-900"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- TAB: PAYROLL (ADMIN ONLY) -->
-        <section id="tab-payroll" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center no-print">
-                <div class="flex items-center space-x-4">
-                    <select id="payroll-month" class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-2 text-xs font-bold text-white">
-                        <!-- Months will be populated by JS -->
-                    </select>
-                    <button onclick="calculatePayrolls()" class="px-6 py-2 bg-orange text-white rounded-xl text-xs font-bold hover:opacity-80">
-                        <i class="fa-solid fa-sync mr-2"></i> Update Realtime
-                    </button>
-                </div>
-                <button onclick="window.print()" class="px-6 py-2 border border-neutral-800 rounded-xl text-xs font-bold hover:bg-neutral-900">
-                    <i class="fa-solid fa-print mr-2"></i> ພິມລາຍງານ
-                </button>
+        <!-- Tab 2: Stock Update -->
+        <section id="tab-stock" class="tab-content hidden space-y-6">
+            <div class="max-w-lg mx-auto glass-card p-8">
+                <h2 class="text-xl font-black mb-6 text-[#FF4D00]">Update Inventory</h2>
+                <form onsubmit="updateInventory(event)" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-neutral-500 block mb-1">ເລືອກສິນຄ້າ</label>
+                        <select id="inv-sku" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-sm outline-none"></select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="inv-type" class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-sm outline-none">
+                            <option value="IN">ນຳເຂົ້າ (IN)</option>
+                            <option value="OUT">ເບີກອອກ (OUT)</option>
+                        </select>
+                        <input type="number" id="inv-qty" placeholder="ຈຳນວນ" required class="bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-sm outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-[#FF4D00] text-white font-black rounded-xl hover:scale-[0.98] transition-all">ບັນທຶກສະຕ໊ອກ</button>
+                </form>
             </div>
+        </section>
 
-            <div class="glass-panel rounded-3xl p-8 print-area">
-                <div class="text-center mb-8">
-                    <h2 class="text-2xl font-black uppercase tracking-tighter">Official Payroll Report</h2>
-                    <p class="text-xs text-neutral-500 mt-1 uppercase">La Dolce Coffee - ໃບບິນເງິນເດືອນພະນັກງານ</p>
-                    <p class="text-[10px] text-neutral-400 mt-2 italic">ໝາຍເຫດ: 9 ຊົ່ວໂມງ = 1 ມື້ເຮັດວຽກ | OT 17,000 LAK/ຊມ</p>
+        <!-- Tab 3: Attendance -->
+        <section id="tab-attendance" class="tab-content hidden flex flex-col items-center justify-center h-full space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-black">Clock In / Out</h1>
+                <p class="text-neutral-500 mt-2">ໃສ່ລະຫັດ PIN 6 ຫຼັກ ເພື່ອລົງເວລາ</p>
+            </div>
+            <div class="glass-card p-8 w-80 space-y-4">
+                <input type="password" id="pin-input" readonly class="w-full bg-black border border-neutral-800 rounded-2xl py-4 text-center text-2xl font-bold tracking-[0.5em] text-[#FF4D00]">
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="addPin('1')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">1</button>
+                    <button onclick="addPin('2')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">2</button>
+                    <button onclick="addPin('3')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">3</button>
+                    <button onclick="addPin('4')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">4</button>
+                    <button onclick="addPin('5')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">5</button>
+                    <button onclick="addPin('6')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">6</button>
+                    <button onclick="addPin('7')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">7</button>
+                    <button onclick="addPin('8')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">8</button>
+                    <button onclick="addPin('9')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">9</button>
+                    <button onclick="clearPin()" class="h-14 rounded-xl bg-rose-950 text-rose-500 font-bold">C</button>
+                    <button onclick="addPin('0')" class="h-14 rounded-xl bg-neutral-900 text-xl font-bold hover:bg-neutral-800">0</button>
+                    <button onclick="clockSubmit()" class="h-14 rounded-xl bg-[#FF4D00] text-white font-bold">OK</button>
                 </div>
+            </div>
+        </section>
 
+        <!-- Tab 4: Payroll (Admin) -->
+        <section id="tab-payroll" class="tab-content hidden space-y-6">
+            <header class="flex justify-between items-center no-print">
+                <h1 class="text-2xl font-black">Payroll Realtime</h1>
+                <button onclick="window.print()" class="px-6 py-2 bg-white text-black rounded-xl text-xs font-bold">ພິມລາຍງານ</button>
+            </header>
+            <div class="glass-card p-6 print-area">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="bg-neutral-900 text-neutral-400 text-[10px] font-black uppercase">
-                                <th class="p-4">ພະນັກງານ</th>
-                                <th class="p-4 text-center">ຊົ່ວໂມງທັງໝົດ</th>
-                                <th class="p-4 text-center">ມື້ເຮັດວຽກຕົວຈິງ (9ຊມ)</th>
-                                <th class="p-4 text-center">OT (ຊົ່ວໂມງ)</th>
-                                <th class="p-4 text-right">ລາຍຮັບລວມ (LAK)</th>
+                            <tr class="text-neutral-500 text-[10px] uppercase border-b border-neutral-800">
+                                <th class="pb-4">ພະນັກງານ</th>
+                                <th class="pb-4 text-center">ຊົ່ວໂມງລວມ</th>
+                                <th class="pb-4 text-center">ມື້ເຮັດວຽກ (9ຊມ)</th>
+                                <th class="pb-4 text-center">OT (ຊົ່ວໂມງ)</th>
+                                <th class="pb-4 text-right">ລາຍຮັບລວມ (LAK)</th>
                             </tr>
                         </thead>
-                        <tbody id="payroll-table-body" class="text-xs divide-y divide-neutral-900">
-                            <!-- Payroll Data -->
-                        </tbody>
+                        <tbody id="payroll-list" class="divide-y divide-neutral-900 text-sm"></tbody>
                     </table>
                 </div>
             </div>
-        </section>
-
-        <!-- (SECTION ອື່ນໆ ຄືກັບຂອງເກົ່າ ແຕ່ຖືກຈັດການຜ່ານ JS ໃໝ່) -->
-        <section id="tab-stock" class="tab-content hidden space-y-6">
-            <div class="glass-panel p-6 rounded-3xl">
-                <h2 class="font-black text-lg mb-4 text-orange">Update Inventory</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <form onsubmit="handleInventoryUpdate(event)" class="space-y-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-neutral-500 block mb-1">ເລືອກສິນຄ້າ</label>
-                            <select id="inv-sku" required class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-xs outline-none focus:border-orange"></select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-neutral-500 block mb-1">ປະເພດ</label>
-                                <select id="inv-type" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-xs outline-none focus:border-orange">
-                                    <option value="IN">ນຳເຂົ້າ (IN)</option>
-                                    <option value="OUT">ເບີກອອກ (OUT)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-neutral-500 block mb-1">ຈຳນວນ</label>
-                                <input type="number" id="inv-qty" required min="1" class="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-xs outline-none focus:border-orange" placeholder="0">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full py-3 bg-orange text-white font-black rounded-xl hover:opacity-90 transition-all">ບັນທຶກລາຍການ</button>
-                    </form>
-                    <div class="bg-black/50 p-6 rounded-2xl border border-neutral-800">
-                        <h4 class="text-[10px] font-bold text-neutral-500 uppercase mb-4">ປະຫວັດ 10 ລາຍການລ່າສຸດ</h4>
-                        <ul id="mini-logs" class="text-[11px] space-y-3"></ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="tab-clock" class="tab-content hidden flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-            <div class="text-center">
-                <h2 class="text-4xl font-black mb-2">Clock In / Out</h2>
-                <p class="text-neutral-500">ກະລຸນາໃສ່ລະຫັດ PIN 6 ຫຼັກ ເພື່ອລົງເວລາເຮັດວຽກ</p>
-            </div>
-            
-            <div class="glass-panel p-8 rounded-[40px] w-full max-w-xs space-y-6">
-                <input type="password" id="pin-display" readonly placeholder="******" class="w-full bg-black border border-neutral-800 rounded-2xl py-4 text-center text-3xl font-bold tracking-[1em] text-orange mono outline-none">
-                
-                <div class="grid grid-cols-3 gap-4">
-                    <button onclick="pressPin('1')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">1</button>
-                    <button onclick="pressPin('2')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">2</button>
-                    <button onclick="pressPin('3')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">3</button>
-                    <button onclick="pressPin('4')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">4</button>
-                    <button onclick="pressPin('5')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">5</button>
-                    <button onclick="pressPin('6')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">6</button>
-                    <button onclick="pressPin('7')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">7</button>
-                    <button onclick="pressPin('8')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">8</button>
-                    <button onclick="pressPin('9')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">9</button>
-                    <button onclick="clearPin()" class="h-14 rounded-2xl bg-rose-950 text-rose-500 font-bold">C</button>
-                    <button onclick="pressPin('0')" class="h-14 rounded-2xl bg-neutral-900 text-xl font-bold active:scale-90 transition-transform">0</button>
-                    <button onclick="submitClock()" class="h-14 rounded-2xl bg-orange text-white font-bold">OK</button>
-                </div>
-            </div>
-            <div id="clock-status" class="text-xs font-bold text-neutral-500 animate-pulse">Ready for scan...</div>
         </section>
 
     </main>
 
     <script>
-        // --- CONFIG & DB ---
-        const SUPABASE_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // --- ຄ່າກຳນົດເບື້ອງຕົ້ນ ---
+        const S_URL = "https://jxkcnraixazvmwdfmraa.supabase.co";
+        const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4a2NucmFpeGF6dm13ZGZtcmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2OTEzMjQsImV4cCI6MjEwMDI2NzMyNH0.qsu7QGAUT0IFR53FNXIMp52jS8DfTxl0GDAljA-T2T0";
+        
+        // ປ່ຽນຊື່ຕົວປ່ຽນເພື່ອບໍ່ໃຫ້ຕຳກັບ Library
+        const clientSupabase = supabase.createClient(S_URL, S_KEY);
 
-        let db = { products: [], staff: [], attendance: [], logs: [], branches: [] };
-        let currentBranch = "ALL";
-        let isAdmin = false;
-        let pinBuffer = "";
+        let localDB = { products: [], staff: [], attendance: [] };
+        let pinStr = "";
 
-        // --- CORE FUNCTIONS ---
+        // --- ລະບົບຫຼັກ ---
+        async function startApp() {
+            await refreshData();
+            renderStock();
+            populateSelects();
+            
+            // Live Clock
+            setInterval(() => {
+                document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-GB');
+            }, 1000);
+        }
+
+        async function refreshData() {
+            const { data: p } = await clientSupabase.from('main_inventory').select('*');
+            const { data: s } = await clientSupabase.from('staff').select('*');
+            const { data: a } = await clientSupabase.from('attendance').select('*');
+            
+            localDB.products = p || [];
+            localDB.staff = s || [];
+            localDB.attendance = a || [];
+        }
 
         function toggleSidebar() {
             const sb = document.getElementById('app-sidebar');
@@ -324,301 +259,152 @@
             icon.classList.toggle('fa-angles-right');
         }
 
-        async function init() {
-            updateSyncStatus('connecting', 'ກຳລັງໂຫຼດຂໍ້ມູນ...');
-            await fetchData();
-            populateFilters();
-            renderAll();
-            updateSyncStatus('online', 'Supabase Connected');
-        }
-
-        async function fetchData() {
-            const [p, s, a, l] = await Promise.all([
-                supabase.from('main_inventory').select('*'),
-                supabase.from('staff').select('*'),
-                supabase.from('attendance').select('*'),
-                supabase.from('daily_inventory_movement').select('*').order('timestamp', { ascending: false }).limit(50)
-            ]);
-            db.products = p.data || [];
-            db.staff = s.data || [];
-            db.attendance = a.data || [];
-            db.logs = l.data || [];
-            db.branches = [...new Set(db.staff.map(item => item.branch))];
-        }
-
-        function populateFilters() {
-            const branchSelect = document.getElementById('global-branch-select');
-            branchSelect.innerHTML = '<option value="ALL">ທຸກສາຂາ</option>';
-            db.branches.forEach(b => {
-                branchSelect.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-
-            const monthSelect = document.getElementById('payroll-month');
-            const months = ["ມັງກອນ", "ກຸມພາ", "ມີນາ", "ເມສາ", "ພຶດສະພາ", "ມິຖຸນາ", "ກໍລະກົດ", "ສິງຫາ", "ກັນຍາ", "ຕຸລາ", "ພະຈິກ", "ທັນວາ"];
-            const now = new Date();
-            for(let i=0; i<6; i++) {
-                let mIdx = (now.getMonth() - i + 12) % 12;
-                let year = now.getFullYear() - (now.getMonth() - i < 0 ? 1 : 0);
-                monthSelect.innerHTML += `<option value="${mIdx+1}-${year}">${months[mIdx]} ${year}</option>`;
-            }
-
-            const invSku = document.getElementById('inv-sku');
-            invSku.innerHTML = db.products.map(p => `<option value="${p.sku}">${p.name} (${p.branch})</option>`).join('');
-        }
-
-        // --- CALCULATION LOGIC (THE HEART OF THE UPDATE) ---
-
-        function calculatePayrolls() {
-            const tbody = document.getElementById('payroll-table-body');
-            const monthVal = document.getElementById('payroll-month').value;
-            const [selMonth, selYear] = monthVal.split('-').map(Number);
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
             
-            tbody.innerHTML = "";
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+            document.getElementById('btn-' + id).classList.add('tab-active');
             
-            db.staff.filter(s => currentBranch === 'ALL' || s.branch === currentBranch).forEach(st => {
-                // Group attendance by Date
-                const stAtts = db.attendance.filter(a => {
-                    const d = new Date(a.timestamp);
-                    return a.pin === st.pin && (d.getMonth() + 1) === selMonth && d.getFullYear() === selYear;
-                });
+            if(id === 'tab-payroll') renderPayroll();
+        }
 
-                const daysData = {};
-                stAtts.forEach(a => {
-                    const dateStr = new Date(a.timestamp).toLocaleDateString();
-                    if(!daysData[dateStr]) daysData[dateStr] = [];
-                    daysData[dateStr].push(new Date(a.timestamp));
-                });
-
-                let totalHours = 0;
-                for (let date in daysData) {
-                    const times = daysData[date].sort((a, b) => a - b);
-                    if (times.length >= 2) {
-                        const diff = (times[times.length - 1] - times[0]) / (1000 * 60 * 60);
-                        totalHours += diff;
-                    } else if (times.length === 1) {
-                        // ຖ້າມີແຕ່ Clock-in ຢ່າງດຽວ ໃຫ້ນັບເປັນ 0 ຫຼື ຕາມນະໂຍບາຍ (ໃນນີ້ໃຫ້ນັບເປັນ 0 ກ່ອນ)
-                        totalHours += 0;
-                    }
-                }
-
-                // Logic: 9 Hours = 1 Day
-                const workedDays = totalHours / 9;
-                const otHours = Math.max(0, totalHours - (Math.floor(workedDays) * 9));
-                
-                // Financials
-                const baseSalary = st.salary || 3500000;
-                const benefit = st.benefit || 400000;
-                const otRate = 17000;
-                const totalPay = Math.round((baseSalary / 26 * Math.min(26, workedDays)) + benefit + (otHours * otRate));
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-neutral-900/50 transition-colors">
-                        <td class="p-4">
-                            <p class="font-bold">${st.name}</p>
-                            <p class="text-[10px] text-neutral-500 font-mono">${st.pin} | ${st.branch}</p>
-                        </td>
-                        <td class="p-4 text-center font-mono font-bold">${totalHours.toFixed(1)} ຊມ</td>
-                        <td class="p-4 text-center">
-                            <span class="bg-emerald-950 text-emerald-500 px-2 py-1 rounded text-[10px] font-bold">${workedDays.toFixed(1)} ມື້</span>
-                        </td>
-                        <td class="p-4 text-center font-mono text-orange font-bold">${otHours.toFixed(1)}</td>
-                        <td class="p-4 text-right">
-                            <span class="text-sm font-black">${totalPay.toLocaleString()}</span>
-                            <span class="text-[9px] text-neutral-500 ml-1">LAK</span>
-                        </td>
+        function renderStock() {
+            const branch = document.getElementById('branch-filter').value;
+            const list = document.getElementById('stock-list');
+            list.innerHTML = "";
+            
+            localDB.products.filter(p => branch === 'ALL' || p.branch === branch).forEach(p => {
+                list.innerHTML += `
+                    <tr>
+                        <td class="py-4 font-bold">${p.name}</td>
+                        <td class="py-4 text-center font-mono text-lg ${p.stock <= 5 ? 'text-rose-500' : 'text-emerald-500'}">${p.stock}</td>
+                        <td class="py-4 text-right text-[10px] text-neutral-500">${p.branch}</td>
                     </tr>
                 `;
             });
         }
 
-        // --- INVENTORY ENGINE ---
+        function populateSelects() {
+            const invSku = document.getElementById('inv-sku');
+            invSku.innerHTML = localDB.products.map(p => `<option value="${p.sku}">${p.name} (${p.branch})</option>`).join('');
+            
+            const branches = [...new Set(localDB.staff.map(s => s.branch))];
+            const filter = document.getElementById('branch-filter');
+            branches.forEach(b => filter.innerHTML += `<option value="${b}">${b}</option>`);
+        }
 
-        async function handleInventoryUpdate(e) {
+        // --- ຄຳນວນເງິນເດືອນ (9 ຊົ່ວໂມງ = 1 ມື້) ---
+        function renderPayroll() {
+            const list = document.getElementById('payroll-list');
+            list.innerHTML = "";
+
+            localDB.staff.forEach(st => {
+                // ດຶງຂໍ້ມູນການລົງເວລາຂອງຄົນນີ້
+                const logs = localDB.attendance.filter(a => a.pin === st.pin);
+                
+                // ແຍກຂໍ້ມູນເປັນລາຍວັນ
+                const dailyGroup = {};
+                logs.forEach(l => {
+                    const d = new Date(l.timestamp).toLocaleDateString();
+                    if(!dailyGroup[d]) dailyGroup[d] = [];
+                    dailyGroup[d].push(new Date(l.timestamp));
+                });
+
+                let totalHrs = 0;
+                for(let day in dailyGroup) {
+                    const times = dailyGroup[day].sort((a,b) => a-b);
+                    if(times.length >= 2) {
+                        const diff = (times[times.length - 1] - times[0]) / (1000 * 60 * 60);
+                        totalHrs += diff;
+                    }
+                }
+
+                // ສູດຄິດໄລ່: 9 ຊມ = 1 ມື້
+                const workDays = totalHrs / 9;
+                const otHours = Math.max(0, totalHrs - (Math.floor(workDays) * 9));
+                
+                const base = st.salary || 3500000;
+                const benefit = st.benefit || 400000;
+                const otPay = otHours * 17000;
+                const netPay = (base / 26 * Math.min(26, workDays)) + benefit + otPay;
+
+                list.innerHTML += `
+                    <tr class="hover:bg-neutral-900/50">
+                        <td class="py-4">
+                            <div class="font-bold">${st.name}</div>
+                            <div class="text-[10px] text-neutral-500">${st.branch}</div>
+                        </td>
+                        <td class="py-4 text-center font-mono">${totalHrs.toFixed(1)}</td>
+                        <td class="py-4 text-center">
+                            <span class="bg-emerald-950 text-emerald-500 px-2 py-0.5 rounded text-xs font-bold">${workDays.toFixed(1)} ມື້</span>
+                        </td>
+                        <td class="py-4 text-center text-orange-500 font-bold">${otHours.toFixed(1)}</td>
+                        <td class="py-4 text-right font-black text-[#FF4D00]">${Math.round(netPay).toLocaleString()} LAK</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- ສ່ວນຂອງ Stock ---
+        async function updateInventory(e) {
             e.preventDefault();
             const sku = document.getElementById('inv-sku').value;
             const type = document.getElementById('inv-type').value;
             const qty = parseInt(document.getElementById('inv-qty').value);
             
-            const product = db.products.find(p => p.sku === sku);
-            if(!product) return;
+            const prod = localDB.products.find(p => p.sku === sku);
+            const newStock = type === 'IN' ? prod.stock + qty : prod.stock - qty;
 
-            let newStock = type === 'IN' ? product.stock + qty : product.stock - qty;
+            const { error } = await clientSupabase.from('main_inventory').update({ stock: newStock }).eq('sku', sku);
             
-            updateSyncStatus('connecting', 'ກຳລັງບັນທຶກ...');
-
-            const { error: pErr } = await supabase.from('main_inventory').update({ stock: newStock }).eq('sku', sku);
-            const { error: lErr } = await supabase.from('daily_inventory_movement').insert([{
-                sku: sku, name: product.name, type: type, qty: qty, timestamp: new Date().toISOString()
-            }]);
-
-            if(!pErr && !lErr) {
-                alert("✅ ບັນທຶກສະຕ໊ອກສຳເລັດ!");
-                await fetchData();
-                renderAll();
+            if(!error) {
+                alert("ອັບເດດສຳເລັດ!");
+                await refreshData();
+                renderStock();
                 e.target.reset();
-            } else {
-                alert("❌ ເກີດຂໍ້ຜິດພາດ");
-            }
-            updateSyncStatus('online', 'Supabase Connected');
-        }
-
-        // --- UI & TABS ---
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-            
-            document.querySelectorAll('aside nav button').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById('btn-' + tabId).classList.add('tab-active');
-
-            const titles = {
-                'tab-dashboard': 'Dashboard & Stock',
-                'tab-stock': 'Inventory Management',
-                'tab-clock': 'Employee Attendance',
-                'tab-admin-dash': 'HRM Administration',
-                'tab-payroll': 'Payroll Realtime Calculation',
-                'tab-staff': 'Staff & Branch Settings'
-            };
-            document.getElementById('page-title').innerText = titles[tabId] || 'Portal';
-            if(tabId === 'tab-payroll') calculatePayrolls();
-        }
-
-        function updateBranchFilter(val) {
-            currentBranch = val;
-            renderAll();
-        }
-
-        function renderAll() {
-            renderStockTable();
-            renderMiniLogs();
-            renderActiveShift();
-        }
-
-        function renderStockTable(search = "") {
-            const body = document.getElementById('stock-table-body');
-            const filtered = db.products.filter(p => {
-                const matchBranch = currentBranch === 'ALL' || p.branch === currentBranch;
-                const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.includes(search);
-                return matchBranch && matchSearch;
-            });
-
-            body.innerHTML = filtered.map(p => `
-                <tr>
-                    <td class="py-4 font-mono text-neutral-500">${p.sku}</td>
-                    <td class="py-4 font-bold">${p.name}</td>
-                    <td class="py-4 text-center font-mono font-bold text-lg ${p.stock <= 5 ? 'text-rose-500' : 'text-emerald-500'}">${p.stock}</td>
-                    <td class="py-4 text-center">
-                        <span class="px-2 py-1 rounded-full text-[9px] font-black uppercase ${p.stock > 5 ? 'bg-emerald-950 text-emerald-500' : 'bg-rose-950 text-rose-500'}">
-                            ${p.stock > 5 ? 'In Stock' : 'Low Stock'}
-                        </span>
-                    </td>
-                    <td class="py-4 text-right font-bold text-orange text-[10px]">${p.branch}</td>
-                </tr>
-            `).join('');
-            
-            document.getElementById('low-stock-count').innerText = filtered.filter(p => p.stock <= 5).length + " ລາຍການ";
-        }
-
-        function renderMiniLogs() {
-            const logEl = document.getElementById('mini-logs');
-            logEl.innerHTML = db.logs.slice(0, 10).map(l => `
-                <li class="flex justify-between items-center border-b border-neutral-900 pb-2">
-                    <span>${l.name} <b class="${l.type === 'IN' ? 'text-emerald-500' : 'text-rose-500'}">${l.type} ${l.qty}</b></span>
-                    <span class="text-[9px] font-mono text-neutral-600">${new Date(l.timestamp).toLocaleTimeString()}</span>
-                </li>
-            `).join('');
-        }
-
-        function renderActiveShift() {
-            const container = document.getElementById('active-staff-list');
-            // Simplified: Count who clocked in today and hasn't clocked out
-            const today = new Date().toLocaleDateString();
-            const activeStaff = db.staff.filter(s => {
-                const logs = db.attendance.filter(a => a.pin === s.pin && new Date(a.timestamp).toLocaleDateString() === today);
-                return logs.length % 2 !== 0; // Odd number of logs means they are "In"
-            });
-
-            container.innerHTML = activeStaff.map(s => `
-                <div class="h-8 w-8 rounded-full bg-orange border-2 border-black flex items-center justify-center text-[10px] font-bold" title="${s.name}">
-                    ${s.name.charAt(0)}
-                </div>
-            `).join('');
-            if(activeStaff.length === 0) container.innerHTML = '<span class="text-[10px] text-neutral-600">No active staff</span>';
-        }
-
-        // --- PIN & CLOCK SYSTEM ---
-
-        function pressPin(n) {
-            if(pinBuffer.length < 6) {
-                pinBuffer += n;
-                document.getElementById('pin-display').value = pinBuffer;
             }
         }
 
+        // --- ສ່ວນຂອງ PIN ---
+        function addPin(n) {
+            if(pinStr.length < 6) {
+                pinStr += n;
+                document.getElementById('pin-input').value = pinStr;
+            }
+        }
         function clearPin() {
-            pinBuffer = "";
-            document.getElementById('pin-display').value = "";
+            pinStr = "";
+            document.getElementById('pin-input').value = "";
         }
+        async function clockSubmit() {
+            const user = localDB.staff.find(s => s.pin === pinStr);
+            if(!user) return alert("PIN ບໍ່ຖືກຕ້ອງ");
 
-        async function submitClock() {
-            const staff = db.staff.find(s => s.pin === pinBuffer);
-            if(!staff) {
-                alert("❌ ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ");
-                clearPin();
-                return;
-            }
-
-            updateSyncStatus('connecting', 'ກຳລັງບັນທຶກເວລາ...');
-            const { error } = await supabase.from('attendance').insert([{
-                pin: pinBuffer,
+            const { error } = await clientSupabase.from('attendance').insert([{
+                pin: pinStr,
                 timestamp: new Date().toISOString(),
-                branch: staff.branch,
-                type: 'LOG' // Simplified log
+                branch: user.branch
             }]);
 
             if(!error) {
-                document.getElementById('clock-status').innerText = `✅ ບັນທຶກ: ${staff.name} ສຳເລັດ!`;
-                setTimeout(() => document.getElementById('clock-status').innerText = "Ready for scan...", 3000);
-                await fetchData();
-                renderAll();
-            }
-            clearPin();
-            updateSyncStatus('online', 'Supabase Connected');
-        }
-
-        function toggleAdminMode() {
-            if(!isAdmin) {
-                const pass = prompt("ໃສ່ລະຫັດ Admin PIN:");
-                if(pass === "9999") {
-                    isAdmin = true;
-                    document.getElementById('menu-group-admin').classList.remove('hidden');
-                    document.getElementById('mode-label').innerText = "ADMIN HRM MODE";
-                    document.getElementById('mode-label').classList.add('text-orange');
-                    document.getElementById('btn-mode-toggle').innerHTML = '<i class="fa-solid fa-right-from-bracket mr-2"></i> LOGOUT';
-                    switchTab('tab-admin-dash');
-                } else {
-                    alert("ລະຫັດບໍ່ຖືກຕ້ອງ!");
-                }
-            } else {
-                isAdmin = false;
-                document.getElementById('menu-group-admin').classList.add('hidden');
-                document.getElementById('mode-label').innerText = "EMPLOYEE MODE";
-                document.getElementById('mode-label').classList.remove('text-orange');
-                document.getElementById('btn-mode-toggle').innerHTML = '<i class="fa-solid fa-user-shield mr-2 text-orange"></i> HRM LOGIN';
-                switchTab('tab-dashboard');
+                alert("ລົງເວລາສຳເລັດ: " + user.name);
+                await refreshData();
+                clearPin();
             }
         }
 
-        function updateSyncStatus(state, text) {
-            const dot = document.getElementById('sync-status');
-            const txt = document.getElementById('sync-text');
-            txt.innerText = text;
-            if(state === 'online') dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-            if(state === 'connecting') dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
-            if(state === 'offline') dot.className = "w-2 h-2 rounded-full bg-rose-500";
+        function loginAdmin() {
+            const p = prompt("ໃສ່ລະຫັດ Admin:");
+            if(p === "9999") {
+                document.getElementById('admin-menu').classList.remove('hidden');
+                document.getElementById('admin-btn').innerHTML = "ADMIN ACTIVE";
+                switchTab('tab-payroll');
+            }
         }
 
-        window.onload = init;
+        // Start
+        window.onload = startApp;
     </script>
 </body>
 </html>
