@@ -1,21 +1,23 @@
+--- START OF FILE Paste August 05, 2026 - 8:10PM ---
+
 <!DOCTYPE html>
 <html lang="lo">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Dolce Portal V4 - Premium Experience</title>
+    <title>La Dolce Portal V5 - Professional Edition</title>
     
     <!-- Favicon V2 -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23050505%22/><text y=%2272%22 x=%2212%22 font-family=%22sans-serif%22 font-size=%2268%22 font-weight=%22900%22 fill=%22%23FF4D00%22>V2</text></svg>">
     
-    <!-- Fonts & Tailwind -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        :root { --primary: #FF4D00; --bg: #050505; --card: #0d0d0d; --border: #1a1a1a; }
+        :root { --primary: #FF4D00; --bg: #050505; --card: rgba(13, 13, 13, 0.8); --border: rgba(255, 255, 255, 0.08); }
         * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none !important; }
         
         body { 
@@ -29,99 +31,80 @@
             overflow: hidden; 
         }
 
+        /* MOTION GROUND BACKGROUND */
+        .motion-ground {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, #050505, #0a0a0a, #0f0a05, #050505);
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* PREMIUM LAYOUT */
         #top-bar { 
-            height: 70px; 
-            background: rgba(5, 5, 5, 0.95); 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 30px; 
-            z-index: 100;
+            height: 70px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); display: flex; 
+            align-items: center; justify-content: space-between; padding: 0 30px; z-index: 100;
         }
 
         #app-container { display: flex; flex: 1; overflow: hidden; }
 
         aside { 
-            width: 260px; 
-            background: #0a0a0a; 
-            border-right: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            padding: 20px;
+            width: 260px; background: rgba(5, 5, 5, 0.5); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px;
         }
 
-        main { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 40px; 
-            background: radial-gradient(circle at top left, #0f0f0f, #050505);
-        }
+        main { flex: 1; overflow-y: auto; padding: 40px; position: relative; }
 
-        /* ELEMENTS */
         .glass-card { 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 28px; 
+            background: var(--card); border: 1px solid var(--border); border-radius: 28px; backdrop-filter: blur(10px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .glass-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .glass-card:hover { border-color: var(--primary); transform: translateY(-3px); background: rgba(20, 20, 20, 0.9); }
         
         .tab-active { 
-            background: linear-gradient(90deg, rgba(255, 77, 0, 0.15), transparent); 
-            color: var(--primary) !important; 
-            border-left: 4px solid var(--primary);
+            background: linear-gradient(90deg, rgba(255, 77, 0, 0.2), transparent); 
+            color: var(--primary) !important; border-left: 4px solid var(--primary);
         }
 
         .category-pill { 
-            padding: 12px 24px; 
-            border-radius: 16px; 
-            font-size: 13px; 
-            font-weight: 700; 
-            background: #111; 
-            color: #555; 
-            border: 1px solid var(--border); 
-            transition: 0.2s;
+            padding: 12px 24px; border-radius: 16px; font-size: 13px; font-weight: 700; 
+            background: rgba(255,255,255,0.03); color: #777; border: 1px solid var(--border); transition: 0.2s;
         }
-        .category-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 8px 20px rgba(255, 77, 0, 0.2); }
+        .category-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 8px 25px rgba(255, 77, 0, 0.3); }
 
         .pin-btn { 
-            height: 70px; 
-            background: #161616; 
-            border-radius: 20px; 
-            font-size: 24px; 
-            font-weight: 800; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border: 1px solid var(--border);
+            height: 70px; background: rgba(255,255,255,0.05); border-radius: 20px; 
+            font-size: 24px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); transition: 0.1s;
         }
-        .pin-btn:active { background: var(--primary); transform: scale(0.95); }
+        .pin-btn:active { background: var(--primary); transform: scale(0.9); }
 
         .active-dot { 
             width: 10px; height: 10px; background: #10b981; border-radius: 50%; 
             position: absolute; bottom: 2px; right: 2px; border: 2px solid #000;
             box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite;
         }
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
         @media (max-width: 1024px) {
             aside { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; flex-direction: row; padding: 0; border-top: 1px solid var(--border); z-index: 1000; }
             aside nav { flex-direction: row !important; width: 100%; justify-content: space-around; }
             aside button { flex-direction: column; font-size: 11px !important; padding: 10px !important; border-left: none !important; }
-            aside button i { margin-right: 0 !important; margin-bottom: 5px; font-size: 20px; }
-            main { padding: 20px; padding-bottom: 110px; }
-            .hide-mobile, .switch-user-box { display: none !important; }
-            #top-bar { padding: 0 20px; }
+            aside button i { margin-right: 0 !important; font-size: 20px; }
+            main { padding: 20px 20px 110px 20px; }
+            .switch-user-box, .hide-mobile { display: none !important; }
         }
     </style>
 </head>
 <body>
+
+    <div class="motion-ground"></div>
 
     <!-- TOP BAR -->
     <header id="top-bar">
@@ -133,7 +116,7 @@
             </div>
         </div>
         <div class="flex items-center space-x-3">
-            <span class="text-[10px] font-bold text-neutral-600 uppercase hidden md:block">Who's Working:</span>
+            <span class="text-[10px] font-bold text-neutral-500 uppercase hidden md:block">On Duty:</span>
             <div id="active-staff-container" class="flex items-center -space-x-3"></div>
         </div>
     </header>
@@ -143,31 +126,31 @@
         <aside class="no-print">
             <nav class="flex-1 flex flex-col space-y-2">
                 <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-neutral-400 transition-all tab-active">
-                    <i class="fa-solid fa-grid-2 w-6 mr-4 text-center"></i><span class="hide-mobile">Dashboard</span>
+                    <i class="fa-solid fa-home w-6 mr-4 text-center"></i><span class="hide-mobile">Dashboard</span>
                 </button>
                 <button onclick="switchTab('tab-stock')" id="btn-tab-stock" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-neutral-400 transition-all">
-                    <i class="fa-solid fa-boxes-stacked w-6 mr-4 text-center"></i><span class="hide-mobile">Stock Control</span>
+                    <i class="fa-solid fa-box w-6 mr-4 text-center"></i><span class="hide-mobile">Stock Edit</span>
                 </button>
                 <button onclick="switchTab('tab-clock')" id="btn-tab-clock" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-neutral-400 transition-all">
-                    <i class="fa-solid fa-user-clock w-6 mr-4 text-center"></i><span class="hide-mobile">Time Clock</span>
+                    <i class="fa-solid fa-clock w-6 mr-4 text-center"></i><span class="hide-mobile">Time Clock</span>
                 </button>
-                <div id="hrm-admin-menu" class="hidden pt-6 mt-4 border-t border-neutral-800 space-y-2">
-                    <button onclick="switchTab('tab-hrm-staff')" id="btn-tab-hrm-staff" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-orange-500 transition-all">
-                        <i class="fa-solid fa-users-gear w-6 mr-4 text-center"></i><span class="hide-mobile">ພະນັກງານ</span>
+                <div id="hrm-admin-menu" class="hidden pt-6 mt-4 border-t border-white/10 space-y-2">
+                    <button onclick="switchTab('tab-hrm-staff')" id="btn-tab-hrm-staff" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-orange-500">
+                        <i class="fa-solid fa-users w-6 mr-4 text-center"></i><span class="hide-mobile">Staff Management</span>
                     </button>
-                    <button onclick="switchTab('tab-hrm-payroll')" id="btn-tab-hrm-payroll" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-orange-500 transition-all">
-                        <i class="fa-solid fa-file-invoice-dollar w-6 mr-4 text-center"></i><span class="hide-mobile">Payroll</span>
+                    <button onclick="switchTab('tab-hrm-payroll')" id="btn-tab-hrm-payroll" class="flex items-center px-5 py-4 rounded-2xl text-[15px] font-bold text-orange-500">
+                        <i class="fa-solid fa-calculator w-6 mr-4 text-center"></i><span class="hide-mobile">Payroll</span>
                     </button>
                 </div>
             </nav>
-            <div class="switch-user-box pt-4 border-t border-neutral-900">
-                <button onclick="openPinModal()" class="w-full py-4 bg-neutral-900 rounded-2xl text-[11px] font-black text-neutral-500 hover:text-orange-500 transition-all uppercase tracking-widest">
-                    <i class="fa-solid fa-shield-halved mr-2"></i> HRM Admin
+            <div class="switch-user-box pt-4 border-t border-white/5">
+                <button onclick="openPinModal()" class="w-full py-4 bg-white/5 rounded-2xl text-[11px] font-black text-neutral-500 hover:text-orange-500 transition-all uppercase tracking-widest">
+                    <i class="fa-solid fa-lock mr-2"></i> HRM ADMIN
                 </button>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN -->
         <main>
             <!-- TAB: DASHBOARD -->
             <section id="tab-dashboard" class="tab-content space-y-8">
@@ -178,39 +161,39 @@
             <!-- TAB: STOCK -->
             <section id="tab-stock" class="tab-content hidden space-y-8">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-3xl font-black tracking-tight">Inventory <span class="text-orange-500">Update</span></h2>
-                    <button onclick="openAddProductModal()" class="px-7 py-3.5 bg-[#FF4D00] rounded-2xl text-xs font-black uppercase shadow-xl shadow-orange-500/20 hover:scale-105 transition-all">+ New Product</button>
+                    <h2 class="text-3xl font-black tracking-tight">Stock <span class="text-orange-500">Update</span></h2>
+                    <button onclick="openAddProductModal()" class="px-7 py-3.5 bg-orange-600 rounded-2xl text-xs font-black uppercase shadow-xl shadow-orange-600/20">+ New Entry</button>
                 </div>
                 <div class="max-w-2xl mx-auto glass-card p-10 space-y-8">
                     <form onsubmit="handleInventoryRecord(event)" class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest">ສິນຄ້າ (ລຽງຕາມ SKU)</label>
-                            <select id="inv-sku" class="w-full bg-[#111] border border-neutral-800 rounded-2xl p-5 text-[15px] font-bold" required></select>
+                        <div>
+                            <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest mb-2 block">Select Product</label>
+                            <select id="inv-sku" class="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-[15px] font-bold" required></select>
                         </div>
                         <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest">ປະເພດ</label>
-                                <select id="inv-type" class="w-full bg-[#111] border border-neutral-800 rounded-2xl p-5 text-[15px] font-bold">
-                                    <option value="IN">ນຳເຂົ້າ (IN)</option>
-                                    <option value="OUT">ເບີກອອກ (OUT)</option>
+                            <div>
+                                <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest mb-2 block">Action</label>
+                                <select id="inv-type" class="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-[15px] font-bold">
+                                    <option value="IN">Stock In (+)</option>
+                                    <option value="OUT">Stock Out (-)</option>
                                 </select>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest">ຈຳນວນ</label>
-                                <input type="number" id="inv-qty" class="w-full bg-[#111] border border-neutral-800 rounded-2xl p-5 text-[15px] font-bold" required placeholder="0">
+                            <div>
+                                <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest mb-2 block">Quantity</label>
+                                <input type="number" id="inv-qty" class="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-[15px] font-bold" required placeholder="0">
                             </div>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest">ເຫດຜົນ</label>
-                            <select id="inv-reason" onchange="toggleOtherReason(this.value)" class="w-full bg-[#111] border border-neutral-800 rounded-2xl p-5 text-[15px] font-bold">
+                        <div>
+                            <label class="text-[11px] font-black text-neutral-500 uppercase tracking-widest mb-2 block">Remark / Reason</label>
+                            <select id="inv-reason" onchange="toggleOtherReason(this.value)" class="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-[15px] font-bold">
                                 <option value="ຊື້ເພີ່ມ">ຊື້ເພີ່ມ</option>
                                 <option value="ເຄື່ອງເສຍ/ເພ">ເຄື່ອງເສຍ/ເພ</option>
                                 <option value="ນັບສະຕ໊ອກ">ນັບສະຕ໊ອກ</option>
                                 <option value="other">ອື່ນໆ (ລະບຸເອງ)</option>
                             </select>
-                            <input type="text" id="inv-reason-other" class="hidden w-full mt-3 bg-[#111] border border-neutral-800 rounded-2xl p-5 text-[15px]" placeholder="ລະບຸເຫດຜົນ...">
+                            <input type="text" id="inv-reason-other" class="hidden w-full mt-4 bg-black/40 border border-white/10 rounded-2xl p-5 text-[15px]" placeholder="Enter reason here...">
                         </div>
-                        <button type="submit" class="w-full py-5 bg-[#FF4D00] rounded-3xl font-black text-[15px] uppercase mt-4 shadow-2xl shadow-orange-500/20 active:scale-95 transition-all">ບັນທຶກລາຍການ</button>
+                        <button type="submit" class="w-full py-5 bg-orange-600 rounded-3xl font-black text-[15px] uppercase mt-4 shadow-2xl shadow-orange-600/20 active:scale-95 transition-all">Confirm Update</button>
                     </form>
                 </div>
             </section>
@@ -222,7 +205,7 @@
                     <p id="clock-msg" class="text-lg font-bold h-8 transition-all"></p>
                 </div>
                 <div class="glass-card p-10 w-[350px] space-y-8 border-t-8 border-orange-500 shadow-2xl shadow-orange-500/10">
-                    <input type="password" id="clock-pin" readonly class="w-full bg-transparent border-none text-center text-5xl font-bold tracking-[0.5em] text-[#FF4D00]">
+                    <input type="password" id="clock-pin" readonly class="w-full bg-transparent border-none text-center text-5xl font-bold tracking-[0.5em] text-orange-500">
                     <div id="clock-pinpad" class="grid grid-cols-3 gap-4"></div>
                 </div>
             </section>
@@ -230,110 +213,103 @@
             <!-- TAB: HRM STAFF -->
             <section id="tab-hrm-staff" class="tab-content hidden space-y-8">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-3xl font-black text-orange-500 uppercase tracking-tight">Staff Management</h2>
-                    <button onclick="openAddStaffModal()" class="px-6 py-3 bg-[#FF4D00] rounded-2xl text-[11px] font-black uppercase tracking-widest">+ Add New Staff</button>
+                    <h2 class="text-3xl font-black text-orange-500 tracking-tight">Staff Management</h2>
+                    <button onclick="openAddStaffModal()" class="px-6 py-3 bg-orange-600 rounded-2xl text-[11px] font-black uppercase tracking-widest">+ Add New Staff</button>
                 </div>
                 <div id="staff-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </section>
 
             <!-- TAB: HRM PAYROLL -->
             <section id="tab-hrm-payroll" class="tab-content hidden space-y-8">
-                <h2 class="text-3xl font-black text-orange-500 uppercase tracking-tight">Realtime Payroll</h2>
+                <h2 class="text-3xl font-black text-orange-500 uppercase tracking-tight">Payroll (9h/Day Logic)</h2>
                 <div class="glass-card overflow-hidden">
-                    <table class="w-full text-left text-[13px]">
-                        <thead class="bg-[#111] text-neutral-500 uppercase font-black">
+                    <table class="w-full text-left text-[14px]">
+                        <thead class="bg-black/40 text-neutral-500 uppercase font-black">
                             <tr>
-                                <th class="p-6">ພະນັກງານ</th>
-                                <th class="p-6 text-center">ຊົ່ວໂມງລວມ</th>
-                                <th class="p-6 text-center">ມື້ເຮັດວຽກ</th>
-                                <th class="p-6 text-center text-orange-500">OT</th>
-                                <th class="p-6 text-right">ລາຍຮັບລວມ</th>
+                                <th class="p-6">Staff Member</th>
+                                <th class="p-6 text-center">Total Hours</th>
+                                <th class="p-6 text-center">Work Days</th>
+                                <th class="p-6 text-center text-orange-500">OT (Hrs)</th>
+                                <th class="p-6 text-right">Total Net Pay</th>
                             </tr>
                         </thead>
-                        <tbody id="payroll-body" class="divide-y divide-neutral-900"></tbody>
+                        <tbody id="payroll-body" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- MODAL: ADD STAFF -->
-    <div id="add-staff-modal" class="fixed inset-0 bg-black/98 z-[2000] hidden flex flex-col items-center justify-center p-6 backdrop-blur-xl">
-        <div class="glass-card w-full max-w-lg p-10 space-y-8 overflow-y-auto max-h-[90vh]">
-            <h3 class="text-3xl font-black text-orange-500 text-center uppercase">Add Staff</h3>
-            <form onsubmit="handleStaffSave(event)" class="space-y-5">
-                <div class="flex flex-col items-center space-y-4">
-                    <img id="staff-photo-preview" src="https://via.placeholder.com/150" class="w-24 h-24 rounded-3xl object-cover border-2 border-neutral-800 shadow-2xl">
-                    <input type="file" id="staff-photo-input" accept="image/*" class="hidden" onchange="previewStaffPhoto(this)">
-                    <button type="button" onclick="document.getElementById('staff-photo-input').click()" class="text-[12px] font-bold text-neutral-400 uppercase underline">Upload Photo</button>
-                </div>
-                <div class="grid grid-cols-2 gap-5">
-                    <input type="text" id="s-name" placeholder="ຊື່ ແລະ ນາມສະກຸນ" class="col-span-2" required>
-                    <input type="text" id="s-pin" placeholder="PIN 6 ຫຼັກ" maxlength="6" required>
-                    <input type="text" id="s-phone" placeholder="ເບີໂທ">
-                    <input type="date" id="s-dob">
-                    <select id="s-branch"><option value="ສາຂານ້ຳພຸ">ສາຂານ້ຳພຸ</option><option value="ສາຂາໄຊເສດຖາ">ສາຂາໄຊເສດຖາ</option></select>
-                    <select id="s-shift"><option value="SHIFT 1">SHIFT 1 (07-16)</option><option value="SHIFT 2">SHIFT 2 (11-20)</option></select>
-                    <input type="number" id="s-salary" placeholder="ເງິນເດືອນ" value="3500000">
-                    <input type="number" id="s-benefit" placeholder="ສະຫວັດດິການ" value="400000">
-                </div>
-                <div class="flex space-x-4 pt-6">
-                    <button type="button" onclick="closeAddStaffModal()" class="flex-1 py-5 bg-neutral-900 rounded-3xl font-bold text-xs uppercase transition-all hover:bg-neutral-800">Cancel</button>
-                    <button type="submit" class="flex-1 py-5 bg-[#FF4D00] rounded-3xl font-black text-xs uppercase shadow-xl shadow-orange-500/20">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: STAFF DETAIL -->
-    <div id="staff-detail-modal" class="fixed inset-0 bg-black/95 z-[1500] hidden flex items-center justify-center p-6 backdrop-blur-2xl">
+    <!-- MODALS -->
+    <div id="staff-detail-modal" class="fixed inset-0 bg-black/95 z-[2000] hidden flex items-center justify-center p-6 backdrop-blur-3xl">
         <div class="glass-card w-full max-w-sm p-8 space-y-6 border-t-8 border-orange-500">
             <div class="flex flex-col items-center text-center space-y-4">
-                <img id="d-photo" class="w-32 h-32 rounded-[40px] object-cover border-4 border-neutral-800 shadow-2xl">
+                <img id="d-photo" class="w-32 h-32 rounded-[40px] object-cover border-4 border-white/10 shadow-2xl">
                 <div>
                     <h3 id="d-name" class="text-2xl font-black tracking-tight"></h3>
                     <p id="d-branch" class="text-[12px] text-orange-500 font-black uppercase tracking-widest mt-1"></p>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4 text-[13px] bg-[#111] p-6 rounded-3xl border border-neutral-800">
+            <div class="grid grid-cols-2 gap-4 text-[13px] bg-black/40 p-6 rounded-3xl border border-white/5">
                 <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Phone</p><p id="d-phone" class="font-bold"></p></div>
                 <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Birthday</p><p id="d-dob" class="font-bold"></p></div>
                 <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Shift</p><p id="d-shift" class="font-bold"></p></div>
                 <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">PIN</p><p id="d-pin" class="font-black text-orange-500 text-lg"></p></div>
-                <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Salary</p><p id="d-salary" class="font-bold"></p></div>
+                <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Base Salary</p><p id="d-salary" class="font-bold"></p></div>
                 <div><p class="text-neutral-500 font-bold uppercase text-[10px] mb-1">Benefit</p><p id="d-benefit" class="font-bold"></p></div>
             </div>
-            <button onclick="closeStaffDetail()" class="w-full py-5 bg-neutral-900 rounded-[30px] text-sm font-bold uppercase transition-all hover:bg-neutral-800">Close</button>
+            <button onclick="closeStaffDetail()" class="w-full py-5 bg-white/5 rounded-[30px] text-sm font-bold uppercase hover:bg-white/10">Close</button>
         </div>
     </div>
 
-    <!-- ADMIN PIN MODAL -->
-    <div id="pin-modal" class="fixed inset-0 bg-black/98 z-[3000] hidden flex flex-col items-center justify-center p-6 backdrop-blur-2xl">
+    <div id="add-staff-modal" class="fixed inset-0 bg-black/98 z-[3000] hidden flex items-center justify-center p-6 backdrop-blur-2xl">
+        <div class="glass-card w-full max-w-lg p-10 space-y-8 overflow-y-auto max-h-[90vh]">
+            <h3 class="text-3xl font-black text-orange-500 text-center uppercase">Add Staff</h3>
+            <form onsubmit="handleStaffSave(event)" class="space-y-5">
+                <div class="flex flex-col items-center space-y-4">
+                    <img id="staff-photo-preview" src="https://via.placeholder.com/150" class="w-24 h-24 rounded-3xl object-cover border-2 border-white/10 shadow-2xl">
+                    <input type="file" id="staff-photo-input" accept="image/*" class="hidden" onchange="previewStaffPhoto(this)">
+                    <button type="button" onclick="document.getElementById('staff-photo-input').click()" class="text-[12px] font-bold text-neutral-400 uppercase underline">Change Photo</button>
+                </div>
+                <div class="grid grid-cols-2 gap-5">
+                    <input type="text" id="s-name" placeholder="Full Name" class="col-span-2 p-5 bg-black/40 rounded-2xl w-full border border-white/10" required>
+                    <input type="text" id="s-pin" placeholder="PIN 6-Digits" maxlength="6" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10" required>
+                    <input type="text" id="s-phone" placeholder="Phone Number" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10">
+                    <input type="date" id="s-dob" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10">
+                    <select id="s-branch" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10"><option value="ສາຂານ້ຳພຸ">ສາຂານ້ຳພຸ</option><option value="ສາຂາໄຊເສດຖາ">ສາຂາໄຊເສດຖາ</option></select>
+                    <select id="s-shift" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10"><option value="SHIFT 1">SHIFT 1 (07-16)</option><option value="SHIFT 2">SHIFT 2 (11-20)</option></select>
+                    <input type="number" id="s-salary" placeholder="Salary" value="3500000" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10">
+                    <input type="number" id="s-benefit" placeholder="Benefit" value="400000" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10">
+                </div>
+                <div class="flex space-x-4 pt-6">
+                    <button type="button" onclick="closeAddStaffModal()" class="flex-1 py-5 bg-white/5 rounded-3xl font-bold text-xs uppercase">Cancel</button>
+                    <button type="submit" class="flex-1 py-5 bg-orange-600 rounded-3xl font-black text-xs uppercase shadow-xl">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="pin-modal" class="fixed inset-0 bg-black/98 z-[5000] hidden flex flex-col items-center justify-center p-6 backdrop-blur-3xl">
         <div class="w-full max-w-xs space-y-12 text-center">
             <span class="text-6xl font-black text-orange-500 tracking-tighter">V2</span>
-            <div class="space-y-4">
-                <input type="password" id="admin-pin-display" readonly class="w-full bg-transparent border-b-2 border-orange-500 text-center text-6xl font-bold tracking-[0.5em] text-white pb-6 outline-none">
-                <p class="text-neutral-600 font-black uppercase text-[10px] tracking-[3px]">Admin Verification</p>
-            </div>
+            <input type="password" id="admin-pin-display" readonly class="w-full bg-transparent border-b-2 border-orange-500 text-center text-6xl font-bold tracking-[0.5em] text-white pb-6 outline-none">
             <div id="admin-pinpad" class="grid grid-cols-3 gap-5"></div>
-            <button onclick="closePinModal()" class="w-full py-5 text-neutral-500 font-black uppercase text-xs tracking-widest hover:text-white transition-all">Cancel</button>
+            <button onclick="closePinModal()" class="w-full py-5 text-neutral-500 font-black uppercase text-xs tracking-widest">Cancel</button>
         </div>
     </div>
 
-    <!-- ADD PRODUCT MODAL -->
-    <div id="product-modal" class="fixed inset-0 bg-black/90 z-[1000] hidden flex items-center justify-center p-6 backdrop-blur-xl">
+    <div id="product-modal" class="fixed inset-0 bg-black/90 z-[4000] hidden flex items-center justify-center p-6 backdrop-blur-xl">
         <div class="glass-card w-full max-w-md p-10 space-y-8 border-t-8 border-orange-500">
-            <h3 class="text-3xl font-black text-orange-500 uppercase tracking-tighter">New Product</h3>
+            <h3 class="text-3xl font-black text-orange-500 uppercase">New Product</h3>
             <form onsubmit="handleNewProduct(event)" class="space-y-5">
-                <div class="space-y-1"><label class="text-[10px] font-black text-neutral-500 uppercase">SKU (Auto)</label>
-                <input type="text" id="p-sku" readonly class="font-mono text-orange-500 font-black text-lg"></div>
-                <input type="text" id="p-name" placeholder="Product Name" class="p-5 bg-[#111] rounded-2xl w-full" required>
-                <input type="text" id="p-category" placeholder="Category (e.g. ວັດຖຸດິບ)" class="p-5 bg-[#111] rounded-2xl w-full" required>
-                <input type="number" id="p-min" placeholder="Minimum Stock Alert" class="p-5 bg-[#111] rounded-2xl w-full" value="5" required>
-                <input type="number" id="p-stock" placeholder="Starting Quantity" class="p-5 bg-[#111] rounded-2xl w-full" required>
+                <input type="text" id="p-sku" readonly class="p-5 bg-black/40 rounded-2xl w-full border border-white/10 font-mono text-orange-500 font-black text-lg">
+                <input type="text" id="p-name" placeholder="Product Name" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10" required>
+                <input type="text" id="p-category" placeholder="Category" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10" required>
+                <input type="number" id="p-min" placeholder="Min Stock" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10" value="5" required>
+                <input type="number" id="p-stock" placeholder="Initial Stock" class="p-5 bg-black/40 rounded-2xl w-full border border-white/10" required>
                 <div class="flex space-x-4 pt-6">
-                    <button type="button" onclick="closeAddProductModal()" class="flex-1 py-5 bg-neutral-900 rounded-3xl font-bold text-xs uppercase">Cancel</button>
-                    <button type="submit" class="flex-1 py-5 bg-[#FF4D00] rounded-3xl font-black text-xs uppercase shadow-xl shadow-orange-500/20">Save</button>
+                    <button type="button" onclick="closeAddProductModal()" class="flex-1 py-5 bg-white/5 rounded-3xl font-bold text-xs uppercase">Cancel</button>
+                    <button type="submit" class="flex-1 py-5 bg-orange-600 rounded-3xl font-black text-xs uppercase shadow-xl">Save</button>
                 </div>
             </form>
         </div>
@@ -347,26 +323,10 @@
         let products = [], staff = [], attendance = [], activeCategory = 'ວັດຖຸດິບ';
         let adminPin = "", clockPin = "", staffPhotoBase64 = "";
 
-        // --- THE "FIXED LAOS TIME" ENGINE ---
-        function getLaosTime() {
-            // ນີ້ຈະໃຫ້ເວລາ YYYY-MM-DD HH:mm:ss ທີ່ເປັນເວລາລາວແທ້ໆ 100%
-            const now = new Date();
-            const options = { 
-                timeZone: 'Asia/Vientiane', 
-                year: 'numeric', 
-                month: '2-digit', 
-                day: '2-digit', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: false 
-            };
-            const formatter = new Intl.DateTimeFormat('sv-SE', options); // sv-SE gives YYYY-MM-DD
-            return formatter.format(now).replace(' ', 'T'); // "2024-05-20T22:47:00"
-        }
-
-        function getLaosTimestamp() {
-            return new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Vientiane' });
+        // --- GMT+7 TIME ENGINE ---
+        function getGMT7Time() {
+            // Returns YYYY-MM-DD HH:mm:ss in GMT+7 strictly
+            return new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Vientiane' }).replace('T', ' ');
         }
 
         async function init() {
@@ -382,12 +342,15 @@
             const [p, s, a] = await Promise.all([
                 client.from('main_inventory').select('*'),
                 client.from('staff').select('*'),
-                client.from('attendance').select('*')
+                client.from('attendance').select('*').order('timestamp', { ascending: true })
             ]);
-            products = p.data || []; staff = s.data || []; attendance = a.data || [];
+            // Strictly filter out XS SKUs
+            products = (p.data || []).filter(item => !item.sku.toUpperCase().endsWith('XS'));
+            staff = s.data || [];
+            attendance = a.data || [];
         }
 
-        // --- DASHBOARD RENDERER ---
+        // --- UI RENDERERS ---
         function renderDashboard() {
             const grid = document.getElementById('dashboard-grid');
             const pills = document.getElementById('category-pills');
@@ -398,7 +361,7 @@
             products.filter(p => activeCategory === 'ALL' || p.category === activeCategory).forEach(p => {
                 const isUrgent = p.stock <= (p.min_stock || 5);
                 grid.innerHTML += `
-                    <div class="glass-card p-6 space-y-4 border-t-4 ${isUrgent ? 'border-orange-500' : 'border-emerald-500 shadow-lg shadow-emerald-500/5'}">
+                    <div class="glass-card p-6 space-y-4 border-t-4 ${isUrgent ? 'border-orange-500' : 'border-emerald-500 shadow-emerald-500/5'}">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-mono font-bold text-neutral-600">${p.sku}</span>
                             <span class="px-3 py-1 rounded-xl text-[9px] font-black uppercase ${isUrgent ? 'text-orange-500 bg-orange-500/10' : 'text-emerald-500 bg-emerald-500/10'}">
@@ -417,61 +380,46 @@
         function renderActiveStaff() {
             const container = document.getElementById('active-staff-container');
             container.innerHTML = "";
-            const todayStr = getLaosTime().split('T')[0];
+            const todayStr = getGMT7Time().split(' ')[0];
             const activeStaff = staff.filter(s => {
-                const todayLogs = attendance.filter(a => a.pin === s.pin && a.timestamp.includes(todayStr)).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+                const todayLogs = attendance.filter(a => a.pin === s.pin && a.timestamp.includes(todayStr));
                 return todayLogs.length > 0 && todayLogs[todayLogs.length - 1].type === "Clock-In";
             });
             activeStaff.forEach(s => {
-                container.innerHTML += `<div class="relative"><img src="${s.photo_url || 'https://via.placeholder.com/150'}" class="w-11 h-11 rounded-full object-cover border-2 border-black ring-2 ring-neutral-900 shadow-xl"><div class="active-dot"></div></div>`;
+                container.innerHTML += `<div class="relative"><img src="${s.photo_url || 'https://via.placeholder.com/150'}" class="w-11 h-11 rounded-full object-cover border-2 border-black ring-2 ring-white/10 shadow-xl"><div class="active-dot"></div></div>`;
             });
         }
 
-        // --- PINPAD ENGINE ---
-        function renderPinPads() {
-            const keys = ['1','2','3','4','5','6','7','8','9','C','0','OK'];
-            const html = keys.map(k => `<button onclick="handlePin('${k}', this)" class="pin-btn transition-all active:bg-orange-500 active:text-white">${k}</button>`).join('');
-            document.getElementById('clock-pinpad').innerHTML = html.replace(/handlePin/g, 'handleClockPin');
-            document.getElementById('admin-pinpad').innerHTML = html.replace(/handlePin/g, 'handleAdminPin');
-        }
-
-        function handleClockPin(k) { if (k === 'C') clockPin = ""; else if (k === 'OK') submitClock(); else if (clockPin.length < 6) clockPin += k; document.getElementById('clock-pin').value = clockPin; }
-
+        // --- CLOCK ENGINE ---
         async function submitClock() {
             const user = staff.find(s => s.pin === clockPin);
             const msg = document.getElementById('clock-msg');
             if (!user) { alert("PIN ຜິດ"); clockPin = ""; document.getElementById('clock-pin').value = ""; return; }
             
-            const nowISO = getLaosTime(); // "2024-05-20T22:47:00"
-            const todayStr = nowISO.split('T')[0];
-            const todayLogs = attendance.filter(a => a.pin === clockPin && a.timestamp.includes(todayStr)).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const now = getGMT7Time(); // format: "2024-05-20 22:47:00"
+            const todayStr = now.split(' ')[0];
+            const todayLogs = attendance.filter(a => a.pin === clockPin && a.timestamp.includes(todayStr));
             
             const actionType = (todayLogs.length === 0 || todayLogs[todayLogs.length - 1].type === "Clock-Out") ? "Clock-In" : "Clock-Out";
 
-            // ສົ່ງເວລາລາວໄປ Supabase
             const { error } = await client.from('attendance').insert([{ 
-                pin: clockPin, 
-                timestamp: getLaosTimestamp(), // format: "2024-05-20 22:47:00"
-                branch: user.branch, 
-                type: actionType 
+                pin: clockPin, timestamp: now, branch: user.branch, type: actionType 
             }]);
 
-            if (error) { alert("Error saving log"); return; }
+            if (error) { alert("Database Error"); return; }
 
             if (actionType === "Clock-In") {
-                msg.innerText = `✅ ${user.name}: ສຳເລັດແລ້ວ (ເຂົ້າວຽກ)`;
+                msg.innerText = `✅ ${user.name}: ເຂົ້າວຽກສຳເລັດ!`;
                 msg.style.color = "#10b981";
             } else {
-                // Precise Millisecond Calculation
                 const firstInToday = todayLogs.find(l => l.type === "Clock-In");
-                let workHrs = 0;
+                let diffHrs = 0;
                 if (firstInToday) {
-                    // ເພາະທັງສອງເປັນເວລາລາວແລ້ວ ສາມາດລົບກັນໄດ້ເລີຍ
-                    const startMs = new Date(firstInToday.timestamp.replace(' ', 'T')).getTime();
-                    const endMs = new Date().getTime(); // Browser time (local)
-                    workHrs = Math.max(0, (endMs - startMs) / (1000 * 60 * 60));
+                    const start = new Date(firstInToday.timestamp.replace(' ', 'T'));
+                    const end = new Date(now.replace(' ', 'T'));
+                    diffHrs = (end - start) / (1000 * 60 * 60);
                 }
-                msg.innerText = `✅ ${user.name}: ເຮັດວຽກມື້ນີ້ ${workHrs.toFixed(1)} ຊົ່ວໂມງ`;
+                msg.innerText = `✅ ${user.name}: ເຮັດວຽກມື້ນີ້ ${diffHrs.toFixed(1)} ຊົ່ວໂມງ`;
                 msg.style.color = "#FF4D00";
             }
             clockPin = ""; document.getElementById('clock-pin').value = "";
@@ -479,47 +427,53 @@
             setTimeout(() => msg.innerText = "", 6000);
         }
 
-        // --- PAYROLL ENGINE ---
+        // --- PAYROLL ENGINE (STRICT GMT+7 LOGIC) ---
         function renderPayroll() {
             const body = document.getElementById('payroll-body');
             body.innerHTML = "";
             const now = new Date();
-            const month = now.getMonth();
-            const year = now.getFullYear();
+            const curMonth = now.getMonth();
+            const curYear = now.getFullYear();
 
             staff.forEach(s => {
                 const monthLogs = attendance.filter(a => {
                     const d = new Date(a.timestamp.replace(' ', 'T'));
-                    return a.pin === s.pin && d.getMonth() === month && d.getFullYear() === year;
-                }).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+                    return a.pin === s.pin && d.getMonth() === curMonth && d.getFullYear() === curYear;
+                });
 
                 const daily = {};
                 monthLogs.forEach(l => {
-                    const date = l.timestamp.split(' ')[0];
-                    if (!daily[date]) daily[date] = [];
-                    daily[date].push(l);
+                    const dStr = l.timestamp.split(' ')[0];
+                    if (!daily[dStr]) daily[dStr] = [];
+                    daily[dStr].push(l);
                 });
 
-                let totalHrs = 0; let otHrs = 0;
-                for (let date in daily) {
-                    const logs = daily[date].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-                    const clockIn = logs.find(l => l.type === "Clock-In");
-                    const clockOut = [...logs].reverse().find(l => l.type === "Clock-Out");
+                let totalHrs = 0;
+                let otHrs = 0;
 
-                    if (clockIn && clockOut) {
-                        const dayHrs = (new Date(clockOut.timestamp.replace(' ', 'T')).getTime() - new Date(clockIn.timestamp.replace(' ', 'T')).getTime()) / (1000 * 60 * 60);
-                        if (dayHrs > 0) {
-                            totalHrs += dayHrs;
-                            if (dayHrs > 9) otHrs += (dayHrs - 9);
+                for (let date in daily) {
+                    const logs = daily[date].sort((a, b) => new Date(a.timestamp.replace(' ', 'T')) - new Date(b.timestamp.replace(' ', 'T')));
+                    const cin = logs.find(l => l.type === "Clock-In");
+                    const cout = [...logs].reverse().find(l => l.type === "Clock-Out");
+
+                    if (cin && cout) {
+                        const start = new Date(cin.timestamp.replace(' ', 'T'));
+                        const end = new Date(cout.timestamp.replace(' ', 'T'));
+                        const hrs = (end - start) / (1000 * 60 * 60);
+                        if (hrs > 0) {
+                            totalHrs += hrs;
+                            if (hrs > 9) otHrs += (hrs - 9);
                         }
                     }
                 }
+
                 const workDays = totalHrs / 9;
                 const netPay = (s.salary / 26 * workDays) + (s.benefit || 0);
+
                 body.innerHTML += `
                     <tr class="hover:bg-white/5 transition-all">
-                        <td class="p-6 font-black text-neutral-200">${s.name}</td>
-                        <td class="p-6 text-center mono font-bold">${totalHrs.toFixed(1)}</td>
+                        <td class="p-6 font-black text-neutral-200">${s.name}<br><span class="text-[9px] text-neutral-500 font-bold uppercase">${s.branch}</span></td>
+                        <td class="p-6 text-center font-mono font-bold">${totalHrs.toFixed(1)}</td>
                         <td class="p-6 text-center font-black text-emerald-500">${workDays.toFixed(1)}</td>
                         <td class="p-6 text-center font-black text-orange-500">${otHrs.toFixed(1)}</td>
                         <td class="p-6 text-right font-black text-orange-500 text-lg">${Math.round(netPay).toLocaleString()}</td>
@@ -527,28 +481,50 @@
             });
         }
 
-        // --- OTHERS ---
-        function previewStaffPhoto(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => { staffPhotoBase64 = e.target.result; document.getElementById('staff-photo-preview').src = staffPhotoBase64; };
-            if (input.files[0]) reader.readAsDataURL(input.files[0]);
+        // --- PRODUCT & DROPDOWN ---
+        function populateSkuSelect() {
+            const select = document.getElementById('inv-sku');
+            // Filter already handled in fetchData, sorting alphabetically
+            const sorted = products.sort((a,b) => a.sku.localeCompare(b.sku, undefined, {numeric: true}));
+            select.innerHTML = sorted.map(p => `<option value="${p.sku}">${p.sku} - ${p.name}</option>`).join('');
         }
-        async function handleStaffSave(e) {
+
+        async function handleInventoryRecord(e) {
             e.preventDefault();
-            const payload = {
-                name: document.getElementById('s-name').value, pin: document.getElementById('s-pin').value,
-                phone: document.getElementById('s-phone').value, dob: document.getElementById('s-dob').value,
-                branch: document.getElementById('s-branch').value, shift: document.getElementById('s-shift').value,
-                salary: parseInt(document.getElementById('s-salary').value), benefit: parseInt(document.getElementById('s-benefit').value),
-                photo_url: staffPhotoBase64
-            };
-            const { error } = await client.from('staff').insert([payload]);
-            if (error) alert("Error"); else { alert("Staff Saved!"); closeAddStaffModal(); init(); }
+            const sku = document.getElementById('inv-sku').value;
+            const type = document.getElementById('inv-type').value;
+            const qty = parseInt(document.getElementById('inv-qty').value);
+            const p = products.find(x => x.sku === sku);
+            const newStock = type === 'IN' ? p.stock + qty : p.stock - qty;
+
+            await client.from('main_inventory').update({ stock: newStock }).eq('sku', sku);
+            await client.from('daily_inventory_movement').insert([{ sku, name: p.name, type, qty, note: document.getElementById('inv-reason').value, timestamp: getGMT7Time() }]);
+            alert("Inventory Update Success!"); init(); switchTab('tab-dashboard');
+        }
+
+        // --- UI HELPERS ---
+        function renderPinPads() {
+            const keys = ['1','2','3','4','5','6','7','8','9','C','0','OK'];
+            const html = keys.map(k => `<button onclick="handlePin('${k}', this)" class="pin-btn">${k}</button>`).join('');
+            document.getElementById('clock-pinpad').innerHTML = html.replace(/handlePin/g, 'handleClockPin');
+            document.getElementById('admin-pinpad').innerHTML = html.replace(/handlePin/g, 'handleAdminPin');
+        }
+        function handleClockPin(k) { if (k === 'C') clockPin = ""; else if (k === 'OK') submitClock(); else if (clockPin.length < 6) clockPin += k; document.getElementById('clock-pin').value = clockPin; }
+        function handleAdminPin(k) { if (k === 'C') adminPin = ""; else if (k === 'OK') { if (adminPin === "9999") { document.getElementById('hrm-admin-menu').classList.remove('hidden'); closePinModal(); } else { alert("PIN Wrong"); adminPin = ""; } } else if (adminPin.length < 4) adminPin += k; document.getElementById('admin-pin-display').value = adminPin; }
+        
+        function filterCategory(c) { activeCategory = c; renderDashboard(); }
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+            document.getElementById('btn-' + id).classList.add('tab-active');
+            if (id === 'tab-hrm-staff') renderStaffList();
+            if (id === 'tab-hrm-payroll') renderPayroll();
         }
         function renderStaffList() {
             document.getElementById('staff-list').innerHTML = staff.map(s => `
                 <div onclick="showStaffDetail('${s.pin}')" class="glass-card p-6 flex items-center space-x-4 border-l-8 border-orange-500 cursor-pointer shadow-xl shadow-black">
-                    <img src="${s.photo_url || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded-2xl object-cover border border-neutral-800">
+                    <img src="${s.photo_url || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded-2xl object-cover border border-white/10">
                     <div><h4 class="font-black text-[16px] text-neutral-200 tracking-tight">${s.name}</h4><p class="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">${s.branch}</p></div>
                 </div>`).join('');
         }
@@ -561,38 +537,16 @@
             document.getElementById('d-salary').innerText = (s.salary || 0).toLocaleString(); document.getElementById('d-benefit').innerText = (s.benefit || 0).toLocaleString();
             document.getElementById('staff-detail-modal').classList.remove('hidden');
         }
-        function populateSkuSelect() {
-            const filtered = products.filter(p => !p.sku.endsWith('XS')).sort((a,b) => a.sku.localeCompare(b.sku, undefined, {numeric: true}));
-            document.getElementById('inv-sku').innerHTML = filtered.map(p => `<option value="${p.sku}">${p.sku} - ${p.name}</option>`).join('');
-        }
-        async function handleInventoryRecord(e) {
-            e.preventDefault();
-            const sku = document.getElementById('inv-sku').value; const type = document.getElementById('inv-type').value; const qty = parseInt(document.getElementById('inv-qty').value);
-            const p = products.find(x => x.sku === sku); const newStock = type === 'IN' ? p.stock + qty : p.stock - qty;
-            await client.from('main_inventory').update({ stock: newStock }).eq('sku', sku);
-            await client.from('daily_inventory_movement').insert([{ sku, name: p.name, type, qty, note: document.getElementById('inv-reason').value, timestamp: getLaosTimestamp() }]);
-            alert("Inventory Updated!"); init(); switchTab('tab-dashboard');
-        }
-        async function handleNewProduct(e) {
-            e.preventDefault();
-            const payload = { sku: document.getElementById('p-sku').value, name: document.getElementById('p-name').value, category: document.getElementById('p-category').value, min_stock: parseInt(document.getElementById('p-min').value), stock: parseInt(document.getElementById('p-stock').value) };
-            await client.from('main_inventory').insert([payload]); closeAddProductModal(); init();
-        }
-        function handleAdminPin(k) { if (k === 'C') adminPin = ""; else if (k === 'OK') { if (adminPin === "9999") { document.getElementById('hrm-admin-menu').classList.remove('hidden'); closePinModal(); } else { alert("PIN Wrong"); adminPin = ""; } } else if (adminPin.length < 4) adminPin += k; document.getElementById('admin-pin-display').value = adminPin; }
-        function filterCategory(c) { activeCategory = c; renderDashboard(); }
-        function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById('btn-' + id).classList.add('tab-active');
-            if (id === 'tab-hrm-staff') renderStaffList(); if (id === 'tab-hrm-payroll') renderPayroll();
-        }
+        function previewStaffPhoto(input) { const reader = new FileReader(); reader.onload = (e) => { staffPhotoBase64 = e.target.result; document.getElementById('staff-photo-preview').src = staffPhotoBase64; }; if (input.files[0]) reader.readAsDataURL(input.files[0]); }
+        async function handleStaffSave(e) { e.preventDefault(); const payload = { name: document.getElementById('s-name').value, pin: document.getElementById('s-pin').value, phone: document.getElementById('s-phone').value, dob: document.getElementById('s-dob').value, branch: document.getElementById('s-branch').value, shift: document.getElementById('s-shift').value, salary: parseInt(document.getElementById('s-salary').value), benefit: parseInt(document.getElementById('s-benefit').value), photo_url: staffPhotoBase64 }; const { error } = await client.from('staff').insert([payload]); if (error) alert("Error"); else { alert("Staff Added!"); closeAddStaffModal(); init(); } }
+        async function handleNewProduct(e) { e.preventDefault(); const payload = { sku: document.getElementById('p-sku').value, name: document.getElementById('p-name').value, category: document.getElementById('p-category').value, min_stock: parseInt(document.getElementById('p-min').value), stock: parseInt(document.getElementById('p-stock').value) }; await client.from('main_inventory').insert([payload]); closeAddProductModal(); init(); }
+
         function openPinModal() { document.getElementById('pin-modal').classList.remove('hidden'); adminPin = ""; }
         function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); }
         function closeStaffDetail() { document.getElementById('staff-detail-modal').classList.add('hidden'); }
         function openAddStaffModal() { document.getElementById('add-staff-modal').classList.remove('hidden'); }
         function closeAddStaffModal() { document.getElementById('add-staff-modal').classList.add('hidden'); staffPhotoBase64 = ""; }
-        function openAddProductModal() { document.getElementById('p-sku').value = "P" + String(products.length + 1).padStart(3, '0'); document.getElementById('product-modal').classList.remove('hidden'); }
+        function openAddProductModal() { const next = "P" + String(products.length + 1).padStart(3, '0'); document.getElementById('p-sku').value = next; document.getElementById('product-modal').classList.remove('hidden'); }
         function closeAddProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
         function toggleOtherReason(v) { document.getElementById('inv-reason-other').classList.toggle('hidden', v !== 'other'); }
 
