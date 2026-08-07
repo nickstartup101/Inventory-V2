@@ -261,7 +261,7 @@
                     <div onclick="openStockMovementKiosk()" class="bg-primary text-white p-5 rounded-2xl shadow-sm hover:bg-primary-container cursor-pointer transition-all">
                         <span class="material-symbols-outlined text-accent text-2xl mb-1.5">swap_horiz</span>
                         <h3 class="font-headline font-bold text-base">ບັນທຶກສະຕ໋ອກ ເຂົ້າ-ອອກ (Movement)</h3>
-                        <p class="text-xs text-primary-fixed-dim mt-1">ບັນທຶກລົງdaily_inventory_movement</p>
+                        <p class="text-xs text-primary-fixed-dim mt-1">ບັນທຶກລົງ daily_inventory_movement</p>
                     </div>
 
                     <div onclick="openModal('admin-pin-modal')" class="bg-surface p-5 rounded-2xl border border-amber-300 shadow-sm hover:border-amber-500 cursor-pointer transition-all">
@@ -789,57 +789,139 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
-        // --- FETCH DATA FROM SUPABASE (ແກ້ໄຂຖືກຕ້ອງ: ກອງບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS) ---
+        // --- FETCH DATA FROM SUPABASE ---
         async function fetchDataFromSupabase() {
             if (!supabaseClient) return;
 
-            // 1. Fetch main_inventory (ບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS)
-            const { data: stockRes, error: stockErr } = await supabaseClient
-                .from('main_inventory')
-                .select('*')
-                .not('sku', 'ilike', '%XS') // 👈 ເພີ່ມແຖວນີ້ກອງ XS ອອກຢ່າງຖືກຕ້ອງ!
-                .order('sku');
+            try {
+                // 1. Fetch main_inventory (ກອງບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS)
+                const { data: stockRes, error: stockErr } = await supabaseClient
+                    .from('main_inventory')
+                    .select('*')
+                    .not('sku', 'ilike', '%XS')
+                    .order('sku');
 
-            if (stockRes && stockRes.length > 0) {
-                stockData = stockRes;
-                renderStockTable();
-                populateStockMovementDropdown();
-            }
+                if (stockErr) {
+                    console.error("Supabase Stock Fetch Error:", stockErr);
+                    showToast("⚠️ Stock Error: " + stockErr.message);
+                } else if (stockRes && stockRes.length > 0) {
+                    stockData = stockRes;
+                    renderStockTable();
+                    populateStockMovementDropdown();
+                }
 
-            // 2. Fetch staff
-            const { data: staffRes, error: staffErr } = await supabaseClient
-                .from('staff')
-                .select('*')
-                .order('pin');
+                // 2. Fetch staff
+                const { data: staffRes, error: staffErr } = await supabaseClient
+                    .from('staff')
+                    .select('*')
+                    .order('pin');
 
-            if (staffRes && staffRes.length > 0) {
-                partnersData = staffRes;
-                renderEmployeesAndPayroll();
-            }
+                if (staffRes && staffRes.length > 0) {
+                    partnersData = staffRes;
+                    renderEmployeesAndPayroll();
+                }
 
-            // 3. Fetch daily_inventory_movement
-            const { data: moveRes, error: moveErr } = await supabaseClient
-                .from('daily_inventory_movement')
-                .select('*')
-                .order('id', { ascending: false })
-                .limit(10);
+                // 3. Fetch daily_inventory_movement
+                const { data: moveRes, error: moveErr } = await supabaseClient
+                    .from('daily_inventory_movement')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(10);
 
-            if (moveRes) {
-                stockMovements = moveRes;
-                renderMovementLogs();
+                if (moveRes) {
+                    stockMovements = moveRes;
+                    renderMovementLogs();
+                }
+            } catch (err) {
+                console.error("Supabase Exception:", err);
             }
         }
 
-        // --- LOCAL FALLBACK DATA ---
+        // --- LOCAL DATA (81 SEEDED PRODUCTS TO SHOW INSTANTLY BEFORE SUPABASE CONNECTS) ---
         let isAdminLoggedIn = false;
 
         let stockData = [
-            { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', category: 'ວັດຖຸດິບ', stock: 12, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', category: 'ວັດຖຸດິບ', stock: 25, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', category: 'ວັດຖຸດິບ', stock: 18, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', category: 'ວັດຖຸດິບ', stock: 8, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', category: 'ໄຊຮັບ', stock: 5, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', stock: 300, min_stock: 1, status: 'OK', branch: 'ສາຂານ້ຳພຸ' }
+            { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P002', name: 'ບ໊ວຍ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P003', name: 'ຊອສຊ໊ອກໂກ້ເເລັດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P004', name: 'ຊ໊ອກຊິບ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P005', name: 'ຄຣີມຊິສ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P008', name: 'ວິບປິ້ງ Anchor (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P009', name: 'ວິບຄຣີມມີ່ (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P010', name: 'ເບຍ HNK (ປ໋ອງ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P011', name: 'ນ້ຳດື່ມຫົວເສືອ (ຕຸກ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P012', name: 'ອັນຊັນ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P013', name: 'ມັດຊະ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P014', name: 'ຊາໄທ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P015', name: 'ຊາຂຽວ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P016', name: 'ປີໂປ້ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P017', name: 'ນ້ຳລິ້ນຈີ່ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P018', name: 'ບີສຄອຟ (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P019', name: 'ນ້ຳເເດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P020', name: 'ນ້ຳເຜິ້ງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P021', name: 'ນ້ຳຕານເຊື່ອມ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P022', name: 'ນ້ຳເຊື່ອມເມເປີ້ນ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P023', name: 'ໄຊຣັບມິ້ນ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P024', name: 'ໂຊດາ (ເເກ້ວ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P025', name: 'ເຈລາຕີນ (ຊອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P026', name: 'ວິບປີ້ງຄຣີມເเບບບີບ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P027', name: 'ວິບປິ້ງຄຣີມ CCN (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P029', name: 'ນົມຟ້າ (ກ່ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P030', name: 'ນົມຜົງ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P032', name: 'ນົມຄາເນຊັນ (ປ໋ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P033', name: 'ນົມຂຸ້ນ 2000g (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P034', name: 'ນົມ AROMA ເเດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P035', name: 'ນົມ AROMA ເຫຼືອງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P037', name: 'ຊອດຄາຣາເມວ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P038', name: 'ນິວເທລ້າ 1ກລ (ວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P039', name: 'ຝາຮ້ອນ (ອັນ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P040', name: 'ຊາເອີເກຣ (ຊອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P041', name: 'ຊາໄທ (ກະປຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P042', name: 'ໝາກພ້າວ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P043', name: 'ໝາກນາວ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P044', name: 'ເລມ້ອນ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P045', name: 'ສະໄປ໋ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P046', name: 'ເເພັກອາຫານ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P047', name: 'ໄມ້ຕີມັດຊະ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P048', name: 'ຝອຍເຫຼັກ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P049', name: 'ບ້ວງຢາງ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P050', name: 'ນ້ຳຢາເຊັດເເວ່ນ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P051', name: 'ທິດຊູ້ລູກຄ້າ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P052', name: 'ທິດຊູ້ພະນັກງານ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P053', name: 'ຖົງມືຢາງດຳ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P054', name: 'ຖົງດຳໃຫຍ່ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P055', name: 'ຖົງເຈ້ຍນ້ອຍ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P056', name: 'ຊັນໄລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P057', name: 'ສະກ໊ອດລ້າງຖ້ວຍ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P058', name: 'ເຈ້ຍປິ້ນເຕີ້ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P059', name: 'ຈອກຕວງໃຫຍ່ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P060', name: 'ຈອກຊ໊ອດ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P061', name: 'ເຄື່ອງອົບເຂົ້າໜົມ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P062', name: 'เครื่องປັ່ນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P063', name: 'เครื่องຕີຄຣີມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P064', name: 'ເກືອ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P065', name: 'ເເຟັບ', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P066', name: 'ໄມ້ພາຍ', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P067', name: 'ຫຼອດໃຫຍ່ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P068', name: 'ຫຼອດນ້ອຍ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P069', name: 'ຫຼອດຕັກ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P070', name: 'ຫຼອດກາງ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P071', name: 'ຝາໂດມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P072', name: 'ຝາຍົກດື່ມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P073', name: 'ຖົງດ່ຽວກັບບ້ານ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P074', name: 'ຖົງດຳນ້ອຍ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P075', name: 'ຖົງໃສ່ຄົວຊອງ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P076', name: 'ຖົງຄູ່ກັບບ້ານ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P077', name: 'ສາຍຄາດຮັດຈອກ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P078', name: 'ຈອກຮ້ອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P079', name: 'ຈອກ 22 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P081', name: 'ເບຍນ້ຳຂອງ', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' }
         ];
 
         let stockMovements = [];
@@ -950,7 +1032,7 @@
             if (!item) return;
 
             // Calculate Stock Update
-            const newStock = movementType === 'IN' ? (item.stock + qty) : Math.max(0, item.stock - qty);
+            const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
             item.stock = newStock;
 
             // Supabase Operations
