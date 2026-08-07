@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Supabase Integrated Operations & HRM</title>
+    <title>LA DOLCE - Operations, Stock & Staff Management</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,7 +67,7 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
 
-    <!-- Mobile/Tablet Header -->
+    <!-- Mobile Header -->
     <div class="md:hidden bg-primary text-on-primary flex items-center justify-between px-4 py-3 sticky top-0 z-40 shadow-md">
         <div class="flex items-center gap-2.5">
             <button id="mobile-menu-btn" class="p-1.5 rounded-lg hover:bg-primary-container text-white active:scale-95">
@@ -89,13 +89,11 @@
         </div>
     </div>
 
-    <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
 
     <!-- SideNavBar Component -->
     <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-5 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
         
-        <!-- Brand / Header -->
         <div class="px-5 mb-5 flex items-center gap-3">
             <div class="w-9 h-9 rounded-full bg-surface flex items-center justify-center shrink-0 shadow-inner">
                 <span class="material-symbols-outlined text-primary text-lg icon-fill">local_cafe</span>
@@ -106,13 +104,11 @@
             </div>
         </div>
 
-        <!-- Admin Active Status Banner -->
         <div id="admin-banner-sidebar" class="hidden mx-4 mb-4 p-2.5 bg-amber-400/20 border border-amber-400/50 rounded-xl text-amber-200 text-xs flex items-center justify-between">
             <span class="font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm text-amber-400">verified_user</span> HRM Admin Mode</span>
             <button onclick="lockAdminMode()" class="text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded hover:bg-amber-300">Lock</button>
         </div>
 
-        <!-- Primary Action -->
         <div class="px-4 mb-5">
             <button onclick="openStockMovementKiosk()" class="w-full bg-primary-container text-on-primary-container font-headline font-semibold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 hover:bg-primary-container/80 transition-all shadow-sm">
                 <span class="material-symbols-outlined icon-fill text-base">swap_horiz</span>
@@ -120,7 +116,6 @@
             </button>
         </div>
 
-        <!-- Navigation Links -->
         <div class="flex-1 overflow-y-auto px-2 space-y-1">
             <a href="#dashboard" onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">dashboard</span>
@@ -139,7 +134,6 @@
                 <span class="font-headline font-medium text-xs">ເຄື່ອງ Kiosk (ເວລາ & ສະຕ໋ອກ)</span>
             </a>
 
-            <!-- HRM Admin Restricted Links -->
             <div class="pt-2 my-2 border-t border-primary-container/40">
                 <a href="#employees" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">badge</span>
@@ -153,7 +147,6 @@
             </div>
         </div>
 
-        <!-- Footer Navigation -->
         <div class="mt-auto pt-3 border-t border-primary-container/60 px-2 space-y-1.5">
             <button onclick="openModal('supabase-config-modal')" class="w-full flex items-center justify-between px-3 py-2 text-primary-fixed-dim hover:text-white rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 transition-colors">
                 <span class="flex items-center gap-2"><span class="material-symbols-outlined text-base text-accent">cloud_sync</span> Supabase API</span>
@@ -169,7 +162,6 @@
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0 min-h-screen">
 
-        <!-- Top Header Bar -->
         <header class="hidden md:flex bg-surface text-primary border-b border-outline-variant/60 sticky top-0 z-30 justify-between items-center px-6 py-3 shadow-sm">
             <div class="flex items-center gap-4">
                 <h2 id="top-title" class="font-headline font-bold text-lg text-primary">LA DOLCE Operations Hub</h2>
@@ -211,7 +203,6 @@
                     </div>
                 </div>
 
-                <!-- Stats Grid -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
@@ -250,7 +241,6 @@
                     </div>
                 </div>
 
-                <!-- Shortcuts Section -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div onclick="navigateTo('current-stock')" class="bg-surface p-5 rounded-2xl border border-outline-variant/40 shadow-sm hover:border-primary cursor-pointer transition-all">
                         <span class="material-symbols-outlined text-primary text-2xl mb-1.5">inventory</span>
@@ -284,7 +274,6 @@
                     </button>
                 </div>
 
-                <!-- Category Filter Pills -->
                 <div class="flex gap-2 overflow-x-auto pb-2 border-b border-outline-variant/40">
                     <button onclick="filterStockCategory('all')" id="tab-stock-all" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">
                         ທັງໝົດ (All)
@@ -303,10 +292,9 @@
                     </button>
                 </div>
 
-                <!-- Stock Table -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[650px]">
+                        <table class="w-full text-left text-xs min-w-[700px]">
                             <thead class="bg-surface-container-low border-b border-outline-variant/40 text-on-surface-variant uppercase font-bold">
                                 <tr>
                                     <th class="p-3">SKU</th>
@@ -316,11 +304,11 @@
                                     <th class="p-3">Stock ປັດຈຸບັນ</th>
                                     <th class="p-3">Min Stock</th>
                                     <th class="p-3">ສະຖານະ</th>
-                                    <th class="p-3 text-right">ຈັດການ</th>
+                                    <th class="p-3 text-right">ຈັດການ (Actions)</th>
                                 </tr>
                             </thead>
                             <tbody id="stock-table-body" class="divide-y divide-surface-container-high text-on-surface">
-                                <!-- Dynamic Rows from main_inventory -->
+                                <!-- Dynamic Rows -->
                             </tbody>
                         </table>
                     </div>
@@ -364,7 +352,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="partner-list-container">
-                    <!-- Dynamic Staff Cards from staff table -->
+                    <!-- Dynamic Staff Cards -->
                 </div>
             </section>
 
@@ -477,7 +465,7 @@
                     <div id="kiosk-subview-stock-movement" class="hidden w-full max-w-lg space-y-4">
                         <div class="bg-surface rounded-2xl shadow-md border border-outline-variant/40 p-5">
                             <div class="mb-4">
-                                <h3 class="font-headline font-bold text-base text-primary">ຟອມບັນທຶກdaily_inventory_movement</h3>
+                                <h3 class="font-headline font-bold text-base text-primary">ຟອມບັນທຶກ daily_inventory_movement</h3>
                                 <p class="text-xs text-on-surface-variant mt-0.5">ບັນທຶກການເບີກໃຊ້, ສິນຄ້າເສຍ/ເພ, ຫຼື ຮັບສິນຄ້າເຂົ້າຮ້ານ</p>
                             </div>
 
@@ -566,6 +554,96 @@
                 <div class="pt-2 flex justify-end gap-2">
                     <button type="button" onclick="closeModal('supabase-config-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
                     <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ເຊື່ອມຕໍ່ Supabase</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT STAFF / PARTNER MODAL (ເພີ່ມໃໝ່) -->
+    <div id="edit-staff-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
+                <div>
+                    <h3 class="font-headline font-bold text-base text-primary">ແກ້ໄຂຂໍ້ມູນພະນັກງານ (Edit Staff)</h3>
+                    <p class="text-xs text-on-surface-variant">ແກ້ໄຂເງິນເດືອນ, ສະຫວັດດີການ, ຮູບພາບ ແລະ ຂໍ້ມູນສ່ວນຕົວ</p>
+                </div>
+                <button onclick="closeModal('edit-staff-modal')" class="text-on-surface-variant hover:text-error">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <form onsubmit="handleEditStaffSubmit(event)" class="space-y-3.5">
+                <input id="edit-staff-pin-hidden" type="hidden">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">PIN 6 ຫຼັກ (ລຶບ/ແກ້ບໍ່ໄດ້)</label>
+                        <input id="edit-staff-pin-disabled" disabled type="text" class="w-full text-xs font-mono font-bold px-3 py-2 bg-surface-container border border-outline-variant rounded-xl text-outline">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Staff ID (ລະຫັດພະນັກງານ) *</label>
+                        <input id="edit-staff-id-input" required type="text" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ຊື່ພະນັກງານ (Name) *</label>
+                        <input id="edit-staff-name-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ສາຂາ (Branch) *</label>
+                        <input id="edit-staff-branch-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ຕຳແໜ່ງ (Role) *</label>
+                        <input id="edit-staff-role-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ເບີໂທ (Phone) *</label>
+                        <input id="edit-staff-phone-input" required type="tel" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 font-extrabold mb-1">ເງິນເດືອນພື້ນຖານ (salary/ກີບ) *</label>
+                        <input id="edit-staff-salary-input" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-300 rounded-xl bg-amber-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 font-extrabold mb-1">ສະຫວັດດີການ (benefit/ກີບ) *</label>
+                        <input id="edit-staff-benefit-input" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-300 rounded-xl bg-amber-50/50">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ປະເພດ (Emp Type)</label>
+                        <select id="edit-staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
+                        <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
+                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Link ຮູບພາບພະນັກງານ (photo_url)</label>
+                    <input id="edit-staff-photo-input" type="url" placeholder="https://..." class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-surface-container-high">
+                    <button type="button" onclick="closeModal('edit-staff-modal')" class="px-4 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-container shadow-sm">ອັບເດດຂໍ້ມູນ (Update Staff)</button>
                 </div>
             </form>
         </div>
@@ -802,8 +880,8 @@
                     .order('sku');
 
                 if (stockErr) {
-                    console.error("Supabase Stock Fetch Error:", stockErr);
-                    showToast("⚠️ Stock Error: " + stockErr.message);
+                    console.error("Supabase Stock Error:", stockErr);
+                    showToast("⚠️ Supabase Stock Error: " + stockErr.message);
                 } else if (stockRes && stockRes.length > 0) {
                     stockData = stockRes;
                     renderStockTable();
@@ -837,7 +915,7 @@
             }
         }
 
-        // --- LOCAL DATA (81 SEEDED PRODUCTS TO SHOW INSTANTLY BEFORE SUPABASE CONNECTS) ---
+        // --- LOCAL FALLBACK DATA (81 PRODUCTS) ---
         let isAdminLoggedIn = false;
 
         let stockData = [
@@ -866,7 +944,7 @@
             { sku: 'P023', name: 'ໄຊຣັບມິ້ນ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P024', name: 'ໂຊດາ (ເເກ້ວ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P025', name: 'ເຈລາຕີນ (ຊອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P026', name: 'ວິບປີ້ງຄຣີມເเບບບີບ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P026', name: 'ວິບປີ້ງຄຣີມເเແບບບີບ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P027', name: 'ວິບປິ້ງຄຣີມ CCN (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P029', name: 'ນົມຟ້າ (ກ່ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
@@ -874,7 +952,7 @@
             { sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P032', name: 'ນົມຄາເນຊັນ (ປ໋ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P033', name: 'ນົມຂຸ້ນ 2000g (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P034', name: 'ນົມ AROMA ເเດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P034', name: 'ນົມ AROMA ເເດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P035', name: 'ນົມ AROMA ເຫຼືອງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P037', name: 'ຊອດຄາຣາເມວ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
@@ -1001,7 +1079,7 @@
             }
         }
 
-        // --- POPULATE PRODUCT DROPDOWN FOR KIOSK MOVEMENT ---
+        // --- POPULATE PRODUCT DROPDOWN ---
         function populateStockMovementDropdown() {
             const select = document.getElementById('movement-item-select');
             select.innerHTML = '';
@@ -1020,7 +1098,7 @@
             input.value = current + amount;
         }
 
-        // --- HANDLE KIOSK STOCK MOVEMENT SUBMIT (daily_inventory_movement) ---
+        // --- HANDLE KIOSK STOCK MOVEMENT SUBMIT ---
         async function handleKioskMovementSubmit(e) {
             e.preventDefault();
             const sku = document.getElementById('movement-item-select').value;
@@ -1031,13 +1109,10 @@
             const item = stockData.find(i => i.sku === sku);
             if (!item) return;
 
-            // Calculate Stock Update
             const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
             item.stock = newStock;
 
-            // Supabase Operations
             if (supabaseClient) {
-                // Insert Movement
                 await supabaseClient.from('daily_inventory_movement').insert([{
                     sku: item.sku,
                     name: item.name,
@@ -1046,7 +1121,6 @@
                     note: note
                 }]);
 
-                // Update Stock in main_inventory
                 await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
             }
 
@@ -1085,7 +1159,96 @@
             });
         }
 
-        // --- HANDLE ADD NEW STAFF (staff table) ---
+        // --- EDIT STAFF FUNCTIONS (ເພີ່ມໃໝ່) ---
+        function openEditStaffModal(pin) {
+            const p = partnersData.find(item => item.pin === pin);
+            if (!p) return;
+
+            document.getElementById('edit-staff-pin-hidden').value = p.pin;
+            document.getElementById('edit-staff-pin-disabled').value = p.pin;
+            document.getElementById('edit-staff-id-input').value = p.staff_id || '';
+            document.getElementById('edit-staff-name-input').value = p.name || '';
+            document.getElementById('edit-staff-branch-input').value = p.branch || 'NP Branch';
+            document.getElementById('edit-staff-role-input').value = p.role || 'Barista';
+            document.getElementById('edit-staff-phone-input').value = p.phone || '';
+            document.getElementById('edit-staff-salary-input').value = p.salary || 3800000;
+            document.getElementById('edit-staff-benefit-input').value = p.benefit || 0;
+            document.getElementById('edit-staff-type-input').value = p.emp_type || 'Full-time';
+            document.getElementById('edit-staff-shift-input').value = p.shift || 'ກະ 1';
+            document.getElementById('edit-staff-photo-input').value = p.photo_url || '';
+
+            openModal('edit-staff-modal');
+        }
+
+        async function handleEditStaffSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById('edit-staff-pin-hidden').value;
+
+            const updatedData = {
+                staff_id: document.getElementById('edit-staff-id-input').value.trim(),
+                name: document.getElementById('edit-staff-name-input').value.trim(),
+                branch: document.getElementById('edit-staff-branch-input').value.trim(),
+                role: document.getElementById('edit-staff-role-input').value.trim(),
+                phone: document.getElementById('edit-staff-phone-input').value.trim(),
+                salary: parseInt(document.getElementById('edit-staff-salary-input').value) || 0,
+                benefit: parseInt(document.getElementById('edit-staff-benefit-input').value) || 0,
+                emp_type: document.getElementById('edit-staff-type-input').value,
+                shift: document.getElementById('edit-staff-shift-input').value,
+                photo_url: document.getElementById('edit-staff-photo-input').value.trim()
+            };
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
+                if (error) {
+                    showToast('❌ ອັບເດດບໍ່ສົມບູນ: ' + error.message);
+                    return;
+                }
+            }
+
+            const localStaff = partnersData.find(p => p.pin === pin);
+            if (localStaff) Object.assign(localStaff, updatedData);
+
+            fetchDataFromSupabase();
+            renderEmployeesAndPayroll();
+            closeModal('edit-staff-modal');
+            showToast(`✓ ອັບເດດຂໍ້ມູນ ${updatedData.name} ສຳເລັດ!`);
+        }
+
+        async function deleteStaff(pin, name) {
+            if (confirm(`ທ່ານຕ້ອງການລົບພະນັກງານ: ${name} (PIN: ${pin}) ອອກຈາກ Database ແທ້ບໍ?`)) {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('staff').delete().eq('pin', pin);
+                    if (error) {
+                        showToast('❌ ລົບບໍ່ສົມບູນ: ' + error.message);
+                        return;
+                    }
+                }
+
+                partnersData = partnersData.filter(p => p.pin !== pin);
+                renderEmployeesAndPayroll();
+                showToast(`✓ ລົບພະນັກງານ ${name} ແລ້ວ`);
+            }
+        }
+
+        // --- DELETE STOCK ITEM ---
+        async function deleteStock(sku, branch, name) {
+            if (confirm(`ທ່ານຕ້ອງການລົບສິນຄ້າ SKU: ${sku} (${name}) ແທ້ບໍ?`)) {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('main_inventory').delete().eq('sku', sku).eq('branch', branch);
+                    if (error) {
+                        showToast('❌ ລົບບໍ່ສົມບູນ: ' + error.message);
+                        return;
+                    }
+                }
+
+                stockData = stockData.filter(s => !(s.sku === sku && s.branch === branch));
+                renderStockTable();
+                populateStockMovementDropdown();
+                showToast(`✓ ລົບສິນຄ້າ ${name} ແລ້ວ`);
+            }
+        }
+
+        // --- HANDLE ADD NEW STAFF ---
         async function handlePartnerSubmit(e) {
             e.preventDefault();
             const newStaff = {
@@ -1119,7 +1282,7 @@
             showToast(`✓ ເພີ່ມພະນັກງານ ${newStaff.name} ລົງ Database ແລ້ວ!`);
         }
 
-        // --- HANDLE ADD NEW STOCK ITEM (main_inventory) ---
+        // --- HANDLE ADD NEW STOCK ITEM ---
         async function handleStockSubmit(e) {
             e.preventDefault();
             const newItem = {
@@ -1183,7 +1346,7 @@
             }
         }
 
-        // --- RENDER STOCK TABLE (main_inventory) ---
+        // --- RENDER STOCK TABLE (main_inventory - ພ້ອມປຸ່ມ Edit / Delete) ---
         function renderStockTable(filterCat = 'all') {
             const tbody = document.getElementById('stock-table-body');
             tbody.innerHTML = '';
@@ -1207,8 +1370,9 @@
                             ${isLow ? '⚠️ ໄກ້ໝົດ' : '✓ OK'}
                         </span>
                     </td>
-                    <td class="p-3 text-right">
+                    <td class="p-3 text-right space-x-1">
                         <button onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="text-xs font-bold text-primary hover:underline">ປັບ Stock</button>
+                        <button onclick="deleteStock('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', '${item.name}')" class="text-xs font-bold text-error hover:underline">ລຶບ</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1247,7 +1411,7 @@
             }
         }
 
-        // --- RENDER EMPLOYEES & PAYROLL (staff table) ---
+        // --- RENDER EMPLOYEES & PAYROLL (staff table - ພ້ອມປຸ່ມ Edit/Delete) ---
         function renderEmployeesAndPayroll() {
             const partnerContainer = document.getElementById('partner-list-container');
             const payrollBody = document.getElementById('payroll-table-body');
@@ -1256,17 +1420,20 @@
             payrollBody.innerHTML = '';
 
             partnersData.forEach(p => {
-                // Staff Card
+                // Staff Card with Edit & Delete Action Buttons
                 const card = document.createElement('div');
-                card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between';
+                card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
                 card.innerHTML = `
                     <div>
-                        <div class="flex items-center gap-3 mb-3">
-                            <img src="${p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm">
-                            <div>
-                                <h3 class="font-headline font-bold text-sm text-on-surface">${p.name}</h3>
-                                <p class="text-xs text-primary font-mono font-bold">${p.staff_id || 'EMP'}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm">
+                                <div>
+                                    <h3 class="font-headline font-bold text-sm text-on-surface">${p.name}</h3>
+                                    <p class="text-xs text-primary font-mono font-bold">${p.staff_id || 'EMP'}</p>
+                                </div>
                             </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.active !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-variant text-outline'}">${p.active !== false ? 'Active' : 'Off'}</span>
                         </div>
                         
                         <div class="space-y-1 text-xs border-t border-surface-container-high pt-2 text-on-surface-variant">
@@ -1274,12 +1441,22 @@
                             <p><span class="text-outline font-semibold">ສາຂາ:</span> ${p.branch}</p>
                             <p><span class="text-outline font-semibold">ກະວຽກ:</span> ${p.shift || 'ກະ 1'}</p>
                             <p><span class="text-outline font-semibold">ເບີໂທ:</span> ${p.phone || 'N/A'}</p>
+                            <p><span class="text-outline font-semibold">ເງິນເດືອນ:</span> <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span></p>
+                            <p><span class="text-outline font-semibold">ສະຫວັດດີການ:</span> <span class="font-mono text-amber-800">+${(p.benefit || 0).toLocaleString()} ກີບ</span></p>
                         </div>
                     </div>
 
                     <div class="mt-3 pt-2 border-t border-surface-container-high flex justify-between items-center text-xs">
                         <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
-                        <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">edit</span> ແກ້ໄຂ
+                            </button>
+                            <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">delete</span> ລຶບ
+                            </button>
+                        </div>
                     </div>
                 `;
                 partnerContainer.appendChild(card);
@@ -1306,7 +1483,7 @@
             document.getElementById('dash-active-staff').textContent = `${partnersData.length} ຄົນ`;
         }
 
-        // --- TIME CLOCK PIN & ATTENDANCE LOGIC (attendance table) ---
+        // --- TIME CLOCK PIN & ATTENDANCE LOGIC ---
         let currentPin = '';
         const maxPin = 6;
 
@@ -1415,7 +1592,6 @@
 
         // Init App
         window.addEventListener('DOMContentLoaded', () => {
-            // Fill Supabase Inputs if saved
             if (supabaseUrl) document.getElementById('config-supabase-url').value = supabaseUrl;
             if (supabaseKey) document.getElementById('config-supabase-key').value = supabaseKey;
 
