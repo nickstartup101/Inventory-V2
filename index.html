@@ -745,37 +745,15 @@
                 try {
                     supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
                     updateDbStatusUI(true);
-                   // --- FETCH DATA FROM SUPABASE ---
-async function fetchDataFromSupabase() {
-    if (!supabaseClient) return;
-
-    // 1. Fetch main_inventory (ປ່ຽນແຖວນີ້)
-    const { data: stockRes, error: stockErr } = await supabaseClient
-        .from('main_inventory')
-        .select('*')
-        .not('sku', 'ilike', '%XS') // 👈 ເພີ່ມແຖວນີ້ເຂົ້າໄປທາງລຸ່ມ .select('*') !
-        .order('sku');
-
-    if (stockRes && stockRes.length > 0) {
-        stockData = stockRes;
-        renderStockTable();
-        populateStockMovementDropdown();
-    }
-
-    // 2. Fetch staff ... (ສ່ວນອື່ນໆປ່ອຍໄວ້ຄືເກົ່າ)
-    const { data: staffRes, error: staffErr } = await supabaseClient.from('staff').select('*').order('pin');
-    if (staffRes && staffRes.length > 0) {
-        partnersData = staffRes;
-        renderEmployeesAndPayroll();
-    }
-
-    // 3. Fetch daily_inventory_movement ... (ປ່ອຍໄວ້ຄືເກົ່າ)
-    const { data: moveRes, error: moveErr } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(10);
-    if (moveRes) {
-        stockMovements = moveRes;
-        renderMovementLogs();
-    }
-}
+                    fetchDataFromSupabase();
+                } catch (e) {
+                    console.error('Supabase Connection Error:', e);
+                    updateDbStatusUI(false);
+                }
+            } else {
+                updateDbStatusUI(false);
+            }
+        }
 
         function updateDbStatusUI(isConnected) {
             const statusDotMobile = document.getElementById('db-status-mobile');
@@ -811,7 +789,48 @@ async function fetchDataFromSupabase() {
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
-        // --- LOCAL FALLBACK DATA (SEED MAPPED EXACTLY TO SUPABASE DB) ---
+        // --- FETCH DATA FROM SUPABASE (ແກ້ໄຂຖືກຕ້ອງ: ກອງບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS) ---
+        async function fetchDataFromSupabase() {
+            if (!supabaseClient) return;
+
+            // 1. Fetch main_inventory (ບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS)
+            const { data: stockRes, error: stockErr } = await supabaseClient
+                .from('main_inventory')
+                .select('*')
+                .not('sku', 'ilike', '%XS') // 👈 ເພີ່ມແຖວນີ້ກອງ XS ອອກຢ່າງຖືກຕ້ອງ!
+                .order('sku');
+
+            if (stockRes && stockRes.length > 0) {
+                stockData = stockRes;
+                renderStockTable();
+                populateStockMovementDropdown();
+            }
+
+            // 2. Fetch staff
+            const { data: staffRes, error: staffErr } = await supabaseClient
+                .from('staff')
+                .select('*')
+                .order('pin');
+
+            if (staffRes && staffRes.length > 0) {
+                partnersData = staffRes;
+                renderEmployeesAndPayroll();
+            }
+
+            // 3. Fetch daily_inventory_movement
+            const { data: moveRes, error: moveErr } = await supabaseClient
+                .from('daily_inventory_movement')
+                .select('*')
+                .order('id', { ascending: false })
+                .limit(10);
+
+            if (moveRes) {
+                stockMovements = moveRes;
+                renderMovementLogs();
+            }
+        }
+
+        // --- LOCAL FALLBACK DATA ---
         let isAdminLoggedIn = false;
 
         let stockData = [
@@ -835,33 +854,6 @@ async function fetchDataFromSupabase() {
         ];
 
         let selectedPartnerForClock = null;
-
-        // --- FETCH DATA FROM SUPABASE ---
-        async function fetchDataFromSupabase() {
-            if (!supabaseClient) return;
-
-            // 1. Fetch main_inventory
-            const { data: stockRes, error: stockErr } = await supabaseClient.from('main_inventory').select('*').order('sku');
-            if (stockRes && stockRes.length > 0) {
-                stockData = stockRes;
-                renderStockTable();
-                populateStockMovementDropdown();
-            }
-
-            // 2. Fetch staff
-            const { data: staffRes, error: staffErr } = await supabaseClient.from('staff').select('*').order('pin');
-            if (staffRes && staffRes.length > 0) {
-                partnersData = staffRes;
-                renderEmployeesAndPayroll();
-            }
-
-            // 3. Fetch daily_inventory_movement
-            const { data: moveRes, error: moveErr } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(10);
-            if (moveRes) {
-                stockMovements = moveRes;
-                renderMovementLogs();
-            }
-        }
 
         // --- NAVIGATION CONTROLLER ---
         const views = ['dashboard', 'current-stock', 'inventory', 'employees', 'payroll', 'kiosk'];
