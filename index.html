@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Real-time Attendance & Payroll System</title>
+    <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,6 +134,7 @@
                 <span class="font-headline font-medium text-xs">ເຄື່ອງ Kiosk (ເວລາ & ສະຕ໋ອກ)</span>
             </a>
 
+            <!-- HRM Admin Restricted Links -->
             <div class="pt-2 my-2 border-t border-primary-container/40">
                 <a href="#employees" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">badge</span>
@@ -142,7 +143,7 @@
                 
                 <a href="#payroll" onclick="navigateTo('payroll')" id="nav-payroll" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">payments</span>
-                    <span class="font-headline font-medium text-xs">ເງິນເດືອນ (Payrolls)</span>
+                    <span class="font-headline font-medium text-xs">ເງິນເດືອນ Real-Time (Payrolls)</span>
                 </a>
             </div>
         </div>
@@ -242,7 +243,7 @@
                     </div>
                 </div>
 
-                <!-- Currently On Duty Staff Section (ເພີ່ມໃໝ່) -->
+                <!-- Currently On Duty Staff Section -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                     <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
@@ -275,12 +276,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 2: CURRENT STOCK (main_inventory) -->
+            <!-- VIEW 2: CURRENT STOCK -->
             <section id="view-current-stock" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                     <div>
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຕ໋ອກປັດຈຸບັນ (main_inventory)</h1>
-                        <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ 81 ລາຍການ ແຍກຕາມໝວດໝູ່</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ ແຍກຕາມໝວດໝູ່</p>
                     </div>
                     <button onclick="openModal('stock-modal')" class="w-full sm:w-auto bg-primary text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-primary-container flex items-center justify-center gap-1.5">
                         <span class="material-symbols-outlined text-base">add</span> ເພີ່ມສິນຄ້າໃໝ່ (New SKU)
@@ -352,8 +353,8 @@
                 </div>
             </section>
 
-            <!-- VIEW 4: EMPLOYEES DIRECTORY (staff table) -->
-            <section id="view-employees" class="view-panel space-y-4">
+            <!-- VIEW 4: EMPLOYEES DIRECTORY & FULL ATTENDANCE LOGS (HRM ADMIN) -->
+            <section id="view-employees" class="view-panel space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
                         <h2 class="font-headline font-extrabold text-lg text-amber-900">ລາຍຊື່ພະນັກງານ (staff table)</h2>
@@ -367,14 +368,46 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="partner-list-container">
                     <!-- Dynamic Staff Cards -->
                 </div>
+
+                <!-- ປະຫວັດການມາວຽກທັງໝົດໃນ Admin (ລາຍວັນ / ລາຍສັບດາ / ລາຍເດືອນ) (ເພີ່ມໃໝ່) -->
+                <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-lg">history_toggle_off</span> ປະຫວັດການມາວຽກທັງໝົດ (Full Attendance Logs)
+                        </h3>
+                        
+                        <!-- Filter Pills: Daily / Weekly / Monthly -->
+                        <div class="flex gap-1.5 bg-surface-container-low p-1 rounded-xl text-xs font-bold">
+                            <button onclick="filterAdminAttendance('daily')" id="btn-att-daily" class="admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm">ລາຍວັນ (Daily)</button>
+                            <button onclick="filterAdminAttendance('weekly')" id="btn-att-weekly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍສັບດາ (Weekly)</button>
+                            <button onclick="filterAdminAttendance('monthly')" id="btn-att-monthly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍເດືອນ (Monthly)</button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs min-w-[600px]">
+                            <thead class="bg-surface-container-low text-on-surface-variant uppercase font-bold border-b border-outline-variant/40">
+                                <tr>
+                                    <th class="p-2.5">ວັນທີ & ເວລາ (GMT+7)</th>
+                                    <th class="p-2.5">PIN / ພະນັກງານ</th>
+                                    <th class="p-2.5">ປະເພດ</th>
+                                    <th class="p-2.5">ສາຂາ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-attendance-table-body" class="divide-y divide-surface-container-high text-on-surface">
+                                <!-- Dynamic Admin Attendance Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ຈາກການມາວຽກຈິງ) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ຈາກການມາວຽກຈິງ (Payrolls)</h1>
-                        <p class="text-amber-800 text-xs">ເງິນເດືອນສຸທິ = (ເງິນເດືອນພື້ນຖານ ÷ 26 ມື້) × ມື້ມາວຽກຈິງ + ສະຫວັດດີການ</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ</h1>
+                        <p class="text-amber-800 text-xs">ຄິດໄລ່ຈ່າຍຕາມ: (ເງິນເດືອນພື້ນຖານ ÷ 26 ມື້ × ມື້ມາວຽກ) + OT + ສະຫວັດດີການ</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -383,15 +416,16 @@
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[700px]">
+                        <table class="w-full text-left text-xs min-w-[750px]">
                             <thead class="bg-surface-container-low border-b border-outline-variant/40 text-on-surface-variant uppercase font-bold">
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ (Name)</th>
                                     <th class="p-3">ເງິນເດືອນພື້ນຖານ (Base Salary)</th>
-                                    <th class="p-3">ມາວຽກຈິງ (Clock-In Days)</th>
+                                    <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
+                                    <th class="p-3">OT (Hours / Pay)</th>
                                     <th class="p-3">ສະຫວັດດີການ (Benefit)</th>
-                                    <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນຄິດໄລ່ຈິງ (Actual Net Pay)</th>
+                                    <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
                             </thead>
                             <tbody id="payroll-table-body" class="divide-y divide-surface-container-high text-on-surface">
@@ -472,12 +506,13 @@
                             <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
                         </div>
 
-                        <!-- ຕາຕະລາງສະແດງປະວັດການປ້ຳໂມງໃນ Kiosk (ເພີ່ມໃໝ່) -->
+                        <!-- ຕາຕະລາງສະແດງປະວັດການປ້ຳໂມງ "ສະເພາະມື້ປັດຈຸບັນ (Today Only GMT+7)" ພ້ອມ ຄຳນວນຊົ່ວໂມງເຮັດວຽກ -->
                         <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
-                            <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">history</span> ປະວັດການປ້ຳໂມງ ເຂົ້າ-ອອກວຽກລ້າສຸດ (attendance)
+                            <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center justify-between">
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">today</span> ປະວັດການມາວຽກປະຈຳວັນນີ້ (Today GMT+7)</span>
+                                <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">ມື້ນີ້ເທົ່ານັ້ນ</span>
                             </h4>
-                            <div class="space-y-2 text-xs" id="kiosk-attendance-logs-container">
+                            <div class="space-y-2 text-xs" id="kiosk-today-attendance-container">
                                 <!-- Rendered dynamically -->
                             </div>
                         </div>
@@ -889,6 +924,15 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
+        // GMT+7 Helper Date String (YYYY-MM-DD)
+        function getLaosDateString(dateObj = new Date()) {
+            const d = new Date(dateObj.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // --- FETCH DATA FROM SUPABASE ---
         async function fetchDataFromSupabase() {
             if (!supabaseClient) return;
@@ -903,7 +947,6 @@
 
                 if (stockErr) {
                     console.error("Supabase Stock Error:", stockErr);
-                    showToast("⚠️ Stock Error: " + stockErr.message);
                 } else if (stockRes && stockRes.length > 0) {
                     stockData = stockRes;
                     renderStockTable();
@@ -933,17 +976,18 @@
                     renderMovementLogs();
                 }
 
-                // 4. Fetch attendance (ເພື່ອສະແດງປະວັດປ້ຳໂມງ ແລະ ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່)
+                // 4. Fetch attendance
                 const { data: attRes, error: attErr } = await supabaseClient
                     .from('attendance')
                     .select('*')
-                    .order('id', { ascending: false })
-                    .limit(20);
+                    .order('id', { ascending: false });
 
                 if (attRes) {
                     attendanceLogs = attRes;
-                    renderAttendanceLogs();
+                    renderTodayKioskAttendance();
+                    renderAdminAttendanceTable('daily');
                     updateOnDutyStaffUI();
+                    renderEmployeesAndPayroll(); // Update Payroll Real-Time!
                 }
             } catch (err) {
                 console.error("Supabase Exception:", err);
@@ -952,7 +996,11 @@
 
         // --- DATA ARRAYS ---
         let isAdminLoggedIn = false;
-        let attendanceLogs = [];
+        let attendanceLogs = [
+            { id: 1, pin: '775533', type: 'Clock-In', branch: 'NP Branch', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() },
+            { id: 2, pin: '225588', type: 'Clock-In', branch: 'NP Branch', timestamp: new Date(Date.now() - 3600000 * 8).toISOString() },
+            { id: 3, pin: '225588', type: 'Clock-Out', branch: 'NP Branch', timestamp: new Date().toISOString() }
+        ];
 
         let stockData = [
             { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
@@ -969,7 +1017,7 @@
             { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', dob: '15/08/1998', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
             { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', dob: '22/11/1999', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3700000, benefit: 450000, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
             { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', dob: '03/04/2000', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
-            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
+            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60', ot: 5 },
             { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', dob: '12/07/1996', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
             { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', dob: '05/09/2001', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
         ];
@@ -1029,6 +1077,7 @@
                 stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
                 timeClockView.classList.remove('hidden');
                 stockView.classList.add('hidden');
+                renderTodayKioskAttendance();
             } else {
                 stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm';
                 timeClockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
@@ -1040,115 +1089,238 @@
             }
         }
 
-        function populateStockMovementDropdown() {
-            const select = document.getElementById('movement-item-select');
-            select.innerHTML = '';
-
-            stockData.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item.sku;
-                opt.textContent = `[${item.sku}] ${item.name} (Stock: ${item.stock || 0})`;
-                select.appendChild(opt);
-            });
-        }
-
-        function addQuickQty(amount) {
-            const input = document.getElementById('movement-qty-input');
-            const current = parseInt(input.value) || 0;
-            input.value = current + amount;
-        }
-
-        // --- HANDLE KIOSK STOCK MOVEMENT SUBMIT ---
-        async function handleKioskMovementSubmit(e) {
-            e.preventDefault();
-            const sku = document.getElementById('movement-item-select').value;
-            const movementType = document.querySelector('input[name="movement-type"]:checked').value;
-            const qty = parseInt(document.getElementById('movement-qty-input').value);
-            const note = document.getElementById('movement-note-input').value.trim() || 'ບັນທຶກ Kiosk';
-
-            const item = stockData.find(i => i.sku === sku);
-            if (!item) return;
-
-            const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
-            item.stock = newStock;
-
-            if (supabaseClient) {
-                await supabaseClient.from('daily_inventory_movement').insert([{
-                    sku: item.sku,
-                    name: item.name,
-                    type: movementType,
-                    qty: qty,
-                    note: note
-                }]);
-
-                await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
-            }
-
-            renderStockTable();
-            populateStockMovementDropdown();
-            fetchDataFromSupabase();
-
-            document.getElementById('movement-qty-input').value = 1;
-            document.getElementById('movement-note-input').value = '';
-            
-            showToast(`✓ ບັນທຶກ (${movementType}) ${item.name} ຈຳນວນ ${qty} ແລ້ວ!`);
-        }
-
-        function renderMovementLogs() {
-            const container = document.getElementById('kiosk-movement-logs-container');
-            container.innerHTML = '';
-
-            if (stockMovements.length === 0) {
-                container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການເຄື່ອນໄຫວ</p>';
-                return;
-            }
-
-            stockMovements.slice(0, 5).forEach(m => {
-                const item = document.createElement('div');
-                item.className = 'p-2 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
-                item.innerHTML = `
-                    <div>
-                        <p class="font-bold text-on-surface">${m.name || m.sku}</p>
-                        <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${new Date(m.timestamp || Date.now()).toLocaleTimeString()}</p>
-                    </div>
-                    <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-                        ${m.type === 'IN' ? '+' : '-'}${m.qty}
-                    </span>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        // --- RENDER ATTENDANCE LOGS IN KIOSK & UPDATE ON DUTY STAFF ---
-        function renderAttendanceLogs() {
-            const container = document.getElementById('kiosk-attendance-logs-container');
+        // --- 1. KIOSK TODAY-ONLY ATTENDANCE & DURATION (GMT+7) ---
+        function renderTodayKioskAttendance() {
+            const container = document.getElementById('kiosk-today-attendance-container');
             if (!container) return;
             container.innerHTML = '';
 
-            if (attendanceLogs.length === 0) {
-                container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການປ້ຳໂມງ</p>';
+            const todayStr = getLaosDateString();
+
+            // Filter today's attendance logs
+            const todayLogs = attendanceLogs.filter(a => {
+                const logDate = getLaosDateString(new Date(a.timestamp || Date.now()));
+                return logDate === todayStr;
+            });
+
+            if (todayLogs.length === 0) {
+                container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການປ້ຳໂມງໃນມື້ນີ້</p>';
                 return;
             }
 
-            attendanceLogs.slice(0, 8).forEach(a => {
-                const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin };
-                const isClockIn = (a.type || '').toLowerCase().includes('in');
+            // Group by Staff PIN to find Clock-In, Clock-Out & Calculate Working Duration
+            const staffPairs = {};
+            todayLogs.forEach(a => {
+                if (!staffPairs[a.pin]) {
+                    staffPairs[a.pin] = { clockIn: null, clockOut: null };
+                }
+                const type = (a.type || '').toLowerCase();
+                if (type.includes('in')) {
+                    if (!staffPairs[a.pin].clockIn) staffPairs[a.pin].clockIn = a;
+                } else if (type.includes('out')) {
+                    if (!staffPairs[a.pin].clockOut) staffPairs[a.pin].clockOut = a;
+                }
+            });
+
+            Object.keys(staffPairs).forEach(pin => {
+                const staff = partnersData.find(p => p.pin === pin) || { name: 'PIN: ' + pin };
+                const pair = staffPairs[pin];
+                
+                let inTime = pair.clockIn ? new Date(pair.clockIn.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+                let outTime = pair.clockOut ? new Date(pair.clockOut.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+                
+                let durationText = 'ກຳລັງເຮັດວຽກຢູ່...';
+                let durationBadgeClass = 'bg-emerald-100 text-emerald-800';
+
+                if (pair.clockIn && pair.clockOut) {
+                    const diffMs = new Date(pair.clockOut.timestamp) - new Date(pair.clockIn.timestamp);
+                    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                    const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                    durationText = `ເຮັດວຽກ: ${hours} ຊມ ${mins} ນາທີ`;
+                    durationBadgeClass = 'bg-blue-100 text-blue-900';
+                }
 
                 const item = document.createElement('div');
-                item.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+                item.className = 'p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
                 item.innerHTML = `
-                    <div class="flex items-center gap-2.5">
-                        <img src="${staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-8 h-8 rounded-full object-cover">
+                    <div class="flex items-center gap-3">
+                        <img src="${staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-9 h-9 rounded-full object-cover border border-primary/20">
                         <div>
                             <p class="font-bold text-on-surface text-xs">${staff.name}</p>
-                            <p class="text-[10px] text-on-surface-variant">${new Date(a.timestamp || Date.now()).toLocaleTimeString()} • ${a.branch || 'NP Branch'}</p>
+                            <p class="text-[10px] text-on-surface-variant font-mono">
+                                ເຂົ້າ: <span class="font-bold text-emerald-700">${inTime}</span> | ອອກ: <span class="font-bold text-amber-700">${outTime}</span>
+                            </p>
                         </div>
                     </div>
-                    <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                        ${a.type || 'Clock-In'}
+                    <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${durationBadgeClass}">
+                        ${durationText}
                     </span>
                 `;
                 container.appendChild(item);
+            });
+        }
+
+        // --- 2. ADMIN FULL ATTENDANCE LOGS WITH FILTERS (Daily / Weekly / Monthly) ---
+        let currentAdminAttFilter = 'daily';
+
+        function filterAdminAttendance(filterType) {
+            currentAdminAttFilter = filterType;
+            document.querySelectorAll('.admin-att-btn').forEach(b => {
+                b.className = 'admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface';
+            });
+            const activeBtn = document.getElementById(`btn-att-${filterType}`);
+            if (activeBtn) activeBtn.className = 'admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm';
+
+            renderAdminAttendanceTable(filterType);
+        }
+
+        function renderAdminAttendanceTable(filterType = 'daily') {
+            const tbody = document.getElementById('admin-attendance-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const todayStr = getLaosDateString();
+            const currentMonthStr = todayStr.substring(0, 7); // YYYY-MM
+
+            let filteredLogs = attendanceLogs;
+
+            if (filterType === 'daily') {
+                filteredLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())) === todayStr);
+            } else if (filterType === 'monthly') {
+                filteredLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())).startsWith(currentMonthStr));
+            }
+
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-outline">ບໍ່ມີຂໍ້ມູນປະຫວັດການມາວຽກ</td></tr>';
+                return;
+            }
+
+            filteredLogs.forEach(a => {
+                const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin };
+                const dt = new Date(a.timestamp || Date.now());
+                const isClockIn = (a.type || '').toLowerCase().includes('in');
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-container-low';
+                tr.innerHTML = `
+                    <td class="p-2.5 font-mono text-[11px]">${dt.toLocaleDateString('en-GB')} ${dt.toLocaleTimeString()}</td>
+                    <td class="p-2.5 font-bold text-on-surface">${staff.name} (PIN: ${a.pin})</td>
+                    <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                            ${a.type || 'Clock-In'}
+                        </span>
+                    </td>
+                    <td class="p-2.5 text-outline">${a.branch || 'NP Branch'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- 3. REAL-TIME PAYROLL CALCULATION FROM ACTUAL ATTENDANCE ---
+        function calculateRealtimePayroll(staff) {
+            const currentMonthStr = getLaosDateString().substring(0, 7); // YYYY-MM
+
+            // Get unique days clocked-in this month for this staff
+            const monthLogs = attendanceLogs.filter(a => {
+                const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
+                return a.pin === staff.pin && logMonth === currentMonthStr && (a.type || '').toLowerCase().includes('in');
+            });
+
+            const daysWorked = new Set(monthLogs.map(a => getLaosDateString(new Date(a.timestamp || Date.now())))).size;
+
+            // Base Calculations (Base Salary based on 26 work days per month)
+            const baseSalary = staff.salary || 3500000;
+            const benefit = staff.benefit || 0;
+            const dailyRate = baseSalary / 26;
+            const hourlyRate = dailyRate / 8;
+
+            // OT Calculation
+            const otHours = staff.ot || 0;
+            const otPay = Math.round(otHours * (hourlyRate * 1.5));
+
+            // Actual Net Pay Real-Time Earning
+            const actualDaysPay = Math.round(dailyRate * daysWorked);
+            const totalNetPay = actualDaysPay + otPay + benefit;
+
+            return {
+                daysWorked,
+                otHours,
+                dailyRate: Math.round(dailyRate),
+                otPay,
+                actualDaysPay,
+                totalNetPay
+            };
+        }
+
+        // --- RENDER EMPLOYEES & PAYROLL TABLE ---
+        function renderEmployeesAndPayroll() {
+            const partnerContainer = document.getElementById('partner-list-container');
+            const payrollBody = document.getElementById('payroll-table-body');
+            
+            partnerContainer.innerHTML = '';
+            payrollBody.innerHTML = '';
+
+            partnersData.forEach(p => {
+                const payroll = calculateRealtimePayroll(p);
+
+                // Staff Card
+                const card = document.createElement('div');
+                card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm">
+                                <div>
+                                    <h3 class="font-headline font-bold text-sm text-on-surface">${p.name}</h3>
+                                    <p class="text-xs text-primary font-mono font-bold">${p.staff_id || 'EMP'}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.active !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-variant text-outline'}">${p.active !== false ? 'Active' : 'Off'}</span>
+                        </div>
+                        
+                        <div class="space-y-1 text-xs border-t border-surface-container-high pt-2 text-on-surface-variant">
+                            <p><span class="text-outline font-semibold">ຕຳແໜ່ງ:</span> <strong>${p.role}</strong> (${p.emp_type || 'Full-time'})</p>
+                            <p><span class="text-outline font-semibold">ສາຂາ:</span> ${p.branch}</p>
+                            <p><span class="text-outline font-semibold">ກະວຽກ:</span> ${p.shift || 'ກະ 1'}</p>
+                            <p><span class="text-outline font-semibold">ເບີໂທ:</span> ${p.phone || 'N/A'}</p>
+                            <p><span class="text-outline font-semibold">ເງິນເດືອນພື້ນຖານ:</span> <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span></p>
+                            <p><span class="text-outline font-semibold">ສະຫວັດດີການ:</span> <span class="font-mono text-amber-800">+${(p.benefit || 0).toLocaleString()} ກີບ</span></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-2 border-t border-surface-container-high flex justify-between items-center text-xs">
+                        <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">edit</span> ແກ້ໄຂ
+                            </button>
+                            <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">delete</span> ລຶບ
+                            </button>
+                        </div>
+                    </div>
+                `;
+                partnerContainer.appendChild(card);
+
+                // Real-Time Payroll Table Row
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-container-low';
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-primary">${p.pin} / ${p.staff_id || ''}</td>
+                    <td class="p-3 font-bold text-on-surface">${p.name}</td>
+                    <td class="p-3 font-mono font-bold">${(p.salary || 0).toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-bold text-blue-700">
+                        ${payroll.daysWorked} ມື້ <span class="text-[10px] text-outline">(${(payroll.actualDaysPay).toLocaleString()} ກີບ)</span>
+                    </td>
+                    <td class="p-3 font-mono text-amber-800 font-bold">
+                        ${payroll.otHours} ຊມ <span class="text-[10px]">(+${payroll.otPay.toLocaleString()} ກີບ)</span>
+                    </td>
+                    <td class="p-3 font-mono text-amber-800">+${(p.benefit || 0).toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-bold text-emerald-800 text-xs bg-emerald-50/50">${payroll.totalNetPay.toLocaleString()} ກີບ</td>
+                `;
+                payrollBody.appendChild(tr);
             });
         }
 
@@ -1158,9 +1330,11 @@
             if (!container) return;
             container.innerHTML = '';
 
-            // Find last status of each PIN
+            const todayStr = getLaosDateString();
+            const todayLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())) === todayStr);
+
             const latestStatusMap = {};
-            attendanceLogs.forEach(a => {
+            todayLogs.forEach(a => {
                 if (!latestStatusMap[a.pin]) {
                     latestStatusMap[a.pin] = a.type;
                 }
@@ -1171,7 +1345,7 @@
             document.getElementById('dash-active-staff').textContent = `${activeStaffPins.length} ຄົນ`;
 
             if (activeStaffPins.length === 0) {
-                container.innerHTML = '<p class="text-xs text-outline italic">ບໍ່ມີພະນັກງານປ້ຳໂມງເຂົ້າວຽກໃນຕອນນີ້</p>';
+                container.innerHTML = '<p class="text-xs text-outline italic">ບໍ່ມີພະນັກງານປ້ຳໂມງເຂົ້າວຽກໃນມື້ນີ້</p>';
                 return;
             }
 
@@ -1187,6 +1361,88 @@
                     container.appendChild(badge);
                 }
             });
+        }
+
+        // --- TIME CLOCK PIN & ATTENDANCE LOGIC ---
+        let currentPin = '';
+        const maxPin = 6;
+
+        function pressPinKey(num) {
+            if (currentPin.length < maxPin) {
+                currentPin += num;
+                updatePinDots();
+            }
+            if (currentPin.length === maxPin) {
+                verifyKioskPin();
+            }
+        }
+
+        function clearPinKey() { currentPin = ''; updatePinDots(); }
+        function backspacePinKey() { if (currentPin.length > 0) { currentPin = currentPin.slice(0, -1); updatePinDots(); } }
+
+        function updatePinDots() {
+            for (let i = 1; i <= maxPin; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) dot.className = `w-3.5 h-3.5 rounded-full border-2 border-outline-variant ${i <= currentPin.length ? 'bg-primary border-primary' : 'bg-surface'}`;
+            }
+        }
+
+        function verifyKioskPin() {
+            setTimeout(() => {
+                if (currentPin === '7777' || currentPin === '777777') {
+                    unlockAdminMode();
+                    navigateTo('employees');
+                } else {
+                    const partner = partnersData.find(p => p.pin === currentPin);
+                    if (partner) {
+                        selectedPartnerForClock = partner;
+                        document.getElementById('kiosk-user-info').innerHTML = `
+                            <div class="flex items-center justify-center gap-3 mb-2">
+                                <img src="${partner.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover">
+                                <div class="text-left">
+                                    <h3 class="font-headline font-bold text-base text-primary">${partner.name}</h3>
+                                    <p class="text-xs text-on-surface-variant">${partner.staff_id} • ${partner.role}</p>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('kiosk-action-panel').classList.remove('hidden');
+                    } else {
+                        showToast('❌ ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ');
+                    }
+                }
+                clearPinKey();
+            }, 200);
+        }
+
+        async function executeClockAction(actionType) {
+            if (selectedPartnerForClock) {
+                const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                const newLog = {
+                    pin: selectedPartnerForClock.pin,
+                    type: actionType,
+                    branch: selectedPartnerForClock.branch || 'NP Branch',
+                    timestamp: new Date().toISOString()
+                };
+
+                if (supabaseClient) {
+                    await supabaseClient.from('attendance').insert([newLog]);
+                }
+
+                attendanceLogs.unshift(newLog);
+                renderTodayKioskAttendance();
+                renderAdminAttendanceTable(currentAdminAttFilter);
+                updateOnDutyStaffUI();
+                renderEmployeesAndPayroll(); // Update Real-time Payroll instantly!
+
+                showToast(`✓ ບັນທຶກ ${actionType} ສຳເລັດ ສຳລັບ ${selectedPartnerForClock.name} (${nowStr})`);
+                cancelClockAction();
+            }
+        }
+
+        function cancelClockAction() {
+            selectedPartnerForClock = null;
+            document.getElementById('kiosk-action-panel').classList.add('hidden');
         }
 
         // --- EDIT STAFF FUNCTIONS ---
@@ -1440,165 +1696,6 @@
             }
         }
 
-        // --- RENDER EMPLOYEES & PAYROLL (ຄິດໄລ່ເງິນເດືອນຈາກການມາວຽກຈິງ) ---
-        function renderEmployeesAndPayroll() {
-            const partnerContainer = document.getElementById('partner-list-container');
-            const payrollBody = document.getElementById('payroll-table-body');
-            
-            partnerContainer.innerHTML = '';
-            payrollBody.innerHTML = '';
-
-            partnersData.forEach(p => {
-                // Count actual clocked in days for this PIN
-                const clockedInDays = new Set(
-                    attendanceLogs
-                        .filter(a => a.pin === p.pin && (a.type || '').toLowerCase().includes('in'))
-                        .map(a => new Date(a.timestamp || Date.now()).toDateString())
-                ).size;
-
-                // Staff Card
-                const card = document.createElement('div');
-                card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-3">
-                                <img src="${p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20 shadow-sm">
-                                <div>
-                                    <h3 class="font-headline font-bold text-sm text-on-surface">${p.name}</h3>
-                                    <p class="text-xs text-primary font-mono font-bold">${p.staff_id || 'EMP'}</p>
-                                </div>
-                            </div>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.active !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-variant text-outline'}">${p.active !== false ? 'Active' : 'Off'}</span>
-                        </div>
-                        
-                        <div class="space-y-1 text-xs border-t border-surface-container-high pt-2 text-on-surface-variant">
-                            <p><span class="text-outline font-semibold">ຕຳແໜ່ງ:</span> <strong>${p.role}</strong> (${p.emp_type || 'Full-time'})</p>
-                            <p><span class="text-outline font-semibold">ສາຂາ:</span> ${p.branch}</p>
-                            <p><span class="text-outline font-semibold">ກະວຽກ:</span> ${p.shift || 'ກະ 1'}</p>
-                            <p><span class="text-outline font-semibold">ເບີໂທ:</span> ${p.phone || 'N/A'}</p>
-                            <p><span class="text-outline font-semibold">ເງິນເດືອນພື້ນຖານ:</span> <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span></p>
-                            <p><span class="text-outline font-semibold">ສະຫວັດດີການ:</span> <span class="font-mono text-amber-800">+${(p.benefit || 0).toLocaleString()} ກີບ</span></p>
-                        </div>
-                    </div>
-
-                    <div class="mt-3 pt-2 border-t border-surface-container-high flex justify-between items-center text-xs">
-                        <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
-                        
-                        <div class="flex gap-2">
-                            <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
-                                <span class="material-symbols-outlined text-xs">edit</span> ແກ້ໄຂ
-                            </button>
-                            <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all flex items-center gap-0.5">
-                                <span class="material-symbols-outlined text-xs">delete</span> ລຶບ
-                            </button>
-                        </div>
-                    </div>
-                `;
-                partnerContainer.appendChild(card);
-
-                // Payroll Calculation based on actual attendance days
-                const baseSalary = p.salary || 3800000;
-                const benefit = p.benefit || 0;
-                // If attendance logged, calculate proportionally based on 26 work days, else default to 26
-                const actualWorkDays = clockedInDays > 0 ? clockedInDays : 26; 
-                const actualCalculatedPay = Math.round((baseSalary / 26) * actualWorkDays) + benefit;
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-surface-container-low';
-                tr.innerHTML = `
-                    <td class="p-3 font-mono font-bold text-primary">${p.pin} / ${p.staff_id || ''}</td>
-                    <td class="p-3 font-bold text-on-surface">${p.name}</td>
-                    <td class="p-3 font-mono font-bold">${baseSalary.toLocaleString()} ກີບ</td>
-                    <td class="p-3 font-mono font-bold text-blue-700">${actualWorkDays} ມື້</td>
-                    <td class="p-3 font-mono text-amber-800">+${benefit.toLocaleString()} ກີບ</td>
-                    <td class="p-3 font-mono font-bold text-emerald-800 text-xs">${actualCalculatedPay.toLocaleString()} ກີບ</td>
-                `;
-                payrollBody.appendChild(tr);
-            });
-        }
-
-        // --- TIME CLOCK PIN & ATTENDANCE LOGIC ---
-        let currentPin = '';
-        const maxPin = 6;
-
-        function pressPinKey(num) {
-            if (currentPin.length < maxPin) {
-                currentPin += num;
-                updatePinDots();
-            }
-            if (currentPin.length === maxPin) {
-                verifyKioskPin();
-            }
-        }
-
-        function clearPinKey() { currentPin = ''; updatePinDots(); }
-        function backspacePinKey() { if (currentPin.length > 0) { currentPin = currentPin.slice(0, -1); updatePinDots(); } }
-
-        function updatePinDots() {
-            for (let i = 1; i <= maxPin; i++) {
-                const dot = document.getElementById(`dot-${i}`);
-                if (dot) dot.className = `w-3.5 h-3.5 rounded-full border-2 border-outline-variant ${i <= currentPin.length ? 'bg-primary border-primary' : 'bg-surface'}`;
-            }
-        }
-
-        function verifyKioskPin() {
-            setTimeout(() => {
-                if (currentPin === '7777' || currentPin === '777777') {
-                    unlockAdminMode();
-                    navigateTo('employees');
-                } else {
-                    const partner = partnersData.find(p => p.pin === currentPin);
-                    if (partner) {
-                        selectedPartnerForClock = partner;
-                        document.getElementById('kiosk-user-info').innerHTML = `
-                            <div class="flex items-center justify-center gap-3 mb-2">
-                                <img src="${partner.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover">
-                                <div class="text-left">
-                                    <h3 class="font-headline font-bold text-base text-primary">${partner.name}</h3>
-                                    <p class="text-xs text-on-surface-variant">${partner.staff_id} • ${partner.role}</p>
-                                </div>
-                            </div>
-                        `;
-                        document.getElementById('kiosk-action-panel').classList.remove('hidden');
-                    } else {
-                        showToast('❌ ລະຫັດ PIN ບໍ່ຖືກຕ້ອງ');
-                    }
-                }
-                clearPinKey();
-            }, 200);
-        }
-
-        async function executeClockAction(actionType) {
-            if (selectedPartnerForClock) {
-                const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-                const newLog = {
-                    pin: selectedPartnerForClock.pin,
-                    type: actionType,
-                    branch: selectedPartnerForClock.branch || 'NP Branch',
-                    timestamp: new Date().toISOString()
-                };
-
-                if (supabaseClient) {
-                    await supabaseClient.from('attendance').insert([newLog]);
-                }
-
-                attendanceLogs.unshift(newLog);
-                renderAttendanceLogs();
-                updateOnDutyStaffUI();
-                renderEmployeesAndPayroll();
-
-                showToast(`✓ ບັນທຶກ ${actionType} ສຳເລັດ ສຳລັບ ${selectedPartnerForClock.name} (${nowStr})`);
-                cancelClockAction();
-            }
-        }
-
-        function cancelClockAction() {
-            selectedPartnerForClock = null;
-            document.getElementById('kiosk-action-panel').classList.add('hidden');
-        }
-
         // --- MODALS & TOAST ---
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -1643,7 +1740,8 @@
             renderEmployeesAndPayroll();
             populateStockMovementDropdown();
             renderMovementLogs();
-            renderAttendanceLogs();
+            renderTodayKioskAttendance();
+            renderAdminAttendanceTable('daily');
             updateOnDutyStaffUI();
             navigateTo('dashboard');
         });
