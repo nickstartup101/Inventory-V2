@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Operations, Stock & Staff Management</title>
+    <title>LA DOLCE - Real-time Attendance & Payroll System</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -203,6 +203,7 @@
                     </div>
                 </div>
 
+                <!-- Stats Grid -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
@@ -224,11 +225,11 @@
 
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="material-symbols-outlined text-primary p-1.5 bg-blue-100 rounded-lg text-lg">group</span>
-                            <span class="text-[10px] font-bold text-primary bg-primary-fixed/30 px-1.5 py-0.5 rounded">Staff</span>
+                            <span class="material-symbols-outlined text-emerald-600 p-1.5 bg-emerald-100 rounded-lg text-lg">touch_app</span>
+                            <span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">On Duty</span>
                         </div>
-                        <p class="text-[11px] text-on-surface-variant font-semibold">ພະນັກງານໃນລະບົບ (staff)</p>
-                        <h3 class="font-headline font-bold text-xl text-on-surface mt-0.5" id="dash-active-staff">6 ຄົນ</h3>
+                        <p class="text-[11px] text-on-surface-variant font-semibold">ມາວຽກດຽວນີ້ (Clocked-In)</p>
+                        <h3 class="font-headline font-bold text-xl text-emerald-700 mt-0.5" id="dash-active-staff">0 ຄົນ</h3>
                     </div>
 
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
@@ -241,6 +242,18 @@
                     </div>
                 </div>
 
+                <!-- Currently On Duty Staff Section (ເພີ່ມໃໝ່) -->
+                <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
+                    <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Currently Clocked-In)
+                    </h3>
+                    <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Shortcuts Section -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div onclick="navigateTo('current-stock')" class="bg-surface p-5 rounded-2xl border border-outline-variant/40 shadow-sm hover:border-primary cursor-pointer transition-all">
                         <span class="material-symbols-outlined text-primary text-2xl mb-1.5">inventory</span>
@@ -356,12 +369,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (staff.salary & staff.benefit) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ຈາກການມາວຽກຈິງ) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຊົ່ວໂມງວຽກ (Payrolls)</h1>
-                        <p class="text-amber-800 text-xs">ຄິດໄລ່ເງິນເດືອນພື້ນຖານ (salary) + ສະຫວັດດີການ (benefit)</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ຈາກການມາວຽກຈິງ (Payrolls)</h1>
+                        <p class="text-amber-800 text-xs">ເງິນເດືອນສຸທິ = (ເງິນເດືອນພື້ນຖານ ÷ 26 ມື້) × ມື້ມາວຽກຈິງ + ສະຫວັດດີການ</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -370,16 +383,15 @@
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[650px]">
+                        <table class="w-full text-left text-xs min-w-[700px]">
                             <thead class="bg-surface-container-low border-b border-outline-variant/40 text-on-surface-variant uppercase font-bold">
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ (Name)</th>
-                                    <th class="p-3">ຕຳແໜ່ງ (Role)</th>
-                                    <th class="p-3">ປະເພດ (Emp Type)</th>
-                                    <th class="p-3">ເງິນເດືອນ (Salary)</th>
+                                    <th class="p-3">ເງິນເດືອນພື້ນຖານ (Base Salary)</th>
+                                    <th class="p-3">ມາວຽກຈິງ (Clock-In Days)</th>
                                     <th class="p-3">ສະຫວັດດີການ (Benefit)</th>
-                                    <th class="p-3 font-bold text-emerald-800">ລວມຮັບສຸທິ (Net Pay)</th>
+                                    <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນຄິດໄລ່ຈິງ (Actual Net Pay)</th>
                                 </tr>
                             </thead>
                             <tbody id="payroll-table-body" class="divide-y divide-surface-container-high text-on-surface">
@@ -409,7 +421,7 @@
                     </div>
 
                     <!-- SUB-TAB 1: TIME CLOCK PIN KEYPAD -->
-                    <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center">
+                    <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center space-y-4">
                         <div id="kiosk-pin-panel" class="bg-surface rounded-2xl shadow-lg border border-outline-variant/40 p-5 sm:p-6 w-full flex flex-col items-center">
                             
                             <div class="text-center mb-3">
@@ -446,7 +458,7 @@
                             </div>
                         </div>
 
-                        <div id="kiosk-action-panel" class="hidden w-full bg-surface rounded-2xl shadow-xl border border-primary/30 p-5 mt-3 text-center">
+                        <div id="kiosk-action-panel" class="hidden w-full bg-surface rounded-2xl shadow-xl border border-primary/30 p-5 text-center">
                             <div id="kiosk-user-info" class="mb-3"></div>
 
                             <div class="grid grid-cols-2 gap-2.5 mb-2">
@@ -458,6 +470,16 @@
                                 </button>
                             </div>
                             <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
+                        </div>
+
+                        <!-- ຕາຕະລາງສະແດງປະວັດການປ້ຳໂມງໃນ Kiosk (ເພີ່ມໃໝ່) -->
+                        <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
+                            <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-base">history</span> ປະວັດການປ້ຳໂມງ ເຂົ້າ-ອອກວຽກລ້າສຸດ (attendance)
+                            </h4>
+                            <div class="space-y-2 text-xs" id="kiosk-attendance-logs-container">
+                                <!-- Rendered dynamically -->
+                            </div>
                         </div>
                     </div>
 
@@ -559,7 +581,7 @@
         </div>
     </div>
 
-    <!-- EDIT STAFF / PARTNER MODAL (ເພີ່ມໃໝ່) -->
+    <!-- EDIT STAFF / PARTNER MODAL -->
     <div id="edit-staff-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -577,11 +599,11 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">PIN 6 ຫຼັກ (ລຶບ/ແກ້ບໍ່ໄດ້)</label>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">PIN 6 ຫຼັກ</label>
                         <input id="edit-staff-pin-disabled" disabled type="text" class="w-full text-xs font-mono font-bold px-3 py-2 bg-surface-container border border-outline-variant rounded-xl text-outline">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Staff ID (ລະຫັດພະນັກງານ) *</label>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Staff ID *</label>
                         <input id="edit-staff-id-input" required type="text" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                 </div>
@@ -872,7 +894,7 @@
             if (!supabaseClient) return;
 
             try {
-                // 1. Fetch main_inventory (ກອງບໍ່ເອົາ SKU ທີ່ລົງທ້າຍດ້ວຍ XS)
+                // 1. Fetch main_inventory
                 const { data: stockRes, error: stockErr } = await supabaseClient
                     .from('main_inventory')
                     .select('*')
@@ -881,7 +903,7 @@
 
                 if (stockErr) {
                     console.error("Supabase Stock Error:", stockErr);
-                    showToast("⚠️ Supabase Stock Error: " + stockErr.message);
+                    showToast("⚠️ Stock Error: " + stockErr.message);
                 } else if (stockRes && stockRes.length > 0) {
                     stockData = stockRes;
                     renderStockTable();
@@ -910,96 +932,35 @@
                     stockMovements = moveRes;
                     renderMovementLogs();
                 }
+
+                // 4. Fetch attendance (ເພື່ອສະແດງປະວັດປ້ຳໂມງ ແລະ ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່)
+                const { data: attRes, error: attErr } = await supabaseClient
+                    .from('attendance')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(20);
+
+                if (attRes) {
+                    attendanceLogs = attRes;
+                    renderAttendanceLogs();
+                    updateOnDutyStaffUI();
+                }
             } catch (err) {
                 console.error("Supabase Exception:", err);
             }
         }
 
-        // --- LOCAL FALLBACK DATA (81 PRODUCTS) ---
+        // --- DATA ARRAYS ---
         let isAdminLoggedIn = false;
+        let attendanceLogs = [];
 
         let stockData = [
             { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P002', name: 'ບ໊ວຍ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P003', name: 'ຊອສຊ໊ອກໂກ້ເເລັດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P004', name: 'ຊ໊ອກຊິບ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P005', name: 'ຄຣີມຊິສ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P008', name: 'ວິບປິ້ງ Anchor (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P009', name: 'ວິບຄຣີມມີ່ (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P010', name: 'ເບຍ HNK (ປ໋ອງ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P011', name: 'ນ້ຳດື່ມຫົວເສືອ (ຕຸກ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P012', name: 'ອັນຊັນ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P013', name: 'ມັດຊະ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P014', name: 'ຊາໄທ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P015', name: 'ຊາຂຽວ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P016', name: 'ປີໂປ້ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P017', name: 'ນ້ຳລິ້ນຈີ່ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P018', name: 'ບີສຄອຟ (ກັບ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P019', name: 'ນ້ຳເເດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P020', name: 'ນ້ຳເຜິ້ງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P021', name: 'ນ້ຳຕານເຊື່ອມ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P022', name: 'ນ້ຳເຊື່ອມເມເປີ້ນ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P023', name: 'ໄຊຣັບມິ້ນ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P024', name: 'ໂຊດາ (ເເກ້ວ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P025', name: 'ເຈລາຕີນ (ຊອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງຍ່ອຍ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P026', name: 'ວິບປີ້ງຄຣີມເเແບບບີບ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P027', name: 'ວິບປິ້ງຄຣີມ CCN (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P029', name: 'ນົມຟ້າ (ກ່ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P030', name: 'ນົມຜົງ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P032', name: 'ນົມຄາເນຊັນ (ປ໋ອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P033', name: 'ນົມຂຸ້ນ 2000g (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P034', name: 'ນົມ AROMA ເເດງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P035', name: 'ນົມ AROMA ເຫຼືອງ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
             { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P037', name: 'ຊອດຄາຣາເມວ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P038', name: 'ນິວເທລ້າ 1ກລ (ວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P039', name: 'ຝາຮ້ອນ (ອັນ)', stock: 0, min_stock: 5, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P040', name: 'ຊາເອີເກຣ (ຊອງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P041', name: 'ຊາໄທ (ກະປຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P042', name: 'ໝາກພ້າວ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P043', name: 'ໝາກນາວ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P044', name: 'ເລມ້ອນ (ໜ່ວຍ)', stock: 0, min_stock: 5, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P045', name: 'ສະໄປ໋ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P046', name: 'ເເພັກອາຫານ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P047', name: 'ໄມ້ຕີມັດຊະ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P048', name: 'ຝອຍເຫຼັກ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P049', name: 'ບ້ວງຢາງ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P050', name: 'ນ້ຳຢາເຊັດເເວ່ນ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P051', name: 'ທິດຊູ້ລູກຄ້າ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P052', name: 'ທິດຊູ້ພະນັກງານ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P053', name: 'ຖົງມືຢາງດຳ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P054', name: 'ຖົງດຳໃຫຍ່ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P055', name: 'ຖົງເຈ້ຍນ້ອຍ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P056', name: 'ຊັນໄລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P057', name: 'ສະກ໊ອດລ້າງຖ້ວຍ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P058', name: 'ເຈ້ຍປິ້ນເຕີ້ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P059', name: 'ຈອກຕວງໃຫຍ່ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P060', name: 'ຈອກຊ໊ອດ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P061', name: 'ເຄື່ອງອົບເຂົ້າໜົມ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P062', name: 'เครื่องປັ່ນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P063', name: 'เครื่องຕີຄຣີມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P064', name: 'ເກືອ (ຂວດ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P065', name: 'ເເຟັບ', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P066', name: 'ໄມ້ພາຍ', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P067', name: 'ຫຼອດໃຫຍ່ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P068', name: 'ຫຼອດນ້ອຍ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P069', name: 'ຫຼອດຕັກ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P070', name: 'ຫຼອດກາງ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P071', name: 'ຝາໂດມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P072', name: 'ຝາຍົກດື່ມ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P073', name: 'ຖົງດ່ຽວກັບບ້ານ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P074', name: 'ຖົງດຳນ້ອຍ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P075', name: 'ຖົງໃສ່ຄົວຊອງ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P076', name: 'ຖົງຄູ່ກັບບ້ານ (ເເພັກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P077', name: 'ສາຍຄາດຮັດຈອກ (ອັນ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P078', name: 'ຈອກຮ້ອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P079', name: 'ຈອກ 22 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P081', name: 'ເບຍນ້ຳຂອງ', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' }
+            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' }
         ];
 
         let stockMovements = [];
@@ -1079,7 +1040,6 @@
             }
         }
 
-        // --- POPULATE PRODUCT DROPDOWN ---
         function populateStockMovementDropdown() {
             const select = document.getElementById('movement-item-select');
             select.innerHTML = '';
@@ -1159,7 +1119,77 @@
             });
         }
 
-        // --- EDIT STAFF FUNCTIONS (ເພີ່ມໃໝ່) ---
+        // --- RENDER ATTENDANCE LOGS IN KIOSK & UPDATE ON DUTY STAFF ---
+        function renderAttendanceLogs() {
+            const container = document.getElementById('kiosk-attendance-logs-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (attendanceLogs.length === 0) {
+                container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການປ້ຳໂມງ</p>';
+                return;
+            }
+
+            attendanceLogs.slice(0, 8).forEach(a => {
+                const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin };
+                const isClockIn = (a.type || '').toLowerCase().includes('in');
+
+                const item = document.createElement('div');
+                item.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <img src="${staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-8 h-8 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-on-surface text-xs">${staff.name}</p>
+                            <p class="text-[10px] text-on-surface-variant">${new Date(a.timestamp || Date.now()).toLocaleTimeString()} • ${a.branch || 'NP Branch'}</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                        ${a.type || 'Clock-In'}
+                    </span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // --- UPDATE ON DUTY STAFF BADGES ---
+        function updateOnDutyStaffUI() {
+            const container = document.getElementById('on-duty-staff-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Find last status of each PIN
+            const latestStatusMap = {};
+            attendanceLogs.forEach(a => {
+                if (!latestStatusMap[a.pin]) {
+                    latestStatusMap[a.pin] = a.type;
+                }
+            });
+
+            const activeStaffPins = Object.keys(latestStatusMap).filter(pin => (latestStatusMap[pin] || '').toLowerCase().includes('in'));
+
+            document.getElementById('dash-active-staff').textContent = `${activeStaffPins.length} ຄົນ`;
+
+            if (activeStaffPins.length === 0) {
+                container.innerHTML = '<p class="text-xs text-outline italic">ບໍ່ມີພະນັກງານປ້ຳໂມງເຂົ້າວຽກໃນຕອນນີ້</p>';
+                return;
+            }
+
+            activeStaffPins.forEach(pin => {
+                const staff = partnersData.find(p => p.pin === pin);
+                if (staff) {
+                    const badge = document.createElement('div');
+                    badge.className = 'flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-900 shadow-sm';
+                    badge.innerHTML = `
+                        <img src="${staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-6 h-6 rounded-full object-cover">
+                        <span>${staff.name} (${staff.role})</span>
+                    `;
+                    container.appendChild(badge);
+                }
+            });
+        }
+
+        // --- EDIT STAFF FUNCTIONS ---
         function openEditStaffModal(pin) {
             const p = partnersData.find(item => item.pin === pin);
             if (!p) return;
@@ -1230,7 +1260,6 @@
             }
         }
 
-        // --- DELETE STOCK ITEM ---
         async function deleteStock(sku, branch, name) {
             if (confirm(`ທ່ານຕ້ອງການລົບສິນຄ້າ SKU: ${sku} (${name}) ແທ້ບໍ?`)) {
                 if (supabaseClient) {
@@ -1346,7 +1375,7 @@
             }
         }
 
-        // --- RENDER STOCK TABLE (main_inventory - ພ້ອມປຸ່ມ Edit / Delete) ---
+        // --- RENDER STOCK TABLE ---
         function renderStockTable(filterCat = 'all') {
             const tbody = document.getElementById('stock-table-body');
             tbody.innerHTML = '';
@@ -1411,7 +1440,7 @@
             }
         }
 
-        // --- RENDER EMPLOYEES & PAYROLL (staff table - ພ້ອມປຸ່ມ Edit/Delete) ---
+        // --- RENDER EMPLOYEES & PAYROLL (ຄິດໄລ່ເງິນເດືອນຈາກການມາວຽກຈິງ) ---
         function renderEmployeesAndPayroll() {
             const partnerContainer = document.getElementById('partner-list-container');
             const payrollBody = document.getElementById('payroll-table-body');
@@ -1420,7 +1449,14 @@
             payrollBody.innerHTML = '';
 
             partnersData.forEach(p => {
-                // Staff Card with Edit & Delete Action Buttons
+                // Count actual clocked in days for this PIN
+                const clockedInDays = new Set(
+                    attendanceLogs
+                        .filter(a => a.pin === p.pin && (a.type || '').toLowerCase().includes('in'))
+                        .map(a => new Date(a.timestamp || Date.now()).toDateString())
+                ).size;
+
+                // Staff Card
                 const card = document.createElement('div');
                 card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
                 card.innerHTML = `
@@ -1441,7 +1477,7 @@
                             <p><span class="text-outline font-semibold">ສາຂາ:</span> ${p.branch}</p>
                             <p><span class="text-outline font-semibold">ກະວຽກ:</span> ${p.shift || 'ກະ 1'}</p>
                             <p><span class="text-outline font-semibold">ເບີໂທ:</span> ${p.phone || 'N/A'}</p>
-                            <p><span class="text-outline font-semibold">ເງິນເດືອນ:</span> <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span></p>
+                            <p><span class="text-outline font-semibold">ເງິນເດືອນພື້ນຖານ:</span> <span class="font-mono font-bold text-emerald-800">${(p.salary || 0).toLocaleString()} ກີບ</span></p>
                             <p><span class="text-outline font-semibold">ສະຫວັດດີການ:</span> <span class="font-mono text-amber-800">+${(p.benefit || 0).toLocaleString()} ກີບ</span></p>
                         </div>
                     </div>
@@ -1461,26 +1497,25 @@
                 `;
                 partnerContainer.appendChild(card);
 
-                // Payroll Row
-                const salary = p.salary || 0;
+                // Payroll Calculation based on actual attendance days
+                const baseSalary = p.salary || 3800000;
                 const benefit = p.benefit || 0;
-                const totalNet = salary + benefit;
+                // If attendance logged, calculate proportionally based on 26 work days, else default to 26
+                const actualWorkDays = clockedInDays > 0 ? clockedInDays : 26; 
+                const actualCalculatedPay = Math.round((baseSalary / 26) * actualWorkDays) + benefit;
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-surface-container-low';
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-primary">${p.pin} / ${p.staff_id || ''}</td>
                     <td class="p-3 font-bold text-on-surface">${p.name}</td>
-                    <td class="p-3 text-on-surface-variant">${p.role}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-variant">${p.emp_type || 'Full-time'}</span></td>
-                    <td class="p-3 font-mono font-bold">${salary.toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-bold">${baseSalary.toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-bold text-blue-700">${actualWorkDays} ມື້</td>
                     <td class="p-3 font-mono text-amber-800">+${benefit.toLocaleString()} ກີບ</td>
-                    <td class="p-3 font-mono font-bold text-emerald-800 text-xs">${totalNet.toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-bold text-emerald-800 text-xs">${actualCalculatedPay.toLocaleString()} ກີບ</td>
                 `;
                 payrollBody.appendChild(tr);
             });
-
-            document.getElementById('dash-active-staff').textContent = `${partnersData.length} ຄົນ`;
         }
 
         // --- TIME CLOCK PIN & ATTENDANCE LOGIC ---
@@ -1538,13 +1573,21 @@
             if (selectedPartnerForClock) {
                 const nowStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
+                const newLog = {
+                    pin: selectedPartnerForClock.pin,
+                    type: actionType,
+                    branch: selectedPartnerForClock.branch || 'NP Branch',
+                    timestamp: new Date().toISOString()
+                };
+
                 if (supabaseClient) {
-                    await supabaseClient.from('attendance').insert([{
-                        pin: selectedPartnerForClock.pin,
-                        type: actionType,
-                        branch: selectedPartnerForClock.branch || 'NP Branch'
-                    }]);
+                    await supabaseClient.from('attendance').insert([newLog]);
                 }
+
+                attendanceLogs.unshift(newLog);
+                renderAttendanceLogs();
+                updateOnDutyStaffUI();
+                renderEmployeesAndPayroll();
 
                 showToast(`✓ ບັນທຶກ ${actionType} ສຳເລັດ ສຳລັບ ${selectedPartnerForClock.name} (${nowStr})`);
                 cancelClockAction();
@@ -1600,6 +1643,8 @@
             renderEmployeesAndPayroll();
             populateStockMovementDropdown();
             renderMovementLogs();
+            renderAttendanceLogs();
+            updateOnDutyStaffUI();
             navigateTo('dashboard');
         });
     </script>
