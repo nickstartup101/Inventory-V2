@@ -276,7 +276,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 2: CURRENT STOCK -->
+            <!-- VIEW 2: CURRENT STOCK (main_inventory) -->
             <section id="view-current-stock" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                     <div>
@@ -369,14 +369,12 @@
                     <!-- Dynamic Staff Cards -->
                 </div>
 
-                <!-- ປະຫວັດການມາວຽກທັງໝົດໃນ Admin (ລາຍວັນ / ລາຍສັບດາ / ລາຍເດືອນ) (ເພີ່ມໃໝ່) -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                         <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-lg">history_toggle_off</span> ປະຫວັດການມາວຽກທັງໝົດ (Full Attendance Logs)
                         </h3>
                         
-                        <!-- Filter Pills: Daily / Weekly / Monthly -->
                         <div class="flex gap-1.5 bg-surface-container-low p-1 rounded-xl text-xs font-bold">
                             <button onclick="filterAdminAttendance('daily')" id="btn-att-daily" class="admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm">ລາຍວັນ (Daily)</button>
                             <button onclick="filterAdminAttendance('weekly')" id="btn-att-weekly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍສັບດາ (Weekly)</button>
@@ -506,7 +504,6 @@
                             <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
                         </div>
 
-                        <!-- ຕາຕະລາງສະແດງປະວັດການປ້ຳໂມງ "ສະເພາະມື້ປັດຈຸບັນ (Today Only GMT+7)" ພ້ອມ ຄຳນວນຊົ່ວໂມງເຮັດວຽກ -->
                         <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                             <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center justify-between">
                                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">today</span> ປະວັດການມາວຽກປະຈຳວັນນີ້ (Today GMT+7)</span>
@@ -924,7 +921,6 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
-        // GMT+7 Helper Date String (YYYY-MM-DD)
         function getLaosDateString(dateObj = new Date()) {
             const d = new Date(dateObj.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
             const year = d.getFullYear();
@@ -933,12 +929,12 @@
             return `${year}-${month}-${day}`;
         }
 
-        // --- FETCH DATA FROM SUPABASE ---
+        // --- FETCH DATA FROM SUPABASE (INDEPENDENT TRY-CATCH FOR EACH TABLE) ---
         async function fetchDataFromSupabase() {
             if (!supabaseClient) return;
 
+            // 1. Fetch main_inventory
             try {
-                // 1. Fetch main_inventory
                 const { data: stockRes, error: stockErr } = await supabaseClient
                     .from('main_inventory')
                     .select('*')
@@ -952,19 +948,26 @@
                     renderStockTable();
                     populateStockMovementDropdown();
                 }
+            } catch (e) { console.error("Stock Fetch Exception:", e); }
 
-                // 2. Fetch staff
+            // 2. Fetch staff (INDEPENDENT FETCH)
+            try {
                 const { data: staffRes, error: staffErr } = await supabaseClient
                     .from('staff')
                     .select('*')
                     .order('pin');
 
-                if (staffRes && staffRes.length > 0) {
+                if (staffErr) {
+                    console.error("Supabase Staff Error:", staffErr);
+                    showToast("⚠️ Staff Error: " + staffErr.message);
+                } else if (staffRes && staffRes.length > 0) {
                     partnersData = staffRes;
                     renderEmployeesAndPayroll();
                 }
+            } catch (e) { console.error("Staff Fetch Exception:", e); }
 
-                // 3. Fetch daily_inventory_movement
+            // 3. Fetch daily_inventory_movement
+            try {
                 const { data: moveRes, error: moveErr } = await supabaseClient
                     .from('daily_inventory_movement')
                     .select('*')
@@ -975,8 +978,10 @@
                     stockMovements = moveRes;
                     renderMovementLogs();
                 }
+            } catch (e) { console.error("Movement Fetch Exception:", e); }
 
-                // 4. Fetch attendance
+            // 4. Fetch attendance
+            try {
                 const { data: attRes, error: attErr } = await supabaseClient
                     .from('attendance')
                     .select('*')
@@ -985,22 +990,16 @@
                 if (attRes) {
                     attendanceLogs = attRes;
                     renderTodayKioskAttendance();
-                    renderAdminAttendanceTable('daily');
+                    renderAdminAttendanceTable(currentAdminAttFilter);
                     updateOnDutyStaffUI();
-                    renderEmployeesAndPayroll(); // Update Payroll Real-Time!
+                    renderEmployeesAndPayroll();
                 }
-            } catch (err) {
-                console.error("Supabase Exception:", err);
-            }
+            } catch (e) { console.error("Attendance Fetch Exception:", e); }
         }
 
         // --- DATA ARRAYS ---
         let isAdminLoggedIn = false;
-        let attendanceLogs = [
-            { id: 1, pin: '775533', type: 'Clock-In', branch: 'NP Branch', timestamp: new Date(Date.now() - 3600000 * 4).toISOString() },
-            { id: 2, pin: '225588', type: 'Clock-In', branch: 'NP Branch', timestamp: new Date(Date.now() - 3600000 * 8).toISOString() },
-            { id: 3, pin: '225588', type: 'Clock-Out', branch: 'NP Branch', timestamp: new Date().toISOString() }
-        ];
+        let attendanceLogs = [];
 
         let stockData = [
             { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
@@ -1089,6 +1088,85 @@
             }
         }
 
+        function populateStockMovementDropdown() {
+            const select = document.getElementById('movement-item-select');
+            select.innerHTML = '';
+
+            stockData.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.sku;
+                opt.textContent = `[${item.sku}] ${item.name} (Stock: ${item.stock || 0})`;
+                select.appendChild(opt);
+            });
+        }
+
+        function addQuickQty(amount) {
+            const input = document.getElementById('movement-qty-input');
+            const current = parseInt(input.value) || 0;
+            input.value = current + amount;
+        }
+
+        // --- HANDLE KIOSK STOCK MOVEMENT SUBMIT ---
+        async function handleKioskMovementSubmit(e) {
+            e.preventDefault();
+            const sku = document.getElementById('movement-item-select').value;
+            const movementType = document.querySelector('input[name="movement-type"]:checked').value;
+            const qty = parseInt(document.getElementById('movement-qty-input').value);
+            const note = document.getElementById('movement-note-input').value.trim() || 'ບັນທຶກ Kiosk';
+
+            const item = stockData.find(i => i.sku === sku);
+            if (!item) return;
+
+            const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
+            item.stock = newStock;
+
+            if (supabaseClient) {
+                await supabaseClient.from('daily_inventory_movement').insert([{
+                    sku: item.sku,
+                    name: item.name,
+                    type: movementType,
+                    qty: qty,
+                    note: note
+                }]);
+
+                await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
+            }
+
+            renderStockTable();
+            populateStockMovementDropdown();
+            fetchDataFromSupabase();
+
+            document.getElementById('movement-qty-input').value = 1;
+            document.getElementById('movement-note-input').value = '';
+            
+            showToast(`✓ ບັນທຶກ (${movementType}) ${item.name} ຈຳນວນ ${qty} ແລ້ວ!`);
+        }
+
+        function renderMovementLogs() {
+            const container = document.getElementById('kiosk-movement-logs-container');
+            container.innerHTML = '';
+
+            if (stockMovements.length === 0) {
+                container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການເຄື່ອນໄຫວ</p>';
+                return;
+            }
+
+            stockMovements.slice(0, 5).forEach(m => {
+                const item = document.createElement('div');
+                item.className = 'p-2 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+                item.innerHTML = `
+                    <div>
+                        <p class="font-bold text-on-surface">${m.name || m.sku}</p>
+                        <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${new Date(m.timestamp || Date.now()).toLocaleTimeString()}</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                        ${m.type === 'IN' ? '+' : '-'}${m.qty}
+                    </span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
         // --- 1. KIOSK TODAY-ONLY ATTENDANCE & DURATION (GMT+7) ---
         function renderTodayKioskAttendance() {
             const container = document.getElementById('kiosk-today-attendance-container');
@@ -1097,7 +1175,6 @@
 
             const todayStr = getLaosDateString();
 
-            // Filter today's attendance logs
             const todayLogs = attendanceLogs.filter(a => {
                 const logDate = getLaosDateString(new Date(a.timestamp || Date.now()));
                 return logDate === todayStr;
@@ -1108,7 +1185,6 @@
                 return;
             }
 
-            // Group by Staff PIN to find Clock-In, Clock-Out & Calculate Working Duration
             const staffPairs = {};
             todayLogs.forEach(a => {
                 if (!staffPairs[a.pin]) {
@@ -1160,7 +1236,7 @@
             });
         }
 
-        // --- 2. ADMIN FULL ATTENDANCE LOGS WITH FILTERS (Daily / Weekly / Monthly) ---
+        // --- 2. ADMIN FULL ATTENDANCE LOGS WITH FILTERS ---
         let currentAdminAttFilter = 'daily';
 
         function filterAdminAttendance(filterType) {
@@ -1180,7 +1256,7 @@
             tbody.innerHTML = '';
 
             const todayStr = getLaosDateString();
-            const currentMonthStr = todayStr.substring(0, 7); // YYYY-MM
+            const currentMonthStr = todayStr.substring(0, 7);
 
             let filteredLogs = attendanceLogs;
 
@@ -1216,11 +1292,10 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION FROM ACTUAL ATTENDANCE ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION ---
         function calculateRealtimePayroll(staff) {
-            const currentMonthStr = getLaosDateString().substring(0, 7); // YYYY-MM
+            const currentMonthStr = getLaosDateString().substring(0, 7);
 
-            // Get unique days clocked-in this month for this staff
             const monthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
                 return a.pin === staff.pin && logMonth === currentMonthStr && (a.type || '').toLowerCase().includes('in');
@@ -1228,17 +1303,14 @@
 
             const daysWorked = new Set(monthLogs.map(a => getLaosDateString(new Date(a.timestamp || Date.now())))).size;
 
-            // Base Calculations (Base Salary based on 26 work days per month)
             const baseSalary = staff.salary || 3500000;
             const benefit = staff.benefit || 0;
             const dailyRate = baseSalary / 26;
             const hourlyRate = dailyRate / 8;
 
-            // OT Calculation
             const otHours = staff.ot || 0;
             const otPay = Math.round(otHours * (hourlyRate * 1.5));
 
-            // Actual Net Pay Real-Time Earning
             const actualDaysPay = Math.round(dailyRate * daysWorked);
             const totalNetPay = actualDaysPay + otPay + benefit;
 
@@ -1433,7 +1505,7 @@
                 renderTodayKioskAttendance();
                 renderAdminAttendanceTable(currentAdminAttFilter);
                 updateOnDutyStaffUI();
-                renderEmployeesAndPayroll(); // Update Real-time Payroll instantly!
+                renderEmployeesAndPayroll();
 
                 showToast(`✓ ບັນທຶກ ${actionType} ສຳເລັດ ສຳລັບ ${selectedPartnerForClock.name} (${nowStr})`);
                 cancelClockAction();
