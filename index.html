@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
+    <title>LA DOLCE - Operations & Game-Style Leaderboard System</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,20 +255,35 @@
                         </div>
                     </div>
 
-                    <!-- ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking) -->
-                    <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-headline font-bold text-sm text-amber-900 flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-base text-amber-700">alarm_off</span>
-                                ⚠️ ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking)
-                            </h3>
-                            <div class="flex gap-1 bg-surface-container-low p-1 rounded-xl text-[10px] font-bold">
-                                <button onclick="setLateRankingFilter('daily')" id="btn-late-daily" class="late-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍວັນ (Daily)</button>
-                                <button onclick="setLateRankingFilter('monthly')" id="btn-late-monthly" class="late-rank-tab px-2.5 py-0.5 rounded-lg bg-amber-800 text-white shadow-sm">ລາຍເດືອນ (Monthly)</button>
+                    <!-- 🏆 GAME-STYLE LEADERBOARD (ໂພດຽມ Top 3 + ປັກໝຸດອັນດັບຂອງທ່ານ - ຕາມຮູບ [1]) -->
+                    <div class="bg-gradient-to-br from-slate-900 to-primary text-white rounded-2xl p-4 shadow-lg space-y-4">
+                        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                            <div>
+                                <h3 class="font-headline font-bold text-base text-amber-400 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-amber-400 icon-fill">emoji_events</span>
+                                    ຈັດອັນດັບພະນັກງານ (Game-Style Ranking)
+                                </h3>
+                                <p class="text-[11px] text-slate-300">ສະແດງ 3 ອັນດັບສູງສຸດເທິງໂພດຽມ</p>
+                            </div>
+                            <!-- Filter Buttons -->
+                            <div class="flex gap-1 bg-white/10 p-1 rounded-xl text-[10px] font-bold">
+                                <button onclick="setLateRankingFilter('daily')" id="btn-late-daily" class="late-rank-tab px-2.5 py-1 rounded-lg text-slate-300 hover:text-white">ລາຍວັນ</button>
+                                <button onclick="setLateRankingFilter('monthly')" id="btn-late-monthly" class="late-rank-tab px-2.5 py-1 rounded-lg bg-amber-500 text-slate-900 shadow-sm">ລາຍເດືອນ</button>
                             </div>
                         </div>
 
-                        <div id="late-ranking-container" class="space-y-2 text-xs">
+                        <!-- 👑 PODIUM TOP 3 (ອັນດັບ 1, 2, 3 ເຄິ່ງກາງ-ຊ້າຍ-ຂວາ) -->
+                        <div id="podium-container" class="flex items-end justify-center gap-2 pt-2 min-h-[160px]">
+                            <!-- Rendered dynamically via JS -->
+                        </div>
+
+                        <!-- 📜 RANKING LIST (#4 ເປັນຕົ້ນໄປ) -->
+                        <div id="late-ranking-container" class="space-y-2 text-xs pt-2 border-t border-white/10">
+                            <!-- Rendered dynamically -->
+                        </div>
+
+                        <!-- 📌 PINNED MY RANK (ປັກໝຸດອັນດັບຂອງທ່ານຢູ່ດ້ານລຸ່ມສຸດ - ແບບໃນຮູບ [1]) -->
+                        <div id="my-rank-pinned" class="p-3 bg-amber-500/20 border border-amber-400/50 rounded-xl flex items-center justify-between mt-2">
                             <!-- Rendered dynamically -->
                         </div>
                     </div>
@@ -866,8 +881,8 @@
         </div>
     </div>
 
-    <!-- ADMIN AUTH PIN MODAL (FIXED POP-UP STUCK ISSUE 100%) -->
-    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <!-- ADMIN AUTH PIN MODAL -->
+    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
@@ -1004,7 +1019,7 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
-        // Safe Date Parser for Safari / iOS Mobile / Supabase String Formats
+        // Safe Date Parser for Safari / iOS Mobile
         function parseSafeDate(ts) {
             if (!ts) return new Date();
             if (ts instanceof Date) return ts;
@@ -1536,7 +1551,7 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION (ສູດຖືກຕ້ອງ 100% ບວກຄ່າແຮງຕາມມື້ມາວຽກຈິງ) ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ສູດຖືກຕ້ອງ 100% ດຶງເງິນເດືອນຂອງໃຜລາວ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
             const shiftRule = SHIFT_RULES[staff.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
@@ -1571,6 +1586,7 @@
             let autoOtHours = 0;
             let totalLateMinutes = 0;
 
+            // ດຶງເງິນເດືອນ ແລະ ສະຫວັດດີການ ຂອງໃຜລາວໂດຍກົງ
             const baseSalary = Number(staff.salary) || 3800000;
             const benefit = Number(staff.benefit) || 0;
             const dailyRate = baseSalary / 30; // 30 ມື້
@@ -1581,7 +1597,7 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. Check Late Arrival against shift start time in GMT+7
+                    // 1. Check Late Arrival against shift start time (07:00 or 11:30) in GMT+7
                     const inInfo = getLaosTimeInfo(day.in);
                     const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
                     if (inInfo.totalMinutes > expectedStartMins) {
@@ -1599,7 +1615,7 @@
                 }
             });
 
-            // 1. ຄ່າແຮງມາວຽກຈິງ = ມື້ມາວຽກຈິງ × (ເງິນເດືອນພື້ນຖານ ÷ 30) (ບວກ 100% ບໍ່ຕິດລົບ)
+            // 1. ຄ່າແຮງມາວຽກຈິງ = ມື້ມາວຽກຈິງ × (ເງິນເດືອນພື້ນຖານ ÷ 30)  (ບວກ 100% ບໍ່ຕິດລົບ)
             const actualDaysPay = Math.round(daysWorked * dailyRate);
 
             // 2. ຄ່າ OT = ຊົ່ວໂມງ OT × 17,000 ກີບ
@@ -1732,8 +1748,8 @@
 
             const uniqueMonthDaysCount = new Set(monthLogs.map(a => getLaosDateString(parseSafeDate(a.timestamp)))).size;
 
-            // ກົດລະບຽບ: ຖ້າເລືອກເບິ່ງ "ລາຍເດືອນ" ແຕ່ຂໍ້ມູນຍັງບໍ່ທັນເກີນ 7 ວັນ ➔ ໃຫ້ແຈ້ງເຕືອນລໍຖ້າເກັບຂໍ້ມູນ
-            if (currentLateRankingFilter === 'monthly' && uniqueMonthDaysCount < 7) {
+            // ກົດລະບຽບ: ຖ້າເລືອກເບິ່ງ "ລາຍເດືອນ" ແຕ່ຂໍ້ມູນຍັງບໍ່ທັນເກີນ 7 ວັນ ➔ ສະແດງຂໍ້ຄວາມລໍຖ້າເກັບຂໍ້ມູນໃຫ້ຄົບ 7 ວັນ
+            if (currentLateRankingFilter === 'monthly' && uniqueMonthDaysCount <= 7) {
                 const progressPct = Math.min(100, Math.round((uniqueMonthDaysCount / 7) * 100));
                 container.innerHTML = `
                     <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-center space-y-2">
@@ -2135,7 +2151,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED POP-UP STUCK ISSUE 100%) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
