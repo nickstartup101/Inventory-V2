@@ -200,7 +200,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ແຜງຄວບຄຸມລວມ (Operations Hub)</h1>
-                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ ແລະ ບັນທຶກເວລາ ຮ້ານກາເຟ La Dolce cafe (ສາຂານ້ຳພຸ)</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ ແລະ ບັນທຶກເວລາ ຮ້ານກາເຟ Luckin Coffee (ສາຂານ້ຳພຸ)</p>
                     </div>
                 </div>
 
@@ -276,7 +276,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 2: CURRENT STOCK (main_inventory) -->
+            <!-- VIEW 2: CURRENT STOCK -->
             <section id="view-current-stock" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                     <div>
@@ -400,12 +400,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ & ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ</h1>
-                        <p class="text-amber-800 text-xs">ຄິດໄລ່ຈ່າຍຕາມ: (ເງິນເດືອນພື້ນຖານ ÷ 26 ມື້ × ມື້ມາວຽກ) + OT + ສະຫວັດດີການ</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ Real-Time (ຫານ 30 ມື້ + OT 17k)</h1>
+                        <p class="text-amber-800 text-xs">ຄ່າແຮງ/ມື້ = ເງິນເດືອນ ÷ 30 | OT = 17,000 ກີບ/ຊມ (ດຶງອັດໂນມັດເມື່ອເຮັດວຽກກາຍ 9 ຊມ)</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -419,9 +419,9 @@
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ (Name)</th>
-                                    <th class="p-3">ເງິນເດືອນພື້ນຖານ (Base Salary)</th>
+                                    <th class="p-3">ເງິນເດືອນ (Base Salary)</th>
                                     <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT (Hours / Pay)</th>
+                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍ 9ຊມ)</th>
                                     <th class="p-3">ສະຫວັດດີການ (Benefit)</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -613,13 +613,13 @@
         </div>
     </div>
 
-    <!-- EDIT STAFF / PARTNER MODAL -->
+    <!-- EDIT STAFF / PARTNER MODAL (ພ້ອມອັບໂຫຼດ & ບີບອັດຮູບ) -->
     <div id="edit-staff-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
                 <div>
                     <h3 class="font-headline font-bold text-base text-primary">ແກ້ໄຂຂໍ້ມູນພະນັກງານ (Edit Staff)</h3>
-                    <p class="text-xs text-on-surface-variant">ແກ້ໄຂເງິນເດືອນ, ສະຫວັດດີການ, ຮູບພາບ ແລະ ຂໍ້ມູນສ່ວນຕົວ</p>
+                    <p class="text-xs text-on-surface-variant">ແກ້ໄຂເງິນເດືອນ, ສະຫວັດດີການ, ອັບໂຫຼດຮູບ ແລະ ຂໍ້ມູນສ່ວນຕົວ</p>
                 </div>
                 <button onclick="closeModal('edit-staff-modal')" class="text-on-surface-variant hover:text-error">
                     <span class="material-symbols-outlined">close</span>
@@ -673,26 +673,14 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ປະເພດ (Emp Type)</label>
-                        <select id="edit-staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="Full-time">Full-time</option>
-                            <option value="Part-time">Part-time</option>
-                        </select>
+                <!-- ບ່ອນອັບໂຫຼດ & ບີບອັດຮູບພາບພະນັກງານ -->
+                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
+                    <label class="block text-xs font-bold text-primary mb-1">📷 ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)</label>
+                    <input type="file" id="edit-staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'edit-staff-photo-input', 'edit-preview-img')" class="w-full text-xs">
+                    <div class="flex items-center gap-3 pt-1">
+                        <img id="edit-preview-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120" class="w-10 h-10 rounded-full object-cover border border-primary">
+                        <input id="edit-staff-photo-input" type="text" placeholder="ຫຼື ໃສ່ URL ຮູບພາບ" class="w-full text-[11px] px-2 py-1.5 border border-outline-variant rounded-lg font-mono">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
-                        <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
-                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant mb-1">Link ຮູບພາບພະນັກງານ (photo_url)</label>
-                    <input id="edit-staff-photo-input" type="url" placeholder="https://..." class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                 </div>
 
                 <div class="pt-3 flex justify-end gap-2 border-t border-surface-container-high">
@@ -703,7 +691,7 @@
         </div>
     </div>
 
-    <!-- ADD NEW STAFF / PARTNER MODAL -->
+    <!-- ADD NEW STAFF MODAL -->
     <div id="partner-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -761,26 +749,14 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ປະເພດ (Emp Type)</label>
-                        <select id="staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="Full-time">Full-time</option>
-                            <option value="Part-time">Part-time</option>
-                        </select>
+                <!-- ອັບໂຫຼດຮູບພາບພະນັກງານໃໝ່ -->
+                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
+                    <label class="block text-xs font-bold text-primary mb-1">📷 ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)</label>
+                    <input type="file" id="staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'staff-photo-input', 'add-preview-img')" class="w-full text-xs">
+                    <div class="flex items-center gap-3 pt-1">
+                        <img id="add-preview-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120" class="w-10 h-10 rounded-full object-cover border border-primary">
+                        <input id="staff-photo-input" type="text" placeholder="ຫຼື ໃສ່ URL ຮູບພາບ" class="w-full text-[11px] px-2 py-1.5 border border-outline-variant rounded-lg font-mono">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
-                        <select id="staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
-                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-on-surface-variant mb-1">URL ຮູບພາບພະນັກງານ (photo_url)</label>
-                    <input id="staff-photo-input" type="url" placeholder="https://images.unsplash.com/..." class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                 </div>
 
                 <div class="pt-3 flex justify-end gap-2 border-t border-surface-container-high">
@@ -929,7 +905,49 @@
             return `${year}-${month}-${day}`;
         }
 
-        // --- FETCH DATA FROM SUPABASE (INDEPENDENT TRY-CATCH FOR EACH TABLE) ---
+        // --- CLIENT-SIDE IMAGE COMPRESSOR (JS CANVAS) ---
+        function handleImageCompress(fileInput, targetInputId, previewImgId) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 200;
+                    const MAX_HEIGHT = 200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // Compress 70%
+                    document.getElementById(targetInputId).value = compressedBase64;
+                    document.getElementById(previewImgId).src = compressedBase64;
+                    showToast('✓ ບີບອັດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
+                };
+            };
+        }
+
+        // --- FETCH DATA FROM SUPABASE ---
         async function fetchDataFromSupabase() {
             if (!supabaseClient) return;
 
@@ -950,7 +968,7 @@
                 }
             } catch (e) { console.error("Stock Fetch Exception:", e); }
 
-            // 2. Fetch staff (INDEPENDENT FETCH)
+            // 2. Fetch staff
             try {
                 const { data: staffRes, error: staffErr } = await supabaseClient
                     .from('staff')
@@ -959,7 +977,6 @@
 
                 if (staffErr) {
                     console.error("Supabase Staff Error:", staffErr);
-                    showToast("⚠️ Staff Error: " + staffErr.message);
                 } else if (staffRes && staffRes.length > 0) {
                     partnersData = staffRes;
                     renderEmployeesAndPayroll();
@@ -1292,31 +1309,62 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ ດຶງອັດໂນມັດເມື່ອກາຍ 9 ຊມ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
 
-            const monthLogs = attendanceLogs.filter(a => {
+            // Filter current month logs for this staff
+            const staffMonthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
-                return a.pin === staff.pin && logMonth === currentMonthStr && (a.type || '').toLowerCase().includes('in');
+                return a.pin === staff.pin && logMonth === currentMonthStr;
             });
 
-            const daysWorked = new Set(monthLogs.map(a => getLaosDateString(new Date(a.timestamp || Date.now())))).size;
+            // Group logs by day YYYY-MM-DD
+            const daysMap = {};
+            staffMonthLogs.forEach(a => {
+                const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
+                if (!daysMap[dateKey]) daysMap[dateKey] = { in: null, out: null };
 
-            const baseSalary = staff.salary || 3500000;
+                const type = (a.type || '').toLowerCase();
+                if (type.includes('in') && !daysMap[dateKey].in) {
+                    daysMap[dateKey].in = new Date(a.timestamp || Date.now());
+                } else if (type.includes('out') && !daysMap[dateKey].out) {
+                    daysMap[dateKey].out = new Date(a.timestamp || Date.now());
+                }
+            });
+
+            let daysWorked = 0;
+            let autoOtHours = 0;
+
+            Object.keys(daysMap).forEach(dateKey => {
+                const day = daysMap[dateKey];
+                if (day.in) {
+                    daysWorked++;
+                    if (day.in && day.out) {
+                        const diffMs = day.out - day.in;
+                        const diffHours = diffMs / (1000 * 60 * 60);
+                        if (diffHours > 9) {
+                            autoOtHours += (diffHours - 9); // Extra hours over 9 hours
+                        }
+                    }
+                }
+            });
+
+            // Formula 1: Daily Wage = Base Salary / 30
+            const baseSalary = staff.salary || 3800000;
             const benefit = staff.benefit || 0;
-            const dailyRate = baseSalary / 26;
-            const hourlyRate = dailyRate / 8;
+            const dailyRate = baseSalary / 30;
 
-            const otHours = staff.ot || 0;
-            const otPay = Math.round(otHours * (hourlyRate * 1.5));
+            // Formula 2: Total OT = Manual OT + Auto OT from attendance (> 9 hrs)
+            const totalOtHours = Math.round((staff.ot || 0) + autoOtHours);
+            const otPay = totalOtHours * 17000; // Fixed OT 17,000 Kip / Hour
 
             const actualDaysPay = Math.round(dailyRate * daysWorked);
             const totalNetPay = actualDaysPay + otPay + benefit;
 
             return {
                 daysWorked,
-                otHours,
+                otHours: totalOtHours,
                 dailyRate: Math.round(dailyRate),
                 otPay,
                 actualDaysPay,
@@ -1534,6 +1582,7 @@
             document.getElementById('edit-staff-type-input').value = p.emp_type || 'Full-time';
             document.getElementById('edit-staff-shift-input').value = p.shift || 'ກະ 1';
             document.getElementById('edit-staff-photo-input').value = p.photo_url || '';
+            document.getElementById('edit-preview-img').src = p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
             openModal('edit-staff-modal');
         }
@@ -1668,7 +1717,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -1692,10 +1741,10 @@
         }
 
         function verifyAdminPinInput() {
-            const input = document.getElementById('modal-admin-pin-input').value;
+            const input = document.getElementById('modal-admin-pin-input').value.trim();
             if (input === '7777' || input === '777777') {
                 unlockAdminMode();
-                closeModal('admin-pin-modal');
+                closeModal('admin-pin-modal'); // ປິດ POPUP ອັດໂນມັດທັນທີ!
                 document.getElementById('modal-admin-pin-input').value = '';
                 navigateTo('employees');
             } else {
