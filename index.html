@@ -263,8 +263,8 @@
                                 ⚠️ ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking)
                             </h3>
                             <div class="flex gap-1 bg-surface-container-low p-1 rounded-xl text-[10px] font-bold">
-                                <button onclick="setLateRankingFilter('daily')" id="btn-late-daily" class="late-rank-tab px-2.5 py-0.5 rounded-lg bg-amber-800 text-white shadow-sm">ລາຍວັນ (Daily)</button>
-                                <button onclick="setLateRankingFilter('monthly')" id="btn-late-monthly" class="late-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍເດືອນ (Monthly)</button>
+                                <button onclick="setLateRankingFilter('daily')" id="btn-late-daily" class="late-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍວັນ (Daily)</button>
+                                <button onclick="setLateRankingFilter('monthly')" id="btn-late-monthly" class="late-rank-tab px-2.5 py-0.5 rounded-lg bg-amber-800 text-white shadow-sm">ລາຍເດືອນ (Monthly)</button>
                             </div>
                         </div>
 
@@ -867,7 +867,7 @@
     </div>
 
     <!-- ADMIN AUTH PIN MODAL (FIXED POP-UP STUCK ISSUE 100%) -->
-    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
@@ -1004,8 +1004,20 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
+        function parseSafeDate(ts) {
+            if (!ts) return new Date();
+            if (ts instanceof Date) return ts;
+            let str = String(ts).trim();
+            if (str.includes(' ') && !str.includes('T')) {
+                str = str.replace(' ', 'T');
+            }
+            const d = new Date(str);
+            return isNaN(d.getTime()) ? new Date() : d;
+        }
+
         function getLaosDateString(dateObj = new Date()) {
-            const d = new Date(dateObj.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
+            const safeD = parseSafeDate(dateObj);
+            const d = new Date(safeD.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
@@ -1013,7 +1025,7 @@
         }
 
         function getLaosTimeInfo(timestamp) {
-            const dt = new Date(timestamp);
+            const dt = parseSafeDate(timestamp);
             const laosStr = dt.toLocaleTimeString('en-US', { timeZone: 'Asia/Vientiane', hour12: false });
             const parts = laosStr.split(':');
             const hours = parseInt(parts[0]) || 0;
@@ -1152,7 +1164,7 @@
             { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', dob: '15/08/1998', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
             { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', dob: '22/11/1999', emp_type: 'Full-time', shift: 'ກະ 1', salary: 4500000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
             { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', dob: '03/04/2000', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
-            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 2', salary: 4000000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60', ot: 5 },
+            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 2', salary: 4000000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
             { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', dob: '12/07/1996', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
             { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', dob: '05/09/2001', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
         ];
@@ -1295,7 +1307,7 @@
                 item.innerHTML = `
                     <div>
                         <p class="font-bold text-on-surface">${m.name || m.sku}</p>
-                        <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${new Date(m.timestamp || Date.now()).toLocaleTimeString()}</p>
+                        <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${parseSafeDate(m.timestamp).toLocaleTimeString()}</p>
                     </div>
                     <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
                         ${m.type === 'IN' ? '+' : '-'}${m.qty}
@@ -1401,7 +1413,7 @@
             const todayStr = getLaosDateString();
 
             const todayLogs = attendanceLogs.filter(a => {
-                const logDate = getLaosDateString(new Date(a.timestamp || Date.now()));
+                const logDate = getLaosDateString(parseSafeDate(a.timestamp));
                 return logDate === todayStr;
             });
 
@@ -1416,14 +1428,14 @@
                     staffPairs[a.pin] = { clockIn: null, clockOut: null };
                 }
                 const type = (a.type || '').toLowerCase();
-                const logTime = new Date(a.timestamp || Date.now());
+                const logTime = parseSafeDate(a.timestamp);
 
                 if (type.includes('in')) {
-                    if (!staffPairs[a.pin].clockIn || logTime < new Date(staffPairs[a.pin].clockIn.timestamp)) {
+                    if (!staffPairs[a.pin].clockIn || logTime < parseSafeDate(staffPairs[a.pin].clockIn.timestamp)) {
                         staffPairs[a.pin].clockIn = a;
                     }
                 } else if (type.includes('out')) {
-                    if (!staffPairs[a.pin].clockOut || logTime > new Date(staffPairs[a.pin].clockOut.timestamp)) {
+                    if (!staffPairs[a.pin].clockOut || logTime > parseSafeDate(staffPairs[a.pin].clockOut.timestamp)) {
                         staffPairs[a.pin].clockOut = a;
                     }
                 }
@@ -1433,14 +1445,14 @@
                 const staff = partnersData.find(p => p.pin === pin) || { name: 'PIN: ' + pin };
                 const pair = staffPairs[pin];
                 
-                let inTime = pair.clockIn ? new Date(pair.clockIn.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
-                let outTime = pair.clockOut ? new Date(pair.clockOut.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+                let inTime = pair.clockIn ? parseSafeDate(pair.clockIn.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+                let outTime = pair.clockOut ? parseSafeDate(pair.clockOut.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
                 
                 let durationText = 'ກຳລັງເຮັດວຽກຢູ່...';
                 let durationBadgeClass = 'bg-emerald-100 text-emerald-800';
 
                 if (pair.clockIn && pair.clockOut) {
-                    const diffMs = Math.max(0, new Date(pair.clockOut.timestamp) - new Date(pair.clockIn.timestamp));
+                    const diffMs = Math.max(0, parseSafeDate(pair.clockOut.timestamp) - parseSafeDate(pair.clockIn.timestamp));
                     const hours = Math.floor(diffMs / (1000 * 60 * 60));
                     const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                     durationText = `ເຮັດວຽກ: ${hours} ຊມ ${mins} ນາທີ`;
@@ -1492,9 +1504,9 @@
             let filteredLogs = attendanceLogs;
 
             if (filterType === 'daily') {
-                filteredLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())) === todayStr);
+                filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)) === todayStr);
             } else if (filterType === 'monthly') {
-                filteredLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())).startsWith(currentMonthStr));
+                filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)).startsWith(currentMonthStr));
             }
 
             if (filteredLogs.length === 0) {
@@ -1504,7 +1516,7 @@
 
             filteredLogs.forEach(a => {
                 const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin };
-                const dt = new Date(a.timestamp || Date.now());
+                const dt = parseSafeDate(a.timestamp);
                 const isClockIn = (a.type || '').toLowerCase().includes('in');
 
                 const tr = document.createElement('tr');
@@ -1523,24 +1535,24 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION (ດຶງເງິນເດືອນຂອງໃຜລາວ 100% ບໍ່ຕິດລົບ) ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ຄິດໄລ່ຖືກຕ້ອງ 100% ບໍ່ຕິດລົບ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
             const shiftRule = SHIFT_RULES[staff.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
-            const stdShiftHours = 8; // Paid standard shift hours
+            const stdShiftHours = 8; // Standard paid shift hours
 
             const staffMonthLogs = attendanceLogs.filter(a => {
-                const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
+                const logMonth = getLaosDateString(parseSafeDate(a.timestamp)).substring(0, 7);
                 return a.pin === staff.pin && logMonth === currentMonthStr;
             });
 
-            // Group logs by Day YYYY-MM-DD (Keep EARLIEST In and LATEST Out)
+            // Group logs by Day YYYY-MM-DD (Keep EARLIEST Clock-In and LATEST Clock-Out)
             const daysMap = {};
             staffMonthLogs.forEach(a => {
-                const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
+                const dateKey = getLaosDateString(parseSafeDate(a.timestamp));
                 if (!daysMap[dateKey]) daysMap[dateKey] = { in: null, out: null };
 
-                const logTime = new Date(a.timestamp || Date.now());
+                const logTime = parseSafeDate(a.timestamp);
                 const type = (a.type || '').toLowerCase();
 
                 if (type.includes('in')) {
@@ -1571,7 +1583,7 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. Check Late Arrival against shift start time (07:00 or 11:30) in GMT+7
+                    // Check Late Arrival against shift start time (07:00 or 11:30) in GMT+7
                     const inInfo = getLaosTimeInfo(day.in);
                     const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
                     if (inInfo.totalMinutes > expectedStartMins) {
@@ -1581,7 +1593,7 @@
                     if (day.in && day.out && day.out > day.in) {
                         const outInfo = getLaosTimeInfo(day.out);
                         const expectedEndMins = shiftRule.endHour * 60 + shiftRule.endMin;
-                        const workedMs = day.out - day.in;
+                        const workedMs = Math.max(0, day.out - day.in);
                         const workedHours = workedMs / (1000 * 60 * 60);
 
                         // Check if Shift Completed (Clock Out at or after scheduled end time: 16:00 or 20:00)
@@ -1594,7 +1606,7 @@
                             }
                         } else {
                             // Incomplete shift: pay by actual worked hours (Positive)
-                            actualDaysPay += Math.round(hourlyRate * Math.max(0, workedHours));
+                            actualDaysPay += Math.round(hourlyRate * workedHours);
                         }
                     } else {
                         // Default full daily rate for worked day
@@ -1702,7 +1714,7 @@
         }
 
         // --- RENDER LATE ARRIVAL RANKING (ກົດລະບຽບ: ລາຍເດືອນຕ້ອງມີຂໍ້ມູນເກີນ 7 ວັນກ່ອນ) ---
-        let currentLateRankingFilter = 'daily';
+        let currentLateRankingFilter = 'monthly';
 
         function setLateRankingFilter(filterType) {
             currentLateRankingFilter = filterType;
@@ -1725,11 +1737,11 @@
 
             // Calculate unique attendance days logged in the current month
             const monthLogs = attendanceLogs.filter(a => {
-                const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
+                const logMonth = getLaosDateString(parseSafeDate(a.timestamp)).substring(0, 7);
                 return logMonth === currentMonthStr;
             });
 
-            const uniqueMonthDaysCount = new Set(monthLogs.map(a => getLaosDateString(new Date(a.timestamp || Date.now())))).size;
+            const uniqueMonthDaysCount = new Set(monthLogs.map(a => getLaosDateString(parseSafeDate(a.timestamp)))).size;
 
             // ກົດລະບຽບ: ຖ້າເລືອກເບິ່ງ "ລາຍເດືອນ" ແຕ່ຂໍ້ມູນຍັງບໍ່ທັນເກີນ 7 ວັນ ➔ ໃຫ້ແຈ້ງເຕືອນລໍຖ້າເກັບຂໍ້ມູນ
             if (currentLateRankingFilter === 'monthly' && uniqueMonthDaysCount <= 7) {
@@ -1748,7 +1760,7 @@
 
             // Filter Attendance Logs for Ranking
             const targetLogs = attendanceLogs.filter(a => {
-                const logDate = getLaosDateString(new Date(a.timestamp || Date.now()));
+                const logDate = getLaosDateString(parseSafeDate(a.timestamp));
                 if (currentLateRankingFilter === 'daily') {
                     return logDate === todayStr;
                 } else {
@@ -1756,7 +1768,7 @@
                 }
             });
 
-            // Calculate Late Minutes for each staff member
+            // Calculate Late Minutes for each staff member accurately from daily EARLIEST Clock-Ins
             const rankingData = partnersData.map(p => {
                 const shiftRule = SHIFT_RULES[p.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
                 const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
@@ -1765,8 +1777,8 @@
 
                 const daysMap = {};
                 pLogs.forEach(a => {
-                    const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
-                    const logTime = new Date(a.timestamp || Date.now());
+                    const dateKey = getLaosDateString(parseSafeDate(a.timestamp));
+                    const logTime = parseSafeDate(a.timestamp);
                     if (!daysMap[dateKey] || logTime < daysMap[dateKey]) {
                         daysMap[dateKey] = logTime;
                     }
@@ -1847,7 +1859,7 @@
             container.innerHTML = '';
 
             const todayStr = getLaosDateString();
-            const todayLogs = attendanceLogs.filter(a => getLaosDateString(new Date(a.timestamp || Date.now())) === todayStr);
+            const todayLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)) === todayStr);
 
             const latestStatusMap = {};
             todayLogs.forEach(a => {
