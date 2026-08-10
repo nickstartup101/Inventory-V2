@@ -255,7 +255,7 @@
                         </div>
                     </div>
 
-                    <!-- ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking) - ພ້ອມປຸ່ມເລືອກ ລາຍວັນ / ລາຍເດືອນ -->
+                    <!-- ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking) -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-amber-900 flex items-center gap-1.5">
@@ -466,12 +466,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຖືກຕ້ອງ 100% ບໍ່ຕິດລົບ) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຖືກຕ້ອງ 100% ບວກຄ່າແຮງຕາມມື້ມາວຽກຈິງ) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງ/ມື້ = ເງິນເດືອນ÷30 | ຊມ = ÷8)</h1>
-                        <p class="text-amber-800 text-xs">ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (16:00) / ກະ 2 (20:00) = OT 17,000 ກີບ/ຊມ</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງມາວຽກຈິງ + OT + ສະຫວັດດີການ)</h1>
+                        <p class="text-amber-800 text-xs">ຄ່າແຮງມາວຽກຈິງ = (ເງິນເດືອນ ÷ 30) × ມື້ມາວຽກ | OT 17,000 ກີບ/ຊມ ຫຼັງ 16:00 (ກະ 1) / 20:00 (ກະ 2)</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -488,7 +488,7 @@
                                     <th class="p-3">ກະວຽກ (Shift)</th>
                                     <th class="p-3">ເງິນເດືອນ (Base Salary)</th>
                                     <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍ 16:00/20:00)</th>
+                                    <th class="p-3">OT 17,000ກີບ/ຊມ</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -867,7 +867,7 @@
     </div>
 
     <!-- ADMIN AUTH PIN MODAL (FIXED POP-UP STUCK ISSUE 100%) -->
-    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-4">
+    <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
@@ -1012,7 +1012,6 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Get Laos Local Time Info
         function getLaosTimeInfo(timestamp) {
             const dt = new Date(timestamp);
             const laosStr = dt.toLocaleTimeString('en-US', { timeZone: 'Asia/Vientiane', hour12: false });
@@ -1151,9 +1150,9 @@
 
         let partnersData = [
             { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', dob: '15/08/1998', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
-            { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', dob: '22/11/1999', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3700000, benefit: 450000, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
+            { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', dob: '22/11/1999', emp_type: 'Full-time', shift: 'ກະ 1', salary: 4500000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
             { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', dob: '03/04/2000', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
-            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
+            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 2', salary: 4000000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
             { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', dob: '12/07/1996', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
             { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', dob: '05/09/2001', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
         ];
@@ -1441,7 +1440,7 @@
                 let durationBadgeClass = 'bg-emerald-100 text-emerald-800';
 
                 if (pair.clockIn && pair.clockOut) {
-                    const diffMs = new Date(pair.clockOut.timestamp) - new Date(pair.clockIn.timestamp);
+                    const diffMs = Math.max(0, new Date(pair.clockOut.timestamp) - new Date(pair.clockIn.timestamp));
                     const hours = Math.floor(diffMs / (1000 * 60 * 60));
                     const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                     durationText = `ເຮັດວຽກ: ${hours} ຊມ ${mins} ນາທີ`;
@@ -1562,7 +1561,7 @@
 
             const baseSalary = staff.salary || 3800000;
             const benefit = staff.benefit || 0;
-            const dailyRate = baseSalary / 30;         // ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ 30
+            const dailyRate = baseSalary / 30;            // ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ 30
             const hourlyRate = dailyRate / stdShiftHours; // ຄ່າແຮງຕໍ່ຊົ່ວໂມງ = ຄ່າແຮງຕໍ່ມື້ ÷ 8
 
             Object.keys(daysMap).forEach(dateKey => {
@@ -1571,14 +1570,14 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. Check Late Arrival against shift start time (07:00 or 11:30) in GMT+7
+                    // Check Late Arrival against shift start time in GMT+7
                     const inInfo = getLaosTimeInfo(day.in);
                     const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
                     if (inInfo.totalMinutes > expectedStartMins) {
                         totalLateMinutes += (inInfo.totalMinutes - expectedStartMins);
                     }
 
-                    if (day.in && day.out) {
+                    if (day.in && day.out && day.out > day.in) {
                         const outInfo = getLaosTimeInfo(day.out);
                         const expectedEndMins = shiftRule.endHour * 60 + shiftRule.endMin;
                         const workedMs = day.out - day.in;
@@ -1594,10 +1593,10 @@
                             }
                         } else {
                             // Incomplete shift: pay by actual worked hours
-                            actualDaysPay += Math.round(hourlyRate * workedHours);
+                            actualDaysPay += Math.round(hourlyRate * Math.max(0, workedHours));
                         }
                     } else {
-                        // Default full day rate if clocked in
+                        // Default full daily rate for worked day
                         actualDaysPay += Math.round(dailyRate);
                     }
                 }
@@ -1701,7 +1700,7 @@
             });
         }
 
-        // --- RENDER LATE ARRIVAL RANKING (WITH DAILY / MONTHLY FILTER & MOST LATE HIGHLIGHT) ---
+        // --- RENDER LATE ARRIVAL RANKING ON DASHBOARD & MOST LATE OF THE MONTH ---
         let currentLateRankingFilter = 'monthly';
 
         function setLateRankingFilter(filterType) {
@@ -1733,15 +1732,13 @@
                 }
             });
 
-            // Calculate Late Minutes for each staff member accurately
+            // Calculate Late Minutes for each staff member accurately from daily EARLIEST Clock-Ins
             const rankingData = partnersData.map(p => {
                 const shiftRule = SHIFT_RULES[p.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
                 const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
 
-                // Find all Clock-Ins for this staff in target logs
                 const pLogs = targetLogs.filter(a => a.pin === p.pin && (a.type || '').toLowerCase().includes('in'));
 
-                // Group by Day and get EARLIEST Clock-In
                 const daysMap = {};
                 pLogs.forEach(a => {
                     const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
@@ -1752,10 +1749,13 @@
                 });
 
                 let lateMins = 0;
+                let lateCount = 0;
                 Object.values(daysMap).forEach(clockInTime => {
                     const inInfo = getLaosTimeInfo(clockInTime);
                     if (inInfo.totalMinutes > expectedStartMins) {
-                        lateMins += (inInfo.totalMinutes - expectedStartMins);
+                        const minsLate = inInfo.totalMinutes - expectedStartMins;
+                        lateMins += minsLate;
+                        lateCount++;
                     }
                 });
 
@@ -1764,7 +1764,8 @@
                     role: p.role,
                     shift: p.shift || 'ກະ 1',
                     photo: p.photo_url,
-                    lateMins
+                    lateMins,
+                    lateCount
                 };
             }).sort((a, b) => b.lateMins - a.lateMins);
 
@@ -1785,6 +1786,7 @@
                     <div>
                         <span class="text-[9px] font-extrabold text-red-800 bg-red-200 px-2 py-0.5 rounded-full uppercase">👑 ມາຊ້າຫຼາຍທີ່ສຸດ (${currentLateRankingFilter === 'daily' ? 'ມື້ນີ້' : 'ປະຈຳເດືອນ'})</span>
                         <h4 class="font-bold text-xs text-on-surface mt-0.5">${mostLate.name} (${mostLate.shift})</h4>
+                        <p class="text-[10px] text-red-700 font-semibold">ມາຊ້າ ${mostLate.lateCount} ຄັ້ງ (ລວມ ${formatMinutesToHours(mostLate.lateMins)})</p>
                     </div>
                 </div>
                 <span class="px-2 py-1 rounded font-bold text-[10px] bg-red-600 text-white">
@@ -1793,7 +1795,7 @@
             `;
             container.appendChild(highlightCard);
 
-            // Remaining Ranking
+            // Remaining Ranking List
             lateStaff.forEach((item, idx) => {
                 const el = document.createElement('div');
                 el.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
@@ -1803,7 +1805,7 @@
                         <img src="${item.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-7 h-7 rounded-full object-cover">
                         <div>
                             <p class="font-bold text-on-surface text-xs">${item.name}</p>
-                            <p class="text-[10px] text-outline">${item.shift}</p>
+                            <p class="text-[10px] text-outline">${item.shift} • ຊ້າ ${item.lateCount} ຄັ້ງ</p>
                         </div>
                     </div>
                     <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error">
