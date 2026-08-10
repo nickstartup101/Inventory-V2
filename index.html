@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Operations, Stock Analytics & HRM</title>
+    <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,6 +134,7 @@
                 <span class="font-headline font-medium text-xs">ເຄື່ອງ Kiosk (ເວລາ & ສະຕ໋ອກ)</span>
             </a>
 
+            <!-- HRM Admin Restricted Links -->
             <div class="pt-2 my-2 border-t border-primary-container/40">
                 <a href="#employees" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">badge</span>
@@ -242,14 +243,27 @@
                     </div>
                 </div>
 
-                <!-- Currently On Duty Staff Section -->
-                <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
-                    <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                        📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Currently Clocked-In)
-                    </h3>
-                    <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5">
-                        <!-- Rendered dynamically -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Currently On Duty Staff Section -->
+                    <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
+                        <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                            📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Currently Clocked-In)
+                        </h3>
+                        <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking) -->
+                    <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
+                        <h3 class="font-headline font-bold text-sm text-amber-900 mb-3 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base text-amber-700">alarm_off</span>
+                            ⚠️ ຈັດອັນດັບການມາຊ້າປະຈຳເດືອນ (Late Arrival Ranking)
+                        </h3>
+                        <div id="late-ranking-container" class="space-y-2 text-xs">
+                            <!-- Rendered dynamically -->
+                        </div>
                     </div>
                 </div>
 
@@ -328,14 +342,13 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: INVENTORY METRICS & BURN RATE ANALYTICS (ເພີ່ມໃໝ່ສົມບູນ) -->
+            <!-- VIEW 3: INVENTORY METRICS & BURN RATE ANALYTICS -->
             <section id="view-inventory" class="view-panel space-y-5">
                 <div>
                     <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & Burn Rate (Stock Analytics)</h1>
                     <p class="text-on-surface-variant text-xs mt-0.5">ວິເຄາະອັດຕາການໝົດໄປຂອງວັດຖຸດິບ (Burn Rate), ຈັດອັນດັບການໃຊ້ງານ ແລະ ປະມານການມື້ສະຕ໋ອກໝົດ</p>
                 </div>
 
-                <!-- Burn Rate Metrics Overview Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <p class="text-[11px] text-on-surface-variant font-bold uppercase">🔥 ອັດຕາການເບີກໃຊ້ວັດຖຸດິບລວມ (Burn Rate)</p>
@@ -356,7 +369,6 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Weekly Usage Chart Container -->
                 <div class="bg-surface rounded-2xl p-4 sm:p-6 border border-outline-variant/40 shadow-sm space-y-3">
                     <div class="flex justify-between items-center">
                         <h3 class="font-headline font-bold text-base text-on-surface flex items-center gap-1.5">
@@ -367,14 +379,13 @@
                     </div>
 
                     <div class="w-full h-56 sm:h-64 relative flex items-end justify-between gap-2 sm:gap-4 pt-8 px-2 border-b border-l border-outline-variant/60" id="analytics-chart-container">
-                        <!-- Rendered dynamically with percentages & tooltips -->
+                        <!-- Rendered dynamically -->
                     </div>
                     <div class="flex justify-between text-[11px] font-bold text-on-surface-variant mt-2 px-1">
                         <span>ຈັນ</span><span>ອັງຄານ</span><span>ພຸດ</span><span>ພະຫັດ</span><span>ສຸກ</span><span>ເສົາ</span><span>ອາທິດ</span>
                     </div>
                 </div>
 
-                <!-- Top Usage Ranking Table -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                     <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-amber-600">leaderboard</span>
@@ -436,7 +447,7 @@
                                 <tr>
                                     <th class="p-2.5">ວັນທີ & ເວລາ (GMT+7)</th>
                                     <th class="p-2.5">PIN / ພະນັກງານ</th>
-                                    <th class="p-2.5">ປະເພດ</th>
+                                    <th class="p-2.5">ປະເພດ & ສະຖານະ</th>
                                     <th class="p-2.5">ສາຂາ</th>
                                 </tr>
                             </thead>
@@ -448,12 +459,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຈາກການມາວຽກຈິງ & ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time: ເຄິ່ງຊົ່ວໂມງ/ຊົ່ວໂມງຈິງ, OT 17,000ກີບ/ຊມ ຫຼັງ 16:00 ຫຼື 20:00) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ & ຄິດໄລ່ Real-Time (ຫານ 30 ມື້ + OT 17k)</h1>
-                        <p class="text-amber-800 text-xs">ຄ່າແຮງ/ມື້ = ເງິນເດືອນ ÷ 30 | OT = 17,000 ກີບ/ຊມ (ດຶງອັດໂນມັດເມື່ອເຮັດວຽກກາຍ 9 ຊມ)</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງ/ມື້ = ເງິນເດືອນ÷30 | ຊມ = ÷8)</h1>
+                        <p class="text-amber-800 text-xs">ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (ຫຼັງ 16:00) / ກະ 2 (ຫຼັງ 20:00) = OT 17,000 ກີບ/ຊມ</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -467,10 +478,11 @@
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ (Name)</th>
+                                    <th class="p-3">ກະວຽກ (Shift)</th>
                                     <th class="p-3">ເງິນເດືອນ (Base Salary)</th>
                                     <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍ 9ຊມ)</th>
-                                    <th class="p-3">ສະຫວັດດີການ (Benefit)</th>
+                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍກະ 16:00/20:00)</th>
+                                    <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
                             </thead>
@@ -732,8 +744,8 @@
                     <div>
                         <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
                         <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
-                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
+                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
+                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
                         </select>
                     </div>
                 </div>
@@ -824,8 +836,8 @@
                     <div>
                         <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
                         <select id="staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
-                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
+                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
+                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
                         </select>
                     </div>
                 </div>
@@ -847,7 +859,7 @@
         </div>
     </div>
 
-    <!-- ADMIN AUTH PIN MODAL (FIXED POPUP STUCK ISSUE) -->
+    <!-- ADMIN AUTH PIN MODAL (FIXED POP-UP STUCK ISSUE 100%) -->
     <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -856,12 +868,14 @@
             <h3 class="font-headline font-bold text-base text-primary">HRM Admin Authentication</h3>
             <p class="text-xs text-on-surface-variant mt-0.5 mb-4">ປ້ອນລະຫັດຜ່ານຜູ້ບໍລິຫານ ເພື່ອປົດລັອກຂໍ້ມູນພະນັກງານ & ເງິນເດືອນ</p>
 
-            <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" onkeyup="if(event.key==='Enter') verifyAdminPinInput()" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-amber-500 mb-4">
+            <form onsubmit="handleAdminPinSubmit(event)">
+                <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-amber-500 mb-4">
 
-            <div class="flex gap-2">
-                <button type="button" onclick="closeModal('admin-pin-modal')" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
-                <button type="button" onclick="verifyAdminPinInput()" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-900 hover:bg-amber-400">ປົດລັອກ</button>
-            </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeAdminModalForce()" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-900 hover:bg-amber-400">ປົດລັອກ</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -923,6 +937,12 @@
 
     <!-- SYSTEM JAVASCRIPT & SUPABASE INTEGRATION -->
     <script>
+        // --- SHIFT DEFINITIONS & RULES (8 PAID HOURS STANDARD) ---
+        const SHIFT_RULES = {
+            'ກະ 1': { startHour: 7, startMin: 0, endHour: 16, endMin: 0 },
+            'ກະ 2': { startHour: 11, startMin: 30, endHour: 20, endMin: 0 }
+        };
+
         // --- SUPABASE CLIENT CONFIGURATION ---
         let supabaseUrl = localStorage.getItem('supabase_url') || '';
         let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -985,7 +1005,6 @@
             return `${year}-${month}-${day}`;
         }
 
-        // --- CLIENT-SIDE IMAGE COMPRESSOR (JS CANVAS) ---
         function handleImageCompress(fileInput, targetInputId, previewImgId) {
             const file = fileInput.files[0];
             if (!file) return;
@@ -1039,9 +1058,7 @@
                     .not('sku', 'ilike', '%XS')
                     .order('sku');
 
-                if (stockErr) {
-                    console.error("Supabase Stock Error:", stockErr);
-                } else if (stockRes && stockRes.length > 0) {
+                if (stockRes && stockRes.length > 0) {
                     stockData = stockRes;
                     renderStockTable();
                     populateStockMovementDropdown();
@@ -1056,9 +1073,7 @@
                     .select('*')
                     .order('pin');
 
-                if (staffErr) {
-                    console.error("Supabase Staff Error:", staffErr);
-                } else if (staffRes && staffRes.length > 0) {
+                if (staffRes && staffRes.length > 0) {
                     partnersData = staffRes;
                     renderEmployeesAndPayroll();
                 }
@@ -1092,6 +1107,7 @@
                     renderAdminAttendanceTable(currentAdminAttFilter);
                     updateOnDutyStaffUI();
                     renderEmployeesAndPayroll();
+                    renderLateArrivalRanking();
                 }
             } catch (e) { console.error("Attendance Fetch Exception:", e); }
         }
@@ -1272,7 +1288,7 @@
             });
         }
 
-        // --- RENDER STOCK ANALYTICS & BURN RATE (ເພີ່ມໃໝ່ສົມບູນ) ---
+        // --- RENDER STOCK ANALYTICS & BURN RATE ---
         function renderStockAnalytics() {
             const chartContainer = document.getElementById('analytics-chart-container');
             const rankingTableBody = document.getElementById('top-ranking-table-body');
@@ -1281,7 +1297,6 @@
             chartContainer.innerHTML = '';
             rankingTableBody.innerHTML = '';
 
-            // Calculate usage per item from stockMovements (OUT type)
             const itemUsageMap = {};
             let totalBurnUnits = 0;
 
@@ -1296,11 +1311,9 @@
                 }
             });
 
-            // Calculate Average Burn Rate
             const avgBurnRatePerDay = Math.round(totalBurnUnits / 7) || 2;
             document.getElementById('stat-avg-burn-rate').textContent = `${avgBurnRatePerDay} ລາຍການ/ມື້`;
 
-            // Sort Top Ranking
             const sortedUsage = Object.values(itemUsageMap).sort((a, b) => b.totalOut - a.totalOut);
 
             let criticalCount = 0;
@@ -1312,7 +1325,6 @@
                 document.getElementById('stat-top-item-qty').textContent = 'ອັນດັບ #1';
             }
 
-            // Render Top 5 Ranking Rows
             const top5 = sortedUsage.length > 0 ? sortedUsage.slice(0, 5) : [
                 { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ', totalOut: 18 },
                 { sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', totalOut: 14 },
@@ -1346,9 +1358,8 @@
 
             document.getElementById('stat-critical-items').textContent = `${criticalCount} ລາຍການ`;
 
-            // Render Dynamic Weekly Chart Bars
             const daysOfWeek = ['ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ', 'ອາທິດ'];
-            const mockHeights = [65, 80, 45, 90, 75, 95, 50]; // Sample usage values
+            const mockHeights = [65, 80, 45, 90, 75, 95, 50];
 
             daysOfWeek.forEach((day, i) => {
                 const val = mockHeights[i];
@@ -1489,15 +1500,18 @@
             });
         }
 
-        // --- REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ ດຶງອັດໂນມັດເມື່ອກາຍ 9 ຊມ) ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ | ຫານ 8 ຊມ | ບໍ່ຄົບກະ = ຕາມຊມຈິງ | OT ເກີນກະ 16:00/20:00 = 17,000ກີບ/ຊມ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
+            const shiftRule = SHIFT_RULES[staff.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
+            const stdShiftHours = 8; // Paid standard shift hours (no break)
 
             const staffMonthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
                 return a.pin === staff.pin && logMonth === currentMonthStr;
             });
 
+            // Group logs by Day YYYY-MM-DD
             const daysMap = {};
             staffMonthLogs.forEach(a => {
                 const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
@@ -1513,40 +1527,66 @@
 
             let daysWorked = 0;
             let autoOtHours = 0;
+            let totalLateMinutes = 0;
+            let actualDaysPay = 0;
+
+            const baseSalary = staff.salary || 3800000;
+            const benefit = staff.benefit || 0;
+            const dailyRate = baseSalary / 30;         // ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ 30
+            const hourlyRate = dailyRate / stdShiftHours; // ຄ່າແຮງຕໍ່ຊົ່ວໂມງ = ຄ່າແຮງຕໍ່ມື້ ÷ 8
 
             Object.keys(daysMap).forEach(dateKey => {
                 const day = daysMap[dateKey];
+
                 if (day.in) {
                     daysWorked++;
+
+                    // 1. Check Late Arrival against shift start time
+                    const inMins = day.in.getHours() * 60 + day.in.getMinutes();
+                    const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
+                    if (inMins > expectedStartMins) {
+                        totalLateMinutes += (inMins - expectedStartMins);
+                    }
+
                     if (day.in && day.out) {
-                        const diffMs = day.out - day.in;
-                        const diffHours = diffMs / (1000 * 60 * 60);
-                        if (diffHours > 9) {
-                            autoOtHours += (diffHours - 9); // OT beyond 9 hours
+                        const outMins = day.out.getHours() * 60 + day.out.getMinutes();
+                        const expectedEndMins = shiftRule.endHour * 60 + shiftRule.endMin;
+                        const workedMs = day.out - day.in;
+                        const workedHours = workedMs / (1000 * 60 * 60);
+
+                        // Check if Shift Completed (Clock out at or after scheduled end time: 16:00 or 20:00)
+                        if (outMins >= expectedEndMins) {
+                            // ເຮັດວຽກຄົບກະ: ໄດ້ຮັບຄ່າແຮງເຕັມ 1 ມື້
+                            actualDaysPay += Math.round(dailyRate);
+
+                            // OT ສະເພາະສ່ວນທີ່ກາຍເວລາສິ້ນສຸດກະ (16:00 ຫຼື 20:00)
+                            if (outMins > expectedEndMins) {
+                                autoOtHours += ((outMins - expectedEndMins) / 60);
+                            }
+                        } else {
+                            // ເຮັດວຽກບໍ່ຄົບກະ (ອອກກ່ອນເວລາສິ້ນສຸດກະ): ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ = ຄ່າແຮງຕໍ່ຊົ່ວໂມງ * ຊົ່ວໂມງຈິງ
+                            actualDaysPay += Math.round(hourlyRate * workedHours);
                         }
+                    } else {
+                        // ຖ້າມີແຕ່ປ້ຳເຂົ້າ ແຕ່ຍັງບໍ່ປ້ຳອອກ (ຄິດໄລ່ 1 ມື້ເຕັມໄວ້ກ່ອນ)
+                        actualDaysPay += Math.round(dailyRate);
                     }
                 }
             });
 
-            // Formula 1: Daily Wage = Base Salary / 30
-            const baseSalary = staff.salary || 3800000;
-            const benefit = staff.benefit || 0;
-            const dailyRate = baseSalary / 30;
-
-            // Formula 2: Total OT = Manual OT + Auto OT from attendance (> 9 hrs)
             const totalOtHours = Math.round((staff.ot || 0) + autoOtHours);
-            const otPay = totalOtHours * 17000; // Fixed OT 17,000 Kip / Hour
-
-            const actualDaysPay = Math.round(dailyRate * daysWorked);
+            const otPay = totalOtHours * 17000; // Fixed OT 17,000 Kip / hour
             const totalNetPay = actualDaysPay + otPay + benefit;
 
             return {
                 daysWorked,
                 otHours: totalOtHours,
                 dailyRate: Math.round(dailyRate),
+                hourlyRate: Math.round(hourlyRate),
                 otPay,
                 actualDaysPay,
-                totalNetPay
+                totalNetPay,
+                totalLateMinutes
             };
         }
 
@@ -1608,6 +1648,7 @@
                 tr.innerHTML = `
                     <td class="p-3 font-mono font-bold text-primary">${p.pin} / ${p.staff_id || ''}</td>
                     <td class="p-3 font-bold text-on-surface">${p.name}</td>
+                    <td class="p-3 font-bold text-outline">${p.shift || 'ກະ 1'}</td>
                     <td class="p-3 font-mono font-bold">${(p.salary || 0).toLocaleString()} ກີບ</td>
                     <td class="p-3 font-mono font-bold text-blue-700">
                         ${payroll.daysWorked} ມື້ <span class="text-[10px] text-outline">(${(payroll.actualDaysPay).toLocaleString()} ກີບ)</span>
@@ -1619,6 +1660,50 @@
                     <td class="p-3 font-mono font-bold text-emerald-800 text-xs bg-emerald-50/50">${payroll.totalNetPay.toLocaleString()} ກີບ</td>
                 `;
                 payrollBody.appendChild(tr);
+            });
+        }
+
+        // --- RENDER LATE ARRIVAL RANKING ON DASHBOARD ---
+        function renderLateArrivalRanking() {
+            const container = document.getElementById('late-ranking-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const rankingData = partnersData.map(p => {
+                const payroll = calculateRealtimePayroll(p);
+                return {
+                    name: p.name,
+                    role: p.role,
+                    shift: p.shift || 'ກະ 1',
+                    photo: p.photo_url,
+                    lateMins: payroll.totalLateMinutes
+                };
+            }).sort((a, b) => b.lateMins - a.lateMins);
+
+            const lateStaff = rankingData.filter(r => r.lateMins > 0);
+
+            if (lateStaff.length === 0) {
+                container.innerHTML = '<p class="text-xs text-emerald-700 font-semibold text-center py-2">🎉 ບໍ່ມີພະນັກງານມາຊ້າໃນເດືອນນີ້</p>';
+                return;
+            }
+
+            lateStaff.slice(0, 5).forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+                el.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="font-bold font-mono text-amber-800 text-xs">#${idx + 1}</span>
+                        <img src="${item.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-7 h-7 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-on-surface text-xs">${item.name}</p>
+                            <p class="text-[10px] text-outline">${item.shift}</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error">
+                        ມາຊ້າລວມ: ${item.lateMins} ນາທີ
+                    </span>
+                `;
+                container.appendChild(el);
             });
         }
 
@@ -1694,12 +1779,25 @@
                     const partner = partnersData.find(p => p.pin === currentPin);
                     if (partner) {
                         selectedPartnerForClock = partner;
+
+                        const shiftInfo = SHIFT_RULES[partner.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
+                        const now = new Date();
+                        const nowMins = now.getHours() * 60 + now.getMinutes();
+                        const startMins = shiftInfo.startHour * 60 + shiftInfo.startMin;
+                        let lateText = '';
+                        if (nowMins > startMins) {
+                            lateText = `<span class="text-error font-bold block text-[11px] mt-1">⚠️ ມາຊ້າ ${nowMins - startMins} ນາທີ (${partner.shift})</span>`;
+                        } else {
+                            lateText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✓ ມາກ່ອນເວລາ (${partner.shift})</span>`;
+                        }
+
                         document.getElementById('kiosk-user-info').innerHTML = `
                             <div class="flex items-center justify-center gap-3 mb-2">
                                 <img src="${partner.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-12 h-12 rounded-full object-cover">
                                 <div class="text-left">
                                     <h3 class="font-headline font-bold text-base text-primary">${partner.name}</h3>
                                     <p class="text-xs text-on-surface-variant">${partner.staff_id} • ${partner.role}</p>
+                                    ${lateText}
                                 </div>
                             </div>
                         `;
@@ -1732,6 +1830,7 @@
                 renderAdminAttendanceTable(currentAdminAttFilter);
                 updateOnDutyStaffUI();
                 renderEmployeesAndPayroll();
+                renderLateArrivalRanking();
 
                 showToast(`✓ ບັນທຶກ ${actionType} ສຳເລັດ ສຳລັບ ${selectedPartnerForClock.name} (${nowStr})`);
                 cancelClockAction();
@@ -1895,7 +1994,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING 100%) ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED POP-UP STUCK ISSUE 100%) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -1918,21 +2017,32 @@
             showToast('🔒 ອອກຈາກ Admin Mode ແລ້ວ');
         }
 
-        function verifyAdminPinInput() {
+        function handleAdminPinSubmit(e) {
+            if (e) e.preventDefault();
             const input = document.getElementById('modal-admin-pin-input');
             const val = input.value.trim();
+
             if (val === '7777' || val === '777777') {
                 unlockAdminMode();
-                
-                // ປິດ POP-UP ທັນທີ 100%
-                const modal = document.getElementById('admin-pin-modal');
-                if (modal) modal.classList.add('hidden');
-                
-                input.value = '';
+                closeAdminModalForce(); // ປິດ Pop-up ມອດໄປ 100% ບໍ່ຂ້າງ
                 navigateTo('employees');
             } else {
                 showToast('❌ ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ');
             }
+        }
+
+        function verifyAdminPinInput() {
+            handleAdminPinSubmit();
+        }
+
+        function closeAdminModalForce() {
+            const modal = document.getElementById('admin-pin-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+            const input = document.getElementById('modal-admin-pin-input');
+            if (input) input.value = '';
         }
 
         // --- RENDER STOCK TABLE ---
@@ -2001,8 +2111,20 @@
         }
 
         // --- MODALS & TOAST ---
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { 
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+        function closeModal(id) { 
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
 
         function showToast(msg) {
             const container = document.getElementById('toast-container');
@@ -2047,6 +2169,7 @@
             renderTodayKioskAttendance();
             renderAdminAttendanceTable('daily');
             updateOnDutyStaffUI();
+            renderLateArrivalRanking();
             navigateTo('dashboard');
         });
     </script>
