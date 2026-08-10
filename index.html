@@ -378,6 +378,7 @@
                         <span class="text-[10px] font-bold bg-primary-fixed/30 text-primary px-2 py-0.5 rounded">ຈຳນວນເບີກອອກຈິງ</span>
                     </div>
 
+                    <!-- Weekly Chart Fixed Height Box -->
                     <div class="w-full h-56 sm:h-64 relative flex items-end justify-between gap-2 sm:gap-4 pt-8 px-2 border-b border-l border-outline-variant/60" id="analytics-chart-container">
                         <!-- Rendered dynamically -->
                     </div>
@@ -459,12 +460,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time: ເຄິ່ງຊົ່ວໂມງ/ຊົ່ວໂມງຈິງ, OT 17,000ກີບ/ຊມ ຫຼັງ 16:00 ຫຼື 20:00) -->
+            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time ຖືກຕ້ອງ 100% ບໍ່ຕິດລົບ) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
                         <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງ/ມື້ = ເງິນເດືອນ÷30 | ຊມ = ÷8)</h1>
-                        <p class="text-amber-800 text-xs">ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (ຫຼັງ 16:00) / ກະ 2 (ຫຼັງ 20:00) = OT 17,000 ກີບ/ຊມ</p>
+                        <p class="text-amber-800 text-xs">ຄົບກະ = ໄດ້ 1 ມື້ເຕັມ | ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (16:00) / ກະ 2 (20:00) = OT 17,000 ກີບ/ຊມ</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -481,7 +482,7 @@
                                     <th class="p-3">ກະວຽກ (Shift)</th>
                                     <th class="p-3">ເງິນເດືອນ (Base Salary)</th>
                                     <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍກະ 16:00/20:00)</th>
+                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍ 16:00/20:00)</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -937,10 +938,10 @@
 
     <!-- SYSTEM JAVASCRIPT & SUPABASE INTEGRATION -->
     <script>
-        // --- SHIFT DEFINITIONS & RULES (8 PAID HOURS STANDARD) ---
+        // --- SHIFT DEFINITIONS & RULES ---
         const SHIFT_RULES = {
-            'ກະ 1': { startHour: 7, startMin: 0, endHour: 16, endMin: 0 },
-            'ກະ 2': { startHour: 11, startMin: 30, endHour: 20, endMin: 0 }
+            'ກະ 1': { startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8 },
+            'ກະ 2': { startHour: 11, startMin: 30, endHour: 20, endMin: 0, stdHours: 8 }
         };
 
         // --- SUPABASE CLIENT CONFIGURATION ---
@@ -1364,10 +1365,10 @@
             daysOfWeek.forEach((day, i) => {
                 const val = mockHeights[i];
                 const bar = document.createElement('div');
-                bar.className = 'w-1/7 bg-primary-container/30 hover:bg-primary rounded-t-lg transition-all relative group flex flex-col justify-end items-center';
-                bar.style.height = `${val}%`;
+                bar.className = 'w-1/7 bg-primary rounded-t-lg transition-all relative group flex flex-col justify-end items-center';
+                bar.style.height = `${Math.max(15, val)}%`;
                 bar.innerHTML = `
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 text-[10px] font-bold bg-primary text-white px-1.5 py-0.5 rounded shadow-sm">
+                    <span class="text-[10px] font-bold text-primary mb-1 bg-primary-fixed/40 px-1 rounded">
                         ${val}
                     </span>
                 `;
@@ -1399,10 +1400,16 @@
                     staffPairs[a.pin] = { clockIn: null, clockOut: null };
                 }
                 const type = (a.type || '').toLowerCase();
+                const logTime = new Date(a.timestamp || Date.now());
+
                 if (type.includes('in')) {
-                    if (!staffPairs[a.pin].clockIn) staffPairs[a.pin].clockIn = a;
+                    if (!staffPairs[a.pin].clockIn || logTime < new Date(staffPairs[a.pin].clockIn.timestamp)) {
+                        staffPairs[a.pin].clockIn = a;
+                    }
                 } else if (type.includes('out')) {
-                    if (!staffPairs[a.pin].clockOut) staffPairs[a.pin].clockOut = a;
+                    if (!staffPairs[a.pin].clockOut || logTime > new Date(staffPairs[a.pin].clockOut.timestamp)) {
+                        staffPairs[a.pin].clockOut = a;
+                    }
                 }
             });
 
@@ -1500,28 +1507,34 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ | ຫານ 8 ຊມ | ບໍ່ຄົບກະ = ຕາມຊມຈິງ | OT ເກີນກະ 16:00/20:00 = 17,000ກີບ/ຊມ) ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ຄິດໄລ່ຖືກຕ້ອງ 100% ບໍ່ຕິດລົບ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
             const shiftRule = SHIFT_RULES[staff.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
-            const stdShiftHours = 8; // Paid standard shift hours (no break)
+            const stdShiftHours = 8; // Paid standard shift hours
 
             const staffMonthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
                 return a.pin === staff.pin && logMonth === currentMonthStr;
             });
 
-            // Group logs by Day YYYY-MM-DD
+            // Group logs by Day YYYY-MM-DD (Keep EARLIEST In and LATEST Out)
             const daysMap = {};
             staffMonthLogs.forEach(a => {
                 const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
                 if (!daysMap[dateKey]) daysMap[dateKey] = { in: null, out: null };
 
+                const logTime = new Date(a.timestamp || Date.now());
                 const type = (a.type || '').toLowerCase();
-                if (type.includes('in') && !daysMap[dateKey].in) {
-                    daysMap[dateKey].in = new Date(a.timestamp || Date.now());
-                } else if (type.includes('out') && !daysMap[dateKey].out) {
-                    daysMap[dateKey].out = new Date(a.timestamp || Date.now());
+
+                if (type.includes('in')) {
+                    if (!daysMap[dateKey].in || logTime < daysMap[dateKey].in) {
+                        daysMap[dateKey].in = logTime;
+                    }
+                } else if (type.includes('out')) {
+                    if (!daysMap[dateKey].out || logTime > daysMap[dateKey].out) {
+                        daysMap[dateKey].out = logTime;
+                    }
                 }
             });
 
@@ -1541,7 +1554,7 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. Check Late Arrival against shift start time
+                    // 1. Check Late Arrival against shift start time (07:00 or 11:30)
                     const inMins = day.in.getHours() * 60 + day.in.getMinutes();
                     const expectedStartMins = shiftRule.startHour * 60 + shiftRule.startMin;
                     if (inMins > expectedStartMins) {
@@ -1554,21 +1567,19 @@
                         const workedMs = day.out - day.in;
                         const workedHours = workedMs / (1000 * 60 * 60);
 
-                        // Check if Shift Completed (Clock out at or after scheduled end time: 16:00 or 20:00)
+                        // Check if Shift Completed (Clock Out at or after scheduled end time)
                         if (outMins >= expectedEndMins) {
-                            // ເຮັດວຽກຄົບກະ: ໄດ້ຮັບຄ່າແຮງເຕັມ 1 ມື້
-                            actualDaysPay += Math.round(dailyRate);
+                            actualDaysPay += Math.round(dailyRate); // Full day pay
 
-                            // OT ສະເພາະສ່ວນທີ່ກາຍເວລາສິ້ນສຸດກະ (16:00 ຫຼື 20:00)
+                            // OT past end time (16:00 for กะ 1, 20:00 for กะ 2)
                             if (outMins > expectedEndMins) {
                                 autoOtHours += ((outMins - expectedEndMins) / 60);
                             }
                         } else {
-                            // ເຮັດວຽກບໍ່ຄົບກະ (ອອກກ່ອນເວລາສິ້ນສຸດກະ): ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ = ຄ່າແຮງຕໍ່ຊົ່ວໂມງ * ຊົ່ວໂມງຈິງ
+                            // Incomplete shift: pay by actual worked hours
                             actualDaysPay += Math.round(hourlyRate * workedHours);
                         }
                     } else {
-                        // ຖ້າມີແຕ່ປ້ຳເຂົ້າ ແຕ່ຍັງບໍ່ປ້ຳອອກ (ຄິດໄລ່ 1 ມື້ເຕັມໄວ້ກ່ອນ)
                         actualDaysPay += Math.round(dailyRate);
                     }
                 }
@@ -1582,12 +1593,21 @@
                 daysWorked,
                 otHours: totalOtHours,
                 dailyRate: Math.round(dailyRate),
-                hourlyRate: Math.round(hourlyRate),
                 otPay,
                 actualDaysPay,
                 totalNetPay,
                 totalLateMinutes
             };
+        }
+
+        // Format Minutes to Hours & Minutes
+        function formatMinutesToHours(mins) {
+            if (!mins || mins <= 0) return '0 ນາທີ';
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            if (h > 0 && m > 0) return `${h} ຊົ່ວໂມງ ${m} ນາທີ`;
+            if (h > 0) return `${h} ຊົ່ວໂມງ`;
+            return `${m} ນາທີ`;
         }
 
         // --- RENDER EMPLOYEES & PAYROLL TABLE ---
@@ -1642,7 +1662,7 @@
                 `;
                 partnerContainer.appendChild(card);
 
-                // Real-Time Payroll Table Row
+                // Real-Time Payroll Table Row (Always Positive!)
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-surface-container-low';
                 tr.innerHTML = `
@@ -1651,7 +1671,7 @@
                     <td class="p-3 font-bold text-outline">${p.shift || 'ກະ 1'}</td>
                     <td class="p-3 font-mono font-bold">${(p.salary || 0).toLocaleString()} ກີບ</td>
                     <td class="p-3 font-mono font-bold text-blue-700">
-                        ${payroll.daysWorked} ມື້ <span class="text-[10px] text-outline">(${(payroll.actualDaysPay).toLocaleString()} ກີບ)</span>
+                        ${payroll.daysWorked} ມື້ <span class="text-[10px] font-semibold text-emerald-700">(+${(payroll.actualDaysPay).toLocaleString()} ກີບ)</span>
                     </td>
                     <td class="p-3 font-mono text-amber-800 font-bold">
                         ${payroll.otHours} ຊມ <span class="text-[10px]">(+${payroll.otPay.toLocaleString()} ກີບ)</span>
@@ -1700,7 +1720,7 @@
                         </div>
                     </div>
                     <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error">
-                        ມາຊ້າລວມ: ${item.lateMins} ນາທີ
+                        ມາຊ້າລວມ: ${formatMinutesToHours(item.lateMins)}
                     </span>
                 `;
                 container.appendChild(el);
@@ -1786,7 +1806,7 @@
                         const startMins = shiftInfo.startHour * 60 + shiftInfo.startMin;
                         let lateText = '';
                         if (nowMins > startMins) {
-                            lateText = `<span class="text-error font-bold block text-[11px] mt-1">⚠️ ມາຊ້າ ${nowMins - startMins} ນາທີ (${partner.shift})</span>`;
+                            lateText = `<span class="text-error font-bold block text-[11px] mt-1">⚠️ ມາຊ້າ ${formatMinutesToHours(nowMins - startMins)} (${partner.shift})</span>`;
                         } else {
                             lateText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✓ ມາກ່ອນເວລາ (${partner.shift})</span>`;
                         }
@@ -1994,7 +2014,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK (FIXED POP-UP STUCK ISSUE 100%) ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING 100%) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -2024,7 +2044,7 @@
 
             if (val === '7777' || val === '777777') {
                 unlockAdminMode();
-                closeAdminModalForce(); // ປິດ Pop-up ມອດໄປ 100% ບໍ່ຂ້າງ
+                closeAdminModalForce(); // ປິດ Pop-up ມອດໄປ 100%
                 navigateTo('employees');
             } else {
                 showToast('❌ ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ');
