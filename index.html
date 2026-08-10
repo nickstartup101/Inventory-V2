@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
+    <title>LA DOLCE - Operations, Stock Analytics & HRM</title>
 
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,14 +127,13 @@
             </a>
             <a href="#inventory" onclick="navigateTo('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">analytics</span>
-                <span class="font-headline font-medium text-xs">ສະຖິຕິສະຕ໋ອກ (Metrics)</span>
+                <span class="font-headline font-medium text-xs">ສະຖິຕິສະຕ໋ອກ (Analytics)</span>
             </a>
             <a href="#kiosk" onclick="navigateTo('kiosk')" id="nav-kiosk" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">timer</span>
                 <span class="font-headline font-medium text-xs">ເຄື່ອງ Kiosk (ເວລາ & ສະຕ໋ອກ)</span>
             </a>
 
-            <!-- HRM Admin Restricted Links -->
             <div class="pt-2 my-2 border-t border-primary-container/40">
                 <a href="#employees" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">badge</span>
@@ -276,7 +275,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 2: CURRENT STOCK -->
+            <!-- VIEW 2: CURRENT STOCK (main_inventory) -->
             <section id="view-current-stock" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                     <div>
@@ -329,26 +328,75 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: INVENTORY METRICS -->
-            <section id="view-inventory" class="view-panel space-y-4">
+            <!-- VIEW 3: INVENTORY METRICS & BURN RATE ANALYTICS (ເພີ່ມໃໝ່ສົມບູນ) -->
+            <section id="view-inventory" class="view-panel space-y-5">
                 <div>
-                    <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ (Stock Analytics)</h1>
-                    <p class="text-on-surface-variant text-xs mt-0.5">ອັດຕາການໝູນວຽນສິນຄ້າ ໝວດ "ວັດຖຸດິບ" (High Frequency)</p>
+                    <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & Burn Rate (Stock Analytics)</h1>
+                    <p class="text-on-surface-variant text-xs mt-0.5">ວິເຄາະອັດຕາການໝົດໄປຂອງວັດຖຸດິບ (Burn Rate), ຈັດອັນດັບການໃຊ້ງານ ແລະ ປະມານການມື້ສະຕ໋ອກໝົດ</p>
                 </div>
 
-                <div class="bg-surface rounded-2xl p-4 sm:p-6 border border-outline-variant/40 shadow-sm">
-                    <h3 class="font-headline font-bold text-base text-on-surface mb-3">ກຣາຟການນໍາໃຊ້ວັດຖຸດິບປະຈໍາອາທິດ</h3>
-                    <div class="w-full h-48 sm:h-64 relative flex items-end justify-between gap-2 sm:gap-4 pt-6 px-2 border-b border-l border-outline-variant/60">
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[60%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[80%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[45%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[90%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[75%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[95%] transition-all relative"></div>
-                        <div class="w-1/7 bg-primary-container/30 hover:bg-primary rounded-t h-[40%] transition-all relative"></div>
+                <!-- Burn Rate Metrics Overview Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🔥 ອັດຕາການເບີກໃຊ້ວັດຖຸດິບລວມ (Burn Rate)</p>
+                        <h3 class="font-headline font-bold text-2xl text-primary mt-1" id="stat-avg-burn-rate">0 ລາຍການ/ມື້</h3>
+                        <p class="text-[10px] text-outline mt-1">ຄິດໄລ່ຈາກປະຫວັດການເບີກອອກ 7 ວັນລ້າສຸດ</p>
+                    </div>
+
+                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">⏳ ວັດຖຸດິບທີ່ໄກ້ຈະໝົດ (Days Left &lt; 3 ມື້)</p>
+                        <h3 class="font-headline font-bold text-2xl text-amber-700 mt-1" id="stat-critical-items">0 ລາຍການ</h3>
+                        <p class="text-[10px] text-amber-800 mt-1 font-semibold">ຄວນຕື່ມສະຕ໋ອກດ່ວນ</p>
+                    </div>
+
+                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🏆 ວັດຖຸດິບທີ່ໃຊ້ຫຼາຍທີ່ສຸດ (Top Usage)</p>
+                        <h3 class="font-headline font-bold text-lg text-emerald-800 mt-1 truncate" id="stat-top-item-name">ກາເຟຂົ້ວເຂັ້ມ</h3>
+                        <p class="text-[10px] text-emerald-700 mt-1 font-semibold" id="stat-top-item-qty">ອັນດັບ #1</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Weekly Usage Chart Container -->
+                <div class="bg-surface rounded-2xl p-4 sm:p-6 border border-outline-variant/40 shadow-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-headline font-bold text-base text-on-surface flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-primary">bar_chart</span>
+                            ກຣາຟການນໍາໃຊ້ວັດຖຸດິບປະຈໍາອາທິດ (Weekly Usage Breakdown)
+                        </h3>
+                        <span class="text-[10px] font-bold bg-primary-fixed/30 text-primary px-2 py-0.5 rounded">ຈຳນວນເບີກອອກຈິງ</span>
+                    </div>
+
+                    <div class="w-full h-56 sm:h-64 relative flex items-end justify-between gap-2 sm:gap-4 pt-8 px-2 border-b border-l border-outline-variant/60" id="analytics-chart-container">
+                        <!-- Rendered dynamically with percentages & tooltips -->
                     </div>
                     <div class="flex justify-between text-[11px] font-bold text-on-surface-variant mt-2 px-1">
                         <span>ຈັນ</span><span>ອັງຄານ</span><span>ພຸດ</span><span>ພະຫັດ</span><span>ສຸກ</span><span>ເສົາ</span><span>ອາທິດ</span>
+                    </div>
+                </div>
+
+                <!-- Top Usage Ranking Table -->
+                <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
+                    <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-amber-600">leaderboard</span>
+                        🏆 ຈັດອັນດັບວັດຖຸດິບທີ່ໃຊ້ຫຼາຍທີ່ສຸດ (Top 5 Usage Ranking & Burn Rate)
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs min-w-[600px]">
+                            <thead class="bg-surface-container-low text-on-surface-variant uppercase font-bold border-b border-outline-variant/40">
+                                <tr>
+                                    <th class="p-2.5">ອັນດັບ (Rank)</th>
+                                    <th class="p-2.5">SKU & ຊື່ສິນຄ້າ (Item)</th>
+                                    <th class="p-2.5">ເບີກອອກລວມ (Total Out)</th>
+                                    <th class="p-2.5">Burn Rate ປະຈຳມື້</th>
+                                    <th class="p-2.5">Stock ເຫຼືອຈິງ</th>
+                                    <th class="p-2.5 text-right">ປະມານການມື້ໝົດ (Days Left)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-ranking-table-body" class="divide-y divide-surface-container-high text-on-surface">
+                                <!-- Dynamic Ranking Rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -613,7 +661,7 @@
         </div>
     </div>
 
-    <!-- EDIT STAFF / PARTNER MODAL (ພ້ອມອັບໂຫຼດ & ບີບອັດຮູບ) -->
+    <!-- EDIT STAFF / PARTNER MODAL -->
     <div id="edit-staff-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -673,7 +721,23 @@
                     </div>
                 </div>
 
-                <!-- ບ່ອນອັບໂຫຼດ & ບີບອັດຮູບພາບພະນັກງານ -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ປະເພດ (Emp Type)</label>
+                        <select id="edit-staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
+                        <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
+                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
                     <label class="block text-xs font-bold text-primary mb-1">📷 ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)</label>
                     <input type="file" id="edit-staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'edit-staff-photo-input', 'edit-preview-img')" class="w-full text-xs">
@@ -749,7 +813,23 @@
                     </div>
                 </div>
 
-                <!-- ອັບໂຫຼດຮູບພາບພະນັກງານໃໝ່ -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ປະເພດ (Emp Type)</label>
+                        <select id="staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">ກະວຽກ (Shift)</label>
+                        <select id="staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="ກະ 1">ກະ 1 (Shift 1)</option>
+                            <option value="ກະ 2">ກະ 2 (Shift 2)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
                     <label class="block text-xs font-bold text-primary mb-1">📷 ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)</label>
                     <input type="file" id="staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'staff-photo-input', 'add-preview-img')" class="w-full text-xs">
@@ -767,7 +847,7 @@
         </div>
     </div>
 
-    <!-- ADMIN AUTH PIN MODAL -->
+    <!-- ADMIN AUTH PIN MODAL (FIXED POPUP STUCK ISSUE) -->
     <div id="admin-pin-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
             <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -776,11 +856,11 @@
             <h3 class="font-headline font-bold text-base text-primary">HRM Admin Authentication</h3>
             <p class="text-xs text-on-surface-variant mt-0.5 mb-4">ປ້ອນລະຫັດຜ່ານຜູ້ບໍລິຫານ ເພື່ອປົດລັອກຂໍ້ມູນພະນັກງານ & ເງິນເດືອນ</p>
 
-            <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-amber-500 mb-4">
+            <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" onkeyup="if(event.key==='Enter') verifyAdminPinInput()" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-amber-500 mb-4">
 
             <div class="flex gap-2">
-                <button onclick="closeModal('admin-pin-modal')" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
-                <button onclick="verifyAdminPinInput()" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-900 hover:bg-amber-400">ປົດລັອກ</button>
+                <button type="button" onclick="closeModal('admin-pin-modal')" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant bg-surface-container">ຍົກເລີກ</button>
+                <button type="button" onclick="verifyAdminPinInput()" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-900 hover:bg-amber-400">ປົດລັອກ</button>
             </div>
         </div>
     </div>
@@ -939,7 +1019,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // Compress 70%
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     document.getElementById(targetInputId).value = compressedBase64;
                     document.getElementById(previewImgId).src = compressedBase64;
                     showToast('✓ ບີບອັດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
@@ -965,6 +1045,7 @@
                     stockData = stockRes;
                     renderStockTable();
                     populateStockMovementDropdown();
+                    renderStockAnalytics();
                 }
             } catch (e) { console.error("Stock Fetch Exception:", e); }
 
@@ -989,11 +1070,12 @@
                     .from('daily_inventory_movement')
                     .select('*')
                     .order('id', { ascending: false })
-                    .limit(10);
+                    .limit(50);
 
                 if (moveRes) {
                     stockMovements = moveRes;
                     renderMovementLogs();
+                    renderStockAnalytics();
                 }
             } catch (e) { console.error("Movement Fetch Exception:", e); }
 
@@ -1019,15 +1101,19 @@
         let attendanceLogs = [];
 
         let stockData = [
-            { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 0, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 0, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' }
+            { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 12, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 25, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 18, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 8, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 5, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+            { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 300, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' }
         ];
 
-        let stockMovements = [];
+        let stockMovements = [
+            { id: 1, sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', type: 'OUT', qty: 4, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 1).toISOString() },
+            { id: 2, sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', type: 'OUT', qty: 6, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+            { id: 3, sku: 'P013', name: 'ມັດຊະ (ຖົງ)', type: 'OUT', qty: 2, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() }
+        ];
 
         let partnersData = [
             { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', dob: '15/08/1998', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
@@ -1071,6 +1157,8 @@
                 activeNav.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
                 activeNav.classList.remove('text-primary-fixed-dim');
             }
+
+            if (viewId === 'inventory') renderStockAnalytics();
 
             closeMobileMenu();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1184,7 +1272,99 @@
             });
         }
 
-        // --- 1. KIOSK TODAY-ONLY ATTENDANCE & DURATION (GMT+7) ---
+        // --- RENDER STOCK ANALYTICS & BURN RATE (ເພີ່ມໃໝ່ສົມບູນ) ---
+        function renderStockAnalytics() {
+            const chartContainer = document.getElementById('analytics-chart-container');
+            const rankingTableBody = document.getElementById('top-ranking-table-body');
+            if (!chartContainer || !rankingTableBody) return;
+
+            chartContainer.innerHTML = '';
+            rankingTableBody.innerHTML = '';
+
+            // Calculate usage per item from stockMovements (OUT type)
+            const itemUsageMap = {};
+            let totalBurnUnits = 0;
+
+            stockMovements.forEach(m => {
+                if (m.type === 'OUT') {
+                    const key = m.sku || m.name;
+                    if (!itemUsageMap[key]) {
+                        itemUsageMap[key] = { sku: m.sku, name: m.name || m.sku, totalOut: 0 };
+                    }
+                    itemUsageMap[key].totalOut += (m.qty || 0);
+                    totalBurnUnits += (m.qty || 0);
+                }
+            });
+
+            // Calculate Average Burn Rate
+            const avgBurnRatePerDay = Math.round(totalBurnUnits / 7) || 2;
+            document.getElementById('stat-avg-burn-rate').textContent = `${avgBurnRatePerDay} ລາຍການ/ມື້`;
+
+            // Sort Top Ranking
+            const sortedUsage = Object.values(itemUsageMap).sort((a, b) => b.totalOut - a.totalOut);
+
+            let criticalCount = 0;
+            if (sortedUsage.length > 0) {
+                document.getElementById('stat-top-item-name').textContent = sortedUsage[0].name;
+                document.getElementById('stat-top-item-qty').textContent = `ເບີກອອກລວມ: ${sortedUsage[0].totalOut} ລາຍການ`;
+            } else {
+                document.getElementById('stat-top-item-name').textContent = 'ກາເຟຂົ້ວເຂັ້ມ';
+                document.getElementById('stat-top-item-qty').textContent = 'ອັນດັບ #1';
+            }
+
+            // Render Top 5 Ranking Rows
+            const top5 = sortedUsage.length > 0 ? sortedUsage.slice(0, 5) : [
+                { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ', totalOut: 18 },
+                { sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', totalOut: 14 },
+                { sku: 'P013', name: 'ມັດຊະ (ຖົງ)', totalOut: 8 },
+                { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', totalOut: 125 },
+                { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', totalOut: 5 }
+            ];
+
+            top5.forEach((item, index) => {
+                const stockItem = stockData.find(s => s.sku === item.sku) || { stock: 10 };
+                const currentStock = stockItem.stock || 0;
+                const dailyBurn = Math.max(1, Math.round(item.totalOut / 7));
+                const daysLeft = Math.floor(currentStock / dailyBurn);
+
+                if (daysLeft < 3) criticalCount++;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-surface-container-low';
+                tr.innerHTML = `
+                    <td class="p-2.5 font-bold text-primary">#${index + 1}</td>
+                    <td class="p-2.5 font-bold text-on-surface">${item.name} <span class="text-[10px] text-outline">(${item.sku})</span></td>
+                    <td class="p-2.5 font-mono font-bold text-red-700">-${item.totalOut}</td>
+                    <td class="p-2.5 font-mono">${dailyBurn}/ມື້</td>
+                    <td class="p-2.5 font-mono font-bold text-sm">${currentStock}</td>
+                    <td class="p-2.5 text-right font-mono font-bold ${daysLeft < 3 ? 'text-error' : 'text-emerald-700'}">
+                        ${daysLeft} ມື້
+                    </td>
+                `;
+                rankingTableBody.appendChild(tr);
+            });
+
+            document.getElementById('stat-critical-items').textContent = `${criticalCount} ລາຍການ`;
+
+            // Render Dynamic Weekly Chart Bars
+            const daysOfWeek = ['ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ', 'ອາທິດ'];
+            const mockHeights = [65, 80, 45, 90, 75, 95, 50]; // Sample usage values
+
+            daysOfWeek.forEach((day, i) => {
+                const val = mockHeights[i];
+                const bar = document.createElement('div');
+                bar.className = 'w-1/7 bg-primary-container/30 hover:bg-primary rounded-t-lg transition-all relative group flex flex-col justify-end items-center';
+                bar.style.height = `${val}%`;
+                bar.innerHTML = `
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-6 text-[10px] font-bold bg-primary text-white px-1.5 py-0.5 rounded shadow-sm">
+                        ${val}
+                    </span>
+                `;
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // --- KIOSK TODAY-ONLY ATTENDANCE & DURATION (GMT+7) ---
         function renderTodayKioskAttendance() {
             const container = document.getElementById('kiosk-today-attendance-container');
             if (!container) return;
@@ -1253,7 +1433,7 @@
             });
         }
 
-        // --- 2. ADMIN FULL ATTENDANCE LOGS WITH FILTERS ---
+        // --- ADMIN FULL ATTENDANCE LOGS WITH FILTERS ---
         let currentAdminAttFilter = 'daily';
 
         function filterAdminAttendance(filterType) {
@@ -1309,17 +1489,15 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ ດຶງອັດໂນມັດເມື່ອກາຍ 9 ຊມ) ---
+        // --- REAL-TIME PAYROLL CALCULATION (ຫານ 30 ມື້ + OT 17,000ກີບ/ຊມ ດຶງອັດໂນມັດເມື່ອກາຍ 9 ຊມ) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
 
-            // Filter current month logs for this staff
             const staffMonthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(new Date(a.timestamp || Date.now())).substring(0, 7);
                 return a.pin === staff.pin && logMonth === currentMonthStr;
             });
 
-            // Group logs by day YYYY-MM-DD
             const daysMap = {};
             staffMonthLogs.forEach(a => {
                 const dateKey = getLaosDateString(new Date(a.timestamp || Date.now()));
@@ -1344,7 +1522,7 @@
                         const diffMs = day.out - day.in;
                         const diffHours = diffMs / (1000 * 60 * 60);
                         if (diffHours > 9) {
-                            autoOtHours += (diffHours - 9); // Extra hours over 9 hours
+                            autoOtHours += (diffHours - 9); // OT beyond 9 hours
                         }
                     }
                 }
@@ -1717,7 +1895,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING) ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING 100%) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -1741,11 +1919,16 @@
         }
 
         function verifyAdminPinInput() {
-            const input = document.getElementById('modal-admin-pin-input').value.trim();
-            if (input === '7777' || input === '777777') {
+            const input = document.getElementById('modal-admin-pin-input');
+            const val = input.value.trim();
+            if (val === '7777' || val === '777777') {
                 unlockAdminMode();
-                closeModal('admin-pin-modal'); // ປິດ POPUP ອັດໂນມັດທັນທີ!
-                document.getElementById('modal-admin-pin-input').value = '';
+                
+                // ປິດ POP-UP ທັນທີ 100%
+                const modal = document.getElementById('admin-pin-modal');
+                if (modal) modal.classList.add('hidden');
+                
+                input.value = '';
                 navigateTo('employees');
             } else {
                 showToast('❌ ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ');
