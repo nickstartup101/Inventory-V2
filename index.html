@@ -255,7 +255,7 @@
                         </div>
                     </div>
 
-                    <!-- ຈັດອັນດັບການມາຊ້າ (Late Arrival Ranking) -->
+                    <!-- ຈັດອັນດັບການມາຊ້າ & ພະນັກງານມາຊ້າຫຼາຍທີ່ສຸດປະຈຳເດືອນ -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                         <h3 class="font-headline font-bold text-sm text-amber-900 mb-3 flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-base text-amber-700">alarm_off</span>
@@ -465,7 +465,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
                         <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງ/ມື້ = ເງິນເດືອນ÷30 | ຊມ = ÷8)</h1>
-                        <p class="text-amber-800 text-xs">ຄົບກະ = ໄດ້ 1 ມື້ເຕັມ | ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (16:00) / ກະ 2 (20:00) = OT 17,000 ກີບ/ຊມ</p>
+                        <p class="text-amber-800 text-xs">ບໍ່ຄົບກະ = ຄິດໄລ່ຕາມຊົ່ວໂມງຈິງ | ເກີນກະ 1 (ຫຼັງ 16:00) / ກະ 2 (ຫຼັງ 20:00) = OT 17,000 ກີບ/ຊມ</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -482,7 +482,7 @@
                                     <th class="p-3">ກະວຽກ (Shift)</th>
                                     <th class="p-3">ເງິນເດືອນ (Base Salary)</th>
                                     <th class="p-3">ມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍ 16:00/20:00)</th>
+                                    <th class="p-3">OT 17,000ກີບ/ຊມ (ກາຍກະ 16:00/20:00)</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -938,7 +938,7 @@
 
     <!-- SYSTEM JAVASCRIPT & SUPABASE INTEGRATION -->
     <script>
-        // --- SHIFT DEFINITIONS & RULES ---
+        // --- SHIFT DEFINITIONS & RULES (07:00-16:00 and 11:30-20:00) ---
         const SHIFT_RULES = {
             'ກະ 1': { startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8 },
             'ກະ 2': { startHour: 11, startMin: 30, endHour: 20, endMin: 0, stdHours: 8 }
@@ -1136,7 +1136,7 @@
             { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', dob: '15/08/1998', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
             { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', dob: '22/11/1999', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3700000, benefit: 450000, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
             { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', dob: '03/04/2000', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
-            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60', ot: 5 },
+            { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', dob: '19/02/1997', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
             { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', dob: '12/07/1996', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
             { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', dob: '05/09/2001', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
         ];
@@ -1507,7 +1507,7 @@
             });
         }
 
-        // --- 3. REAL-TIME PAYROLL CALCULATION (ຄິດໄລ່ຖືກຕ້ອງ 100% ບໍ່ຕິດລົບ) ---
+        // --- 3. REAL-TIME PAYROLL CALCULATION (ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ 30 | ຄ່າແຮງ/ຊມ = ຄ່າແຮງ/ມື້ ÷ 8 | OT = 17k) ---
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
             const shiftRule = SHIFT_RULES[staff.shift || 'ກະ 1'] || SHIFT_RULES['ກະ 1'];
@@ -1567,32 +1567,34 @@
                         const workedMs = day.out - day.in;
                         const workedHours = workedMs / (1000 * 60 * 60);
 
-                        // Check if Shift Completed (Clock Out at or after scheduled end time)
+                        // Check if Shift Completed (Clock Out at or after scheduled end time: 16:00 or 20:00)
                         if (outMins >= expectedEndMins) {
-                            actualDaysPay += Math.round(dailyRate); // Full day pay
+                            actualDaysPay += Math.round(dailyRate); // Full daily rate
 
-                            // OT past end time (16:00 for กะ 1, 20:00 for กะ 2)
+                            // Auto OT past shift end time (16:00 for กะ 1, 20:00 for กะ 2)
                             if (outMins > expectedEndMins) {
                                 autoOtHours += ((outMins - expectedEndMins) / 60);
                             }
                         } else {
-                            // Incomplete shift: pay by actual worked hours
+                            // Incomplete Shift (Clock Out before 16:00 or 20:00): Paid by actual worked hours
                             actualDaysPay += Math.round(hourlyRate * workedHours);
                         }
                     } else {
+                        // Default full day rate if clocked in
                         actualDaysPay += Math.round(dailyRate);
                     }
                 }
             });
 
             const totalOtHours = Math.round((staff.ot || 0) + autoOtHours);
-            const otPay = totalOtHours * 17000; // Fixed OT 17,000 Kip / hour
-            const totalNetPay = actualDaysPay + otPay + benefit;
+            const otPay = totalOtHours * 17000; // Fixed OT 17,000 Kip / hr
+            const totalNetPay = actualDaysPay + otPay + benefit; // ALWAYS POSITIVE!
 
             return {
                 daysWorked,
                 otHours: totalOtHours,
                 dailyRate: Math.round(dailyRate),
+                hourlyRate: Math.round(hourlyRate),
                 otPay,
                 actualDaysPay,
                 totalNetPay,
@@ -1600,7 +1602,6 @@
             };
         }
 
-        // Format Minutes to Hours & Minutes
         function formatMinutesToHours(mins) {
             if (!mins || mins <= 0) return '0 ນາທີ';
             const h = Math.floor(mins / 60);
@@ -1662,7 +1663,7 @@
                 `;
                 partnerContainer.appendChild(card);
 
-                // Real-Time Payroll Table Row (Always Positive!)
+                // Real-Time Payroll Table Row (Always Positive Earning!)
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-surface-container-low';
                 tr.innerHTML = `
@@ -1683,7 +1684,7 @@
             });
         }
 
-        // --- RENDER LATE ARRIVAL RANKING ON DASHBOARD ---
+        // --- RENDER LATE ARRIVAL RANKING ON DASHBOARD & MOST LATE OF THE MONTH ---
         function renderLateArrivalRanking() {
             const container = document.getElementById('late-ranking-container');
             if (!container) return;
@@ -1707,7 +1708,26 @@
                 return;
             }
 
-            lateStaff.slice(0, 5).forEach((item, idx) => {
+            // Highlight Most Late Person of the Month (#1)
+            const mostLate = lateStaff[0];
+            const highlightCard = document.createElement('div');
+            highlightCard.className = 'p-3 bg-red-50 border border-red-200 rounded-xl mb-2 flex items-center justify-between shadow-sm';
+            highlightCard.innerHTML = `
+                <div class="flex items-center gap-2.5">
+                    <img src="${mostLate.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-9 h-9 rounded-full object-cover border-2 border-red-400">
+                    <div>
+                        <span class="text-[9px] font-extrabold text-red-800 bg-red-200 px-2 py-0.5 rounded-full uppercase">👑 ມາຊ້າຫຼາຍທີ່ສຸດປະຈຳເດືອນ</span>
+                        <h4 class="font-bold text-xs text-on-surface mt-0.5">${mostLate.name} (${mostLate.shift})</h4>
+                    </div>
+                </div>
+                <span class="px-2 py-1 rounded font-bold text-[10px] bg-red-600 text-white">
+                    ${formatMinutesToHours(mostLate.lateMins)}
+                </span>
+            `;
+            container.appendChild(highlightCard);
+
+            // Remaining Ranking List
+            lateStaff.forEach((item, idx) => {
                 const el = document.createElement('div');
                 el.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
                 el.innerHTML = `
@@ -1720,7 +1740,7 @@
                         </div>
                     </div>
                     <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error">
-                        ມາຊ້າລວມ: ${formatMinutesToHours(item.lateMins)}
+                        ມາຊ້າ: ${formatMinutesToHours(item.lateMins)}
                     </span>
                 `;
                 container.appendChild(el);
@@ -2014,7 +2034,7 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK (FIXED ADMIN POPUP CLOSING 100%) ---
+        // --- HRM ADMIN UNLOCK/LOCK (FIXED POP-UP STUCK ISSUE 100%) ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
@@ -2044,7 +2064,7 @@
 
             if (val === '7777' || val === '777777') {
                 unlockAdminMode();
-                closeAdminModalForce(); // ປິດ Pop-up ມອດໄປ 100%
+                closeAdminModalForce(); // ປິດ Pop-up ມອດໄປ 100% ບໍ່ຂ້າງ
                 navigateTo('employees');
             } else {
                 showToast('❌ ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ');
