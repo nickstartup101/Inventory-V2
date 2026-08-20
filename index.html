@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
 
+    <!-- Browser Favicon: LADOLCE -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23001d3d'/><text x='50%' y='56%' dominant-baseline='central' text-anchor='middle' fill='%238cd889' font-family='Arial, sans-serif' font-weight='900' font-size='40' letter-spacing='-1'>LD</text></svg>">
+
     <!-- Google Fonts & Lao Support -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
     <!-- Supabase JS SDK v2 -->
@@ -62,8 +65,8 @@
       ::-webkit-scrollbar-track { background: #f0f4f8; }
       ::-webkit-scrollbar-thumb { background: #bfc7cd; border-radius: 4px; }
       @keyframes pulse-glow {
-        0%, 100% { filter: drop-shadow(0 0 4px #fbbf24); }
-        50% { filter: drop-shadow(0 0 10px #f59e0b); }
+        0%, 100% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #fbbf24); transform: scale(1); }
+        50% { filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 18px #f59e0b); transform: scale(1.12); }
       }
       .streak-glow { animation: pulse-glow 2s infinite ease-in-out; }
     </style>
@@ -79,10 +82,7 @@
             <button id="mobile-menu-btn" class="p-1.5 rounded-lg hover:bg-primary-container text-white active:scale-95">
                 <span class="material-symbols-outlined">menu</span>
             </button>
-            <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-accent icon-fill text-xl">local_cafe</span>
-                <span class="font-headline font-bold text-base tracking-wide">LA DOLCE</span>
-            </div>
+            <span class="font-headline font-extrabold text-lg tracking-wider">LA DOLCE</span>
         </div>
         
         <div class="flex items-center gap-2">
@@ -97,17 +97,13 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
 
-    <!-- SideNavBar Component -->
-    <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-5 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
+    <!-- SideNavBar Component (Cleaned: Coffee icon removed, pure text brand) -->
+    <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-6 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
         
-        <div class="px-5 mb-5 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-surface flex items-center justify-center shrink-0 shadow-inner">
-                <span class="material-symbols-outlined text-primary text-lg icon-fill">local_cafe</span>
-            </div>
-            <div>
-                <h1 class="font-headline font-bold text-lg text-white tracking-tight leading-none">LA DOLCE</h1>
-                <p class="text-[11px] text-primary-fixed-dim mt-0.5">La Dolce cafe • NP Branch</p>
-            </div>
+        <!-- Pure Text Branding Header -->
+        <div class="px-6 mb-6">
+            <h1 class="font-headline font-black text-2xl text-white tracking-wider leading-none">LA DOLCE</h1>
+            <p class="text-[11px] text-primary-fixed-dim font-medium mt-1 tracking-wide">La Dolce cafe • NP Branch</p>
         </div>
 
         <div id="admin-banner-sidebar" class="hidden mx-4 mb-4 p-2.5 bg-amber-400/20 border border-amber-400/50 rounded-xl text-amber-200 text-xs flex items-center justify-between">
@@ -206,7 +202,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ແຜງຄວບຄຸມລວມ (Operations Hub)</h1>
-                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ ແລະ ບັນທຶກເວລາ ຮ້ານກາເຟ Luckin Coffee (ສາຂານ້ຳພຸ)</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ ແລະ ບັນທຶກເວລາ ຮ້ານກາເຟ La Dolce (ສາຂານ້ຳພຸ)</p>
                     </div>
                 </div>
 
@@ -261,7 +257,7 @@
                         </div>
                     </div>
 
-                    <!-- NEW: ຈັດອັນດັບພະນັກງານມາວຽກໄວ & DAY STREAK (EARLY COMER RANKING) -->
+                    <!-- DAY STREAK TRACKER (Real-Time Day of Week Highlighted) -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-emerald-800 flex items-center gap-1.5">
@@ -274,24 +270,33 @@
                             </div>
                         </div>
 
-                        <!-- Mini Day Streak Visualizer Card (Inspired by User graphic) -->
-                        <div id="streak-banner-card" class="p-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white shadow-md relative overflow-hidden">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-[11px] font-extrabold tracking-wider uppercase flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-sm text-yellow-200">local_fire_department</span>
+                        <!-- Mini Day Streak Visualizer Card (Accurate to today's weekday) -->
+                        <div id="streak-banner-card" class="p-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl text-white shadow-md relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[11px] font-black tracking-wider uppercase flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm text-yellow-200 icon-fill">local_fire_department</span>
                                     <span>ON-TIME DAY STREAK</span>
                                 </span>
-                                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">3+ ວັນ = Super Streak</span>
+                                <span id="streak-today-badge" class="text-[10px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-bold text-yellow-100 border border-white/20">
+                                    Today: --
+                                </span>
                             </div>
                             
-                            <!-- Weekly Day Track -->
-                            <div class="flex justify-between items-center text-[10px] font-bold px-2 py-1 text-amber-100">
-                                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                            <!-- Weekly Day Track with Dynamic Today Highlight -->
+                            <div class="grid grid-cols-7 text-center text-[10px] font-black px-1 text-amber-200/90 mb-1" id="streak-days-labels">
+                                <span id="day-lbl-0">Su</span>
+                                <span id="day-lbl-1">Mo</span>
+                                <span id="day-lbl-2">Tu</span>
+                                <span id="day-lbl-3">We</span>
+                                <span id="day-lbl-4">Th</span>
+                                <span id="day-lbl-5">Fr</span>
+                                <span id="day-lbl-6">Sa</span>
                             </div>
-                            <!-- Glowing streak bar -->
-                            <div class="w-full bg-white/20 rounded-full h-3.5 p-0.5 flex items-center relative">
-                                <div id="streak-progress-bar" class="bg-gradient-to-r from-yellow-200 to-yellow-300 h-full rounded-full transition-all duration-700 shadow-sm flex items-center justify-end pr-0.5" style="width: 70%;">
-                                    <span class="material-symbols-outlined text-[12px] text-amber-800 font-bold streak-glow">sparkles</span>
+
+                            <!-- Glowing streak bar matched to current weekday -->
+                            <div class="w-full bg-white/25 backdrop-blur-sm rounded-full h-4 p-0.5 flex items-center relative overflow-visible">
+                                <div id="streak-progress-bar" class="bg-gradient-to-r from-yellow-200 to-yellow-300 h-full rounded-full transition-all duration-700 shadow-md flex items-center justify-end pr-0.5 relative" style="width: 50%;">
+                                    <span class="material-symbols-outlined text-[14px] text-amber-900 font-extrabold streak-glow absolute -right-1">sparkles</span>
                                 </div>
                             </div>
                         </div>
@@ -495,12 +500,12 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (ຄິດໄລ່ Real-Time + Smart Shift + Pre-Shift OT 100%) -->
+            <!-- VIEW 5: PAYROLL (Real-Time Payroll Calculation) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງມາວຽກຈິງ + OT ມາໄວ/ເລີກຊ້າ + ສະຫວັດດີການ)</h1>
-                        <p class="text-amber-800 text-xs">ຄ່າແຮງ = (ເງິນເດືອນ ÷ 30) × ມື້ມາວຽກ | OT 17,000 ກີບ/ຊມ (ນັບທັງມາກ່ອນເວລາເລີ່ມກະ ແລະ ຢູ່ກາຍເວລາເລີກກະ)</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງມາວຽກຈິງ + OT ຫຼັງເລີກວຽກ + ສະຫວັດດີການ)</h1>
+                        <p class="text-amber-800 text-xs">ຄ່າແຮງ = (ເງິນເດືອນ ÷ 30) × ມື້ມາວຽກ | OT 17,000 ກີບ/ຊມ (ນັບສະເພາະຢູ່ກາຍເວລາເລີກກະ)</p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -517,7 +522,7 @@
                                     <th class="p-3">ກະຫຼັກ (Base Shift)</th>
                                     <th class="p-3">ເງິນເດືອນພື້ນຖານ (Base)</th>
                                     <th class="p-3">ຄ່າແຮງມາວຽກຈິງ (Days Worked)</th>
-                                    <th class="p-3">OT (ມາໄວ+ເລີກຊ້າ) @17k</th>
+                                    <th class="p-3">OT ຫຼັງເລີກກະ @17k</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -971,7 +976,7 @@
         </div>
     </div>
 
-    <!-- SYSTEM JAVASCRIPT & ADVANCED SHIFT/STREAK LOGIC -->
+    <!-- SYSTEM JAVASCRIPT & SUPABASE INTEGRATION -->
     <script>
         // --- STANDARD SHIFTS DEFINITIONS ---
         const SHIFT_RULES = {
@@ -979,13 +984,11 @@
             'ກະ 2': { name: 'ກະ 2', startHour: 11, startMin: 30, endHour: 20, endMin: 0, stdHours: 8, startMins: 690, endMins: 1200 }
         };
 
-        // SMART AUTO SHIFT DETECTOR (ແກ້ໄຂບັນຫາສະລັບກະກັນມາ 100%)
+        // SMART AUTO SHIFT DETECTOR (ປ້ອງກັນການສະລັບກະກັນມາ 100%)
         function detectActualShift(clockInDate, defaultShiftName = 'ກະ 1') {
             const timeInfo = getLaosTimeInfo(clockInDate);
             const totalMins = timeInfo.totalMinutes;
-
-            // Threshold: 09:15 AM (555 mins) ແມ່ນຈຸດເຄິ່ງກາງລະຫວ່າງ 07:00 (420) ແລະ 11:30 (690)
-            if (totalMins < 555) {
+            if (totalMins < 555) { // 09:15 AM threshold
                 return SHIFT_RULES['ກະ 1'];
             } else {
                 return SHIFT_RULES['ກະ 2'];
@@ -1046,7 +1049,7 @@
             showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
         }
 
-        // Safe Date Parser for Safari / iOS Mobile
+        // Safe Date Parser
         function parseSafeDate(ts) {
             if (!ts) return new Date();
             if (ts instanceof Date) return ts;
@@ -1573,7 +1576,7 @@
         }
 
         // =========================================================================
-        // REAL-TIME PAYROLL CALCULATION (SMART SHIFT + PRE-SHIFT OT + POST-SHIFT OT)
+        // REAL-TIME PAYROLL CALCULATION (PRE-SHIFT OT REMOVED + ONLY POST-SHIFT OT)
         // =========================================================================
         function calculateRealtimePayroll(staff) {
             const currentMonthStr = getLaosDateString().substring(0, 7);
@@ -1604,7 +1607,7 @@
             });
 
             let daysWorked = 0;
-            let autoOtHours = 0;
+            let autoOtHours = 0; // Post-shift OT only
             let onTimeDaysCount = 0;
             let dailyStreak = 0;
             let maxStreak = 0;
@@ -1621,27 +1624,21 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. SMART SHIFT DETECTION: ກວດຈັບກະວຽກຕົວຈິງອັດຕະໂນມັດ ປ້ອງກັນການສະລັບກະກັນມາ
+                    // 1. Smart Shift Detection
                     const shiftRule = detectActualShift(day.in, staff.shift || 'ກະ 1');
                     const inInfo = getLaosTimeInfo(day.in);
 
-                    // 2. PRE-SHIFT OT (ມາກ່ອນເວລາເລີ່ມກະ ເຊັ່ນ: ກະ 2 ເລີ່ມ 11:30 ແຕ່ມາ 10:30 ➔ ບວກ OT 1 ຊົ່ວໂມງ)
-                    if (inInfo.totalMinutes < shiftRule.startMins) {
-                        const preOtMins = shiftRule.startMins - inInfo.totalMinutes;
-                        autoOtHours += (preOtMins / 60);
-                        dailyStreak++;
-                        onTimeDaysCount++;
-                    } else if (inInfo.totalMinutes === shiftRule.startMins) {
+                    // Track streak & on-time arrival (Without adding pre-shift OT pay)
+                    if (inInfo.totalMinutes <= shiftRule.startMins) {
                         dailyStreak++;
                         onTimeDaysCount++;
                     } else {
-                        // ມາຊ້າກວ່າກະທີ່ກວດຈັບໄດ້
                         dailyStreak = 0;
                     }
 
                     if (dailyStreak > maxStreak) maxStreak = dailyStreak;
 
-                    // 3. POST-SHIFT OT (ຢູ່ກາຍເວລາເລີກກະ)
+                    // 2. Post-Shift OT Only (ເລີກວຽກກາຍເວລາປົກກະຕິ)
                     if (day.out && day.out > day.in) {
                         const outInfo = getLaosTimeInfo(day.out);
                         if (outInfo.totalMinutes > shiftRule.endMins) {
@@ -1749,7 +1746,7 @@
         }
 
         // =========================================================================
-        // NEW FEATURE: EARLY COMER RANKING & DAY STREAK (ປັບປຸງຕາມຮູບພາບທີ່ສົ່ງມາ)
+        // EARLY COMER RANKING & REAL-TIME WEEKDAY STREAK BAR
         // =========================================================================
         let currentEarlyRankingFilter = 'monthly';
 
@@ -1767,13 +1764,43 @@
         function renderEarlyComerStreakRanking() {
             const container = document.getElementById('early-ranking-container');
             const streakProgressBar = document.getElementById('streak-progress-bar');
+            const streakTodayBadge = document.getElementById('streak-today-badge');
             if (!container) return;
             container.innerHTML = '';
+
+            const now = new Date();
+            const laosNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
+            const todayDayIndex = laosNow.getDay(); // 0 = Su, 1 = Mo, ..., 6 = Sa
+            const dayNamesLao = ['ອາທິດ', 'ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ'];
+            const dayNamesEng = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+            // 1. Highlight today's weekday on Day Streak bar
+            if (streakTodayBadge) {
+                streakTodayBadge.innerHTML = `✨ ມື້ນີ້: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
+            }
+
+            for (let i = 0; i < 7; i++) {
+                const lbl = document.getElementById(`day-lbl-${i}`);
+                if (lbl) {
+                    if (i === todayDayIndex) {
+                        lbl.className = 'text-white font-black text-[11px] scale-125 transition-transform drop-shadow';
+                    } else {
+                        lbl.className = 'text-amber-200/70 font-semibold text-[10px]';
+                    }
+                }
+            }
+
+            // 2. Align the Super Streak bar to land precisely on TODAY's day of the week
+            // Indices: 0->~14%, 1->~28%, 2->~43%, 3->~57%, 4->~71%, 5->~85%, 6->100%
+            const targetWidthPct = Math.round(((todayDayIndex + 1) / 7) * 100);
+            if (streakProgressBar) {
+                streakProgressBar.style.width = `${targetWidthPct}%`;
+            }
 
             const todayStr = getLaosDateString();
             const currentMonthStr = todayStr.substring(0, 7);
 
-            // ຄິດໄລ່ Early Bird & Streak ຂອງແຕ່ລະຄົນ
+            // Compute Early Birds & Consecutive Streaks
             const earlyRankingList = partnersData.map(p => {
                 const pLogs = attendanceLogs.filter(a => {
                     const logDate = getLaosDateString(parseSafeDate(a.timestamp));
@@ -1785,7 +1812,6 @@
                     }
                 });
 
-                // Group Earliest Clock-In by Day
                 const dayEarliestMap = {};
                 pLogs.forEach(a => {
                     const dateKey = getLaosDateString(parseSafeDate(a.timestamp));
@@ -1835,13 +1861,6 @@
                 if (b.onTimeCount !== a.onTimeCount) return b.onTimeCount - a.onTimeCount;
                 return b.totalSecondsEarly - a.totalSecondsEarly;
             });
-
-            // Update Progress Bar based on top active streak
-            const highestStreak = earlyRankingList.length > 0 ? Math.max(...earlyRankingList.map(i => i.currentStreak)) : 0;
-            const progressPercentage = Math.min(100, Math.max(15, Math.round((highestStreak / 7) * 100)));
-            if (streakProgressBar) {
-                streakProgressBar.style.width = `${progressPercentage}%`;
-            }
 
             if (earlyRankingList.length === 0 || (currentEarlyRankingFilter === 'daily' && earlyRankingList.every(i => i.onTimeCount === 0))) {
                 container.innerHTML = `<p class="text-xs text-outline italic text-center py-3">ຍັງບໍ່ມີພະນັກງານປ້ຳໂມງເຂົ້າວຽກໃນມື້ນີ້</p>`;
@@ -1993,7 +2012,7 @@
                         let statusText = '';
                         if (nowInfo.totalMinutes < startMins) {
                             const earlyMins = startMins - nowInfo.totalMinutes;
-                            statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✨ ມາກ່ອນເວລາ ${formatMinutesToHours(earlyMins)} (${detectedShift.name} Auto-Detect +OT 17k)</span>`;
+                            statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✨ ມາກ່ອນເວລາ ${formatMinutesToHours(earlyMins)} (${detectedShift.name} Auto-Detect)</span>`;
                         } else if (nowInfo.totalMinutes === startMins) {
                             statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✓ ມາຕົງເວລາພໍດີ (${detectedShift.name})</span>`;
                         } else {
