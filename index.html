@@ -97,7 +97,7 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
 
-    <!-- SideNavBar Component (Cleaned: Coffee icon removed, pure text brand) -->
+    <!-- SideNavBar Component -->
     <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-6 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
         
         <!-- Pure Text Branding Header -->
@@ -211,10 +211,10 @@
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
                             <span class="material-symbols-outlined text-primary p-1.5 bg-primary-container/20 rounded-lg text-lg">inventory_2</span>
-                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">81 Products</span>
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">Products</span>
                         </div>
                         <p class="text-[11px] text-on-surface-variant font-semibold">ສະຕ໋ອກທັງໝົດ (main_inventory)</p>
-                        <h3 class="font-headline font-bold text-xl text-on-surface mt-0.5" id="dash-total-items">81 ລາຍການ</h3>
+                        <h3 class="font-headline font-bold text-xl text-on-surface mt-0.5" id="dash-total-items">0 ລາຍການ</h3>
                     </div>
 
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
@@ -257,7 +257,7 @@
                         </div>
                     </div>
 
-                    <!-- DAY STREAK TRACKER (Real-Time Day of Week Highlighted) -->
+                    <!-- DAY STREAK TRACKER -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-emerald-800 flex items-center gap-1.5">
@@ -270,7 +270,7 @@
                             </div>
                         </div>
 
-                        <!-- Mini Day Streak Visualizer Card (Accurate to today's weekday) -->
+                        <!-- Mini Day Streak Visualizer Card -->
                         <div id="streak-banner-card" class="p-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl text-white shadow-md relative overflow-hidden">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-[11px] font-black tracking-wider uppercase flex items-center gap-1">
@@ -282,7 +282,6 @@
                                 </span>
                             </div>
                             
-                            <!-- Weekly Day Track with Dynamic Today Highlight -->
                             <div class="grid grid-cols-7 text-center text-[10px] font-black px-1 text-amber-200/90 mb-1" id="streak-days-labels">
                                 <span id="day-lbl-0">Su</span>
                                 <span id="day-lbl-1">Mo</span>
@@ -293,7 +292,6 @@
                                 <span id="day-lbl-6">Sa</span>
                             </div>
 
-                            <!-- Glowing streak bar matched to current weekday -->
                             <div class="w-full bg-white/25 backdrop-blur-sm rounded-full h-4 p-0.5 flex items-center relative overflow-visible">
                                 <div id="streak-progress-bar" class="bg-gradient-to-r from-yellow-200 to-yellow-300 h-full rounded-full transition-all duration-700 shadow-md flex items-center justify-end pr-0.5 relative" style="width: 50%;">
                                     <span class="material-symbols-outlined text-[14px] text-amber-900 font-extrabold streak-glow absolute -right-1">sparkles</span>
@@ -336,7 +334,8 @@
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຕ໋ອກປັດຈຸບັນ (main_inventory)</h1>
                         <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ ແຍກຕາມໝວດໝູ່</p>
                     </div>
-                    <button onclick="openModal('stock-modal')" class="w-full sm:w-auto bg-primary text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-primary-container flex items-center justify-center gap-1.5">
+                    <!-- Admin Only: Add New Stock Button -->
+                    <button onclick="openModal('stock-modal')" id="btn-add-stock-modal" class="admin-only hidden w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
                         <span class="material-symbols-outlined text-base">add</span> ເພີ່ມສິນຄ້າໃໝ່ (New SKU)
                     </button>
                 </div>
@@ -371,7 +370,7 @@
                                     <th class="p-3">Stock ປັດຈຸບັນ</th>
                                     <th class="p-3">Min Stock</th>
                                     <th class="p-3">ສະຖານະ</th>
-                                    <th class="p-3 text-right">ຈັດການ (Actions)</th>
+                                    <th class="p-3 text-right admin-only hidden" id="th-stock-actions">ຈັດການ (Actions)</th>
                                 </tr>
                             </thead>
                             <tbody id="stock-table-body" class="divide-y divide-surface-container-high text-on-surface">
@@ -500,12 +499,14 @@
                 </div>
             </section>
 
-            <!-- VIEW 5: PAYROLL (Real-Time Payroll Calculation) -->
+            <!-- VIEW 5: PAYROLL (Real-Time Payroll Calculation with Dynamic Month Days) -->
             <section id="view-payroll" class="view-panel space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
-                        <h1 class="font-headline font-extrabold text-lg text-amber-900">ຈັດການເງິນເດືອນ Real-Time (ຄ່າແຮງມາວຽກຈິງ + OT ຫຼັງເລີກວຽກ + ສະຫວັດດີການ)</h1>
-                        <p class="text-amber-800 text-xs">ຄ່າແຮງ = (ເງິນເດືອນ ÷ 30) × ມື້ມາວຽກ | OT 17,000 ກີບ/ຊມ (ນັບສະເພາະຢູ່ກາຍເວລາເລີກກະ)</p>
+                        <h1 class="font-headline font-extrabold text-lg text-amber-900" id="payroll-header-title">ຈັດການເງິນເດືອນ Real-Time</h1>
+                        <p class="text-amber-800 text-xs" id="payroll-header-desc">
+                            ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ (ຈຳນວນມື້ໃນເດືອນ - 4 ມື້ພັກ) | OT 17,000 ກີບ/ຊມ (ນັບສະເພາະຫຼັງເລີກກະ) + ສະຫວັດດີການ
+                        </p>
                     </div>
                     <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
@@ -514,13 +515,14 @@
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[750px]">
+                        <table class="w-full text-left text-xs min-w-[850px]">
                             <thead class="bg-surface-container-low border-b border-outline-variant/40 text-on-surface-variant uppercase font-bold">
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ (Name)</th>
-                                    <th class="p-3">ກະຫຼັກ (Base Shift)</th>
+                                    <th class="p-3">ກະຫຼັກ</th>
                                     <th class="p-3">ເງິນເດືອນພື້ນຖານ (Base)</th>
+                                    <th class="p-3">ຄ່າແຮງຕໍ່ມື້ (Daily Rate)</th>
                                     <th class="p-3">ຄ່າແຮງມາວຽກຈິງ (Days Worked)</th>
                                     <th class="p-3">OT ຫຼັງເລີກກະ @17k</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
@@ -714,7 +716,7 @@
         </div>
     </div>
 
-    <!-- EDIT STAFF / PARTNER MODAL -->
+    <!-- EDIT STAFF MODAL -->
     <div id="edit-staff-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -907,7 +909,7 @@
                 <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
             </div>
             <h3 class="font-headline font-bold text-base text-primary">HRM Admin Authentication</h3>
-            <p class="text-xs text-on-surface-variant mt-0.5 mb-4">ປ້ອນລະຫັດຜ່ານຜູ້ບໍລິຫານ ເພື່ອປົດລັອກຂໍ້ມູນພະນັກງານ & ເງິນເດືອນ</p>
+            <p class="text-xs text-on-surface-variant mt-0.5 mb-4">ປ້ອນລະຫັດຜ່ານຜູ້ບໍລິຫານ ເພື່ອປົດລັອກຂໍ້ມູນພະນັກງານ, ເງິນເດືອນ & ການແກ້ໄຂສະຕ໋ອກ</p>
 
             <form onsubmit="handleAdminPinSubmit(event)">
                 <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-amber-500 mb-4">
@@ -963,7 +965,7 @@
                         <input id="modal-item-qty" required type="number" value="0" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Min Stock เตືອນ</label>
+                        <label class="block text-xs font-bold text-on-surface-variant mb-1">Min Stock ເຕືອນ</label>
                         <input id="modal-item-min" required type="number" value="1" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                 </div>
@@ -984,7 +986,7 @@
             'ກະ 2': { name: 'ກະ 2', startHour: 11, startMin: 30, endHour: 20, endMin: 0, stdHours: 8, startMins: 690, endMins: 1200 }
         };
 
-        // SMART AUTO SHIFT DETECTOR (ປ້ອງກັນການສະລັບກະກັນມາ 100%)
+        // SMART AUTO SHIFT DETECTOR
         function detectActualShift(clockInDate, defaultShiftName = 'ກະ 1') {
             const timeInfo = getLaosTimeInfo(clockInDate);
             const totalMins = timeInfo.totalMinutes;
@@ -993,6 +995,11 @@
             } else {
                 return SHIFT_RULES['ກະ 2'];
             }
+        }
+
+        // Helper: Get Total Days in Specific Month/Year
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
         }
 
         // --- SUPABASE CLIENT CONFIGURATION ---
@@ -1247,6 +1254,7 @@
             }
 
             if (viewId === 'inventory') renderStockAnalytics();
+            if (viewId === 'current-stock') renderStockTable();
 
             closeMobileMenu();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1576,10 +1584,19 @@
         }
 
         // =========================================================================
-        // REAL-TIME PAYROLL CALCULATION (PRE-SHIFT OT REMOVED + ONLY POST-SHIFT OT)
+        // REAL-TIME PAYROLL CALCULATION (FORMULA: Base / (MonthDays - 4) * DaysWorked)
         // =========================================================================
         function calculateRealtimePayroll(staff) {
-            const currentMonthStr = getLaosDateString().substring(0, 7);
+            const todayStr = getLaosDateString();
+            const currentMonthStr = todayStr.substring(0, 7);
+            const [yearStr, monthStr] = currentMonthStr.split('-');
+            const year = parseInt(yearStr);
+            const month = parseInt(monthStr);
+
+            // 1. Get exact days in the current calendar month
+            const daysInMonth = getDaysInMonth(year, month);
+            // 2. Standard working days = Total days in month - 4 days off
+            const standardWorkDays = Math.max(1, daysInMonth - 4);
 
             const staffMonthLogs = attendanceLogs.filter(a => {
                 const logMonth = getLaosDateString(parseSafeDate(a.timestamp)).substring(0, 7);
@@ -1614,7 +1631,8 @@
 
             const baseSalary = Number(staff.salary) || 3800000;
             const benefit = Number(staff.benefit) || 0;
-            const dailyRate = baseSalary / 30;
+            // Daily Rate = Base Salary / (DaysInMonth - 4)
+            const dailyRate = baseSalary / standardWorkDays;
 
             const sortedDates = Object.keys(daysMap).sort();
 
@@ -1624,11 +1642,9 @@
                 if (day.in) {
                     daysWorked++;
 
-                    // 1. Smart Shift Detection
                     const shiftRule = detectActualShift(day.in, staff.shift || 'ກະ 1');
                     const inInfo = getLaosTimeInfo(day.in);
 
-                    // Track streak & on-time arrival (Without adding pre-shift OT pay)
                     if (inInfo.totalMinutes <= shiftRule.startMins) {
                         dailyStreak++;
                         onTimeDaysCount++;
@@ -1638,7 +1654,7 @@
 
                     if (dailyStreak > maxStreak) maxStreak = dailyStreak;
 
-                    // 2. Post-Shift OT Only (ເລີກວຽກກາຍເວລາປົກກະຕິ)
+                    // Post-shift OT Only
                     if (day.out && day.out > day.in) {
                         const outInfo = getLaosTimeInfo(day.out);
                         if (outInfo.totalMinutes > shiftRule.endMins) {
@@ -1655,6 +1671,8 @@
             const totalNetPay = actualDaysPay + otPay + benefit;
 
             return {
+                daysInMonth,
+                standardWorkDays,
                 daysWorked,
                 otHours: totalOtHours,
                 dailyRate: Math.round(dailyRate),
@@ -1675,6 +1693,17 @@
             payrollBody.innerHTML = '';
 
             let superStreakCount = 0;
+
+            // Get dynamic month info for payroll header description
+            const now = new Date();
+            const daysInCurMonth = getDaysInMonth(now.getFullYear(), now.getMonth() + 1);
+            const stdWorkDays = daysInCurMonth - 4;
+            const curMonthName = now.toLocaleDateString('lo-LA', { month: 'long', year: 'numeric' });
+
+            const pDesc = document.getElementById('payroll-header-desc');
+            if (pDesc) {
+                pDesc.innerHTML = `ເດືອນນີ້ (${curMonthName}) ມີ <b>${daysInCurMonth} ວັນ</b> | ມື້ເຮັດວຽກມາດຕະຖານ = <b>${stdWorkDays} ມື້</b> (${daysInCurMonth}-4 ວັນພັກ) | ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ ${stdWorkDays} | OT 17,000 ກີບ/ຊມ (ນັບສະເພາະຫຼັງເລີກກະ)`;
+            }
 
             partnersData.forEach(p => {
                 const payroll = calculateRealtimePayroll(p);
@@ -1703,6 +1732,7 @@
                             <p><span class="text-outline font-semibold">ຕຳແໜ່ງ:</span> <strong>${p.role}</strong> (${p.emp_type || 'Full-time'})</p>
                             <p><span class="text-outline font-semibold">ກະຫຼັກ:</span> ${p.shift || 'ກະ 1'} <span class="text-[10px] text-emerald-700 font-bold">(Auto-detect)</span></p>
                             <p><span class="text-outline font-semibold">ເງິນເດືອນພື້ນຖານ:</span> <span class="font-mono font-bold text-emerald-800">${(Number(p.salary) || 0).toLocaleString()} ກີບ</span></p>
+                            <p><span class="text-outline font-semibold">ຄ່າແຮງຕໍ່ມື້:</span> <span class="font-mono font-semibold text-primary">${payroll.dailyRate.toLocaleString()} ກີບ/ມື້</span> <span class="text-[10px] text-outline">(${payroll.daysInMonth}-4=${payroll.standardWorkDays}ມື້)</span></p>
                             <p><span class="text-outline font-semibold">ສະຫວັດດີການ:</span> <span class="font-mono text-amber-800">+${(Number(p.benefit) || 0).toLocaleString()} ກີບ</span></p>
                         </div>
                     </div>
@@ -1730,6 +1760,9 @@
                     <td class="p-3 font-bold text-on-surface">${p.name}</td>
                     <td class="p-3 font-bold text-outline">${p.shift || 'ກະ 1'}</td>
                     <td class="p-3 font-mono font-bold">${(Number(p.salary) || 0).toLocaleString()} ກີບ</td>
+                    <td class="p-3 font-mono font-semibold text-primary">
+                        ${payroll.dailyRate.toLocaleString()} ກີບ <span class="text-[10px] text-outline font-normal">(/${payroll.standardWorkDays}ມື້)</span>
+                    </td>
                     <td class="p-3 font-mono font-bold text-blue-700">
                         ${payroll.daysWorked} ມື້ <span class="text-[10px] font-bold text-emerald-700">(+${(payroll.actualDaysPay).toLocaleString()} ກີບ)</span>
                     </td>
@@ -1770,11 +1803,10 @@
 
             const now = new Date();
             const laosNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
-            const todayDayIndex = laosNow.getDay(); // 0 = Su, 1 = Mo, ..., 6 = Sa
+            const todayDayIndex = laosNow.getDay();
             const dayNamesLao = ['ອາທິດ', 'ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ'];
             const dayNamesEng = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-            // 1. Highlight today's weekday on Day Streak bar
             if (streakTodayBadge) {
                 streakTodayBadge.innerHTML = `✨ ມາໄວ3ມື້=Super streak: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
             }
@@ -1790,8 +1822,6 @@
                 }
             }
 
-            // 2. Align the Super Streak bar to land precisely on TODAY's day of the week
-            // Indices: 0->~14%, 1->~28%, 2->~43%, 3->~57%, 4->~71%, 5->~85%, 6->100%
             const targetWidthPct = Math.round(((todayDayIndex + 1) / 7) * 100);
             if (streakProgressBar) {
                 streakProgressBar.style.width = `${targetWidthPct}%`;
@@ -1800,7 +1830,6 @@
             const todayStr = getLaosDateString();
             const currentMonthStr = todayStr.substring(0, 7);
 
-            // Compute Early Birds & Consecutive Streaks
             const earlyRankingList = partnersData.map(p => {
                 const pLogs = attendanceLogs.filter(a => {
                     const logDate = getLaosDateString(parseSafeDate(a.timestamp));
@@ -1867,7 +1896,6 @@
                 return;
             }
 
-            // Top #1 Early Bird / Streak Champion
             const topOne = earlyRankingList[0];
             const isSuperStreak = topOne.currentStreak >= 3;
 
@@ -1901,7 +1929,6 @@
             `;
             container.appendChild(topCard);
 
-            // Remaining Ranking List
             earlyRankingList.slice(1).forEach((item, idx) => {
                 const hasActiveStreak = item.currentStreak >= 3;
                 const row = document.createElement('div');
@@ -2222,12 +2249,13 @@
             showToast(`✓ ເພີ່ມ SKU ${newItem.sku} (${newItem.name}) ແລ້ວ!`);
         }
 
-        // --- HRM ADMIN UNLOCK/LOCK ---
+        // --- HRM ADMIN UNLOCK/LOCK CONTROLLER ---
         function unlockAdminMode() {
             isAdminLoggedIn = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             document.getElementById('admin-banner-sidebar').classList.remove('hidden');
             document.getElementById('top-admin-tag').classList.remove('hidden');
+            renderStockTable(); // Re-render table with action buttons visible
             showToast('🔓 ປົດລັອກ HRM Admin ສຳເລັດແລ້ວ!');
         }
 
@@ -2236,6 +2264,7 @@
             document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
             document.getElementById('admin-banner-sidebar').classList.add('hidden');
             document.getElementById('top-admin-tag').classList.add('hidden');
+            renderStockTable(); // Re-render table to hide action buttons
             
             if (window.location.hash === '#employees' || window.location.hash === '#payroll') {
                 navigateTo('dashboard');
@@ -2268,10 +2297,24 @@
             if (input) input.value = '';
         }
 
-        // --- RENDER STOCK TABLE ---
-        function renderStockTable(filterCat = 'all') {
+        // --- RENDER STOCK TABLE WITH ADMIN-AWARE ACTIONS ---
+        let currentStockFilter = 'all';
+
+        function renderStockTable(filterCat = currentStockFilter) {
+            currentStockFilter = filterCat;
             const tbody = document.getElementById('stock-table-body');
+            const thActions = document.getElementById('th-stock-actions');
+            if (!tbody) return;
             tbody.innerHTML = '';
+
+            // Toggle table header action column visibility
+            if (thActions) {
+                if (isAdminLoggedIn) {
+                    thActions.classList.remove('hidden');
+                } else {
+                    thActions.classList.add('hidden');
+                }
+            }
 
             const filtered = filterCat === 'all' ? stockData : stockData.filter(i => i.category === filterCat);
 
@@ -2292,10 +2335,15 @@
                             ${isLow ? '⚠️ ໄກ້ໝົດ' : '✓ OK'}
                         </span>
                     </td>
-                    <td class="p-3 text-right space-x-1">
-                        <button onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="text-xs font-bold text-primary hover:underline">ປັບ Stock</button>
-                        <button onclick="deleteStock('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', '${item.name}')" class="text-xs font-bold text-error hover:underline">ລຶບ</button>
-                    </td>
+                    ${isAdminLoggedIn ? `
+                    <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                        <button onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-all">
+                            ປັບ Stock
+                        </button>
+                        <button onclick="deleteStock('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', '${item.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                            ລຶບ
+                        </button>
+                    </td>` : ''}
                 `;
                 tbody.appendChild(tr);
             });
@@ -2316,6 +2364,10 @@
         }
 
         async function adjustStockPrompt(sku, branch) {
+            if (!isAdminLoggedIn) {
+                openModal('admin-pin-modal');
+                return;
+            }
             const item = stockData.find(i => i.sku === sku && i.branch === branch);
             if (item) {
                 const newQty = prompt(`ປັບຈຳນວນ Stock ໃໝ່ສຳລັບ SKU: ${item.sku} (${item.name})`, item.stock || 0);
@@ -2328,7 +2380,7 @@
                     }
 
                     renderStockTable();
-                    showToast(`ອັບເດດ ${item.name} ເປັນ ${parsedQty} ແລ້ວ`);
+                    showToast(`✓ ອັບເດດ ${item.name} ເປັນ ${parsedQty} ແລ້ວ`);
                 }
             }
         }
