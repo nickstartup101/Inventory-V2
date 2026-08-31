@@ -225,7 +225,6 @@ function calculateRealtimePayroll(staff) {
     let maxStreak = 0;
 
     const baseSalary = Number(staff.salary) || 3800000;
-    // Calculate Benefit ONLY IF Approved by Admin
     const isBenefitApproved = staff.benefit_approved === true;
     const effectiveBenefit = isBenefitApproved ? (Number(staff.benefit) || 0) : 0;
     const dailyRate = baseSalary / standardWorkDays;
@@ -309,7 +308,6 @@ function renderEmployeesAndPayroll() {
         const payroll = calculateRealtimePayroll(p);
         if (payroll.currentStreak >= 3) superStreakCount++;
 
-        // Staff Directory Card
         const card = document.createElement('div');
         card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
         card.innerHTML = `
@@ -356,7 +354,6 @@ function renderEmployeesAndPayroll() {
         `;
         partnerContainer.appendChild(card);
 
-        // Payroll Table Row
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-surface-container-low';
         tr.innerHTML = `
@@ -382,7 +379,6 @@ function renderEmployeesAndPayroll() {
         payrollBody.appendChild(tr);
     });
 
-    // Update Dashboard Today Late Summary
     const todayStr = getLaosDateString();
     let todayLateTotal = 0;
     attendanceLogs.forEach(a => {
@@ -395,7 +391,6 @@ function renderEmployeesAndPayroll() {
     if (lateEl) lateEl.textContent = `${todayLateTotal} ນາທີ`;
 }
 
-// Admin toggle benefit quick switch
 async function toggleBenefitDirectly(pin) {
     const p = partnersData.find(item => item.pin === pin);
     if (!p) return;
@@ -411,7 +406,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// STAFF SELF-SERVICE PORTAL (NO SALARY DISPLAY, BENEFIT BADGE ONLY)
+// STAFF SELF-SERVICE PORTAL
 // =========================================================================
 function checkStaffSelfService() {
     const pin = document.getElementById('staff-portal-pin').value.trim();
@@ -447,7 +442,6 @@ function renderStaffPortal(staff) {
     document.getElementById('portal-staff-branch').textContent = staff.branch || 'NP Branch';
     document.getElementById('portal-staff-shift-badge').textContent = `ກະຫຼັກ: ${staff.shift || 'ກະ 1'} (Auto-detect)`;
 
-    // RENDER BENEFIT BADGE ONLY (NO SALARY AMOUNT SHOWN)
     const benefitBadgeEl = document.getElementById('portal-benefit-status-badge');
     if (staff.benefit_approved) {
         benefitBadgeEl.className = 'px-4 py-2.5 rounded-2xl text-center shadow-sm border bg-emerald-50 border-emerald-300 text-emerald-900';
@@ -470,14 +464,13 @@ function renderStaffPortal(staff) {
     document.getElementById('portal-days-worked').textContent = `${payroll.daysWorked} ມື້`;
     document.getElementById('portal-total-late').textContent = `${payroll.totalLateMinutes} ນາທີ`;
 
-    // Off-days handling (Max 4 per month)
     const staffApprovedOffDays = staffOffDays[staff.pin] || [];
     const thisMonthOffDays = staffApprovedOffDays.filter(d => d.startsWith(curMonthStr));
     const offDaysCount = thisMonthOffDays.length;
     const offRemaining = Math.max(0, 4 - offDaysCount);
 
     document.getElementById('portal-days-off').textContent = `${offDaysCount} / 4 ມື້`;
-    document.getElementById('portal-off-quota-tag').textContent = `ໂຄຕ້າວັນພັກ: ເຫຼືອ ${offRemaining} ມື້`;
+    document.getElementById('portal-off-quota-tag').textContent = `ໂຄຕ້າ: ເຫຼືອ ${offRemaining} ມື້`;
 
     const staffMonthLogs = attendanceLogs.filter(a => a.pin === staff.pin && getLaosDateString(parseSafeDate(a.timestamp)).startsWith(curMonthStr));
     const daysMap = {};
@@ -577,196 +570,63 @@ function toggleOffDayProof(pin, dateStr) {
 }
 
 // =========================================================================
-// ADMIN ATTENDANCE LOGS & STOCK
+// STOCK MANAGEMENT & EDIT PRODUCT FUNCTIONALITY (NEW)
 // =========================================================================
-let currentAdminAttFilter = 'daily';
-
-function filterAdminAttendance(filterType) {
-    currentAdminAttFilter = filterType;
-    document.querySelectorAll('.admin-att-btn').forEach(b => {
-        b.className = 'admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface';
-    });
-    const activeBtn = document.getElementById(`btn-att-${filterType}`);
-    if (activeBtn) activeBtn.className = 'admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm';
-
-    renderAdminAttendanceTable(filterType);
-}
-
-function renderAdminAttendanceTable(filterType = 'daily') {
-    const tbody = document.getElementById('admin-attendance-table-body');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    const todayStr = getLaosDateString();
-    const currentMonthStr = todayStr.substring(0, 7);
-
-    let filteredLogs = attendanceLogs;
-
-    if (filterType === 'daily') {
-        filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)) === todayStr);
-    } else if (filterType === 'monthly') {
-        filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)).startsWith(currentMonthStr));
-    }
-
-    if (filteredLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-outline">ບໍ່ມີຂໍ້ມູນປະຫວັດການມາວຽກ</td></tr>';
-        return;
-    }
-
-    filteredLogs.forEach(a => {
-        const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin, shift: 'ກະ 1' };
-        const dt = parseSafeDate(a.timestamp);
-        const isClockIn = (a.type || '').toLowerCase().includes('in');
-        const detectedShift = detectActualShift(dt, staff.shift);
-        
-        let lateMins = 0;
-        if (isClockIn) {
-            lateMins = calculateLateMinutes(dt, staff.shift);
-        }
-
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-surface-container-low';
-        tr.innerHTML = `
-            <td class="p-2.5 font-mono text-[11px]">${dt.toLocaleDateString('en-GB')} ${dt.toLocaleTimeString()}</td>
-            <td class="p-2.5 font-bold text-on-surface">${staff.name} (PIN: ${a.pin})</td>
-            <td class="p-2.5">
-                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                    ${a.type || 'Clock-In'}
-                </span>
-            </td>
-            <td class="p-2.5 font-mono font-bold text-xs text-primary">${detectedShift.name}</td>
-            <td class="p-2.5 font-mono font-bold ${lateMins > 0 ? 'text-amber-700' : 'text-emerald-700'}">
-                ${isClockIn ? (lateMins > 0 ? `+${lateMins} ນາທີ` : '✓ ຕົງເວລາ') : '--'}
-            </td>
-            <td class="p-2.5 text-outline">${a.branch || 'NP Branch'}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-function openStockMovementKiosk() {
-    navigateTo('kiosk');
-    switchKioskTab('stock-movement');
-}
-
-function switchKioskTab(tabName) {
-    const timeClockTab = document.getElementById('kiosk-tab-time-clock');
-    const stockTab = document.getElementById('kiosk-tab-stock-movement');
-    const timeClockView = document.getElementById('kiosk-subview-time-clock');
-    const stockView = document.getElementById('kiosk-subview-stock-movement');
-
-    if (tabName === 'time-clock') {
-        timeClockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm';
-        stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
-        timeClockView.classList.remove('hidden');
-        stockView.classList.add('hidden');
-        renderTodayKioskAttendance();
-    } else {
-        stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm';
-        timeClockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
-        stockView.classList.remove('hidden');
-        timeClockView.classList.add('hidden');
-        
-        populateStockMovementDropdown();
-        renderMovementLogs();
-    }
-}
-
-function populateStockMovementDropdown() {
-    const select = document.getElementById('movement-item-select');
-    if (!select) return;
-    select.innerHTML = '';
-
-    stockData.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item.sku;
-        opt.textContent = `[${item.sku}] ${item.name} (Stock: ${item.stock || 0})`;
-        select.appendChild(opt);
-    });
-}
-
-function addQuickQty(amount) {
-    const input = document.getElementById('movement-qty-input');
-    const current = parseInt(input.value) || 0;
-    input.value = current + amount;
-}
-
-async function handleKioskMovementSubmit(e) {
-    e.preventDefault();
-    const sku = document.getElementById('movement-item-select').value;
-    const movementType = document.querySelector('input[name="movement-type"]:checked').value;
-    const qty = parseInt(document.getElementById('movement-qty-input').value);
-    const note = document.getElementById('movement-note-input').value.trim() || 'ບັນທຶກ Kiosk';
-
-    const item = stockData.find(i => i.sku === sku);
+function openEditStockModal(sku, branch) {
+    const item = stockData.find(i => i.sku === sku && i.branch === branch);
     if (!item) return;
 
-    const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
-    item.stock = newStock;
+    document.getElementById('edit-modal-old-sku').value = item.sku;
+    document.getElementById('edit-modal-old-branch').value = item.branch || 'ສາຂານ້ຳພຸ';
+
+    document.getElementById('edit-modal-sku').value = item.sku;
+    document.getElementById('edit-modal-branch').value = item.branch || 'ສາຂານ້ຳພຸ';
+    document.getElementById('edit-modal-name').value = item.name || '';
+    document.getElementById('edit-modal-category').value = item.category || 'ວັດຖຸດິບ';
+    document.getElementById('edit-modal-qty').value = item.stock || 0;
+    document.getElementById('edit-modal-min').value = item.min_stock || 1;
+
+    openModal('edit-stock-modal');
+}
+
+async function handleEditStockSubmit(e) {
+    e.preventDefault();
+    const oldSku = document.getElementById('edit-modal-old-sku').value;
+    const oldBranch = document.getElementById('edit-modal-old-branch').value;
+
+    const updatedItem = {
+        sku: document.getElementById('edit-modal-sku').value.trim(),
+        branch: document.getElementById('edit-modal-branch').value.trim(),
+        name: document.getElementById('edit-modal-name').value.trim(),
+        category: document.getElementById('edit-modal-category').value,
+        stock: parseInt(document.getElementById('edit-modal-qty').value) || 0,
+        min_stock: parseInt(document.getElementById('edit-modal-min').value) || 1,
+        status: 'OK'
+    };
 
     if (supabaseClient) {
-        await supabaseClient.from('daily_inventory_movement').insert([{
-            sku: item.sku,
-            name: item.name,
-            type: movementType,
-            qty: qty,
-            note: note
-        }]);
+        const { error } = await supabaseClient
+            .from('main_inventory')
+            .update(updatedItem)
+            .eq('sku', oldSku)
+            .eq('branch', oldBranch);
 
-        await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
+        if (error) {
+            showToast('❌ ອັບເດດບໍ່ສຳເລັດ: ' + error.message);
+            return;
+        }
+    }
+
+    const localItem = stockData.find(i => i.sku === oldSku && i.branch === oldBranch);
+    if (localItem) {
+        Object.assign(localItem, updatedItem);
     }
 
     renderStockTable();
+    renderStockAnalytics();
     populateStockMovementDropdown();
-    fetchDataFromSupabase();
-
-    document.getElementById('movement-qty-input').value = 1;
-    document.getElementById('movement-note-input').value = '';
-    showToast(`✓ ບັນທຶກ (${movementType}) ${item.name} ຈຳນວນ ${qty} ແລ້ວ!`);
-}
-
-function renderMovementLogs() {
-    const container = document.getElementById('kiosk-movement-logs-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    if (stockMovements.length === 0) {
-        container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການເຄື່ອນໄຫວ</p>';
-        return;
-    }
-
-    stockMovements.slice(0, 5).forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'p-2 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
-        item.innerHTML = `
-            <div>
-                <p class="font-bold text-on-surface">${m.name || m.sku}</p>
-                <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${parseSafeDate(m.timestamp).toLocaleTimeString()}</p>
-            </div>
-            <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-                ${m.type === 'IN' ? '+' : '-'}${m.qty}
-            </span>
-        `;
-        container.appendChild(item);
-    });
-}
-
-function renderStockAnalytics() {
-    const chartContainer = document.getElementById('analytics-chart-container');
-    if (!chartContainer) return;
-    chartContainer.innerHTML = '';
-
-    const daysOfWeek = ['ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ', 'ອາທິດ'];
-    const mockHeights = [65, 80, 45, 90, 75, 95, 50];
-
-    daysOfWeek.forEach((day, i) => {
-        const val = mockHeights[i];
-        const bar = document.createElement('div');
-        bar.className = 'w-1/7 bg-primary rounded-t-lg transition-all relative group flex flex-col justify-end items-center shadow-sm';
-        bar.style.height = `${Math.max(20, val)}%`;
-        bar.innerHTML = `<span class="text-[10px] font-bold text-primary mb-1 bg-primary-fixed/40 px-1 rounded">${val}</span>`;
-        chartContainer.appendChild(bar);
-    });
+    closeModal('edit-stock-modal');
+    showToast(`✓ ແກ້ໄຂຂໍ້ມູນ ${updatedItem.name} ສຳເລັດແລ້ວ!`);
 }
 
 let currentStockFilter = 'all';
@@ -802,7 +662,10 @@ function renderStockTable(filterCat = currentStockFilter) {
                 </span>
             </td>
             ${isAdminLoggedIn ? `
-            <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+            <td class="p-3 text-right space-x-1 whitespace-nowrap">
+                <button onclick="openEditStockModal('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                    ແກ້ໄຂ
+                </button>
                 <button onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-all">
                     ປັບ Stock
                 </button>
@@ -846,9 +709,154 @@ async function adjustStockPrompt(sku, branch) {
             }
 
             renderStockTable();
+            renderStockAnalytics();
             showToast(`✓ ອັບເດດ ${item.name} ເປັນ ${parsedQty} ແລ້ວ`);
         }
     }
+}
+
+// =========================================================================
+// STOCK ANALYTICS & MODERN METRICS RENDERING
+// =========================================================================
+function renderStockAnalytics() {
+    const categoryProgressContainer = document.getElementById('analytics-category-progress');
+    const chartContainer = document.getElementById('analytics-chart-container');
+    const chartLabelsContainer = document.getElementById('analytics-chart-labels');
+    const rankingTableBody = document.getElementById('top-ranking-table-body');
+
+    if (!categoryProgressContainer || !chartContainer || !rankingTableBody) return;
+
+    categoryProgressContainer.innerHTML = '';
+    chartContainer.innerHTML = '';
+    if (chartLabelsContainer) chartLabelsContainer.innerHTML = '';
+    rankingTableBody.innerHTML = '';
+
+    // 1. Calculate Category Stock Distribution
+    const catCountMap = { 'ວັດຖຸດິບ': 0, 'ໄຊຮັບ': 0, 'ເຄື່ອງຍ່ອຍ': 0, 'ເຄື່ອງໃຊ້ທົ່ວໄປ': 0 };
+    stockData.forEach(item => {
+        const cat = item.category || 'ວັດຖຸດິບ';
+        if (catCountMap[cat] !== undefined) catCountMap[cat] += (item.stock || 0);
+        else catCountMap[cat] = (item.stock || 0);
+    });
+
+    const totalStockQty = Object.values(catCountMap).reduce((a, b) => a + b, 0) || 1;
+    const catColors = {
+        'ວັດຖຸດິບ': 'bg-amber-600',
+        'ໄຊຮັບ': 'bg-yellow-500',
+        'ເຄື່ອງຍ່ອຍ': 'bg-emerald-600',
+        'ເຄື່ອງໃຊ້ທົ່ວໄປ': 'bg-blue-600'
+    };
+
+    Object.keys(catCountMap).forEach(cat => {
+        const count = catCountMap[cat];
+        const pct = Math.round((count / totalStockQty) * 100);
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1';
+        row.innerHTML = `
+            <div class="flex justify-between text-xs font-bold">
+                <span class="text-on-surface">${cat}</span>
+                <span class="text-on-surface-variant font-mono">${count} ຊິ້ນ (${pct}%)</span>
+            </div>
+            <div class="w-full bg-surface-container rounded-full h-2.5 overflow-hidden">
+                <div class="${catColors[cat] || 'bg-primary'} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+        `;
+        categoryProgressContainer.appendChild(row);
+    });
+
+    // 2. Calculate Usage and Burn Rate from movements
+    const itemUsageMap = {};
+    let totalBurnUnits = 0;
+
+    stockMovements.forEach(m => {
+        if (m.type === 'OUT') {
+            const key = m.sku || m.name;
+            if (!itemUsageMap[key]) itemUsageMap[key] = { sku: m.sku, name: m.name || m.sku, totalOut: 0 };
+            itemUsageMap[key].totalOut += (m.qty || 0);
+            totalBurnUnits += (m.qty || 0);
+        }
+    });
+
+    const avgBurnRatePerDay = Math.round(totalBurnUnits / 7) || 2;
+    document.getElementById('stat-avg-burn-rate').textContent = `${avgBurnRatePerDay} ລາຍການ/ມື້`;
+
+    const sortedUsage = Object.values(itemUsageMap).sort((a, b) => b.totalOut - a.totalOut);
+
+    if (sortedUsage.length > 0) {
+        document.getElementById('stat-top-item-name').textContent = sortedUsage[0].name;
+        document.getElementById('stat-top-item-qty').textContent = `ເບີກອອກ: ${sortedUsage[0].totalOut} ລາຍການ`;
+    } else {
+        document.getElementById('stat-top-item-name').textContent = stockData[0]?.name || 'ກາເຟຂົ້ວເຂັ້ມ';
+        document.getElementById('stat-top-item-qty').textContent = 'ອັນດັບ #1';
+    }
+
+    const top5 = sortedUsage.length > 0 ? sortedUsage.slice(0, 5) : stockData.slice(0, 5).map(s => ({ sku: s.sku, name: s.name, totalOut: 5 }));
+    let criticalCount = 0;
+
+    top5.forEach((item, index) => {
+        const stockItem = stockData.find(s => s.sku === item.sku) || { stock: 10 };
+        const currentStock = stockItem.stock || 0;
+        const dailyBurn = Math.max(1, Math.round(item.totalOut / 7));
+        const daysLeft = Math.floor(currentStock / dailyBurn);
+
+        if (daysLeft < 3) criticalCount++;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low';
+        tr.innerHTML = `
+            <td class="p-2.5 font-bold text-primary">#${index + 1}</td>
+            <td class="p-2.5 font-bold text-on-surface">${item.name} <span class="text-[10px] text-outline">(${item.sku})</span></td>
+            <td class="p-2.5 font-mono font-bold text-red-700">-${item.totalOut}</td>
+            <td class="p-2.5 font-mono">${dailyBurn}/ມື້</td>
+            <td class="p-2.5 font-mono font-bold text-sm">${currentStock}</td>
+            <td class="p-2.5 text-right font-mono font-bold ${daysLeft < 3 ? 'text-error' : 'text-emerald-700'}">
+                ${daysLeft} ມື້
+            </td>
+        `;
+        rankingTableBody.appendChild(tr);
+    });
+
+    document.getElementById('stat-critical-items').textContent = `${criticalCount} ລາຍການ`;
+
+    // 3. Render Daily Outflow 7-day Trend Bars
+    const last7Days = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(today.getDate() - i);
+        last7Days.push(getLaosDateString(d));
+    }
+
+    const dailyQtyMap = {};
+    last7Days.forEach(dayStr => dailyQtyMap[dayStr] = 0);
+
+    stockMovements.forEach(m => {
+        if (m.type === 'OUT') {
+            const mDate = getLaosDateString(parseSafeDate(m.timestamp));
+            if (dailyQtyMap[mDate] !== undefined) dailyQtyMap[mDate] += (m.qty || 0);
+        }
+    });
+
+    const maxVal = Math.max(...Object.values(dailyQtyMap), 10);
+
+    last7Days.forEach(dayStr => {
+        const val = dailyQtyMap[dayStr];
+        const heightPct = Math.max(15, Math.round((val / maxVal) * 100));
+
+        const bar = document.createElement('div');
+        bar.className = 'w-1/7 bg-emerald-600 hover:bg-emerald-500 rounded-t-lg transition-all relative flex flex-col justify-end items-center shadow-sm cursor-pointer';
+        bar.style.height = `${heightPct}%`;
+        bar.innerHTML = `<span class="text-[9px] font-bold text-emerald-900 mb-1">${val}</span>`;
+        chartContainer.appendChild(bar);
+
+        if (chartLabelsContainer) {
+            const lbl = document.createElement('span');
+            lbl.className = 'text-[9px] text-outline font-mono';
+            lbl.textContent = dayStr.substring(8, 10);
+            chartLabelsContainer.appendChild(lbl);
+        }
+    });
 }
 
 // =========================================================================
@@ -1102,7 +1110,7 @@ function renderEarlyComerStreakRanking() {
 }
 
 // =========================================================================
-// HRM ADMIN AUTHENTICATION & EDIT STAFF
+// ADMIN AUTHENTICATION & CRUD
 // =========================================================================
 function unlockAdminMode() {
     isAdminLoggedIn = true;
@@ -1224,6 +1232,7 @@ async function deleteStock(sku, branch, name) {
 
         stockData = stockData.filter(s => !(s.sku === sku && s.branch === branch));
         renderStockTable();
+        renderStockAnalytics();
         populateStockMovementDropdown();
         showToast(`✓ ລົບສິນຄ້າ ${name} ແລ້ວ`);
     }
@@ -1279,11 +1288,11 @@ async function handleStockSubmit(e) {
     }
 
     renderStockTable();
+    renderStockAnalytics();
     closeModal('stock-modal');
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
-// Fetch Supabase Data
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -1292,6 +1301,7 @@ async function fetchDataFromSupabase() {
         if (stockRes && stockRes.length > 0) {
             stockData = stockRes;
             renderStockTable();
+            renderStockAnalytics();
             populateStockMovementDropdown();
         }
     } catch (e) {}
@@ -1309,6 +1319,7 @@ async function fetchDataFromSupabase() {
         if (moveRes) {
             stockMovements = moveRes;
             renderMovementLogs();
+            renderStockAnalytics();
         }
     } catch (e) {}
 
@@ -1325,7 +1336,6 @@ async function fetchDataFromSupabase() {
     } catch (e) {}
 }
 
-// Modals & Toasts
 function openModal(id) { 
     const modal = document.getElementById(id);
     if (modal) {
@@ -1353,7 +1363,6 @@ function showToast(msg) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// Clock Loop
 setInterval(() => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1370,7 +1379,6 @@ setInterval(() => {
     if (kioskDate) kioskDate.textContent = dateStr;
 }, 1000);
 
-// Sidebar Mobile Toggle
 const mobileBtn = document.getElementById('mobile-menu-btn');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
@@ -1379,13 +1387,13 @@ function openMobileMenu() { sidebar.classList.remove('-translate-x-full'); overl
 function closeMobileMenu() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
 if (mobileBtn) { mobileBtn.onclick = openMobileMenu; overlay.onclick = closeMobileMenu; }
 
-// App Init
 window.addEventListener('DOMContentLoaded', () => {
     if (supabaseUrl) document.getElementById('config-supabase-url').value = supabaseUrl;
     if (supabaseKey) document.getElementById('config-supabase-key').value = supabaseKey;
 
     initSupabase();
     renderStockTable();
+    renderStockAnalytics();
     renderEmployeesAndPayroll();
     populateStockMovementDropdown();
     renderMovementLogs();
