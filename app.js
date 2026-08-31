@@ -1,5 +1,5 @@
 // =========================================================================
-// SHIFT CONFIGURATION & SMART AUTO DETECTION
+// 1. SHIFT CONFIGURATION & SMART AUTO DETECTION
 // =========================================================================
 const SHIFT_RULES = {
     'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
@@ -26,12 +26,73 @@ function getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
 }
 
+function parseSafeDate(ts) {
+    if (!ts) return new Date();
+    if (ts instanceof Date) return ts;
+    let str = String(ts).trim();
+    if (str.includes(' ') && !str.includes('T')) str = str.replace(' ', 'T');
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? new Date() : d;
+}
+
+function getLaosDateString(dateObj = new Date()) {
+    const safeD = parseSafeDate(dateObj);
+    const d = new Date(safeD.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getLaosTimeInfo(timestamp) {
+    const dt = parseSafeDate(timestamp);
+    const laosStr = dt.toLocaleTimeString('en-US', { timeZone: 'Asia/Vientiane', hour12: false });
+    const parts = laosStr.split(':');
+    const hours = parseInt(parts[0]) || 0;
+    const minutes = parseInt(parts[1]) || 0;
+    const seconds = parseInt(parts[2]) || 0;
+    const totalMinutes = hours * 60 + minutes;
+    const totalSeconds = totalMinutes * 60 + seconds;
+    return { hours, minutes, seconds, totalMinutes, totalSeconds };
+}
+
 // =========================================================================
-// SUPABASE CLIENT CONFIGURATION
+// 2. SUPABASE API & STATE INITIALIZATION
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
 let supabaseClient = null;
+
+let isAdminLoggedIn = false;
+let attendanceLogs = [];
+let staffOffDays = JSON.parse(localStorage.getItem('staff_off_days') || '{}');
+let localBenefitApprovals = JSON.parse(localStorage.getItem('staff_benefit_approvals') || '{}');
+
+let stockData = [
+    { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 12, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+    { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 25, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+    { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 18, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+    { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 8, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
+    { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 5, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
+    { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 300, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' }
+];
+
+let stockMovements = [
+    { id: 1, sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', type: 'OUT', qty: 4, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 1).toISOString() },
+    { id: 2, sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', type: 'OUT', qty: 6, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
+    { id: 3, sku: 'P013', name: 'ມັດຊະ (ຖົງ)', type: 'OUT', qty: 2, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() }
+];
+
+let partnersData = [
+    { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
+    { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', emp_type: 'Full-time', shift: 'ກະ 1', salary: 4500000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
+    { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, benefit_approved: false, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
+    { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', emp_type: 'Full-time', shift: 'ກະ 2', salary: 4000000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
+    { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
+    { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, benefit_approved: false, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
+];
+
+let selectedPartnerForClock = null;
 
 function initSupabase() {
     if (supabaseUrl && supabaseKey && supabaseUrl.startsWith('http')) {
@@ -82,74 +143,8 @@ function saveSupabaseConfig(e) {
     showToast('✓ ຕັ້ງຄ່າ ແລະ ເຊື່ອມຕໍ່ Supabase ແລ້ວ!');
 }
 
-function parseSafeDate(ts) {
-    if (!ts) return new Date();
-    if (ts instanceof Date) return ts;
-    let str = String(ts).trim();
-    if (str.includes(' ') && !str.includes('T')) str = str.replace(' ', 'T');
-    const d = new Date(str);
-    return isNaN(d.getTime()) ? new Date() : d;
-}
-
-function getLaosDateString(dateObj = new Date()) {
-    const safeD = parseSafeDate(dateObj);
-    const d = new Date(safeD.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-function getLaosTimeInfo(timestamp) {
-    const dt = parseSafeDate(timestamp);
-    const laosStr = dt.toLocaleTimeString('en-US', { timeZone: 'Asia/Vientiane', hour12: false });
-    const parts = laosStr.split(':');
-    const hours = parseInt(parts[0]) || 0;
-    const minutes = parseInt(parts[1]) || 0;
-    const seconds = parseInt(parts[2]) || 0;
-    const totalMinutes = hours * 60 + minutes;
-    const totalSeconds = totalMinutes * 60 + seconds;
-    return { hours, minutes, seconds, totalMinutes, totalSeconds };
-}
-
 // =========================================================================
-// DATA ARRAYS & STATE PERSISTENCE
-// =========================================================================
-let isAdminLoggedIn = false;
-let attendanceLogs = [];
-let staffOffDays = JSON.parse(localStorage.getItem('staff_off_days') || '{}');
-
-// Benefit approvals backup persistence in LocalStorage
-let localBenefitApprovals = JSON.parse(localStorage.getItem('staff_benefit_approvals') || '{}');
-
-let stockData = [
-    { sku: 'P001', name: 'ຜົງໂກ້ໂກ້ (ຖົງ)', stock: 12, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-    { sku: 'P006', name: 'ກາເຟຂົ້ວກາງ 1ກລ (ຖົງ)', stock: 25, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-    { sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', stock: 18, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-    { sku: 'P028', name: 'ນົມໂອດ (ຕຸກ)', stock: 8, min_stock: 1, status: 'OK', category: 'ວັດຖຸດິບ', branch: 'ສາຂານ້ຳພຸ' },
-    { sku: 'P036', name: 'ໄຊຣັບຄາລາເມລ (ຕຸກ)', stock: 5, min_stock: 1, status: 'OK', category: 'ໄຊຮັບ', branch: 'ສາຂານ້ຳພຸ' },
-    { sku: 'P080', name: 'ຈອກ 16 ອອນ (ໜ່ວຍ)', stock: 300, min_stock: 1, status: 'OK', category: 'ເຄື່ອງໃຊ້ທົ່ວໄປ', branch: 'ສາຂານ້ຳພຸ' }
-];
-
-let stockMovements = [
-    { id: 1, sku: 'P007', name: 'ກາເຟຂົ້ວເຂັ້ມ 1ກລ (ຖົງ)', type: 'OUT', qty: 4, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 1).toISOString() },
-    { id: 2, sku: 'P031', name: 'ນົມສົດ 2000g (ຕຸກ)', type: 'OUT', qty: 6, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
-    { id: 3, sku: 'P013', name: 'ມັດຊະ (ຖົງ)', type: 'OUT', qty: 2, note: 'ໃຊ້ປະຈຳວັນ', timestamp: new Date(Date.now() - 86400000 * 3).toISOString() }
-];
-
-let partnersData = [
-    { pin: '225588', staff_id: 'EMP0001', name: 'Keo', branch: 'NP branch', role: 'Barista', phone: '2057558813', emp_type: 'Full-time', shift: 'ກະ 1', salary: 3800000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=60' },
-    { pin: '147258', staff_id: 'EMP0002', name: 'Vieng', branch: 'NP Branch', role: 'Barista', phone: '2078081195', emp_type: 'Full-time', shift: 'ກະ 1', salary: 4500000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=60' },
-    { pin: '112233', staff_id: 'EMP0003', name: 'Cherry', branch: 'NP Branch', role: 'Barista', phone: '2097363821', emp_type: 'Part-time', shift: 'ກະ 1', salary: 2500000, benefit: 300000, benefit_approved: false, photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&auto=format&fit=crop&q=60' },
-    { pin: '775533', staff_id: 'EMP0004', name: 'pakham', branch: 'NP Branch', role: 'Barista', phone: '2098382508', emp_type: 'Full-time', shift: 'ກະ 2', salary: 4000000, benefit: 500000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=60' },
-    { pin: '181193', staff_id: 'EMP0005', name: 'Nut', branch: 'NP Branch', role: 'Barista', phone: '2077489078', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3600000, benefit: 420000, benefit_approved: true, photo_url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=60' },
-    { pin: '920707', staff_id: 'EMP0006', name: 'AE', branch: 'NP Branch', role: 'Barista', phone: '2092070715', emp_type: 'Full-time', shift: 'ກະ 2', salary: 3500000, benefit: 400000, benefit_approved: false, photo_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=60' }
-];
-
-let selectedPartnerForClock = null;
-
-// =========================================================================
-// NAVIGATION CONTROLLER (DEFAULT: DASHBOARD)
+// 3. NAVIGATION CONTROLLER (DEFAULT: DASHBOARD)
 // =========================================================================
 const views = ['dashboard', 'current-stock', 'inventory', 'employees', 'payroll', 'self-service', 'kiosk'];
 
@@ -188,7 +183,10 @@ function navigateTo(viewId) {
         activeNav.classList.remove('text-primary-fixed-dim');
     }
 
-    if (viewId === 'dashboard') updateOnDutyStaffUI();
+    if (viewId === 'dashboard') {
+        updateOnDutyStaffUI();
+        renderEarlyComerStreakRanking();
+    }
     if (viewId === 'inventory') renderStockAnalytics();
     if (viewId === 'current-stock') renderStockTable();
 
@@ -197,7 +195,94 @@ function navigateTo(viewId) {
 }
 
 // =========================================================================
-// ON-DUTY (CLOCKED-IN) STAFF TRACKER
+// 4. KIOSK & STOCK MOVEMENT HANDLERS (DEFINED EXPLICITLY)
+// =========================================================================
+function openStockMovementKiosk() {
+    navigateTo('kiosk');
+    switchKioskTab('stock-movement');
+}
+
+function switchKioskTab(tabName) {
+    const timeClockTab = document.getElementById('kiosk-tab-time-clock');
+    const stockTab = document.getElementById('kiosk-tab-stock-movement');
+    const timeClockView = document.getElementById('kiosk-subview-time-clock');
+    const stockView = document.getElementById('kiosk-subview-stock-movement');
+
+    if (!timeClockTab || !stockTab || !timeClockView || !stockView) return;
+
+    if (tabName === 'time-clock') {
+        timeClockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm';
+        stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
+        timeClockView.classList.remove('hidden');
+        stockView.classList.add('hidden');
+        renderTodayKioskAttendance();
+    } else {
+        stockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm';
+        timeClockTab.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5';
+        stockView.classList.remove('hidden');
+        timeClockView.classList.add('hidden');
+        
+        populateStockMovementDropdown();
+    }
+}
+
+function populateStockMovementDropdown() {
+    const select = document.getElementById('movement-item-select');
+    if (!select) return;
+    select.innerHTML = '';
+
+    stockData.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.sku;
+        opt.textContent = `[${item.sku}] ${item.name} (Stock: ${item.stock || 0})`;
+        select.appendChild(opt);
+    });
+}
+
+function addQuickQty(amount) {
+    const input = document.getElementById('movement-qty-input');
+    if (!input) return;
+    const current = parseInt(input.value) || 0;
+    input.value = current + amount;
+}
+
+async function handleKioskMovementSubmit(e) {
+    e.preventDefault();
+    const sku = document.getElementById('movement-item-select').value;
+    const movementType = document.querySelector('input[name="movement-type"]:checked').value;
+    const qty = parseInt(document.getElementById('movement-qty-input').value);
+    const note = document.getElementById('movement-note-input').value.trim() || 'ບັນທຶກ Kiosk';
+
+    const item = stockData.find(i => i.sku === sku);
+    if (!item) return;
+
+    const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
+    item.stock = newStock;
+
+    if (supabaseClient) {
+        await supabaseClient.from('daily_inventory_movement').insert([{
+            sku: item.sku,
+            name: item.name,
+            type: movementType,
+            qty: qty,
+            note: note
+        }]);
+
+        await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
+    }
+
+    renderStockTable();
+    renderStockAnalytics();
+    populateStockMovementDropdown();
+    fetchDataFromSupabase();
+
+    document.getElementById('movement-qty-input').value = 1;
+    document.getElementById('movement-note-input').value = '';
+    showToast(`✓ ບັນທຶກ (${movementType}) ${item.name} ຈຳນວນ ${qty} ແລ້ວ!`);
+}
+
+// =========================================================================
+// 5. ON-DUTY & DAY STREAK TRACKER
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -237,8 +322,70 @@ function updateOnDutyStaffUI() {
     });
 }
 
+let currentEarlyRankingFilter = 'monthly';
+function setEarlyRankingFilter(filterType) {
+    currentEarlyRankingFilter = filterType;
+    document.querySelectorAll('.early-rank-tab').forEach(btn => {
+        btn.className = 'early-rank-tab px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-on-surface-variant hover:bg-surface';
+    });
+    const activeBtn = document.getElementById(`btn-early-${filterType}`);
+    if (activeBtn) activeBtn.className = 'early-rank-tab px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-800 text-white shadow-sm';
+    renderEarlyComerStreakRanking();
+}
+
+function renderEarlyComerStreakRanking() {
+    const container = document.getElementById('early-ranking-container');
+    const streakProgressBar = document.getElementById('streak-progress-bar');
+    const streakTodayBadge = document.getElementById('streak-today-badge');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const now = new Date();
+    const laosNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
+    const todayDayIndex = laosNow.getDay();
+    const dayNamesLao = ['ອາທິດ', 'ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ'];
+    const dayNamesEng = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+    if (streakTodayBadge) {
+        streakTodayBadge.innerHTML = `✨ ມື້ນີ້: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
+    }
+
+    for (let i = 0; i < 7; i++) {
+        const lbl = document.getElementById(`day-lbl-${i}`);
+        if (lbl) {
+            if (i === todayDayIndex) lbl.className = 'text-white font-black text-[11px] scale-125 transition-transform drop-shadow';
+            else lbl.className = 'text-amber-200/70 font-semibold text-[10px]';
+        }
+    }
+
+    const targetWidthPct = Math.round(((todayDayIndex + 1) / 7) * 100);
+    if (streakProgressBar) streakProgressBar.style.width = `${targetWidthPct}%`;
+
+    const ranking = partnersData.map(p => {
+        const payroll = calculateRealtimePayroll(p);
+        return { name: p.name, photo: p.photo_url, streak: payroll.currentStreak, onTimeCount: payroll.onTimeDaysCount };
+    }).sort((a, b) => b.streak - a.streak);
+
+    if (ranking.length > 0) {
+        const top = ranking[0];
+        const topCard = document.createElement('div');
+        topCard.className = 'p-3 bg-amber-50 border border-amber-300 rounded-xl flex items-center justify-between shadow-sm';
+        topCard.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="${top.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-10 h-10 rounded-full object-cover border border-amber-500">
+                <div>
+                    <h4 class="font-bold text-xs text-on-surface">${top.name} 👑</h4>
+                    <p class="text-[10px] text-on-surface-variant font-semibold">ມາວຽກໄວ & ຕົງເວລາ: ${top.onTimeCount} ມື້</p>
+                </div>
+            </div>
+            <span class="font-bold text-amber-700 text-xs">🔥 ${top.streak} Day Streak</span>
+        `;
+        container.appendChild(topCard);
+    }
+}
+
 // =========================================================================
-// REAL-TIME PAYROLL & BENEFIT CALCULATION (SUPABASE PERSISTENT)
+// 6. REAL-TIME PAYROLL & BENEFIT CALCULATION
 // =========================================================================
 function calculateRealtimePayroll(staff) {
     const todayStr = getLaosDateString();
@@ -278,8 +425,6 @@ function calculateRealtimePayroll(staff) {
     let maxStreak = 0;
 
     const baseSalary = Number(staff.salary) || 3800000;
-    
-    // Check benefit status from object, or Supabase/LocalStorage backup
     const isBenefitApproved = staff.benefit_approved === true || localBenefitApprovals[staff.pin] === true;
     const effectiveBenefit = isBenefitApproved ? (Number(staff.benefit) || 0) : 0;
     const dailyRate = baseSalary / standardWorkDays;
@@ -347,18 +492,13 @@ function renderEmployeesAndPayroll() {
     partnerContainer.innerHTML = '';
     payrollBody.innerHTML = '';
 
-    let superStreakCount = 0;
-
     partnersData.forEach(p => {
-        // Sync local cache
         if (localBenefitApprovals[p.pin] !== undefined) {
             p.benefit_approved = localBenefitApprovals[p.pin];
         }
 
         const payroll = calculateRealtimePayroll(p);
-        if (payroll.currentStreak >= 3) superStreakCount++;
 
-        // Directory Card
         const card = document.createElement('div');
         card.className = 'bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm flex flex-col justify-between relative group';
         card.innerHTML = `
@@ -405,7 +545,6 @@ function renderEmployeesAndPayroll() {
         `;
         partnerContainer.appendChild(card);
 
-        // Payroll Table Row
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-surface-container-low';
         tr.innerHTML = `
@@ -443,23 +582,20 @@ function renderEmployeesAndPayroll() {
     if (lateEl) lateEl.textContent = `${todayLateTotal} ນາທີ`;
 }
 
-// TOGGLE BENEFIT WITH SUPABASE & LOCAL PERSISTENCE (FIXED)
 async function toggleBenefitDirectly(pin) {
     const p = partnersData.find(item => item.pin === pin);
     if (!p) return;
 
     p.benefit_approved = !p.benefit_approved;
 
-    // 1. Save to LocalStorage immediately
     localBenefitApprovals[pin] = p.benefit_approved;
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
-    // 2. Persist to Supabase Database
     if (supabaseClient) {
         try {
             await supabaseClient.from('staff').update({ benefit_approved: p.benefit_approved }).eq('pin', pin);
         } catch (e) {
-            console.warn('Supabase staff update exception:', e);
+            console.warn('Supabase staff benefit update error:', e);
         }
     }
 
@@ -468,7 +604,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// STAFF SELF-SERVICE PORTAL
+// 7. STAFF SELF-SERVICE PORTAL
 // =========================================================================
 function checkStaffSelfService() {
     const pin = document.getElementById('staff-portal-pin').value.trim();
@@ -632,7 +768,7 @@ function toggleOffDayProof(pin, dateStr) {
 }
 
 // =========================================================================
-// STOCK MANAGEMENT & INLINE CATEGORY EDITING
+// 8. STOCK CRUD & EDITING
 // =========================================================================
 function openEditStockModal(sku, branch) {
     const item = stockData.find(i => i.sku === sku && i.branch === branch);
@@ -691,7 +827,6 @@ async function handleEditStockSubmit(e) {
     showToast(`✓ ແກ້ໄຂສິນຄ້າ ແລະ ປ່ຽນໝວດໝູ່ເປັນ [${updatedItem.category}] ສຳເລັດແລ້ວ!`);
 }
 
-// Inline Category quick change directly via Admin dropdown
 async function quickChangeCategory(sku, branch, newCategory) {
     if (!isAdminLoggedIn) return;
     const item = stockData.find(i => i.sku === sku && i.branch === branch);
@@ -806,7 +941,7 @@ async function adjustStockPrompt(sku, branch) {
 }
 
 // =========================================================================
-// STOCK ANALYTICS RENDERING
+// 9. STOCK ANALYTICS RENDERING
 // =========================================================================
 function renderStockAnalytics() {
     const categoryProgressContainer = document.getElementById('analytics-category-progress');
@@ -947,7 +1082,7 @@ function renderStockAnalytics() {
 }
 
 // =========================================================================
-// KIOSK CLOCK-IN & OUT
+// 10. KIOSK PIN CLOCK-IN/OUT
 // =========================================================================
 let currentPin = '';
 const maxPin = 6;
@@ -1029,7 +1164,6 @@ async function executeClockAction(actionType) {
 
         attendanceLogs.unshift(newLog);
         renderTodayKioskAttendance();
-        renderAdminAttendanceTable(currentAdminAttFilter);
         updateOnDutyStaffUI();
         renderEmployeesAndPayroll();
         renderEarlyComerStreakRanking();
@@ -1090,78 +1224,15 @@ function renderTodayKioskAttendance() {
                 </div>
             </div>
             <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] bg-emerald-100 text-emerald-800">
-                On-Time / Active
+                Active
             </span>
         `;
         container.appendChild(item);
     });
 }
 
-// Early Comer Ranking
-let currentEarlyRankingFilter = 'monthly';
-function setEarlyRankingFilter(filterType) {
-    currentEarlyRankingFilter = filterType;
-    document.querySelectorAll('.early-rank-tab').forEach(btn => {
-        btn.className = 'early-rank-tab px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-on-surface-variant hover:bg-surface';
-    });
-    const activeBtn = document.getElementById(`btn-early-${filterType}`);
-    if (activeBtn) activeBtn.className = 'early-rank-tab px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-800 text-white shadow-sm';
-    renderEarlyComerStreakRanking();
-}
-
-function renderEarlyComerStreakRanking() {
-    const container = document.getElementById('early-ranking-container');
-    const streakProgressBar = document.getElementById('streak-progress-bar');
-    const streakTodayBadge = document.getElementById('streak-today-badge');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const now = new Date();
-    const laosNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Vientiane' }));
-    const todayDayIndex = laosNow.getDay();
-    const dayNamesLao = ['ອາທິດ', 'ຈັນ', 'ອັງຄານ', 'ພຸດ', 'ພະຫັດ', 'ສຸກ', 'ເສົາ'];
-    const dayNamesEng = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
-    if (streakTodayBadge) {
-        streakTodayBadge.innerHTML = `✨ ມາໄວ3ມື້=Super streak: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
-    }
-
-    for (let i = 0; i < 7; i++) {
-        const lbl = document.getElementById(`day-lbl-${i}`);
-        if (lbl) {
-            if (i === todayDayIndex) lbl.className = 'text-white font-black text-[11px] scale-125 transition-transform drop-shadow';
-            else lbl.className = 'text-amber-200/70 font-semibold text-[10px]';
-        }
-    }
-
-    const targetWidthPct = Math.round(((todayDayIndex + 1) / 7) * 100);
-    if (streakProgressBar) streakProgressBar.style.width = `${targetWidthPct}%`;
-
-    const ranking = partnersData.map(p => {
-        const payroll = calculateRealtimePayroll(p);
-        return { name: p.name, photo: p.photo_url, streak: payroll.currentStreak, onTimeCount: payroll.onTimeDaysCount };
-    }).sort((a, b) => b.streak - a.streak);
-
-    if (ranking.length > 0) {
-        const top = ranking[0];
-        const topCard = document.createElement('div');
-        topCard.className = 'p-3 bg-amber-50 border border-amber-300 rounded-xl flex items-center justify-between';
-        topCard.innerHTML = `
-            <div class="flex items-center gap-3">
-                <img src="${top.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-10 h-10 rounded-full object-cover border border-amber-500">
-                <div>
-                    <h4 class="font-bold text-xs text-on-surface">${top.name} 👑</h4>
-                    <p class="text-[10px] text-on-surface-variant">ຕົງເວລາ: ${top.onTimeCount} ມື້</p>
-                </div>
-            </div>
-            <span class="font-bold text-amber-700 text-xs">🔥 ${top.streak} Streak</span>
-        `;
-        container.appendChild(topCard);
-    }
-}
-
 // =========================================================================
-// ADMIN AUTHENTICATION & CRUD
+// 11. ADMIN AUTHENTICATION & CRUD
 // =========================================================================
 function unlockAdminMode() {
     isAdminLoggedIn = true;
@@ -1250,7 +1321,6 @@ async function handleEditStaffSubmit(e) {
         shift: document.getElementById('edit-staff-shift-input').value
     };
 
-    // Save persistence to LocalStorage
     localBenefitApprovals[pin] = isBenefitApproved;
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
@@ -1356,7 +1426,6 @@ async function handleStockSubmit(e) {
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
-// Fetch Supabase Data
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -1385,7 +1454,6 @@ async function fetchDataFromSupabase() {
         const { data: moveRes } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(50);
         if (moveRes) {
             stockMovements = moveRes;
-            renderMovementLogs();
             renderStockAnalytics();
         }
     } catch (e) {}
@@ -1395,7 +1463,6 @@ async function fetchDataFromSupabase() {
         if (attRes) {
             attendanceLogs = attRes;
             renderTodayKioskAttendance();
-            renderAdminAttendanceTable(currentAdminAttFilter);
             updateOnDutyStaffUI();
             renderEmployeesAndPayroll();
             renderEarlyComerStreakRanking();
@@ -1430,7 +1497,9 @@ function showToast(msg) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// Clock Loop
+// =========================================================================
+// 12. CLOCK & APP INITIALIZATION
+// =========================================================================
 setInterval(() => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1455,7 +1524,6 @@ function openMobileMenu() { sidebar.classList.remove('-translate-x-full'); overl
 function closeMobileMenu() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
 if (mobileBtn) { mobileBtn.onclick = openMobileMenu; overlay.onclick = closeMobileMenu; }
 
-// INITIALIZE APP (LANDING AT DASHBOARD)
 window.addEventListener('DOMContentLoaded', () => {
     if (supabaseUrl) document.getElementById('config-supabase-url').value = supabaseUrl;
     if (supabaseKey) document.getElementById('config-supabase-key').value = supabaseKey;
@@ -1465,12 +1533,10 @@ window.addEventListener('DOMContentLoaded', () => {
     renderStockAnalytics();
     renderEmployeesAndPayroll();
     populateStockMovementDropdown();
-    renderMovementLogs();
     renderTodayKioskAttendance();
-    renderAdminAttendanceTable('daily');
     updateOnDutyStaffUI();
     renderEarlyComerStreakRanking();
     
-    // Always navigate to Dashboard first on launch
+    // LAND AT DASHBOARD FIRST
     navigateTo('dashboard');
 });
