@@ -1,0 +1,48 @@
+css
+.material-symbols-outlined { 
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; 
+}
+
+.icon-fill { 
+    font-variation-settings: 'FILL' 1; 
+}
+
+.view-panel { 
+    display: none; 
+    opacity: 0; 
+    transition: opacity 0.2s ease-in-out; 
+}
+
+.view-panel.active { 
+    display: block; 
+    opacity: 1; 
+}
+
+::-webkit-scrollbar { 
+    width: 5px; 
+    height: 5px; 
+}
+
+::-webkit-scrollbar-track { 
+    background: #f0f4f8; 
+}
+
+::-webkit-scrollbar-thumb { 
+    background: #bfc7cd; 
+    border-radius: 4px; 
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px #fbbf24); 
+        transform: scale(1); 
+    }
+    50% { 
+        filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 18px #f59e0b); 
+        transform: scale(1.12); 
+    }
+}
+
+.streak-glow { 
+    animation: pulse-glow 2s infinite ease-in-out; 
+}
