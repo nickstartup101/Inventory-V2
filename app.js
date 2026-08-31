@@ -65,7 +65,7 @@ function formatSecondsToExactTime(secs) {
 }
 
 // =========================================================================
-// 2. SUPABASE API & STATE INITIALIZATION
+// 2. STATE & SUPABASE INITIALIZATION
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -231,6 +231,7 @@ function switchKioskTab(tabName) {
         timeClockView.classList.add('hidden');
         
         populateStockMovementDropdown();
+        renderKioskMovementLogs();
     }
 }
 
@@ -267,30 +268,60 @@ async function handleKioskMovementSubmit(e) {
     const newStock = movementType === 'IN' ? ((item.stock || 0) + qty) : Math.max(0, (item.stock || 0) - qty);
     item.stock = newStock;
 
-    if (supabaseClient) {
-        await supabaseClient.from('daily_inventory_movement').insert([{
-            sku: item.sku,
-            name: item.name,
-            type: movementType,
-            qty: qty,
-            note: note
-        }]);
+    const newMovement = {
+        sku: item.sku,
+        name: item.name,
+        type: movementType,
+        qty: qty,
+        note: note,
+        timestamp: new Date().toISOString()
+    };
 
+    if (supabaseClient) {
+        await supabaseClient.from('daily_inventory_movement').insert([newMovement]);
         await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
     }
+
+    stockMovements.unshift(newMovement);
 
     renderStockTable();
     renderStockAnalytics();
     populateStockMovementDropdown();
-    fetchDataFromSupabase();
+    renderKioskMovementLogs();
 
     document.getElementById('movement-qty-input').value = 1;
     document.getElementById('movement-note-input').value = '';
     showToast(`✓ ບັນທຶກ (${movementType}) ${item.name} ຈຳນວນ ${qty} ແລ້ວ!`);
 }
 
+function renderKioskMovementLogs() {
+    const container = document.getElementById('kiosk-movement-logs-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (stockMovements.length === 0) {
+        container.innerHTML = '<p class="text-outline text-center py-2">ບໍ່ມີປະວັດການເຄື່ອນໄຫວ</p>';
+        return;
+    }
+
+    stockMovements.slice(0, 6).forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+        item.innerHTML = `
+            <div>
+                <p class="font-bold text-on-surface text-xs">${m.name || m.sku}</p>
+                <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${parseSafeDate(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+            <span class="px-2 py-0.5 rounded font-mono font-bold text-xs ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                ${m.type === 'IN' ? '+' : '-'}${m.qty}
+            </span>
+        `;
+        container.appendChild(item);
+    });
+}
+
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING FIXED)
+// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING)
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -341,7 +372,6 @@ function setEarlyRankingFilter(filterType) {
     renderEarlyComerStreakRanking();
 }
 
-// RENDER TOP 4 EARLY COMERS & STREAK CHAMPIONS (FIXED)
 function renderEarlyComerStreakRanking() {
     const container = document.getElementById('early-ranking-container');
     const streakProgressBar = document.getElementById('streak-progress-bar');
@@ -371,13 +401,10 @@ function renderEarlyComerStreakRanking() {
     if (streakProgressBar) streakProgressBar.style.width = `${targetWidthPct}%`;
 
     const todayStr = getLaosDateString();
-    const currentMonthStr = todayStr.substring(0, 7);
 
-    // Compute Early Bird & Streak Metrics for All Staff
     const rankedStaffList = partnersData.map(p => {
         const payroll = calculateRealtimePayroll(p);
 
-        // Daily Early Bird Computation (Today's Clock-in)
         const todayLog = attendanceLogs.find(a => a.pin === p.pin && getLaosDateString(parseSafeDate(a.timestamp)) === todayStr && (a.type || '').toLowerCase().includes('in'));
         let secondsEarlyToday = 0;
         let clockInTimeStr = '--:--';
@@ -414,7 +441,6 @@ function renderEarlyComerStreakRanking() {
         }
     });
 
-    // Take exactly Top 4
     const top4List = rankedStaffList.slice(0, 4);
 
     if (top4List.length === 0) {
@@ -422,7 +448,7 @@ function renderEarlyComerStreakRanking() {
         return;
     }
 
-    // 1. Render Top #1 (Champion Card)
+    // Champion Card
     const top1 = top4List[0];
     const top1Card = document.createElement('div');
     top1Card.className = 'p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl flex items-center justify-between shadow-sm mb-2';
@@ -451,9 +477,8 @@ function renderEarlyComerStreakRanking() {
     `;
     container.appendChild(top1Card);
 
-    // 2. Render Top #2, #3, #4 (Runner-ups List)
+    // Runner-ups
     const rankBadges = ['🥈 #2', '🥉 #3', '🎖️ #4'];
-
     top4List.slice(1).forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'p-2.5 bg-surface-container-low border border-outline-variant/30 rounded-xl flex items-center justify-between hover:bg-surface-container transition-all';
@@ -1037,21 +1062,23 @@ async function adjustStockPrompt(sku, branch) {
 }
 
 // =========================================================================
-// 9. STOCK ANALYTICS RENDERING
+// 9. INVENTORY ANALYTICS & MOVEMENT HISTORY RENDERING
 // =========================================================================
 function renderStockAnalytics() {
     const categoryProgressContainer = document.getElementById('analytics-category-progress');
     const chartContainer = document.getElementById('analytics-chart-container');
     const chartLabelsContainer = document.getElementById('analytics-chart-labels');
-    const rankingTableBody = document.getElementById('top-ranking-table-body');
+    const movementsTableBody = document.getElementById('analytics-movements-table-body');
+    const countEl = document.getElementById('analytics-movements-count');
 
-    if (!categoryProgressContainer || !chartContainer || !rankingTableBody) return;
+    if (!categoryProgressContainer || !chartContainer || !movementsTableBody) return;
 
     categoryProgressContainer.innerHTML = '';
     chartContainer.innerHTML = '';
     if (chartLabelsContainer) chartLabelsContainer.innerHTML = '';
-    rankingTableBody.innerHTML = '';
+    movementsTableBody.innerHTML = '';
 
+    // 1. Category Stock Distribution
     const catCountMap = { 'ວັດຖຸດິບ': 0, 'ໄຊຮັບ': 0, 'ເຄື່ອງຍ່ອຍ': 0, 'ເຄື່ອງໃຊ້ທົ່ວໄປ': 0 };
     stockData.forEach(item => {
         const cat = item.category || 'ວັດຖຸດິບ';
@@ -1085,59 +1112,29 @@ function renderStockAnalytics() {
         categoryProgressContainer.appendChild(row);
     });
 
-    const itemUsageMap = {};
-    let totalBurnUnits = 0;
+    // 2. Calculate Total In / Total Out / Burn Rate
+    let totalInQty = 0;
+    let totalOutQty = 0;
 
     stockMovements.forEach(m => {
-        if (m.type === 'OUT') {
-            const key = m.sku || m.name;
-            if (!itemUsageMap[key]) itemUsageMap[key] = { sku: m.sku, name: m.name || m.sku, totalOut: 0 };
-            itemUsageMap[key].totalOut += (m.qty || 0);
-            totalBurnUnits += (m.qty || 0);
-        }
+        if (m.type === 'IN') totalInQty += (Number(m.qty) || 0);
+        if (m.type === 'OUT') totalOutQty += (Number(m.qty) || 0);
     });
 
-    const avgBurnRatePerDay = Math.round(totalBurnUnits / 7) || 2;
-    document.getElementById('stat-avg-burn-rate').textContent = `${avgBurnRatePerDay} ລາຍການ/ມື້`;
+    const statIn = document.getElementById('stat-total-in-qty');
+    const statOut = document.getElementById('stat-total-out-qty');
+    if (statIn) statIn.textContent = `${totalInQty} ຊິ້ນ`;
+    if (statOut) statOut.textContent = `${totalOutQty} ຊິ້ນ`;
 
-    const sortedUsage = Object.values(itemUsageMap).sort((a, b) => b.totalOut - a.totalOut);
+    const avgBurnRatePerDay = Math.round(totalOutQty / 7) || 0;
+    const statBurn = document.getElementById('stat-avg-burn-rate');
+    if (statBurn) statBurn.textContent = `${avgBurnRatePerDay} ລາຍການ/ມື້`;
 
-    if (sortedUsage.length > 0) {
-        document.getElementById('stat-top-item-name').textContent = sortedUsage[0].name;
-        document.getElementById('stat-top-item-qty').textContent = `ເບີກອອກ: ${sortedUsage[0].totalOut} ລາຍການ`;
-    } else {
-        document.getElementById('stat-top-item-name').textContent = stockData[0]?.name || 'ກາເຟຂົ້ວເຂັ້ມ';
-        document.getElementById('stat-top-item-qty').textContent = 'ອັນດັບ #1';
-    }
+    const lowCount = stockData.filter(i => (i.stock || 0) <= (i.min_stock || 1)).length;
+    const statCrit = document.getElementById('stat-critical-items');
+    if (statCrit) statCrit.textContent = `${lowCount} ລາຍການ`;
 
-    const top5 = sortedUsage.length > 0 ? sortedUsage.slice(0, 5) : stockData.slice(0, 5).map(s => ({ sku: s.sku, name: s.name, totalOut: 5 }));
-    let criticalCount = 0;
-
-    top5.forEach((item, index) => {
-        const stockItem = stockData.find(s => s.sku === item.sku) || { stock: 10 };
-        const currentStock = stockItem.stock || 0;
-        const dailyBurn = Math.max(1, Math.round(item.totalOut / 7));
-        const daysLeft = Math.floor(currentStock / dailyBurn);
-
-        if (daysLeft < 3) criticalCount++;
-
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-surface-container-low';
-        tr.innerHTML = `
-            <td class="p-2.5 font-bold text-primary">#${index + 1}</td>
-            <td class="p-2.5 font-bold text-on-surface">${item.name} <span class="text-[10px] text-outline">(${item.sku})</span></td>
-            <td class="p-2.5 font-mono font-bold text-red-700">-${item.totalOut}</td>
-            <td class="p-2.5 font-mono">${dailyBurn}/ມື້</td>
-            <td class="p-2.5 font-mono font-bold text-sm">${currentStock}</td>
-            <td class="p-2.5 text-right font-mono font-bold ${daysLeft < 3 ? 'text-error' : 'text-emerald-700'}">
-                ${daysLeft} ມື້
-            </td>
-        `;
-        rankingTableBody.appendChild(tr);
-    });
-
-    document.getElementById('stat-critical-items').textContent = `${criticalCount} ລາຍການ`;
-
+    // 3. Render 7-day Outflow Trend Chart
     const last7Days = [];
     const today = new Date();
     for (let i = 6; i >= 0; i--) {
@@ -1152,7 +1149,7 @@ function renderStockAnalytics() {
     stockMovements.forEach(m => {
         if (m.type === 'OUT') {
             const mDate = getLaosDateString(parseSafeDate(m.timestamp));
-            if (dailyQtyMap[mDate] !== undefined) dailyQtyMap[mDate] += (m.qty || 0);
+            if (dailyQtyMap[mDate] !== undefined) dailyQtyMap[mDate] += (Number(m.qty) || 0);
         }
     });
 
@@ -1175,10 +1172,37 @@ function renderStockAnalytics() {
             chartLabelsContainer.appendChild(lbl);
         }
     });
+
+    // 4. Render Full Movement Logs History Table
+    if (countEl) countEl.textContent = `${stockMovements.length} ລາຍການ`;
+
+    if (stockMovements.length === 0) {
+        movementsTableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-outline">ບໍ່ມີປະວັດການເຄື່ອນໄຫວສະຕ໋ອກ</td></tr>';
+        return;
+    }
+
+    stockMovements.slice(0, 30).forEach(m => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low';
+        tr.innerHTML = `
+            <td class="p-2.5 font-mono text-[11px] text-on-surface-variant">${parseSafeDate(m.timestamp).toLocaleDateString('en-GB')} ${parseSafeDate(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td>
+            <td class="p-2.5 font-bold text-on-surface">${m.name || m.sku} <span class="text-[10px] text-outline">(${m.sku || ''})</span></td>
+            <td class="p-2.5">
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                    ${m.type === 'IN' ? '📥 ນຳເຂົ້າ' : '📤 ເບີກອອກ'}
+                </span>
+            </td>
+            <td class="p-2.5 font-mono font-bold ${m.type === 'IN' ? 'text-emerald-700' : 'text-red-700'}">
+                ${m.type === 'IN' ? '+' : '-'}${m.qty}
+            </td>
+            <td class="p-2.5 text-on-surface-variant">${m.note || 'N/A'}</td>
+        `;
+        movementsTableBody.appendChild(tr);
+    });
 }
 
 // =========================================================================
-// 10. KIOSK PIN CLOCK-IN/OUT
+// 10. KIOSK PIN CLOCK-IN/OUT & STATUS (ON DUTY / END OF DUTY BADGES)
 // =========================================================================
 let currentPin = '';
 const maxPin = 6;
@@ -1274,6 +1298,7 @@ function cancelClockAction() {
     document.getElementById('kiosk-action-panel').classList.add('hidden');
 }
 
+// RENDER TODAY KIOSK FEED (ON DUTY / END OF DUTY BADGES)
 function renderTodayKioskAttendance() {
     const container = document.getElementById('kiosk-today-attendance-container');
     if (!container) return;
@@ -1307,8 +1332,11 @@ function renderTodayKioskAttendance() {
         let inTime = pair.clockIn ? parseSafeDate(pair.clockIn.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
         let outTime = pair.clockOut ? parseSafeDate(pair.clockOut.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
+        // Check if On Duty or End of Duty
+        const isOnDuty = pair.clockIn && !pair.clockOut;
+
         const item = document.createElement('div');
-        item.className = 'p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between';
+        item.className = 'p-3 bg-surface-container-low rounded-xl border border-outline-variant/30 flex items-center justify-between shadow-sm';
         item.innerHTML = `
             <div class="flex items-center gap-3">
                 <img src="${staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-9 h-9 rounded-full object-cover border border-primary/20">
@@ -1319,8 +1347,9 @@ function renderTodayKioskAttendance() {
                     </p>
                 </div>
             </div>
-            <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] bg-emerald-100 text-emerald-800">
-                Active
+            <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${isOnDuty ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' : 'bg-gray-200 text-gray-800'}">
+                <span class="w-1.5 h-1.5 rounded-full ${isOnDuty ? 'bg-emerald-600 animate-pulse' : 'bg-gray-500'}"></span>
+                ${isOnDuty ? '🟢 On Duty' : '🔴 End of Duty'}
             </span>
         `;
         container.appendChild(item);
@@ -1547,10 +1576,11 @@ async function fetchDataFromSupabase() {
     } catch (e) {}
 
     try {
-        const { data: moveRes } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(50);
+        const { data: moveRes } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(100);
         if (moveRes) {
             stockMovements = moveRes;
             renderStockAnalytics();
+            renderKioskMovementLogs();
         }
     } catch (e) {}
 
@@ -1630,6 +1660,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderEmployeesAndPayroll();
     populateStockMovementDropdown();
     renderTodayKioskAttendance();
+    renderKioskMovementLogs();
     updateOnDutyStaffUI();
     renderEarlyComerStreakRanking();
     
