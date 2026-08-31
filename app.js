@@ -56,6 +56,14 @@ function getLaosTimeInfo(timestamp) {
     return { hours, minutes, seconds, totalMinutes, totalSeconds };
 }
 
+function formatSecondsToExactTime(secs) {
+    if (secs <= 0) return '0 ວິ';
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    if (m > 0) return `${m} ນາທີ ${s} ວິ`;
+    return `${s} ວິນາທີ`;
+}
+
 // =========================================================================
 // 2. SUPABASE API & STATE INITIALIZATION
 // =========================================================================
@@ -195,7 +203,7 @@ function navigateTo(viewId) {
 }
 
 // =========================================================================
-// 4. KIOSK & STOCK MOVEMENT HANDLERS (DEFINED EXPLICITLY)
+// 4. KIOSK & STOCK MOVEMENT HANDLERS
 // =========================================================================
 function openStockMovementKiosk() {
     navigateTo('kiosk');
@@ -282,7 +290,7 @@ async function handleKioskMovementSubmit(e) {
 }
 
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER
+// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING FIXED)
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -333,6 +341,7 @@ function setEarlyRankingFilter(filterType) {
     renderEarlyComerStreakRanking();
 }
 
+// RENDER TOP 4 EARLY COMERS & STREAK CHAMPIONS (FIXED)
 function renderEarlyComerStreakRanking() {
     const container = document.getElementById('early-ranking-container');
     const streakProgressBar = document.getElementById('streak-progress-bar');
@@ -361,27 +370,114 @@ function renderEarlyComerStreakRanking() {
     const targetWidthPct = Math.round(((todayDayIndex + 1) / 7) * 100);
     if (streakProgressBar) streakProgressBar.style.width = `${targetWidthPct}%`;
 
-    const ranking = partnersData.map(p => {
-        const payroll = calculateRealtimePayroll(p);
-        return { name: p.name, photo: p.photo_url, streak: payroll.currentStreak, onTimeCount: payroll.onTimeDaysCount };
-    }).sort((a, b) => b.streak - a.streak);
+    const todayStr = getLaosDateString();
+    const currentMonthStr = todayStr.substring(0, 7);
 
-    if (ranking.length > 0) {
-        const top = ranking[0];
-        const topCard = document.createElement('div');
-        topCard.className = 'p-3 bg-amber-50 border border-amber-300 rounded-xl flex items-center justify-between shadow-sm';
-        topCard.innerHTML = `
-            <div class="flex items-center gap-3">
-                <img src="${top.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-10 h-10 rounded-full object-cover border border-amber-500">
+    // Compute Early Bird & Streak Metrics for All Staff
+    const rankedStaffList = partnersData.map(p => {
+        const payroll = calculateRealtimePayroll(p);
+
+        // Daily Early Bird Computation (Today's Clock-in)
+        const todayLog = attendanceLogs.find(a => a.pin === p.pin && getLaosDateString(parseSafeDate(a.timestamp)) === todayStr && (a.type || '').toLowerCase().includes('in'));
+        let secondsEarlyToday = 0;
+        let clockInTimeStr = '--:--';
+
+        if (todayLog) {
+            const inDate = parseSafeDate(todayLog.timestamp);
+            clockInTimeStr = inDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const shift = detectActualShift(inDate, p.shift);
+            const inInfo = getLaosTimeInfo(inDate);
+            const shiftStartSecs = shift.startMins * 60;
+            if (inInfo.totalSeconds < shiftStartSecs) {
+                secondsEarlyToday = shiftStartSecs - inInfo.totalSeconds;
+            }
+        }
+
+        return {
+            pin: p.pin,
+            name: p.name,
+            role: p.role,
+            photo: p.photo_url,
+            currentStreak: payroll.currentStreak,
+            onTimeCount: payroll.onTimeDaysCount,
+            secondsEarlyToday: secondsEarlyToday,
+            clockInTimeStr: clockInTimeStr,
+            hasClockedInToday: !!todayLog
+        };
+    }).sort((a, b) => {
+        if (currentEarlyRankingFilter === 'daily') {
+            if (b.hasClockedInToday !== a.hasClockedInToday) return b.hasClockedInToday - a.hasClockedInToday;
+            return b.secondsEarlyToday - a.secondsEarlyToday;
+        } else {
+            if (b.currentStreak !== a.currentStreak) return b.currentStreak - a.currentStreak;
+            return b.onTimeCount - a.onTimeCount;
+        }
+    });
+
+    // Take exactly Top 4
+    const top4List = rankedStaffList.slice(0, 4);
+
+    if (top4List.length === 0) {
+        container.innerHTML = '<p class="text-xs text-outline italic text-center py-3">ບໍ່ມີຂໍ້ມູນການຈັດອັນດັບ</p>';
+        return;
+    }
+
+    // 1. Render Top #1 (Champion Card)
+    const top1 = top4List[0];
+    const top1Card = document.createElement('div');
+    top1Card.className = 'p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl flex items-center justify-between shadow-sm mb-2';
+    top1Card.innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="relative">
+                <img src="${top1.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-11 h-11 rounded-full object-cover border-2 border-amber-500 shadow-sm">
+                <span class="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">👑</span>
+            </div>
+            <div>
+                <div class="flex items-center gap-1.5">
+                    <h4 class="font-bold text-xs text-on-surface">${top1.name}</h4>
+                    <span class="text-[9px] font-extrabold bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded-full uppercase">#1 Champion</span>
+                </div>
+                <p class="text-[10px] text-on-surface-variant font-semibold mt-0.5">
+                    ${currentEarlyRankingFilter === 'daily' 
+                        ? (top1.hasClockedInToday ? `ເຂົ້າ: <b>${top1.clockInTimeStr}</b> (ກ່ອນເວລາ: ${formatSecondsToExactTime(top1.secondsEarlyToday)})` : 'ຍັງບໍ່ທັນປ້ຳໂມງ') 
+                        : `ຕົງເວລາ: <b>${top1.onTimeCount} ມື້</b> ປະຈຳເດືອນ`}
+                </p>
+            </div>
+        </div>
+        <div class="text-right">
+            <span class="font-bold text-amber-700 text-xs block">🔥 ${top1.currentStreak} Day Streak</span>
+            <span class="text-[9px] text-outline font-semibold">Super Active</span>
+        </div>
+    `;
+    container.appendChild(top1Card);
+
+    // 2. Render Top #2, #3, #4 (Runner-ups List)
+    const rankBadges = ['🥈 #2', '🥉 #3', '🎖️ #4'];
+
+    top4List.slice(1).forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'p-2.5 bg-surface-container-low border border-outline-variant/30 rounded-xl flex items-center justify-between hover:bg-surface-container transition-all';
+        row.innerHTML = `
+            <div class="flex items-center gap-2.5">
+                <span class="font-mono font-bold text-xs text-on-surface-variant w-8">${rankBadges[index]}</span>
+                <img src="${item.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
                 <div>
-                    <h4 class="font-bold text-xs text-on-surface">${top.name} 👑</h4>
-                    <p class="text-[10px] text-on-surface-variant font-semibold">ມາວຽກໄວ & ຕົງເວລາ: ${top.onTimeCount} ມື້</p>
+                    <h5 class="font-bold text-xs text-on-surface leading-tight">${item.name}</h5>
+                    <p class="text-[10px] text-outline">
+                        ${currentEarlyRankingFilter === 'daily' 
+                            ? (item.hasClockedInToday ? `ເຂົ້າ: ${item.clockInTimeStr} (${formatSecondsToExactTime(item.secondsEarlyToday)})` : 'ຍັງບໍ່ທັນປ້ຳໂມງ') 
+                            : `ຕົງເວລາ ${item.onTimeCount} ມື້`}
+                    </p>
                 </div>
             </div>
-            <span class="font-bold text-amber-700 text-xs">🔥 ${top.streak} Day Streak</span>
+            <div class="text-right">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${item.currentStreak >= 3 ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-800'}">
+                    ${item.currentStreak} Streak
+                </span>
+            </div>
         `;
-        container.appendChild(topCard);
-    }
+        container.appendChild(row);
+    });
 }
 
 // =========================================================================
