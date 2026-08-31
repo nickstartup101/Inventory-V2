@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Real-Time Attendance & Payroll System</title>
+    <title>LA DOLCE - Operations Hub & Attendance System</title>
 
-    <!-- Browser Favicon -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23001d3d'/><text x='50%' y='56%' dominant-baseline='central' text-anchor='middle' fill='%238cd889' font-family='Arial, sans-serif' font-weight='900' font-size='40' letter-spacing='-1'>HRM</text></svg>">
 
-    <!-- Google Fonts & Lao Support -->
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -84,7 +84,7 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
 
-    <!-- SideNavBar Component -->
+    <!-- SideNavBar -->
     <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-6 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
         <div class="px-6 mb-6">
             <h1 class="font-headline font-black text-2xl text-white tracking-wider leading-none">LA DOLCE</h1>
@@ -191,12 +191,12 @@
 
         <main class="flex-1 p-3 sm:p-5 md:p-6 bg-background overflow-y-auto">
 
-            <!-- VIEW 1: DASHBOARD -->
-            <section id="view-dashboard" class="view-panel space-y-5">
+            <!-- VIEW 1: DASHBOARD (DEFAULT LANDING PAGE) -->
+            <section id="view-dashboard" class="view-panel active space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ແຜງຄວບຄຸມລວມ (Operations Hub)</h1>
-                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ, ຄິດໄລ່ການມາຊ້າ ແລະ ບັນທຶກເວລາ ຮ້ານກາເຟ La Dolce</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">ລະບົບຈັດການສະຕ໋ອກ, ຕິດຕາມເວລາ ແລະ ພະນັກງານເຂົ້າກະ ຮ້ານກາເຟ La Dolce</p>
                     </div>
                 </div>
 
@@ -240,13 +240,15 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Currently Clocked-In -->
+                    <!-- Currently On-Duty / Clocked-In Staff -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                         <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                            📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Clocked-In)
+                            📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Currently Clocked-In)
                         </h3>
-                        <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5"></div>
+                        <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5">
+                            <p class="text-xs text-outline italic">ກຳລັງກວດສອບລາຍຊື່...</p>
+                        </div>
                     </div>
 
                     <!-- DAY STREAK TRACKER -->
@@ -292,7 +294,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
                     <div>
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຕ໋ອກປັດຈຸບັນ (main_inventory)</h1>
-                        <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ ແຍກຕາມໝວດໝູ່ (ສາມາດແກ້ໄຂໄດ້ເມື່ອເປີດ Admin)</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ ແຍກຕາມໝວດໝູ່ (ສາມາດແກ້ໄຂໝວດສິນຄ້າໄດ້ເມື່ອເປີດ Admin Mode)</p>
                     </div>
                     <button onclick="openModal('stock-modal')" id="btn-add-stock-modal" class="admin-only hidden w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
                         <span class="material-symbols-outlined text-base">add</span> ເພີ່ມສິນຄ້າໃໝ່ (New SKU)
@@ -309,12 +311,12 @@
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[700px]">
+                        <table class="w-full text-left text-xs min-w-[750px]">
                             <thead class="bg-surface-container-low border-b border-outline-variant/40 text-on-surface-variant uppercase font-bold">
                                 <tr>
                                     <th class="p-3">SKU</th>
                                     <th class="p-3">ຊື່ສິນຄ້າ</th>
-                                    <th class="p-3">ໝວດໝູ່</th>
+                                    <th class="p-3">ໝວດໝູ່ (Category)</th>
                                     <th class="p-3">ສາຂາ</th>
                                     <th class="p-3">Stock ປັດຈຸບັນ</th>
                                     <th class="p-3">Min Stock</th>
@@ -328,7 +330,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: INVENTORY ANALYTICS & MODERN METRICS -->
+            <!-- VIEW 3: INVENTORY ANALYTICS -->
             <section id="view-inventory" class="view-panel space-y-5">
                 <div>
                     <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & ວິເຄາະການໝົດໄປ (Stock Analytics)</h1>
@@ -355,9 +357,8 @@
                     </div>
                 </div>
 
-                <!-- 2 Modern Analytics Charts -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Chart 1: Category Distribution Bar -->
+                    <!-- Category Breakdown -->
                     <div class="bg-surface rounded-2xl p-5 border border-outline-variant/40 shadow-sm space-y-4">
                         <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-2">
                             <span class="material-symbols-outlined text-base text-primary">pie_chart</span>
@@ -366,7 +367,7 @@
                         <div id="analytics-category-progress" class="space-y-3"></div>
                     </div>
 
-                    <!-- Chart 2: Daily Outflow Trend Chart -->
+                    <!-- Daily Outflow Trend Chart -->
                     <div class="bg-surface rounded-2xl p-5 border border-outline-variant/40 shadow-sm space-y-4">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-2">
@@ -380,7 +381,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 Usage Ranking Table -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                     <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-amber-600">leaderboard</span>
@@ -589,7 +589,6 @@
                         </button>
                     </div>
 
-                    <!-- KIOSK PIN KEYPAD -->
                     <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center space-y-4">
                         <div id="kiosk-pin-panel" class="bg-surface rounded-2xl shadow-lg border border-outline-variant/40 p-5 sm:p-6 w-full flex flex-col items-center">
                             <div class="text-center mb-3">
@@ -607,19 +606,19 @@
                             </div>
 
                             <div class="grid grid-cols-3 gap-2.5 w-full">
-                                <button onclick="pressPinKey('1')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">1</button>
-                                <button onclick="pressPinKey('2')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">2</button>
-                                <button onclick="pressPinKey('3')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">3</button>
-                                <button onclick="pressPinKey('4')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">4</button>
-                                <button onclick="pressPinKey('5')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">5</button>
-                                <button onclick="pressPinKey('6')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">6</button>
-                                <button onclick="pressPinKey('7')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">7</button>
-                                <button onclick="pressPinKey('8')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">8</button>
-                                <button onclick="pressPinKey('9')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">9</button>
+                                <button onclick="pressPinKey('1')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">1</button>
+                                <button onclick="pressPinKey('2')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">2</button>
+                                <button onclick="pressPinKey('3')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">3</button>
+                                <button onclick="pressPinKey('4')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">4</button>
+                                <button onclick="pressPinKey('5')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">5</button>
+                                <button onclick="pressPinKey('6')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">6</button>
+                                <button onclick="pressPinKey('7')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">7</button>
+                                <button onclick="pressPinKey('8')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">8</button>
+                                <button onclick="pressPinKey('9')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">9</button>
                                 <button onclick="clearPinKey()" class="h-12 rounded-xl text-on-surface-variant hover:text-error hover:bg-red-50 font-semibold text-xs flex flex-col items-center justify-center active:scale-95">
                                     <span>ລຶບ</span><span class="text-[8px]">Clear</span>
                                 </button>
-                                <button onclick="pressPinKey('0')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg text-on-surface shadow-sm active:scale-95">0</button>
+                                <button onclick="pressPinKey('0')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">0</button>
                                 <button onclick="backspacePinKey()" class="h-12 rounded-xl text-on-surface-variant hover:bg-surface-container-low flex items-center justify-center active:scale-95">
                                     <span class="material-symbols-outlined text-lg">backspace</span>
                                 </button>
@@ -648,13 +647,9 @@
                         </div>
                     </div>
 
-                    <!-- STOCK MOVEMENT -->
                     <div id="kiosk-subview-stock-movement" class="hidden w-full max-w-lg space-y-4">
                         <div class="bg-surface rounded-2xl shadow-md border border-outline-variant/40 p-5">
-                            <div class="mb-4">
-                                <h3 class="font-headline font-bold text-base text-primary">ຟອມບັນທຶກ daily_inventory_movement</h3>
-                            </div>
-
+                            <h3 class="font-headline font-bold text-base text-primary mb-3">ຟອມບັນທຶກ daily_inventory_movement</h3>
                             <form onsubmit="handleKioskMovementSubmit(event)" class="space-y-3.5">
                                 <div>
                                     <label class="block text-xs font-bold text-on-surface-variant mb-1">ເລືອກສິນຄ້າ *</label>
@@ -692,7 +687,6 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
             </section>
 
@@ -743,13 +737,13 @@
         </div>
     </div>
 
-    <!-- EDIT PRODUCT MODAL (NEW) -->
+    <!-- EDIT PRODUCT MODAL (EDIT CATEGORY & PRODUCT DETAILS) -->
     <div id="edit-stock-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1">
                     <span class="material-symbols-outlined text-amber-600">edit_note</span>
-                    ແກ້ໄຂສິນຄ້າ (Edit Product)
+                    ແກ້ໄຂສິນຄ້າ & ປ່ຽນໝວດໝູ່ (Edit SKU & Category)
                 </h3>
                 <button onclick="closeModal('edit-stock-modal')"><span class="material-symbols-outlined">close</span></button>
             </div>
@@ -773,12 +767,12 @@
                     <input id="edit-modal-name" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold mb-1">ໝວດໝູ່ (Category) *</label>
-                    <select id="edit-modal-category" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ</option>
-                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ</option>
-                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ</option>
-                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
+                    <label class="block text-xs font-bold text-primary mb-1">ໝວດໝູ່ສິນຄ້າ (Category) *</label>
+                    <select id="edit-modal-category" class="w-full text-xs font-bold px-3 py-2 border border-primary/40 rounded-xl bg-primary-container/10">
+                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ (High Frequency)</option>
+                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ (Syrups)</option>
+                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ (Beverages)</option>
+                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ (Supplies)</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2.5">
