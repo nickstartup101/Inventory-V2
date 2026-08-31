@@ -103,7 +103,6 @@
             </button>
         </div>
 
-        <!-- ໝວດເມນູຫຼັກ -->
         <div class="flex-1 overflow-y-auto px-2 space-y-1">
             <a href="#dashboard" onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">dashboard</span>
@@ -115,7 +114,7 @@
             </a>
             <a href="#inventory" onclick="navigateTo('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">analytics</span>
-                <span class="font-headline font-medium text-xs">ສະຖິຕິສະຕ໋ອກ (Analytics)</span>
+                <span class="font-headline font-medium text-xs">ສະຖິຕິສະຕ໋ອກ & ປະຫວັດ</span>
             </a>
             <a href="#kiosk" onclick="navigateTo('kiosk')" id="nav-kiosk" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">timer</span>
@@ -135,7 +134,6 @@
             </div>
         </div>
 
-        <!-- ໝວດເມນູເສີມດ້ານລຸ່ມ -->
         <div class="mt-auto pt-3 border-t border-primary-container/60 px-2 space-y-1.5">
             <a href="#self-service" onclick="navigateTo('self-service')" id="nav-self-service" class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-300 hover:text-white hover:bg-amber-500/20 rounded-xl text-left text-xs font-semibold bg-amber-500/10 transition-colors">
                 <span class="material-symbols-outlined text-lg text-amber-400">person_check</span>
@@ -192,7 +190,7 @@
 
         <main class="flex-1 p-3 sm:p-5 md:p-6 bg-background overflow-y-auto">
 
-            <!-- VIEW 1: DASHBOARD (DEFAULT LANDING PAGE) -->
+            <!-- VIEW 1: DASHBOARD -->
             <section id="view-dashboard" class="view-panel active space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
@@ -252,7 +250,7 @@
                         </div>
                     </div>
 
-                    <!-- DAY STREAK TRACKER (TOP 4 RANKING) -->
+                    <!-- DAY STREAK TRACKER -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-emerald-800 flex items-center gap-1.5">
@@ -286,7 +284,6 @@
                             </div>
                         </div>
 
-                        <!-- TOP 4 RANKING CONTAINER -->
                         <div id="early-ranking-container" class="space-y-2 text-xs"></div>
                     </div>
                 </div>
@@ -333,25 +330,37 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: INVENTORY ANALYTICS -->
+            <!-- VIEW 3: INVENTORY ANALYTICS & MOVEMENT HISTORY -->
             <section id="view-inventory" class="view-panel space-y-5">
                 <div>
-                    <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & ວິເຄາະການໝົດໄປ (Stock Analytics)</h1>
-                    <p class="text-on-surface-variant text-xs mt-0.5">ສະຖິຕິການເບີກໃຊ້ວັດຖຸດິບ (Burn Rate) ແລະ ສັດສ່ວນໝວດໝູ່ສິນຄ້າ</p>
+                    <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & ປະຫວັດການເຄື່ອນໄຫວ (Inventory Analytics)</h1>
+                    <p class="text-on-surface-variant text-xs mt-0.5">ວິເຄາະອັດຕາການໝົດໄປຂອງວັດຖຸດິບ (Burn Rate), ຍອດນຳເຂົ້າ-ເບີກອອກຈິງ ແລະ ປະຫວັດການເຄື່ອນໄຫວ</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🔥 ອັດຕາການເບີກໃຊ້ວັດຖຸດິບລວມ</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">📥 ນຳເຂົ້າລວມ (Total In)</p>
+                        <h3 class="font-headline font-bold text-2xl text-emerald-700 mt-1" id="stat-total-in-qty">0 ຊິ້ນ</h3>
+                        <p class="text-[10px] text-outline mt-0.5">ບັນທຶກຈາກ daily movement</p>
+                    </div>
+
+                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">📤 ເບີກອອກລວມ (Total Out)</p>
+                        <h3 class="font-headline font-bold text-2xl text-red-700 mt-1" id="stat-total-out-qty">0 ຊິ້ນ</h3>
+                        <p class="text-[10px] text-outline mt-0.5">ໃຊ້ງານ/ເສຍ/ເພ</p>
+                    </div>
+
+                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🔥 Burn Rate ສະເລ່ຍ</p>
                         <h3 class="font-headline font-bold text-2xl text-primary mt-1" id="stat-avg-burn-rate">0 ລາຍການ/ມື້</h3>
+                        <p class="text-[10px] text-outline mt-0.5">ຄິດໄລ່ຈາກ 7 ວັນລ້າສຸດ</p>
                     </div>
+
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">⏳ ວັດຖຸດິບທີ່ໄກ້ຈະໝົດ</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">⏳ ສິນຄ້າໄກ້ໝົດ (&lt; 3 ມື້)</p>
                         <h3 class="font-headline font-bold text-2xl text-amber-700 mt-1" id="stat-critical-items">0 ລາຍການ</h3>
-                    </div>
-                    <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🏆 ວັດຖຸດິບທີ່ໃຊ້ຫຼາຍທີ່ສຸດ</p>
-                        <h3 class="font-headline font-bold text-lg text-emerald-800 mt-1 truncate" id="stat-top-item-name">ກາເຟຂົ້ວເຂັ້ມ</h3>
+                        <p class="text-[10px] text-amber-800 mt-0.5 font-semibold">ຄວນຕື່ມສະຕ໋ອກ</p>
                     </div>
                 </div>
 
@@ -359,7 +368,7 @@
                     <div class="bg-surface rounded-2xl p-5 border border-outline-variant/40 shadow-sm space-y-4">
                         <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-2">
                             <span class="material-symbols-outlined text-base">pie_chart</span>
-                            ສັດສ່ວນສິນຄ້າແຍກຕາມໝວດໝູ່
+                            ສັດສ່ວນສິນຄ້າແຍກຕາມໝວດໝູ່ (Category Breakdown)
                         </h3>
                         <div id="analytics-category-progress" class="space-y-3"></div>
                     </div>
@@ -377,24 +386,28 @@
                     </div>
                 </div>
 
+                <!-- FULL STOCK MOVEMENT HISTORY TABLE -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
-                    <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-amber-600">leaderboard</span>
-                        🏆 ຈັດອັນດັບວັດຖຸດິບທີ່ໃຊ້ຫຼາຍທີ່ສຸດ
-                    </h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-lg text-primary">history</span>
+                            ປະຫວັດການເຄື່ອນໄຫວສະຕ໋ອກທັງໝົດ (Full Movement Logs)
+                        </h3>
+                        <span class="text-[11px] text-outline font-mono" id="analytics-movements-count">0 ລາຍການ</span>
+                    </div>
+
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs min-w-[600px]">
+                        <table class="w-full text-left text-xs min-w-[700px]">
                             <thead class="bg-surface-container-low text-on-surface-variant uppercase font-bold border-b border-outline-variant/40">
                                 <tr>
-                                    <th class="p-2.5">ອັນດັບ</th>
+                                    <th class="p-2.5">ວັນທີ & ເວລາ</th>
                                     <th class="p-2.5">SKU & ຊື່ສິນຄ້າ</th>
-                                    <th class="p-2.5">ເບີກອອກລວມ</th>
-                                    <th class="p-2.5">Burn Rate / ມື້</th>
-                                    <th class="p-2.5">Stock ເຫຼືອ</th>
-                                    <th class="p-2.5 text-right">ປະມານການມື້ໝົດ</th>
+                                    <th class="p-2.5">ປະເພດ</th>
+                                    <th class="p-2.5">ຈຳນວນ</th>
+                                    <th class="p-2.5">ໝາຍເຫດ / ເຫດຜົນ</th>
                                 </tr>
                             </thead>
-                            <tbody id="top-ranking-table-body" class="divide-y divide-surface-container-high"></tbody>
+                            <tbody id="analytics-movements-table-body" class="divide-y divide-surface-container-high"></tbody>
                         </table>
                     </div>
                 </div>
@@ -538,7 +551,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 7: KIOSK -->
+            <!-- VIEW 7: KIOSK (ATTENDANCE & MOVEMENT RECORD) -->
             <section id="view-kiosk" class="view-panel space-y-4">
                 <div class="max-w-xl mx-auto flex flex-col items-center">
                     <div class="text-center mb-3">
@@ -555,6 +568,7 @@
                         </button>
                     </div>
 
+                    <!-- SUBVIEW 1: TIME CLOCK PIN KEYPAD -->
                     <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center space-y-4">
                         <div id="kiosk-pin-panel" class="bg-surface rounded-2xl shadow-lg border border-outline-variant/40 p-5 sm:p-6 w-full flex flex-col items-center">
                             <div class="text-center mb-3">
@@ -604,15 +618,17 @@
                             <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
                         </div>
 
+                        <!-- Today Attendance Kiosk Feed -->
                         <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                             <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center justify-between">
-                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">today</span> ປະວັດການມາວຽກປະຈຳວັນນີ້ (Today GMT+7)</span>
-                                <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">ມື້ນີ້ເທົ່ານັ້ນ</span>
+                                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">today</span> ປະວັດການປ້ຳໂມງມື້ນີ້ (Today Feed)</span>
+                                <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">On/End Duty</span>
                             </h4>
                             <div class="space-y-2 text-xs" id="kiosk-today-attendance-container"></div>
                         </div>
                     </div>
 
+                    <!-- SUBVIEW 2: STOCK MOVEMENT FORM & LOGS -->
                     <div id="kiosk-subview-stock-movement" class="hidden w-full max-w-lg space-y-4">
                         <div class="bg-surface rounded-2xl shadow-md border border-outline-variant/40 p-5">
                             <h3 class="font-headline font-bold text-base text-primary mb-3">ຟອມບັນທຶກ daily_inventory_movement</h3>
@@ -644,13 +660,22 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-on-surface-variant mb-1">ໝາຍເຫດ *</label>
+                                    <label class="block text-xs font-bold text-on-surface-variant mb-1">ໝາຍເຫດ / ເຫດຜົນ *</label>
                                     <input id="movement-note-input" type="text" placeholder="ເຊັ່ນ: ຊື້ເພີ່ມ, ເຄື່ອງເສຍ/ເພ, ໃຊ້ປະຈຳວັນ" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                                 </div>
                                 <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-xs hover:bg-primary-container shadow-md transition-all">
                                     ບັນທຶກລົງ Supabase
                                 </button>
                             </form>
+                        </div>
+
+                        <!-- Kiosk Movement Logs Feed -->
+                        <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
+                            <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm">history</span>
+                                ປະວັດການບັນທຶກສະຕ໋ອກລ້າສຸດ (Movement Logs)
+                            </h4>
+                            <div class="space-y-2 text-xs" id="kiosk-movement-logs-container"></div>
                         </div>
                     </div>
                 </div>
@@ -848,7 +873,7 @@
                         <input id="edit-staff-role-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">ເ缓存ໂທ *</label>
+                        <label class="block text-xs font-bold mb-1">ເບີໂທ *</label>
                         <input id="edit-staff-phone-input" required type="tel" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                 </div>
