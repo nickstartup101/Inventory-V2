@@ -1793,3 +1793,4 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // LAND AT DASHBOARD FIRST
     navigateTo('dashboard');
+});
