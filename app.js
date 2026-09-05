@@ -1,5 +1,5 @@
 // =========================================================================
-// 1. SHIFT CONFIGURATION & SMART AUTO DETECTION
+// 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
 // =========================================================================
 const SHIFT_RULES = {
     'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
@@ -26,11 +26,14 @@ function getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
 }
 
-function parseSafeDate(ts) {
-    if (!ts) return new Date();
-    if (ts instanceof Date) return ts;
-    let str = String(ts).trim();
-    if (str.includes(' ') && !str.includes('T')) str = str.replace(' ', 'T');
+function parseSafeDate(rawTs) {
+    if (!rawTs) return new Date();
+    if (rawTs instanceof Date) return rawTs;
+    
+    let str = String(rawTs).trim();
+    if (str.includes(' ') && !str.includes('T')) {
+        str = str.replace(' ', 'T');
+    }
     const d = new Date(str);
     return isNaN(d.getTime()) ? new Date() : d;
 }
@@ -62,6 +65,24 @@ function formatSecondsToExactTime(secs) {
     const s = secs % 60;
     if (m > 0) return `${m} ນາທີ ${s} ວິ`;
     return `${s} ວິນາທີ`;
+}
+
+function normalizeAttendanceLog(log) {
+    const rawTimestamp = log.timestamp || log.created_at || log.clock_time || log.date_time || new Date().toISOString();
+    const rawType = String(log.type || log.action || 'Clock-In').toLowerCase();
+    
+    let standardizedType = 'Clock-In';
+    if (rawType.includes('out') || rawType.includes('ອອກ')) {
+        standardizedType = 'Clock-Out';
+    }
+
+    return {
+        id: log.id,
+        pin: String(log.pin || log.staff_pin || '').trim(),
+        type: standardizedType,
+        branch: log.branch || 'NP Branch',
+        timestamp: rawTimestamp
+    };
 }
 
 // =========================================================================
@@ -613,6 +634,8 @@ function renderEmployeesAndPayroll() {
     partnerContainer.innerHTML = '';
     payrollBody.innerHTML = '';
 
+    populateManualAttendanceStaffDropdown();
+
     partnersData.forEach(p => {
         if (localBenefitApprovals[p.pin] !== undefined) {
             p.benefit_approved = localBenefitApprovals[p.pin];
@@ -648,20 +671,27 @@ function renderEmployeesAndPayroll() {
                 </div>
             </div>
 
-            <div class="mt-3 pt-2 border-t border-surface-container-high flex justify-between items-center text-xs">
-                <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
-                
-                <div class="flex gap-2">
-                    <button onclick="toggleBenefitDirectly('${p.pin}')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all shadow-sm ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300' : 'bg-primary text-white hover:bg-primary-container'}">
-                        ${payroll.isBenefitApproved ? 'ປິດສະຫວັດດີການ' : 'ອະນຸມັດສະຫວັດດີການ'}
-                    </button>
-                    <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all">
-                        <span class="material-symbols-outlined text-xs">edit</span>
-                    </button>
-                    <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all">
-                        <span class="material-symbols-outlined text-xs">delete</span>
-                    </button>
+            <div class="mt-3 pt-2 border-t border-surface-container-high flex flex-col gap-2 text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
+                    
+                    <div class="flex gap-1.5">
+                        <button onclick="toggleBenefitDirectly('${p.pin}')" class="px-2 py-1 rounded-lg text-xs font-bold transition-all shadow-sm ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300' : 'bg-primary text-white hover:bg-primary-container'}">
+                            ${payroll.isBenefitApproved ? 'ປິດສະຫວັດດີການ' : 'ອະນຸມັດ'}
+                        </button>
+                        <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all" title="ແກ້ໄຂ">
+                            <span class="material-symbols-outlined text-xs">edit</span>
+                        </button>
+                        <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all" title="ລຶບ">
+                            <span class="material-symbols-outlined text-xs">delete</span>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- QUICK BUTTON TO ADD MANUAL ATTENDANCE FOR THIS SPECIFIC PERSON -->
+                <button onclick="openManualAttendanceModal('${p.pin}')" class="w-full py-1 bg-surface-container hover:bg-surface-container-high rounded-lg font-bold text-[11px] text-primary flex items-center justify-center gap-1 border border-outline-variant/40">
+                    <span class="material-symbols-outlined text-xs text-accent">more_time</span> ລົງເວລາຍ້ອນຫຼັງ
+                </button>
             </div>
         `;
         partnerContainer.appendChild(card);
@@ -727,6 +757,8 @@ async function toggleBenefitDirectly(pin) {
 // =========================================================================
 // 7. STAFF SELF-SERVICE PORTAL
 // =========================================================================
+let currentViewingStaffPin = null;
+
 function checkStaffSelfService() {
     const pin = document.getElementById('staff-portal-pin').value.trim();
     if (!pin) {
@@ -741,7 +773,18 @@ function checkStaffSelfService() {
         return;
     }
 
+    currentViewingStaffPin = pin;
     renderStaffPortal(staff);
+}
+
+async function syncStaffSelfServiceData() {
+    showToast('🔄 ກຳລັງດຶງຂໍ້ມູນໃໝ່ລ້າສຸດຈາກ Database...');
+    await fetchDataFromSupabase();
+    if (currentViewingStaffPin) {
+        const staff = partnersData.find(p => p.pin === currentViewingStaffPin);
+        if (staff) renderStaffPortal(staff);
+    }
+    showToast('✓ Sync ດຶງຂໍ້ມູນການມາວຽກຄົບຖ້ວນແລ້ວ!');
 }
 
 function renderStaffPortal(staff) {
@@ -763,20 +806,18 @@ function renderStaffPortal(staff) {
 
     const benefitBadgeEl = document.getElementById('portal-benefit-status-badge');
     if (payroll.isBenefitApproved) {
-        benefitBadgeEl.className = 'px-4 py-2.5 rounded-2xl text-center shadow-sm border bg-emerald-50 border-emerald-300 text-emerald-900';
+        benefitBadgeEl.className = 'px-4 py-2 rounded-2xl text-center shadow-sm border bg-emerald-50 border-emerald-300 text-emerald-900';
         benefitBadgeEl.innerHTML = `
             <span class="text-xs font-black flex items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-base text-emerald-600">verified</span> ໄດ້ຮັບສິດສະຫວັດດີການປະຈຳເດືອນ
+                <span class="material-symbols-outlined text-base text-emerald-600">verified</span> ໄດ້ຮັບສິດສະຫວັດດີການ
             </span>
-            <span class="text-[10px] text-emerald-700 font-semibold block mt-0.5">Admin ໄດ້ອະນຸມັດຮຽບຮ້ອຍແລ້ວ</span>
         `;
     } else {
-        benefitBadgeEl.className = 'px-4 py-2.5 rounded-2xl text-center shadow-sm border bg-gray-50 border-gray-300 text-gray-700';
+        benefitBadgeEl.className = 'px-4 py-2 rounded-2xl text-center shadow-sm border bg-gray-50 border-gray-300 text-gray-700';
         benefitBadgeEl.innerHTML = `
             <span class="text-xs font-bold flex items-center justify-center gap-1">
                 <span class="material-symbols-outlined text-base text-gray-500">pending</span> ຍັງບໍ່ທັນໄດ້ຮັບສິດສະຫວັດດີການ
             </span>
-            <span class="text-[10px] text-gray-500 font-medium block mt-0.5">ລໍຖ້າການອະນຸມັດຈາກ Admin</span>
         `;
     }
 
@@ -1078,7 +1119,6 @@ function renderStockAnalytics() {
     if (chartLabelsContainer) chartLabelsContainer.innerHTML = '';
     movementsTableBody.innerHTML = '';
 
-    // 1. Category Stock Distribution
     const catCountMap = { 'ວັດຖຸດິບ': 0, 'ໄຊຮັບ': 0, 'ເຄື່ອງຍ່ອຍ': 0, 'ເຄື່ອງໃຊ້ທົ່ວໄປ': 0 };
     stockData.forEach(item => {
         const cat = item.category || 'ວັດຖຸດິບ';
@@ -1112,7 +1152,6 @@ function renderStockAnalytics() {
         categoryProgressContainer.appendChild(row);
     });
 
-    // 2. Calculate Total In / Total Out / Burn Rate
     let totalInQty = 0;
     let totalOutQty = 0;
 
@@ -1134,7 +1173,6 @@ function renderStockAnalytics() {
     const statCrit = document.getElementById('stat-critical-items');
     if (statCrit) statCrit.textContent = `${lowCount} ລາຍການ`;
 
-    // 3. Render 7-day Outflow Trend Chart
     const last7Days = [];
     const today = new Date();
     for (let i = 6; i >= 0; i--) {
@@ -1173,7 +1211,6 @@ function renderStockAnalytics() {
         }
     });
 
-    // 4. Render Full Movement Logs History Table
     if (countEl) countEl.textContent = `${stockMovements.length} ລາຍການ`;
 
     if (stockMovements.length === 0) {
@@ -1202,7 +1239,7 @@ function renderStockAnalytics() {
 }
 
 // =========================================================================
-// 10. KIOSK PIN CLOCK-IN/OUT & STATUS (ON DUTY / END OF DUTY BADGES)
+// 10. KIOSK PIN CLOCK-IN/OUT
 // =========================================================================
 let currentPin = '';
 const maxPin = 6;
@@ -1298,7 +1335,6 @@ function cancelClockAction() {
     document.getElementById('kiosk-action-panel').classList.add('hidden');
 }
 
-// RENDER TODAY KIOSK FEED (ON DUTY / END OF DUTY BADGES)
 function renderTodayKioskAttendance() {
     const container = document.getElementById('kiosk-today-attendance-container');
     if (!container) return;
@@ -1332,7 +1368,6 @@ function renderTodayKioskAttendance() {
         let inTime = pair.clockIn ? parseSafeDate(pair.clockIn.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
         let outTime = pair.clockOut ? parseSafeDate(pair.clockOut.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
-        // Check if On Duty or End of Duty
         const isOnDuty = pair.clockIn && !pair.clockOut;
 
         const item = document.createElement('div');
@@ -1357,7 +1392,95 @@ function renderTodayKioskAttendance() {
 }
 
 // =========================================================================
-// 11. ADMIN AUTHENTICATION & CRUD
+// 11. MANUAL ADD BACKUP ATTENDANCE (ADMIN FORM & ONE-CLICK PUNCH)
+// =========================================================================
+function populateManualAttendanceStaffDropdown() {
+    const select = document.getElementById('manual-att-staff-select');
+    if (!select) return;
+    select.innerHTML = '';
+
+    partnersData.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.pin;
+        opt.textContent = `${p.name} (PIN: ${p.pin} | ${p.role})`;
+        select.appendChild(opt);
+    });
+}
+
+function openManualAttendanceModal(preselectPin = null) {
+    populateManualAttendanceStaffDropdown();
+
+    const today = new Date();
+    const dateInput = document.getElementById('manual-att-date-input');
+    const inTimeInput = document.getElementById('manual-att-in-time');
+    const outTimeInput = document.getElementById('manual-att-out-time');
+
+    if (dateInput) dateInput.value = getLaosDateString(today);
+    if (inTimeInput) inTimeInput.value = '07:00';
+    if (outTimeInput) outTimeInput.value = '16:00';
+
+    if (preselectPin) {
+        const select = document.getElementById('manual-att-staff-select');
+        if (select) select.value = preselectPin;
+    }
+
+    openModal('manual-attendance-modal');
+}
+
+async function handleManualAttendanceSubmit(e) {
+    e.preventDefault();
+    const pin = document.getElementById('manual-att-staff-select').value;
+    const dateVal = document.getElementById('manual-att-date-input').value;
+    const inTimeVal = document.getElementById('manual-att-in-time').value;
+    const outTimeVal = document.getElementById('manual-att-out-time').value;
+
+    const staff = partnersData.find(p => p.pin === pin);
+    if (!staff || !dateVal || !inTimeVal) return;
+
+    const recordsToInsert = [];
+
+    // 1. Build Clock-In Log in GMT+7 ISO format
+    const inIsoString = `${dateVal}T${inTimeVal}:00+07:00`;
+    recordsToInsert.push({
+        pin: pin,
+        type: 'Clock-In',
+        branch: staff.branch || 'NP Branch',
+        timestamp: inIsoString
+    });
+
+    // 2. Build Clock-Out Log if provided
+    if (outTimeVal) {
+        const outIsoString = `${dateVal}T${outTimeVal}:00+07:00`;
+        recordsToInsert.push({
+            pin: pin,
+            type: 'Clock-Out',
+            branch: staff.branch || 'NP Branch',
+            timestamp: outIsoString
+        });
+    }
+
+    if (supabaseClient) {
+        const { error } = await supabaseClient.from('attendance').insert(recordsToInsert);
+        if (error) {
+            showToast('❌ ບັນທຶກບໍ່ສຳເລັດ: ' + error.message);
+            return;
+        }
+    }
+
+    // Add into local state
+    recordsToInsert.forEach(rec => attendanceLogs.unshift(rec));
+
+    renderTodayKioskAttendance();
+    updateOnDutyStaffUI();
+    renderEmployeesAndPayroll();
+    renderEarlyComerStreakRanking();
+
+    closeModal('manual-attendance-modal');
+    showToast(`✓ ບັນທຶກເວລາຍ້ອນຫຼັງສຳເລັດ ສຳລັບ ${staff.name} (${dateVal})`);
+}
+
+// =========================================================================
+// 12. ADMIN AUTHENTICATION & CRUD
 // =========================================================================
 function unlockAdminMode() {
     isAdminLoggedIn = true;
@@ -1587,13 +1710,19 @@ async function fetchDataFromSupabase() {
     try {
         const { data: attRes } = await supabaseClient.from('attendance').select('*').order('id', { ascending: false });
         if (attRes) {
-            attendanceLogs = attRes;
+            attendanceLogs = attRes.map(normalizeAttendanceLog);
             renderTodayKioskAttendance();
             updateOnDutyStaffUI();
             renderEmployeesAndPayroll();
             renderEarlyComerStreakRanking();
         }
     } catch (e) {}
+}
+
+async function refreshAllData() {
+    showToast('🔄 ກຳລັງດຶງຂໍ້ມູນໃໝ່ລ້າສຸດ...');
+    await fetchDataFromSupabase();
+    showToast('✓ ດຶງຂໍ້ມູນສຳເລັດແລ້ວ!');
 }
 
 function openModal(id) { 
@@ -1623,9 +1752,7 @@ function showToast(msg) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// =========================================================================
-// 12. CLOCK & APP INITIALIZATION
-// =========================================================================
+// Clock Loop
 setInterval(() => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -1666,4 +1793,3 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // LAND AT DASHBOARD FIRST
     navigateTo('dashboard');
-});
