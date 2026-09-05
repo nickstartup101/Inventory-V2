@@ -86,7 +86,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE INITIALIZATION
+// 2. STATE & SUPABASE INITIALIZATION (SAFE BROWSER CDN CONNECTION)
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -126,9 +126,15 @@ let selectedPartnerForClock = null;
 function initSupabase() {
     if (supabaseUrl && supabaseKey && supabaseUrl.startsWith('http')) {
         try {
-            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-            updateDbStatusUI(true);
-            fetchDataFromSupabase();
+            // Safe SDK Client Initializer
+            const createClientFn = window.supabase ? window.supabase.createClient : (supabase ? supabase.createClient : null);
+            if (createClientFn) {
+                supabaseClient = createClientFn(supabaseUrl, supabaseKey);
+                updateDbStatusUI(true);
+                fetchDataFromSupabase();
+            } else {
+                updateDbStatusUI(false);
+            }
         } catch (e) {
             console.error('Supabase Connection Error:', e);
             updateDbStatusUI(false);
@@ -173,7 +179,7 @@ function saveSupabaseConfig(e) {
 }
 
 // =========================================================================
-// 3. NAVIGATION CONTROLLER (DEFAULT: DASHBOARD)
+// 3. NAVIGATION CONTROLLER
 // =========================================================================
 const views = ['dashboard', 'current-stock', 'inventory', 'employees', 'payroll', 'self-service', 'kiosk'];
 
@@ -218,6 +224,7 @@ function navigateTo(viewId) {
     }
     if (viewId === 'inventory') renderStockAnalytics();
     if (viewId === 'current-stock') renderStockTable();
+    if (viewId === 'employees') renderAdminAttendanceTable(currentAdminAttFilter);
 
     closeMobileMenu();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -634,8 +641,6 @@ function renderEmployeesAndPayroll() {
     partnerContainer.innerHTML = '';
     payrollBody.innerHTML = '';
 
-    populateManualAttendanceStaffDropdown();
-
     partnersData.forEach(p => {
         if (localBenefitApprovals[p.pin] !== undefined) {
             p.benefit_approved = localBenefitApprovals[p.pin];
@@ -688,7 +693,6 @@ function renderEmployeesAndPayroll() {
                     </div>
                 </div>
 
-                <!-- QUICK BUTTON TO ADD MANUAL ATTENDANCE FOR THIS SPECIFIC PERSON -->
                 <button onclick="openManualAttendanceModal('${p.pin}')" class="w-full py-1 bg-surface-container hover:bg-surface-container-high rounded-lg font-bold text-[11px] text-primary flex items-center justify-center gap-1 border border-outline-variant/40">
                     <span class="material-symbols-outlined text-xs text-accent">more_time</span> ລົງເວລາຍ້ອນຫຼັງ
                 </button>
@@ -1392,8 +1396,155 @@ function renderTodayKioskAttendance() {
 }
 
 // =========================================================================
-// 11. MANUAL ADD BACKUP ATTENDANCE (ADMIN FORM & ONE-CLICK PUNCH)
+// 11. ADMIN ATTENDANCE LOGS, EDITING & MANUAL ADD
 // =========================================================================
+let currentAdminAttFilter = 'daily';
+
+function filterAdminAttendance(filterType) {
+    currentAdminAttFilter = filterType;
+    document.querySelectorAll('.admin-att-btn').forEach(b => {
+        b.className = 'admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface';
+    });
+    const activeBtn = document.getElementById(`btn-att-${filterType}`);
+    if (activeBtn) activeBtn.className = 'admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm';
+
+    renderAdminAttendanceTable(filterType);
+}
+
+function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
+    const tbody = document.getElementById('admin-attendance-table-body');
+    const thActions = document.getElementById('th-attendance-actions');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (thActions) {
+        if (isAdminLoggedIn) thActions.classList.remove('hidden');
+        else thActions.classList.add('hidden');
+    }
+
+    const todayStr = getLaosDateString();
+    const currentMonthStr = todayStr.substring(0, 7);
+
+    let filteredLogs = attendanceLogs;
+
+    if (filterType === 'daily') {
+        filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)) === todayStr);
+    } else if (filterType === 'monthly') {
+        filteredLogs = attendanceLogs.filter(a => getLaosDateString(parseSafeDate(a.timestamp)).startsWith(currentMonthStr));
+    }
+
+    if (filteredLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${isAdminLoggedIn ? '6' : '5'}" class="p-4 text-center text-outline">ບໍ່ມີຂໍ້ມູນປະຫວັດການມາວຽກ</td></tr>`;
+        return;
+    }
+
+    filteredLogs.forEach(a => {
+        const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin, shift: 'ກະ 1' };
+        const dt = parseSafeDate(a.timestamp);
+        const isClockIn = (a.type || '').toLowerCase().includes('in');
+        const detectedShift = detectActualShift(dt, staff.shift);
+        
+        let lateMins = 0;
+        if (isClockIn) {
+            lateMins = calculateLateMinutes(dt, staff.shift);
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-container-low';
+        tr.innerHTML = `
+            <td class="p-2.5 font-mono text-[11px]">${dt.toLocaleDateString('en-GB')} ${dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td>
+            <td class="p-2.5 font-bold text-on-surface">${staff.name} (PIN: ${a.pin})</td>
+            <td class="p-2.5">
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                    ${a.type || 'Clock-In'}
+                </span>
+            </td>
+            <td class="p-2.5 font-mono font-bold text-xs text-primary">${detectedShift.name}</td>
+            <td class="p-2.5 font-mono font-bold ${lateMins > 0 ? 'text-amber-700' : 'text-emerald-700'}">
+                ${isClockIn ? (lateMins > 0 ? `+${lateMins} ນາທີ` : '✓ ຕົງເວລາ') : '--'}
+            </td>
+            ${isAdminLoggedIn ? `
+            <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
+                <button onclick="openEditAttendanceModal('${a.id || ''}', '${a.pin}', '${a.type}', '${a.timestamp}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                    ແກ້ໄຂ
+                </button>
+            </td>` : ''}
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// EDIT ATTENDANCE MODAL CONTROLLER
+function openEditAttendanceModal(id, pin, type, timestamp) {
+    const staff = partnersData.find(p => p.pin === pin) || { name: 'PIN: ' + pin };
+    const dt = parseSafeDate(timestamp);
+
+    document.getElementById('edit-att-id').value = id || '';
+    document.getElementById('edit-att-staff-name').value = `${staff.name} (${pin})`;
+    document.getElementById('edit-att-type-select').value = type || 'Clock-In';
+    document.getElementById('edit-att-date-input').value = getLaosDateString(dt);
+    document.getElementById('edit-att-time-input').value = dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+    openModal('edit-attendance-modal');
+}
+
+async function handleEditAttendanceSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-att-id').value;
+    const type = document.getElementById('edit-att-type-select').value;
+    const dateVal = document.getElementById('edit-att-date-input').value;
+    const timeVal = document.getElementById('edit-att-time-input').value;
+
+    const newTimestamp = `${dateVal}T${timeVal}:00+07:00`;
+
+    if (supabaseClient && id) {
+        const { error } = await supabaseClient
+            .from('attendance')
+            .update({ type: type, timestamp: newTimestamp })
+            .eq('id', id);
+
+        if (error) {
+            showToast('❌ ອັບເດດບໍ່ສຳເລັດ: ' + error.message);
+            return;
+        }
+    }
+
+    // Update local state
+    const localLog = attendanceLogs.find(a => a.id == id);
+    if (localLog) {
+        localLog.type = type;
+        localLog.timestamp = newTimestamp;
+    }
+
+    renderAdminAttendanceTable(currentAdminAttFilter);
+    renderEmployeesAndPayroll();
+    updateOnDutyStaffUI();
+    renderEarlyComerStreakRanking();
+
+    closeModal('edit-attendance-modal');
+    showToast('✓ ອັບເດດເວລາປ້ຳໂມງຮຽບຮ້ອຍແລ້ວ!');
+}
+
+async function deleteCurrentAttendanceLog() {
+    const id = document.getElementById('edit-att-id').value;
+    if (!confirm('ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ Log ການປ້ຳໂມງນີ້?')) return;
+
+    if (supabaseClient && id) {
+        await supabaseClient.from('attendance').delete().eq('id', id);
+    }
+
+    attendanceLogs = attendanceLogs.filter(a => a.id != id);
+
+    renderAdminAttendanceTable(currentAdminAttFilter);
+    renderEmployeesAndPayroll();
+    updateOnDutyStaffUI();
+    renderEarlyComerStreakRanking();
+
+    closeModal('edit-attendance-modal');
+    showToast('✓ ລຶບ Log ການປ້ຳໂມງແລ້ວ');
+}
+
+// MANUAL ADD ATTENDANCE MODAL
 function populateManualAttendanceStaffDropdown() {
     const select = document.getElementById('manual-att-staff-select');
     if (!select) return;
@@ -1439,7 +1590,6 @@ async function handleManualAttendanceSubmit(e) {
 
     const recordsToInsert = [];
 
-    // 1. Build Clock-In Log in GMT+7 ISO format
     const inIsoString = `${dateVal}T${inTimeVal}:00+07:00`;
     recordsToInsert.push({
         pin: pin,
@@ -1448,7 +1598,6 @@ async function handleManualAttendanceSubmit(e) {
         timestamp: inIsoString
     });
 
-    // 2. Build Clock-Out Log if provided
     if (outTimeVal) {
         const outIsoString = `${dateVal}T${outTimeVal}:00+07:00`;
         recordsToInsert.push({
@@ -1467,9 +1616,9 @@ async function handleManualAttendanceSubmit(e) {
         }
     }
 
-    // Add into local state
     recordsToInsert.forEach(rec => attendanceLogs.unshift(rec));
 
+    renderAdminAttendanceTable(currentAdminAttFilter);
     renderTodayKioskAttendance();
     updateOnDutyStaffUI();
     renderEmployeesAndPayroll();
@@ -1489,6 +1638,7 @@ function unlockAdminMode() {
     document.getElementById('top-admin-tag').classList.remove('hidden');
     renderStockTable();
     renderEmployeesAndPayroll();
+    renderAdminAttendanceTable(currentAdminAttFilter);
     showToast('🔓 ປົດລັອກ HRM Admin ສຳເລັດແລ້ວ!');
 }
 
@@ -1498,6 +1648,7 @@ function lockAdminMode() {
     document.getElementById('admin-banner-sidebar').classList.add('hidden');
     document.getElementById('top-admin-tag').classList.add('hidden');
     renderStockTable();
+    renderAdminAttendanceTable(currentAdminAttFilter);
     
     if (window.location.hash === '#employees' || window.location.hash === '#payroll') {
         navigateTo('dashboard');
@@ -1715,6 +1866,7 @@ async function fetchDataFromSupabase() {
             updateOnDutyStaffUI();
             renderEmployeesAndPayroll();
             renderEarlyComerStreakRanking();
+            renderAdminAttendanceTable(currentAdminAttFilter);
         }
     } catch (e) {}
 }
@@ -1777,6 +1929,7 @@ function openMobileMenu() { sidebar.classList.remove('-translate-x-full'); overl
 function closeMobileMenu() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
 if (mobileBtn) { mobileBtn.onclick = openMobileMenu; overlay.onclick = closeMobileMenu; }
 
+// APP INITIALIZATION
 window.addEventListener('DOMContentLoaded', () => {
     if (supabaseUrl) document.getElementById('config-supabase-url').value = supabaseUrl;
     if (supabaseKey) document.getElementById('config-supabase-key').value = supabaseKey;
@@ -1791,6 +1944,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updateOnDutyStaffUI();
     renderEarlyComerStreakRanking();
     
-    // LAND AT DASHBOARD FIRST
+    // LAND AT DASHBOARD
     navigateTo('dashboard');
 });
