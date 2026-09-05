@@ -14,8 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-    <!-- Supabase JS SDK v2 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS SDK v2 (Fixed CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -135,7 +135,7 @@
             </div>
         </div>
 
-        <!-- Secondary Menu (Bottom) -->
+        <!-- Secondary Menu -->
         <div class="mt-auto pt-3 border-t border-primary-container/60 px-2 space-y-1.5">
             <a href="#self-service" onclick="navigateTo('self-service')" id="nav-self-service" class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-300 hover:text-white hover:bg-amber-500/20 rounded-xl text-left text-xs font-semibold bg-amber-500/10 transition-colors">
                 <span class="material-symbols-outlined text-lg text-amber-400">person_check</span>
@@ -197,7 +197,7 @@
 
         <main class="flex-1 p-3 sm:p-5 md:p-6 bg-background overflow-y-auto">
 
-            <!-- VIEW 1: DASHBOARD (DEFAULT LANDING PAGE) -->
+            <!-- VIEW 1: DASHBOARD -->
             <section id="view-dashboard" class="view-panel active space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
@@ -257,7 +257,7 @@
                         </div>
                     </div>
 
-                    <!-- DAY STREAK TRACKER -->
+                    <!-- DAY STREAK TRACKER (TOP 4 RANKING) -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-emerald-800 flex items-center gap-1.5">
@@ -419,7 +419,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 4: EMPLOYEES DIRECTORY (WITH MANUAL ATTENDANCE BACKUP BUTTON) -->
+            <!-- VIEW 4: EMPLOYEES DIRECTORY & ATTENDANCE LOGS (WITH EDIT LOGS IN ADMIN) -->
             <section id="view-employees" class="view-panel space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
@@ -427,7 +427,6 @@
                         <p class="text-amber-800 text-xs">ຈັດການຂໍ້ມູນພະນັກງານ, PIN, ເງິນເດືອນ ແລະ ການບັນທຶກເວລາຍ້ອນຫຼັງ</p>
                     </div>
                     <div class="flex gap-2">
-                        <!-- BUTTON: MANUAL ADD BACKUP ATTENDANCE -->
                         <button onclick="openManualAttendanceModal()" class="bg-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-primary-container flex items-center gap-1.5 shadow-sm transition-all">
                             <span class="material-symbols-outlined text-sm text-accent">more_time</span>
                             <span>ບັນທຶກເວລາຍ້ອນຫຼັງ</span>
@@ -440,6 +439,37 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="partner-list-container"></div>
+
+                <!-- ATTENDANCE LOGS (WITH EDIT & DELETE BUTTONS IN ADMIN MODE) -->
+                <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-lg">history_toggle_off</span> 
+                            ປະຫວັດການມາວຽກ ແລະ ແກ້ໄຂເວລາປ້ຳໂມງ (Attendance Logs)
+                        </h3>
+                        <div class="flex gap-1.5 bg-surface-container-low p-1 rounded-xl text-xs font-bold">
+                            <button onclick="filterAdminAttendance('daily')" id="btn-att-daily" class="admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm">ລາຍວັນ</button>
+                            <button onclick="filterAdminAttendance('weekly')" id="btn-att-weekly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍສັບດາ</button>
+                            <button onclick="filterAdminAttendance('monthly')" id="btn-att-monthly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍເດືອນ</button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs min-w-[750px]">
+                            <thead class="bg-surface-container-low text-on-surface-variant uppercase font-bold border-b border-outline-variant/40">
+                                <tr>
+                                    <th class="p-2.5">ວັນທີ & ເວລາ</th>
+                                    <th class="p-2.5">PIN / ພະນັກງານ</th>
+                                    <th class="p-2.5">ປະເພດ</th>
+                                    <th class="p-2.5">ກະວຽກ</th>
+                                    <th class="p-2.5 font-bold text-amber-700">ມາຊ້າ (Late)</th>
+                                    <th class="p-2.5 text-right admin-only hidden" id="th-attendance-actions">ຈັດການ (Actions)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-attendance-table-body" class="divide-y divide-surface-container-high"></tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
             <!-- VIEW 5: PAYROLL -->
@@ -510,7 +540,7 @@
                                 </div>
 
                                 <div class="flex flex-wrap gap-2 justify-center sm:justify-end">
-                                    <button onclick="syncStaffSelfServiceData()" class="px-3 py-2 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 flex items-center gap-1 shadow-sm transition-all" title="ດຶງຂໍ້ມູນທີ່ manual add ໃໝ່ຈາກ Database">
+                                    <button onclick="syncStaffSelfServiceData()" class="px-3 py-2 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 flex items-center gap-1 shadow-sm transition-all">
                                         <span class="material-symbols-outlined text-sm text-primary">sync</span> Sync ດຶງຂໍ້ມູນໃໝ່
                                     </button>
                                     <div id="portal-benefit-status-badge" class="px-4 py-2 rounded-2xl text-center shadow-sm border transition-all"></div>
@@ -544,7 +574,6 @@
                                         <span class="material-symbols-outlined text-base">calendar_month</span>
                                         ຕາຕະລາງກວດສອບມື້ມາວຽກ & Proof ວັນພັກ
                                     </h3>
-                                    <p class="text-[10px] text-outline">ຫາກມີການບັນທຶກເວລາຍ້ອນຫຼັງ ໃຫ້ກົດປຸ່ມ <b>Sync ດຶງຂໍ້ມູນໃໝ່</b> ດ້ານເທິງ</p>
                                 </div>
                                 <span id="portal-off-quota-tag" class="text-xs bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded-full font-bold">ໂຄຕ້າ: ເຫຼືອ 4 ມື້</span>
                             </div>
@@ -699,7 +728,58 @@
     </div>
 
     <!-- MODALS -->
-    <!-- MANUAL ADD ATTENDANCE MODAL (FOR ADMIN RECOVERY) -->
+    <!-- EDIT ATTENDANCE LOG MODAL (FOR ADMIN) -->
+    <div id="edit-attendance-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-amber-600">edit_calendar</span>
+                    ແກ້ໄຂເວລາປ້ຳໂມງ (Edit Punch Log)
+                </h3>
+                <button onclick="closeModal('edit-attendance-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handleEditAttendanceSubmit(event)" class="space-y-3.5">
+                <input id="edit-att-id" type="hidden">
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ພະນັກງານ (PIN)</label>
+                    <input id="edit-att-staff-name" disabled class="w-full text-xs font-bold px-3 py-2 bg-surface-container border border-outline-variant rounded-xl text-outline">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ປະເພດການປ້ຳໂມງ *</label>
+                    <select id="edit-att-type-select" class="w-full text-xs font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                        <option value="Clock-In">🟢 ເຂົ້າວຽກ (Clock-In)</option>
+                        <option value="Clock-Out">🔴 ອອກວຽກ (Clock-Out)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ວັນທີ *</label>
+                        <input id="edit-att-date-input" required type="date" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ເວລາ (GMT+7) *</label>
+                        <input id="edit-att-time-input" required type="time" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center">
+                    <button type="button" onclick="deleteCurrentAttendanceLog()" class="px-3 py-1.5 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold transition-all">
+                        ລຶບ Log ນີ້
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeModal('edit-attendance-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                        <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ບັນທຶກການແກ້ໄຂ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MANUAL ADD ATTENDANCE MODAL -->
     <div id="manual-attendance-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30">
             <div class="flex justify-between items-center mb-3">
