@@ -18,6 +18,11 @@ css
     opacity: 1; 
 }
 
+/* Modals Overlay Handling */
+.modal-open {
+    display: flex !important;
+}
+
 ::-webkit-scrollbar { 
     width: 5px; 
     height: 5px; 
