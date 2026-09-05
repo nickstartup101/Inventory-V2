@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA DOLCE - Real-Time Attendance & Operations System</title>
+    <title>LA DOLCE - Operations Hub & Attendance System</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23001d3d'/><text x='50%' y='56%' dominant-baseline='central' text-anchor='middle' fill='%238cd889' font-family='Arial, sans-serif' font-weight='900' font-size='40' letter-spacing='-1'>HRM</text></svg>">
@@ -103,6 +103,7 @@
             </button>
         </div>
 
+        <!-- Primary Menu Items -->
         <div class="flex-1 overflow-y-auto px-2 space-y-1">
             <a href="#dashboard" onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">dashboard</span>
@@ -134,6 +135,7 @@
             </div>
         </div>
 
+        <!-- Secondary Menu (Bottom) -->
         <div class="mt-auto pt-3 border-t border-primary-container/60 px-2 space-y-1.5">
             <a href="#self-service" onclick="navigateTo('self-service')" id="nav-self-service" class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-300 hover:text-white hover:bg-amber-500/20 rounded-xl text-left text-xs font-semibold bg-amber-500/10 transition-colors">
                 <span class="material-symbols-outlined text-lg text-amber-400">person_check</span>
@@ -162,6 +164,11 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <button onclick="refreshAllData()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5 shadow-sm transition-all" title="ກົດເພື່ອດຶງຂໍ້ມູນໃໝ່ລ້າສຸດຈາກ Database">
+                    <span class="material-symbols-outlined text-sm text-primary">sync</span>
+                    <span>Sync Database</span>
+                </button>
+
                 <button onclick="navigateTo('self-service')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 flex items-center gap-1.5 transition-all">
                     <span class="material-symbols-outlined text-sm">person_check</span>
                     <span>ກວດມື້ມາວຽກ & Proof ວັນພັກ</span>
@@ -190,7 +197,7 @@
 
         <main class="flex-1 p-3 sm:p-5 md:p-6 bg-background overflow-y-auto">
 
-            <!-- VIEW 1: DASHBOARD -->
+            <!-- VIEW 1: DASHBOARD (DEFAULT LANDING PAGE) -->
             <section id="view-dashboard" class="view-panel active space-y-5">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                     <div>
@@ -330,14 +337,13 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: INVENTORY ANALYTICS & MOVEMENT HISTORY -->
+            <!-- VIEW 3: INVENTORY ANALYTICS -->
             <section id="view-inventory" class="view-panel space-y-5">
                 <div>
                     <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຖິຕິສະຕ໋ອກ & ປະຫວັດການເຄື່ອນໄຫວ (Inventory Analytics)</h1>
                     <p class="text-on-surface-variant text-xs mt-0.5">ວິເຄາະອັດຕາການໝົດໄປຂອງວັດຖຸດິບ (Burn Rate), ຍອດນຳເຂົ້າ-ເບີກອອກຈິງ ແລະ ປະຫວັດການເຄື່ອນໄຫວ</p>
                 </div>
 
-                <!-- Metrics Grid -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <p class="text-[11px] text-on-surface-variant font-bold uppercase">📥 ນຳເຂົ້າລວມ (Total In)</p>
@@ -413,16 +419,24 @@
                 </div>
             </section>
 
-            <!-- VIEW 4: EMPLOYEES DIRECTORY -->
+            <!-- VIEW 4: EMPLOYEES DIRECTORY (WITH MANUAL ATTENDANCE BACKUP BUTTON) -->
             <section id="view-employees" class="view-panel space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
                         <h2 class="font-headline font-extrabold text-lg text-amber-900">ລາຍຊື່ພະນັກງານ (staff table)</h2>
-                        <p class="text-amber-800 text-xs">ຈັດການຂໍ້ມູນພະນັກງານ, PIN, ເງິນເດືອນ ແລະ ການອະນຸມັດສະຫວັດດີການ</p>
+                        <p class="text-amber-800 text-xs">ຈັດການຂໍ້ມູນພະນັກງານ, PIN, ເງິນເດືອນ ແລະ ການບັນທຶກເວລາຍ້ອນຫຼັງ</p>
                     </div>
-                    <button onclick="openModal('partner-modal')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900 flex items-center gap-1.5 shadow-sm">
-                        <span class="material-symbols-outlined text-sm">person_add</span> ເພີ່ມພະນັກງານໃໝ່
-                    </button>
+                    <div class="flex gap-2">
+                        <!-- BUTTON: MANUAL ADD BACKUP ATTENDANCE -->
+                        <button onclick="openManualAttendanceModal()" class="bg-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-primary-container flex items-center gap-1.5 shadow-sm transition-all">
+                            <span class="material-symbols-outlined text-sm text-accent">more_time</span>
+                            <span>ບັນທຶກເວລາຍ້ອນຫຼັງ</span>
+                        </button>
+                        <button onclick="openModal('partner-modal')" class="bg-amber-800 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-amber-900 flex items-center gap-1.5 shadow-sm transition-all">
+                            <span class="material-symbols-outlined text-sm">person_add</span>
+                            <span>ເພີ່ມພະນັກງານ</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="partner-list-container"></div>
@@ -475,7 +489,7 @@
                         </h2>
                         <p class="text-xs text-on-surface-variant mt-1">ປ້ອນ PIN 6 ຫຼັກ ເພື່ອກວດສອບປະຫວັດການມາວຽກ, ມາຊ້າ ແລະ ກົດ Proof ວັນພັກປະຈຳເດືອນ (ສູງສຸດ 4 ວັນ)</p>
 
-                        <div class="mt-4 flex max-w-xs mx-auto gap-2">
+                        <div class="mt-4 flex max-w-sm mx-auto gap-2">
                             <input id="staff-portal-pin" type="password" maxlength="6" placeholder="ປ້ອນ PIN 6 ຫຼັກ" class="w-full text-center font-mono font-bold text-base px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary">
                             <button onclick="checkStaffSelfService()" class="px-4 py-2 bg-primary text-white rounded-xl font-bold text-xs hover:bg-primary-container shadow-sm flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">search</span> ກວດສອບ
@@ -496,7 +510,10 @@
                                 </div>
 
                                 <div class="flex flex-wrap gap-2 justify-center sm:justify-end">
-                                    <div id="portal-benefit-status-badge" class="px-4 py-2.5 rounded-2xl text-center shadow-sm border transition-all"></div>
+                                    <button onclick="syncStaffSelfServiceData()" class="px-3 py-2 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 flex items-center gap-1 shadow-sm transition-all" title="ດຶງຂໍ້ມູນທີ່ manual add ໃໝ່ຈາກ Database">
+                                        <span class="material-symbols-outlined text-sm text-primary">sync</span> Sync ດຶງຂໍ້ມູນໃໝ່
+                                    </button>
+                                    <div id="portal-benefit-status-badge" class="px-4 py-2 rounded-2xl text-center shadow-sm border transition-all"></div>
                                 </div>
                             </div>
 
@@ -527,6 +544,7 @@
                                         <span class="material-symbols-outlined text-base">calendar_month</span>
                                         ຕາຕະລາງກວດສອບມື້ມາວຽກ & Proof ວັນພັກ
                                     </h3>
+                                    <p class="text-[10px] text-outline">ຫາກມີການບັນທຶກເວລາຍ້ອນຫຼັງ ໃຫ້ກົດປຸ່ມ <b>Sync ດຶງຂໍ້ມູນໃໝ່</b> ດ້ານເທິງ</p>
                                 </div>
                                 <span id="portal-off-quota-tag" class="text-xs bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded-full font-bold">ໂຄຕ້າ: ເຫຼືອ 4 ມື້</span>
                             </div>
@@ -551,7 +569,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 7: KIOSK (ATTENDANCE & MOVEMENT RECORD) -->
+            <!-- VIEW 7: KIOSK -->
             <section id="view-kiosk" class="view-panel space-y-4">
                 <div class="max-w-xl mx-auto flex flex-col items-center">
                     <div class="text-center mb-3">
@@ -568,7 +586,6 @@
                         </button>
                     </div>
 
-                    <!-- SUBVIEW 1: TIME CLOCK PIN KEYPAD -->
                     <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center space-y-4">
                         <div id="kiosk-pin-panel" class="bg-surface rounded-2xl shadow-lg border border-outline-variant/40 p-5 sm:p-6 w-full flex flex-col items-center">
                             <div class="text-center mb-3">
@@ -618,7 +635,6 @@
                             <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
                         </div>
 
-                        <!-- Today Attendance Kiosk Feed -->
                         <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                             <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center justify-between">
                                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">today</span> ປະວັດການປ້ຳໂມງມື້ນີ້ (Today Feed)</span>
@@ -628,7 +644,6 @@
                         </div>
                     </div>
 
-                    <!-- SUBVIEW 2: STOCK MOVEMENT FORM & LOGS -->
                     <div id="kiosk-subview-stock-movement" class="hidden w-full max-w-lg space-y-4">
                         <div class="bg-surface rounded-2xl shadow-md border border-outline-variant/40 p-5">
                             <h3 class="font-headline font-bold text-base text-primary mb-3">ຟອມບັນທຶກ daily_inventory_movement</h3>
@@ -669,7 +684,6 @@
                             </form>
                         </div>
 
-                        <!-- Kiosk Movement Logs Feed -->
                         <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                             <h4 class="font-headline font-bold text-xs text-primary mb-3 flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-sm">history</span>
@@ -685,6 +699,55 @@
     </div>
 
     <!-- MODALS -->
+    <!-- MANUAL ADD ATTENDANCE MODAL (FOR ADMIN RECOVERY) -->
+    <div id="manual-attendance-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-amber-600">more_time</span>
+                    ບັນທຶກເວລາຍ້ອນຫຼັງ (Manual Punch Attendance)
+                </h3>
+                <button onclick="closeModal('manual-attendance-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <p class="text-xs text-on-surface-variant mb-4">
+                ໃຊ້ສຳລັບກໍລະນີລະບົບຂັດຂ້ອງ ຫຼື ພະນັກງານລືມປ້ຳໂມງ. ລະບົບຈະ Insert ລົງ Database Supabase ໂດຍກົງ ແລະ ຄິດໄລ່ເງິນເດືອນຄືນໃໝ່ທັນທີ.
+            </p>
+
+            <form onsubmit="handleManualAttendanceSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold mb-1">ເລືອກພະນັກງານ *</label>
+                    <select id="manual-att-staff-select" required class="w-full text-xs font-bold px-3 py-2 border border-outline-variant rounded-xl"></select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ວັນທີທີ່ຕ້ອງການລົງເວລາຍ້ອນຫຼັງ *</label>
+                    <input id="manual-att-date-input" required type="date" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/40">
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-800 mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">login</span> ເວລາເຂົ້າວຽກ *
+                        </label>
+                        <input id="manual-att-in-time" required type="time" class="w-full text-xs font-mono font-bold px-2 py-1.5 border border-emerald-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">logout</span> ເວລາອອກວຽກ (ທາງເລືອກ)
+                        </label>
+                        <input id="manual-att-out-time" type="time" class="w-full text-xs font-mono font-bold px-2 py-1.5 border border-amber-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('manual-attendance-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-container shadow-sm">ບັນທຶກລົງ Database</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Supabase Config Modal -->
     <div id="supabase-config-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
