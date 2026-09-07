@@ -126,7 +126,6 @@ let selectedPartnerForClock = null;
 function initSupabase() {
     if (supabaseUrl && supabaseKey && supabaseUrl.startsWith('http')) {
         try {
-            // Safe SDK Client Initializer
             const createClientFn = window.supabase ? window.supabase.createClient : (supabase ? supabase.createClient : null);
             if (createClientFn) {
                 supabaseClient = createClientFn(supabaseUrl, supabaseKey);
@@ -640,6 +639,8 @@ function renderEmployeesAndPayroll() {
     
     partnerContainer.innerHTML = '';
     payrollBody.innerHTML = '';
+
+    populateManualAttendanceStaffDropdown();
 
     partnersData.forEach(p => {
         if (localBenefitApprovals[p.pin] !== undefined) {
@@ -1509,7 +1510,6 @@ async function handleEditAttendanceSubmit(e) {
         }
     }
 
-    // Update local state
     const localLog = attendanceLogs.find(a => a.id == id);
     if (localLog) {
         localLog.type = type;
@@ -1825,6 +1825,7 @@ async function handleStockSubmit(e) {
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
+// Fetch Supabase Data with Safe Network Retry
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -1836,7 +1837,9 @@ async function fetchDataFromSupabase() {
             renderStockAnalytics();
             populateStockMovementDropdown();
         }
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Stock fetch warning:', e);
+    }
 
     try {
         const { data: staffRes } = await supabaseClient.from('staff').select('*').order('pin');
@@ -1847,7 +1850,9 @@ async function fetchDataFromSupabase() {
             }));
             renderEmployeesAndPayroll();
         }
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Staff fetch warning:', e);
+    }
 
     try {
         const { data: moveRes } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(100);
@@ -1856,7 +1861,9 @@ async function fetchDataFromSupabase() {
             renderStockAnalytics();
             renderKioskMovementLogs();
         }
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Movement fetch warning:', e);
+    }
 
     try {
         const { data: attRes } = await supabaseClient.from('attendance').select('*').order('id', { ascending: false });
@@ -1868,7 +1875,9 @@ async function fetchDataFromSupabase() {
             renderEarlyComerStreakRanking();
             renderAdminAttendanceTable(currentAdminAttFilter);
         }
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Attendance fetch warning:', e);
+    }
 }
 
 async function refreshAllData() {
