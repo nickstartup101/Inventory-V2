@@ -14,8 +14,19 @@ css
 }
 
 .view-panel.active { 
-    display: block; 
+    display: block !important; 
     opacity: 1; 
+}
+
+/* FIX MODAL BACKDROP POINTER BLOCKING */
+.modal-backdrop.hidden {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+.modal-backdrop:not(.hidden) {
+    display: flex !important;
+    pointer-events: auto !important;
 }
 
 ::-webkit-scrollbar { 
