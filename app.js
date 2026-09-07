@@ -86,7 +86,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE INITIALIZATION (SAFE BROWSER CDN CONNECTION)
+// 2. STATE & SUPABASE INITIALIZATION (SAFE INITIALIZER)
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -126,7 +126,7 @@ let selectedPartnerForClock = null;
 function initSupabase() {
     if (supabaseUrl && supabaseKey && supabaseUrl.startsWith('http')) {
         try {
-            const createClientFn = window.supabase ? window.supabase.createClient : (supabase ? supabase.createClient : null);
+            const createClientFn = window.supabase ? window.supabase.createClient : (typeof supabase !== 'undefined' ? supabase.createClient : null);
             if (createClientFn) {
                 supabaseClient = createClientFn(supabaseUrl, supabaseKey);
                 updateDbStatusUI(true);
@@ -178,7 +178,7 @@ function saveSupabaseConfig(e) {
 }
 
 // =========================================================================
-// 3. NAVIGATION CONTROLLER
+// 3. NAVIGATION CONTROLLER (BULLETPROOF & SMOOTH)
 // =========================================================================
 const views = ['dashboard', 'current-stock', 'inventory', 'employees', 'payroll', 'self-service', 'kiosk'];
 
@@ -348,7 +348,7 @@ function renderKioskMovementLogs() {
 }
 
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING)
+// 5. ON-DUTY & DAY STREAK TRACKER
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -682,19 +682,19 @@ function renderEmployeesAndPayroll() {
                     <span class="text-outline">PIN: <code class="bg-surface-container-high px-1.5 py-0.5 rounded font-mono font-bold text-primary">${p.pin}</code></span>
                     
                     <div class="flex gap-1.5">
-                        <button onclick="toggleBenefitDirectly('${p.pin}')" class="px-2 py-1 rounded-lg text-xs font-bold transition-all shadow-sm ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300' : 'bg-primary text-white hover:bg-primary-container'}">
+                        <button type="button" onclick="toggleBenefitDirectly('${p.pin}')" class="px-2 py-1 rounded-lg text-xs font-bold transition-all shadow-sm ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300' : 'bg-primary text-white hover:bg-primary-container'}">
                             ${payroll.isBenefitApproved ? 'ປິດສະຫວັດດີການ' : 'ອະນຸມັດ'}
                         </button>
-                        <button onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all" title="ແກ້ໄຂ">
+                        <button type="button" onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all" title="ແກ້ໄຂ">
                             <span class="material-symbols-outlined text-xs">edit</span>
                         </button>
-                        <button onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all" title="ລຶບ">
+                        <button type="button" onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all" title="ລຶບ">
                             <span class="material-symbols-outlined text-xs">delete</span>
                         </button>
                     </div>
                 </div>
 
-                <button onclick="openManualAttendanceModal('${p.pin}')" class="w-full py-1 bg-surface-container hover:bg-surface-container-high rounded-lg font-bold text-[11px] text-primary flex items-center justify-center gap-1 border border-outline-variant/40">
+                <button type="button" onclick="openManualAttendanceModal('${p.pin}')" class="w-full py-1 bg-surface-container hover:bg-surface-container-high rounded-lg font-bold text-[11px] text-primary flex items-center justify-center gap-1 border border-outline-variant/40">
                     <span class="material-symbols-outlined text-xs text-accent">more_time</span> ລົງເວລາຍ້ອນຫຼັງ
                 </button>
             </div>
@@ -879,12 +879,12 @@ function renderStaffPortal(staff) {
             actionBtn = `<span class="text-[10px] text-outline">ປ້ຳໂມງແລ້ວ</span>`;
         } else if (isOffDay) {
             statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-100 text-blue-900">🏖️ ວັນພັກປົກກະຕິ</span>`;
-            actionBtn = `<button onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-100 rounded text-[10px] font-bold">ຍົກເລີກພັກ</button>`;
+            actionBtn = `<button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-100 rounded text-[10px] font-bold">ຍົກເລີກພັກ</button>`;
         } else if (isPastDay) {
             absentCount++;
             statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error font-bold">❌ ຂາດວຽກ</span>`;
             if (offRemaining > 0) {
-                actionBtn = `<button onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold shadow-sm">+ Proof ວັນພັກ</button>`;
+                actionBtn = `<button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold shadow-sm">+ Proof ວັນພັກ</button>`;
             } else {
                 actionBtn = `<span class="text-[10px] text-error font-bold">ໂຄຕ້າພັກໝົດ</span>`;
             }
@@ -1053,13 +1053,13 @@ function renderStockTable(filterCat = currentStockFilter) {
             </td>
             ${isAdminLoggedIn ? `
             <td class="p-3 text-right space-x-1 whitespace-nowrap">
-                <button onclick="openEditStockModal('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                <button type="button" onclick="openEditStockModal('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
                     ແກ້ໄຂ
                 </button>
-                <button onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-all">
+                <button type="button" onclick="adjustStockPrompt('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg text-xs font-bold transition-all">
                     ປັບ Stock
                 </button>
-                <button onclick="deleteStock('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', '${item.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                <button type="button" onclick="deleteStock('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', '${item.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg text-xs font-bold transition-all">
                     ລຶບ
                 </button>
             </td>` : ''}
@@ -1466,7 +1466,7 @@ function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
             </td>
             ${isAdminLoggedIn ? `
             <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
-                <button onclick="openEditAttendanceModal('${a.id || ''}', '${a.pin}', '${a.type}', '${a.timestamp}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
+                <button type="button" onclick="openEditAttendanceModal('${a.id || ''}', '${a.pin}', '${a.type}', '${a.timestamp}')" class="px-2 py-1 bg-amber-50 text-amber-900 hover:bg-amber-600 hover:text-white rounded-lg text-xs font-bold transition-all">
                     ແກ້ໄຂ
                 </button>
             </td>` : ''}
@@ -1675,7 +1675,6 @@ function closeAdminModalForce() {
     if (modal) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
-        modal.style.display = 'none';
     }
     const input = document.getElementById('modal-admin-pin-input');
     if (input) input.value = '';
@@ -1825,7 +1824,6 @@ async function handleStockSubmit(e) {
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
-// Fetch Supabase Data with Safe Network Retry
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -1886,12 +1884,12 @@ async function refreshAllData() {
     showToast('✓ ດຶງຂໍ້ມູນສຳເລັດແລ້ວ!');
 }
 
+// SAFE MODAL OPEN/CLOSE
 function openModal(id) { 
     const modal = document.getElementById(id);
     if (modal) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-        modal.style.display = 'flex';
     }
 }
 
@@ -1900,12 +1898,12 @@ function closeModal(id) {
     if (modal) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
-        modal.style.display = 'none';
     }
 }
 
 function showToast(msg) {
     const container = document.getElementById('toast-container');
+    if (!container) return;
     const toast = document.createElement('div');
     toast.className = 'bg-primary text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xl flex items-center gap-2 pointer-events-auto';
     toast.innerHTML = `<span class="material-symbols-outlined text-accent text-sm">info</span><span>${msg}</span>`;
@@ -1934,14 +1932,27 @@ const mobileBtn = document.getElementById('mobile-menu-btn');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('sidebar-overlay');
 
-function openMobileMenu() { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
-function closeMobileMenu() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-if (mobileBtn) { mobileBtn.onclick = openMobileMenu; overlay.onclick = closeMobileMenu; }
+function openMobileMenu() { 
+    if (sidebar) sidebar.classList.remove('-translate-x-full'); 
+    if (overlay) overlay.classList.remove('hidden'); 
+}
+function closeMobileMenu() { 
+    if (sidebar) sidebar.classList.add('-translate-x-full'); 
+    if (overlay) overlay.classList.add('hidden'); 
+}
+if (mobileBtn) mobileBtn.onclick = openMobileMenu;
+if (overlay) overlay.onclick = closeMobileMenu;
 
-// APP INITIALIZATION
+// SAFE DOM READY INITIALIZATION
 window.addEventListener('DOMContentLoaded', () => {
-    if (supabaseUrl) document.getElementById('config-supabase-url').value = supabaseUrl;
-    if (supabaseKey) document.getElementById('config-supabase-key').value = supabaseKey;
+    if (supabaseUrl) {
+        const urlInput = document.getElementById('config-supabase-url');
+        if (urlInput) urlInput.value = supabaseUrl;
+    }
+    if (supabaseKey) {
+        const keyInput = document.getElementById('config-supabase-key');
+        if (keyInput) keyInput.value = supabaseKey;
+    }
 
     initSupabase();
     renderStockTable();
