@@ -14,14 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-    <!-- Supabase SDK with Multi-CDN Fallback (ແກ້ບັນຫາບາງເຄືອຂ່າຍໂຫຼດ CDN ບໍ່ໄດ້) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
-    <script>
-      // Fallback ຖ້າ jsdelivr ຖືກ Block ໃນບາງເຄືອຂ່າຍ
-      if (!window.supabase) {
-        document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>');
-      }
-    </script>
+    <!-- Safe Supabase SDK Bundle -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -70,28 +64,28 @@
     <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-xs sm:max-w-sm"></div>
 
     <!-- Mobile Header -->
-    <div class="md:hidden bg-primary text-on-primary flex items-center justify-between px-4 py-3 sticky top-0 z-40 shadow-md">
+    <div class="md:hidden bg-primary text-on-primary flex items-center justify-between px-4 py-3 sticky top-0 z-30 shadow-md">
         <div class="flex items-center gap-2.5">
-            <button id="mobile-menu-btn" class="p-1.5 rounded-lg hover:bg-primary-container text-white active:scale-95">
+            <button id="mobile-menu-btn" type="button" class="p-1.5 rounded-lg hover:bg-primary-container text-white active:scale-95">
                 <span class="material-symbols-outlined">menu</span>
             </button>
             <span class="font-headline font-extrabold text-lg tracking-wider">LA DOLCE</span>
         </div>
         
         <div class="flex items-center gap-2">
-            <button onclick="navigateTo('self-service')" class="bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+            <button type="button" onclick="navigateTo('self-service')" class="bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">person_check</span> ກວດວັນມາວຽກ
             </button>
-            <button onclick="navigateTo('kiosk')" class="bg-primary-container text-on-primary-container text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
+            <button type="button" onclick="navigateTo('kiosk')" class="bg-primary-container text-on-primary-container text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">schedule</span> Kiosk
             </button>
         </div>
     </div>
 
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
 
     <!-- SideNavBar -->
-    <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-50 flex flex-col py-6 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
+    <nav id="sidebar" class="bg-primary text-primary-fixed-dim w-64 fixed md:sticky top-0 h-screen z-40 flex flex-col py-6 shrink-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-xl md:shadow-none">
         <div class="px-6 mb-6">
             <h1 class="font-headline font-black text-2xl text-white tracking-wider leading-none">LA DOLCE</h1>
             <p class="text-[11px] text-primary-fixed-dim font-medium mt-1 tracking-wide">La Dolce cafe • NP Branch</p>
@@ -99,11 +93,11 @@
 
         <div id="admin-banner-sidebar" class="hidden mx-4 mb-4 p-2.5 bg-amber-400/20 border border-amber-400/50 rounded-xl text-amber-200 text-xs flex items-center justify-between">
             <span class="font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm text-amber-400">verified_user</span> HRM Admin Mode</span>
-            <button onclick="lockAdminMode()" class="text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded hover:bg-amber-300">Lock</button>
+            <button type="button" onclick="lockAdminMode()" class="text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded hover:bg-amber-300">Lock</button>
         </div>
 
         <div class="px-4 mb-4">
-            <button onclick="openStockMovementKiosk()" class="w-full bg-primary-container text-on-primary-container font-headline font-semibold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 hover:bg-primary-container/80 transition-all shadow-sm">
+            <button type="button" onclick="openStockMovementKiosk()" class="w-full bg-primary-container text-on-primary-container font-headline font-semibold text-xs py-2.5 px-3 rounded-full flex items-center justify-center gap-2 hover:bg-primary-container/80 transition-all shadow-sm">
                 <span class="material-symbols-outlined icon-fill text-base">swap_horiz</span>
                 <span>ບັນທຶກສະຕ໋ອກ ເຂົ້າ-ອອກ</span>
             </button>
@@ -111,30 +105,30 @@
 
         <!-- Primary Menu Items -->
         <div class="flex-1 overflow-y-auto px-2 space-y-1">
-            <a href="#dashboard" onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
+            <a href="javascript:void(0)" onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">dashboard</span>
                 <span class="font-headline font-medium text-xs">ໜ້າຫຼັກ (Dashboard)</span>
             </a>
-            <a href="#current-stock" onclick="navigateTo('current-stock')" id="nav-current-stock" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
+            <a href="javascript:void(0)" onclick="navigateTo('current-stock')" id="nav-current-stock" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">inventory_2</span>
                 <span class="font-headline font-medium text-xs">ສະຕ໋ອກປັດຈຸບັນ (Stock)</span>
             </a>
-            <a href="#inventory" onclick="navigateTo('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
+            <a href="javascript:void(0)" onclick="navigateTo('inventory')" id="nav-inventory" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">analytics</span>
                 <span class="font-headline font-medium text-xs">ສະຖິຕິສະຕ໋ອກ & ປະຫວັດ</span>
             </a>
-            <a href="#kiosk" onclick="navigateTo('kiosk')" id="nav-kiosk" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
+            <a href="javascript:void(0)" onclick="navigateTo('kiosk')" id="nav-kiosk" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all">
                 <span class="material-symbols-outlined text-xl">timer</span>
                 <span class="font-headline font-medium text-xs">ເຄື່ອງ Kiosk (ເວລາ & ສະຕ໋ອກ)</span>
             </a>
 
             <!-- Admin Restricted Links -->
             <div class="pt-2 my-2 border-t border-primary-container/40">
-                <a href="#employees" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
+                <a href="javascript:void(0)" onclick="navigateTo('employees')" id="nav-employees" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">badge</span>
                     <span class="font-headline font-medium text-xs">ພະນັກງານ (staff)</span>
                 </a>
-                <a href="#payroll" onclick="navigateTo('payroll')" id="nav-payroll" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
+                <a href="javascript:void(0)" onclick="navigateTo('payroll')" id="nav-payroll" class="admin-only hidden nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-amber-300 hover:text-white">
                     <span class="material-symbols-outlined text-xl">payments</span>
                     <span class="font-headline font-medium text-xs">ເງິນເດືອນ & ມາຊ້າ (Payrolls)</span>
                 </a>
@@ -143,15 +137,15 @@
 
         <!-- Secondary Menu -->
         <div class="mt-auto pt-3 border-t border-primary-container/60 px-2 space-y-1.5">
-            <a href="#self-service" onclick="navigateTo('self-service')" id="nav-self-service" class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-300 hover:text-white hover:bg-amber-500/20 rounded-xl text-left text-xs font-semibold bg-amber-500/10 transition-colors">
+            <a href="javascript:void(0)" onclick="navigateTo('self-service')" id="nav-self-service" class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-300 hover:text-white hover:bg-amber-500/20 rounded-xl text-left text-xs font-semibold bg-amber-500/10 transition-colors">
                 <span class="material-symbols-outlined text-lg text-amber-400">person_check</span>
                 <span>ກວດມື້ມາວຽກ & ສະຫວັດດີການ</span>
             </a>
-            <button onclick="openModal('supabase-config-modal')" class="w-full flex items-center justify-between px-3 py-2 text-primary-fixed-dim hover:text-white rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 transition-colors">
+            <button type="button" onclick="openModal('supabase-config-modal')" class="w-full flex items-center justify-between px-3 py-2 text-primary-fixed-dim hover:text-white rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 transition-colors">
                 <span class="flex items-center gap-2"><span class="material-symbols-outlined text-base text-accent">cloud_sync</span> Supabase API</span>
                 <span id="db-status-indicator" class="w-2 h-2 rounded-full bg-red-400"></span>
             </button>
-            <button onclick="openModal('admin-pin-modal')" class="w-full flex items-center gap-2.5 px-3 py-2 text-primary-fixed-dim hover:text-white rounded-xl text-left text-xs font-semibold bg-primary-container/30 hover:bg-primary-container/60 transition-colors">
+            <button type="button" onclick="openModal('admin-pin-modal')" class="w-full flex items-center gap-2.5 px-3 py-2 text-primary-fixed-dim hover:text-white rounded-xl text-left text-xs font-semibold bg-primary-container/30 hover:bg-primary-container/60 transition-colors">
                 <span class="material-symbols-outlined text-lg text-amber-400">sync_lock</span>
                 <span>Switch User / HRM Admin</span>
             </button>
@@ -161,7 +155,7 @@
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-w-0 min-h-screen">
 
-        <header class="hidden md:flex bg-surface text-primary border-b border-outline-variant/60 sticky top-0 z-30 justify-between items-center px-6 py-3 shadow-sm">
+        <header class="hidden md:flex bg-surface text-primary border-b border-outline-variant/60 sticky top-0 z-20 justify-between items-center px-6 py-3 shadow-sm">
             <div class="flex items-center gap-4">
                 <h2 id="top-title" class="font-headline font-bold text-lg text-primary">LA DOLCE Operations Hub</h2>
                 <span id="top-admin-tag" class="hidden text-xs bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
@@ -170,17 +164,17 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <button onclick="refreshAllData()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5 shadow-sm transition-all" title="ກົດເພື່ອດຶງຂໍ້ມູນໃໝ່ລ້າສຸດຈາກ Database">
+                <button type="button" onclick="refreshAllData()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5 shadow-sm transition-all" title="ກົດເພື່ອດຶງຂໍ້ມູນໃໝ່ລ້າສຸດຈາກ Database">
                     <span class="material-symbols-outlined text-sm text-primary">sync</span>
                     <span>Sync Database</span>
                 </button>
 
-                <button onclick="navigateTo('self-service')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 flex items-center gap-1.5 transition-all">
+                <button type="button" onclick="navigateTo('self-service')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 flex items-center gap-1.5 transition-all">
                     <span class="material-symbols-outlined text-sm">person_check</span>
                     <span>ກວດມື້ມາວຽກ & Proof ວັນພັກ</span>
                 </button>
 
-                <button onclick="openModal('supabase-config-modal')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5">
+                <button type="button" onclick="openModal('supabase-config-modal')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5">
                     <span id="db-dot-desktop" class="w-2 h-2 rounded-full bg-red-500"></span>
                     <span id="db-text-desktop">Supabase Status</span>
                 </button>
@@ -190,12 +184,12 @@
                     <div id="top-live-date" class="text-[10px] text-on-surface-variant">-- -- ----</div>
                 </div>
 
-                <button onclick="navigateTo('kiosk')" class="bg-secondary text-white font-headline font-semibold text-xs px-3.5 py-1.5 rounded-full hover:bg-secondary/80 transition-colors flex items-center gap-1 shadow-sm">
+                <button type="button" onclick="navigateTo('kiosk')" class="bg-secondary text-white font-headline font-semibold text-xs px-3.5 py-1.5 rounded-full hover:bg-secondary/80 transition-colors flex items-center gap-1 shadow-sm">
                     <span class="material-symbols-outlined text-sm">touch_app</span>
                     <span>ເຄື່ອງ Kiosk</span>
                 </button>
 
-                <button onclick="openModal('admin-pin-modal')" class="p-1.5 rounded-full hover:bg-surface-container text-on-surface-variant" title="Switch User">
+                <button type="button" onclick="openModal('admin-pin-modal')" class="p-1.5 rounded-full hover:bg-surface-container text-on-surface-variant" title="Switch User">
                     <span class="material-symbols-outlined text-xl text-amber-600">key</span>
                 </button>
             </div>
@@ -271,8 +265,8 @@
                                 🏆 ຈັດອັນດັບມາວຽກໄວ & Day Streak (Top 4)
                             </h3>
                             <div class="flex gap-1 bg-surface-container-low p-1 rounded-xl text-[10px] font-bold">
-                                <button onclick="setEarlyRankingFilter('daily')" id="btn-early-daily" class="early-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍວັນ (Daily)</button>
-                                <button onclick="setEarlyRankingFilter('monthly')" id="btn-early-monthly" class="early-rank-tab px-2.5 py-0.5 rounded-lg bg-emerald-800 text-white shadow-sm">ລາຍເດືອນ (Monthly)</button>
+                                <button type="button" onclick="setEarlyRankingFilter('daily')" id="btn-early-daily" class="early-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍວັນ (Daily)</button>
+                                <button type="button" onclick="setEarlyRankingFilter('monthly')" id="btn-early-monthly" class="early-rank-tab px-2.5 py-0.5 rounded-lg bg-emerald-800 text-white shadow-sm">ລາຍເດືອນ (Monthly)</button>
                             </div>
                         </div>
 
@@ -309,17 +303,17 @@
                         <h1 class="font-headline font-extrabold text-xl sm:text-2xl text-on-surface">ສະຕ໋ອກປັດຈຸບັນ (main_inventory)</h1>
                         <p class="text-on-surface-variant text-xs mt-0.5">ລາຍການຄັງສິນຄ້າທັງໝົດ ແຍກຕາມໝວດໝູ່</p>
                     </div>
-                    <button onclick="openModal('stock-modal')" id="btn-add-stock-modal" class="admin-only hidden w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
+                    <button type="button" onclick="openModal('stock-modal')" id="btn-add-stock-modal" class="admin-only hidden w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-sm">
                         <span class="material-symbols-outlined text-base">add</span> ເພີ່ມສິນຄ້າໃໝ່ (New SKU)
                     </button>
                 </div>
 
                 <div class="flex gap-2 overflow-x-auto pb-2 border-b border-outline-variant/40">
-                    <button onclick="filterStockCategory('all')" id="tab-stock-all" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ທັງໝົດ (All)</button>
-                    <button onclick="filterStockCategory('ວັດຖຸດິບ')" id="tab-stock-ວັດຖຸດິບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">☕ ວັດຖຸດິບ</button>
-                    <button onclick="filterStockCategory('ໄຊຮັບ')" id="tab-stock-ໄຊຮັບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍯 ໄຊຮັບ</button>
-                    <button onclick="filterStockCategory('ເຄື່ອງຍ່ອຍ')" id="tab-stock-ເຄື່ອງຍ່ອຍ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍺 ເຄື່ອງຍ່ອຍ</button>
-                    <button onclick="filterStockCategory('ເຄື່ອງໃຊ້ທົ່ວໄປ')" id="tab-stock-ເຄື່ອງໃຊ້ທົ່ວໄປ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</button>
+                    <button type="button" onclick="filterStockCategory('all')" id="tab-stock-all" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ທັງໝົດ (All)</button>
+                    <button type="button" onclick="filterStockCategory('ວັດຖຸດິບ')" id="tab-stock-ວັດຖຸດິບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">☕ ວັດຖຸດິບ</button>
+                    <button type="button" onclick="filterStockCategory('ໄຊຮັບ')" id="tab-stock-ໄຊຮັບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍯 ໄຊຮັບ</button>
+                    <button type="button" onclick="filterStockCategory('ເຄື່ອງຍ່ອຍ')" id="tab-stock-ເຄື່ອງຍ່ອຍ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍺 ເຄື່ອງຍ່ອຍ</button>
+                    <button type="button" onclick="filterStockCategory('ເຄື່ອງໃຊ້ທົ່ວໄປ')" id="tab-stock-ເຄື່ອງໃຊ້ທົ່ວໄປ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</button>
                 </div>
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
@@ -425,7 +419,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 4: EMPLOYEES DIRECTORY & ATTENDANCE LOGS (WITH EDIT LOGS IN ADMIN) -->
+            <!-- VIEW 4: EMPLOYEES DIRECTORY & ATTENDANCE LOGS -->
             <section id="view-employees" class="view-panel space-y-5">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
@@ -433,11 +427,11 @@
                         <p class="text-amber-800 text-xs">ຈັດການຂໍ້ມູນພະນັກງານ, PIN, ເງິນເດືອນ ແລະ ການບັນທຶກເວລາຍ້ອນຫຼັງ</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="openManualAttendanceModal()" class="bg-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-primary-container flex items-center gap-1.5 shadow-sm transition-all">
+                        <button type="button" onclick="openManualAttendanceModal()" class="bg-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-primary-container flex items-center gap-1.5 shadow-sm transition-all">
                             <span class="material-symbols-outlined text-sm text-accent">more_time</span>
                             <span>ບັນທຶກເວລາຍ້ອນຫຼັງ</span>
                         </button>
-                        <button onclick="openModal('partner-modal')" class="bg-amber-800 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-amber-900 flex items-center gap-1.5 shadow-sm transition-all">
+                        <button type="button" onclick="openModal('partner-modal')" class="bg-amber-800 text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-amber-900 flex items-center gap-1.5 shadow-sm transition-all">
                             <span class="material-symbols-outlined text-sm">person_add</span>
                             <span>ເພີ່ມພະນັກງານ</span>
                         </button>
@@ -446,7 +440,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="partner-list-container"></div>
 
-                <!-- ATTENDANCE LOGS (WITH EDIT & DELETE BUTTONS IN ADMIN MODE) -->
+                <!-- ATTENDANCE LOGS -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                         <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
@@ -454,9 +448,9 @@
                             ປະຫວັດການມາວຽກ ແລະ ແກ້ໄຂເວລາປ້ຳໂມງ (Attendance Logs)
                         </h3>
                         <div class="flex gap-1.5 bg-surface-container-low p-1 rounded-xl text-xs font-bold">
-                            <button onclick="filterAdminAttendance('daily')" id="btn-att-daily" class="admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm">ລາຍວັນ</button>
-                            <button onclick="filterAdminAttendance('weekly')" id="btn-att-weekly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍສັບດາ</button>
-                            <button onclick="filterAdminAttendance('monthly')" id="btn-att-monthly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍເດືອນ</button>
+                            <button type="button" onclick="filterAdminAttendance('daily')" id="btn-att-daily" class="admin-att-btn px-3 py-1 rounded-lg bg-primary text-white shadow-sm">ລາຍວັນ</button>
+                            <button type="button" onclick="filterAdminAttendance('weekly')" id="btn-att-weekly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍສັບດາ</button>
+                            <button type="button" onclick="filterAdminAttendance('monthly')" id="btn-att-monthly" class="admin-att-btn px-3 py-1 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍເດືອນ</button>
                         </div>
                     </div>
 
@@ -487,7 +481,7 @@
                             ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ (ຈຳນວນມື້ໃນເດືອນ - 4 ມື້ພັກ) | OT 17,000 ກີບ/ຊມ + ສະຫວັດດີການ
                         </p>
                     </div>
-                    <button onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
+                    <button type="button" onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
                         ອະນຸມັດເງິນເດືອນ
                     </button>
                 </div>
@@ -527,7 +521,7 @@
 
                         <div class="mt-4 flex max-w-sm mx-auto gap-2">
                             <input id="staff-portal-pin" type="password" maxlength="6" placeholder="ປ້ອນ PIN 6 ຫຼັກ" class="w-full text-center font-mono font-bold text-base px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary">
-                            <button onclick="checkStaffSelfService()" class="px-4 py-2 bg-primary text-white rounded-xl font-bold text-xs hover:bg-primary-container shadow-sm flex items-center gap-1">
+                            <button type="button" onclick="checkStaffSelfService()" class="px-4 py-2 bg-primary text-white rounded-xl font-bold text-xs hover:bg-primary-container shadow-sm flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">search</span> ກວດສອບ
                             </button>
                         </div>
@@ -546,7 +540,7 @@
                                 </div>
 
                                 <div class="flex flex-wrap gap-2 justify-center sm:justify-end">
-                                    <button onclick="syncStaffSelfServiceData()" class="px-3 py-2 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 flex items-center gap-1 shadow-sm transition-all">
+                                    <button type="button" onclick="syncStaffSelfServiceData()" class="px-3 py-2 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-container-high border border-outline-variant/60 flex items-center gap-1 shadow-sm transition-all">
                                         <span class="material-symbols-outlined text-sm text-primary">sync</span> Sync ດຶງຂໍ້ມູນໃໝ່
                                     </button>
                                     <div id="portal-benefit-status-badge" class="px-4 py-2 rounded-2xl text-center shadow-sm border transition-all"></div>
@@ -613,10 +607,10 @@
                     </div>
 
                     <div class="flex gap-2 p-1 bg-surface-container-low rounded-2xl border border-outline-variant/40 mb-4 w-full max-w-md">
-                        <button onclick="switchKioskTab('time-clock')" id="kiosk-tab-time-clock" class="flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                        <button type="button" onclick="switchKioskTab('time-clock')" id="kiosk-tab-time-clock" class="flex-1 py-2 rounded-xl text-xs font-bold bg-primary text-white transition-all flex items-center justify-center gap-1.5 shadow-sm">
                             <span class="material-symbols-outlined text-base">schedule</span> ບັນທຶກເວລາ
                         </button>
-                        <button onclick="switchKioskTab('stock-movement')" id="kiosk-tab-stock-movement" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5">
+                        <button type="button" onclick="switchKioskTab('stock-movement')" id="kiosk-tab-stock-movement" class="flex-1 py-2 rounded-xl text-xs font-bold text-on-surface-variant hover:bg-surface transition-all flex items-center justify-center gap-1.5">
                             <span class="material-symbols-outlined text-base">swap_horiz</span> ບັນທຶກສະຕ໋ອກ
                         </button>
                     </div>
@@ -638,20 +632,20 @@
                             </div>
 
                             <div class="grid grid-cols-3 gap-2.5 w-full">
-                                <button onclick="pressPinKey('1')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">1</button>
-                                <button onclick="pressPinKey('2')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">2</button>
-                                <button onclick="pressPinKey('3')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">3</button>
-                                <button onclick="pressPinKey('4')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">4</button>
-                                <button onclick="pressPinKey('5')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">5</button>
-                                <button onclick="pressPinKey('6')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">6</button>
-                                <button onclick="pressPinKey('7')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">7</button>
-                                <button onclick="pressPinKey('8')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">8</button>
-                                <button onclick="pressPinKey('9')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">9</button>
-                                <button onclick="clearPinKey()" class="h-12 rounded-xl text-on-surface-variant hover:text-error hover:bg-red-50 font-semibold text-xs flex flex-col items-center justify-center active:scale-95">
+                                <button type="button" onclick="pressPinKey('1')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">1</button>
+                                <button type="button" onclick="pressPinKey('2')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">2</button>
+                                <button type="button" onclick="pressPinKey('3')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">3</button>
+                                <button type="button" onclick="pressPinKey('4')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">4</button>
+                                <button type="button" onclick="pressPinKey('5')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">5</button>
+                                <button type="button" onclick="pressPinKey('6')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">6</button>
+                                <button type="button" onclick="pressPinKey('7')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">7</button>
+                                <button type="button" onclick="pressPinKey('8')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">8</button>
+                                <button type="button" onclick="pressPinKey('9')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">9</button>
+                                <button type="button" onclick="clearPinKey()" class="h-12 rounded-xl text-on-surface-variant hover:text-error hover:bg-red-50 font-semibold text-xs flex flex-col items-center justify-center active:scale-95">
                                     <span>ລຶບ</span><span class="text-[8px]">Clear</span>
                                 </button>
-                                <button onclick="pressPinKey('0')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">0</button>
-                                <button onclick="backspacePinKey()" class="h-12 rounded-xl text-on-surface-variant hover:bg-surface-container-low flex items-center justify-center active:scale-95">
+                                <button type="button" onclick="pressPinKey('0')" class="h-12 rounded-xl bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/30 font-headline font-bold text-lg active:scale-95">0</button>
+                                <button type="button" onclick="backspacePinKey()" class="h-12 rounded-xl text-on-surface-variant hover:bg-surface-container-low flex items-center justify-center active:scale-95">
                                     <span class="material-symbols-outlined text-lg">backspace</span>
                                 </button>
                             </div>
@@ -660,14 +654,14 @@
                         <div id="kiosk-action-panel" class="hidden w-full bg-surface rounded-2xl shadow-xl border border-primary/30 p-5 text-center">
                             <div id="kiosk-user-info" class="mb-3"></div>
                             <div class="grid grid-cols-2 gap-2.5 mb-2">
-                                <button onclick="executeClockAction('Clock-In')" class="py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 flex items-center justify-center gap-1">
+                                <button type="button" onclick="executeClockAction('Clock-In')" class="py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 flex items-center justify-center gap-1">
                                     <span class="material-symbols-outlined text-sm">login</span> ເຂົ້າວຽກ (Clock-In)
                                 </button>
-                                <button onclick="executeClockAction('Clock-Out')" class="py-2.5 bg-amber-600 text-white rounded-xl font-bold text-xs hover:bg-amber-700 flex items-center justify-center gap-1">
+                                <button type="button" onclick="executeClockAction('Clock-Out')" class="py-2.5 bg-amber-600 text-white rounded-xl font-bold text-xs hover:bg-amber-700 flex items-center justify-center gap-1">
                                     <span class="material-symbols-outlined text-sm">logout</span> ອອກວຽກ (Clock-Out)
                                 </button>
                             </div>
-                            <button onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
+                            <button type="button" onclick="cancelClockAction()" class="text-[11px] text-on-surface-variant hover:underline">ຍົກເລີກ</button>
                         </div>
 
                         <div class="w-full bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
@@ -731,6 +725,436 @@
             </section>
 
         </main>
+    </div>
+
+    <!-- MODALS (ALL SECURE & NO BACKDROP CLICK BLOCKING) -->
+    <!-- EDIT ATTENDANCE LOG MODAL -->
+    <div id="edit-attendance-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-amber-600">edit_calendar</span>
+                    ແກ້ໄຂເວລາປ້ຳໂມງ (Edit Punch Log)
+                </h3>
+                <button type="button" onclick="closeModal('edit-attendance-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handleEditAttendanceSubmit(event)" class="space-y-3.5">
+                <input id="edit-att-id" type="hidden">
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ພະນັກງານ (PIN)</label>
+                    <input id="edit-att-staff-name" disabled class="w-full text-xs font-bold px-3 py-2 bg-surface-container border border-outline-variant rounded-xl text-outline">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ປະເພດການປ້ຳໂມງ *</label>
+                    <select id="edit-att-type-select" class="w-full text-xs font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                        <option value="Clock-In">🟢 ເຂົ້າວຽກ (Clock-In)</option>
+                        <option value="Clock-Out">🔴 ອອກວຽກ (Clock-Out)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ວັນທີ *</label>
+                        <input id="edit-att-date-input" required type="date" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ເວລາ (GMT+7) *</label>
+                        <input id="edit-att-time-input" required type="time" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-between items-center">
+                    <button type="button" onclick="deleteCurrentAttendanceLog()" class="px-3 py-1.5 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold transition-all">
+                        ລຶບ Log ນີ້
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeModal('edit-attendance-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                        <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ບັນທຶກການແກ້ໄຂ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MANUAL ADD ATTENDANCE MODAL -->
+    <div id="manual-attendance-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-amber-600">more_time</span>
+                    ບັນທຶກເວລາຍ້ອນຫຼັງ (Manual Punch Attendance)
+                </h3>
+                <button type="button" onclick="closeModal('manual-attendance-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <p class="text-xs text-on-surface-variant mb-4">
+                ໃຊ້ສຳລັບກໍລະນີລະບົບຂັດຂ້ອງ ຫຼື ພະນັກງານລືມປ້ຳໂມງ. ລະບົບຈະ Insert ລົງ Database Supabase ໂດຍກົງ ແລະ ຄິດໄລ່ເງິນເດືອນຄືນໃໝ່ທັນທີ.
+            </p>
+
+            <form onsubmit="handleManualAttendanceSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold mb-1">ເລືອກພະນັກງານ *</label>
+                    <select id="manual-att-staff-select" required class="w-full text-xs font-bold px-3 py-2 border border-outline-variant rounded-xl"></select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1">ວັນທີທີ່ຕ້ອງການລົງເວລາຍ້ອນຫຼັງ *</label>
+                    <input id="manual-att-date-input" required type="date" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/40">
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-800 mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">login</span> ເວລາເຂົ້າວຽກ *
+                        </label>
+                        <input id="manual-att-in-time" required type="time" class="w-full text-xs font-mono font-bold px-2 py-1.5 border border-emerald-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 mb-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">logout</span> ເວລາອອກວຽກ (ທາງເລືອກ)
+                        </label>
+                        <input id="manual-att-out-time" type="time" class="w-full text-xs font-mono font-bold px-2 py-1.5 border border-amber-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('manual-attendance-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-container shadow-sm">ບັນທຶກລົງ Database</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase Config Modal -->
+    <div id="supabase-config-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary">ຕັ້ງຄ່າ Supabase API</h3>
+                <button type="button" onclick="closeModal('supabase-config-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form onsubmit="saveSupabaseConfig(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold mb-1">Project URL</label>
+                    <input id="config-supabase-url" required type="url" class="w-full text-xs font-mono px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">Anon Key</label>
+                    <input id="config-supabase-key" required type="password" class="w-full text-xs font-mono px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('supabase-config-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ເຊື່ອມຕໍ່</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Pin Modal -->
+    <div id="admin-pin-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-xs w-full p-5 shadow-2xl border border-outline-variant/30 text-center">
+            <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-2">
+                <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
+            </div>
+            <h3 class="font-headline font-bold text-base text-primary">HRM Admin Authentication</h3>
+            <p class="text-xs text-on-surface-variant mt-0.5 mb-4">ປ້ອນລະຫັດຜ່ານ Admin ເພື່ອປົດລັອກຂໍ້ມູນ</p>
+
+            <form onsubmit="handleAdminPinSubmit(event)">
+                <input id="modal-admin-pin-input" type="password" maxlength="6" placeholder="ປ້ອນລະຫັດ Admin" class="w-full text-center text-lg font-bold font-mono tracking-widest px-3 py-2 border border-outline-variant rounded-xl mb-4">
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeAdminModalForce()" class="flex-1 py-2 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-900">ປົດລັອກ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PRODUCT MODAL -->
+    <div id="edit-stock-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary flex items-center gap-1">
+                    <span class="material-symbols-outlined text-amber-600">edit_note</span>
+                    ແກ້ໄຂສິນຄ້າ & ປ່ຽນໝວດໝູ່
+                </h3>
+                <button type="button" onclick="closeModal('edit-stock-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handleEditStockSubmit(event)" class="space-y-3">
+                <input id="edit-modal-old-sku" type="hidden">
+                <input id="edit-modal-old-branch" type="hidden">
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">SKU *</label>
+                        <input id="edit-modal-sku" required type="text" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
+                        <input id="edit-modal-branch" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">ຊື່ສິນຄ້າ *</label>
+                    <input id="edit-modal-name" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-primary mb-1">ໝວດໝູ່ສິນຄ້າ (Category) *</label>
+                    <select id="edit-modal-category" class="w-full text-xs font-bold px-3 py-2 border border-primary/40 rounded-xl bg-primary-container/10">
+                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ (High Frequency)</option>
+                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ (Syrups)</option>
+                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ (Beverages)</option>
+                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ (Supplies)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Stock ປັດຈຸບັນ</label>
+                        <input id="edit-modal-qty" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Min Stock ເຕືອນ</label>
+                        <input id="edit-modal-min" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('edit-stock-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ບັນທຶກການແກ້ໄຂ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT MODAL -->
+    <div id="stock-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-headline font-bold text-base text-primary">ເພີ່ມສິນຄ້າໃໝ່</h3>
+                <button type="button" onclick="closeModal('stock-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handleStockSubmit(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">SKU *</label>
+                        <input id="modal-sku" required type="text" placeholder="P082" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
+                        <input id="modal-branch" required type="text" value="ສາຂານ້ຳພຸ" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">ຊື່ສິນຄ້າ *</label>
+                    <input id="modal-item-name" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">ໝວດໝູ່ *</label>
+                    <select id="modal-item-category" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ</option>
+                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ</option>
+                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ</option>
+                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Stock ປັດຈຸບັນ</label>
+                        <input id="modal-item-qty" required type="number" value="0" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Min Stock</label>
+                        <input id="modal-item-min" required type="number" value="1" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('stock-modal')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ບັນທຶກ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Staff Modal -->
+    <div id="edit-staff-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
+                <h3 class="font-headline font-bold text-base text-primary">ແກ້ໄຂຂໍ້ມູນພະນັກງານ (Edit Staff)</h3>
+                <button type="button" onclick="closeModal('edit-staff-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handleEditStaffSubmit(event)" class="space-y-3.5">
+                <input id="edit-staff-pin-hidden" type="hidden">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">PIN 6 ຫຼັກ</label>
+                        <input id="edit-staff-pin-disabled" disabled type="text" class="w-full text-xs font-mono font-bold px-3 py-2 bg-surface-container border border-outline-variant rounded-xl text-outline">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Staff ID *</label>
+                        <input id="edit-staff-id-input" required type="text" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ຊື່ພະນັກງານ *</label>
+                        <input id="edit-staff-name-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
+                        <input id="edit-staff-branch-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ຕຳແໜ່ງ *</label>
+                        <input id="edit-staff-role-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ເບີໂທ *</label>
+                        <input id="edit-staff-phone-input" required type="tel" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 mb-1">ເງິນເດືອນພື້ນຖານ (ກີບ) *</label>
+                        <input id="edit-staff-salary-input" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-300 rounded-xl bg-amber-50/50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 mb-1">ສະຫວັດດີການ (ກີບ) *</label>
+                        <input id="edit-staff-benefit-input" required type="number" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-300 rounded-xl bg-amber-50/50">
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-amber-950">ອະນຸມັດສະຫວັດດີການ (Admin Benefit Approval)</p>
+                        <p class="text-[10px] text-amber-800">ກົດເປີດເພື່ອໃຫ້ພະນັກງານໄດ້ຮັບສະຫວັດດີການປະຈຳເດືອນ</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="edit-staff-benefit-approved" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ປະເພດ</label>
+                        <select id="edit-staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ກະວຽກ</label>
+                        <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
+                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-surface-container-high">
+                    <button type="button" onclick="closeModal('edit-staff-modal')" class="px-4 py-2 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-container shadow-sm">ອັບເດດຂໍ້ມູນ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Partner Modal -->
+    <div id="partner-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
+                <h3 class="font-headline font-bold text-base text-primary">ເພີ່ມພະນັກງານໃໝ່</h3>
+                <button type="button" onclick="closeModal('partner-modal')"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <form onsubmit="handlePartnerSubmit(event)" class="space-y-3.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">PIN 6 ຫຼັກ *</label>
+                        <input id="staff-pin-input" required type="text" maxlength="6" placeholder="ເຊັ່ນ: 123456" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Staff ID *</label>
+                        <input id="staff-id-input" required type="text" placeholder="EMP0007" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ຊື່ພະນັກງານ *</label>
+                        <input id="staff-name-input" required type="text" placeholder="ເຊັ່ນ: Somchai" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
+                        <input id="staff-branch-input" required type="text" value="NP branch" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ຕຳແໜ່ງ *</label>
+                        <input id="staff-role-input" required type="text" value="Barista" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ເບີໂທ *</label>
+                        <input id="staff-phone-input" required type="tel" placeholder="2055512345" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ເງິນເດືອນພື້ນຖານ *</label>
+                        <input id="staff-salary-input" required type="number" value="3800000" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ສະຫວັດດີການ</label>
+                        <input id="staff-benefit-input" type="number" value="500000" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-amber-950">ອະນຸມັດສະຫວັດດີການທັນທີ</p>
+                        <p class="text-[10px] text-amber-800">ຖ້າເປັນພະນັກງານໃໝ່ ໃຫ້ປິດໄວ້ກ່ອນ</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="staff-benefit-approved-input" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ປະເພດ</label>
+                        <select id="staff-type-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">ກະວຽກ</label>
+                        <select id="staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
+                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-surface-container-high">
+                    <button type="button" onclick="closeModal('partner-modal')" class="px-4 py-2 rounded-xl text-xs font-bold bg-surface-container">ຍົກເລີກ</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-800 text-white hover:bg-amber-900 shadow-sm">ບັນທຶກພະນັກງານ</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- External JavaScript -->
