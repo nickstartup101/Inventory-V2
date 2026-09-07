@@ -1,4 +1,47 @@
 // =========================================================================
+// SINGLE TAB LOCK SYSTEM (ປ້ອງກັນການເປີດຊ້ຳຫຼາຍ TABS)
+// =========================================================================
+const TAB_LOCK_CHANNEL = 'ladolce_tab_lock_channel';
+const currentTabId = 'tab_' + Math.random().toString(36).substr(2, 9);
+let tabChannel = null;
+
+if (window.BroadcastChannel) {
+    tabChannel = new BroadcastChannel(TAB_LOCK_CHANNEL);
+
+    // ແຈ້ງເຕືອນ Tab ອື່ນວ່າເຮົາເປີດ Tab ໃໝ່
+    tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: currentTabId });
+
+    tabChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'NEW_TAB_OPENED') {
+            // ຖ້າມີ Tab ໃໝ່ເປີດ, ໃຫ້ຕອບກັບວ່າ Tab ເດີມຍັງ Active ຢູ່
+            tabChannel.postMessage({ type: 'TAB_ALREADY_ACTIVE', tabId: currentTabId });
+        } else if (event.data && event.data.type === 'TAB_ALREADY_ACTIVE') {
+            if (event.data.tabId !== currentTabId) {
+                // ສະແດງໜ້າຈໍເຕືອນ Duplicate Tab ທັນທີ
+                showDuplicateTabOverlay();
+            }
+        } else if (event.data && event.data.type === 'CLAIM_ACTIVE') {
+            if (event.data.tabId !== currentTabId) {
+                showDuplicateTabOverlay();
+            }
+        }
+    };
+}
+
+function showDuplicateTabOverlay() {
+    const overlay = document.getElementById('duplicate-tab-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+}
+
+function claimActiveTab() {
+    if (tabChannel) {
+        tabChannel.postMessage({ type: 'CLAIM_ACTIVE', tabId: currentTabId });
+    }
+    const overlay = document.getElementById('duplicate-tab-overlay');
+    if (overlay) overlay.classList.add('hidden');
+}
+
+// =========================================================================
 // 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
 // =========================================================================
 const SHIFT_RULES = {
@@ -86,7 +129,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE INITIALIZATION (SAFE INITIALIZER)
+// 2. STATE & SUPABASE INITIALIZATION
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -178,7 +221,7 @@ function saveSupabaseConfig(e) {
 }
 
 // =========================================================================
-// 3. NAVIGATION CONTROLLER (BULLETPROOF & SMOOTH)
+// 3. NAVIGATION CONTROLLER
 // =========================================================================
 const views = ['dashboard', 'current-stock', 'inventory', 'employees', 'payroll', 'self-service', 'kiosk'];
 
@@ -475,7 +518,6 @@ function renderEarlyComerStreakRanking() {
         return;
     }
 
-    // Champion Card
     const top1 = top4List[0];
     const top1Card = document.createElement('div');
     top1Card.className = 'p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl flex items-center justify-between shadow-sm mb-2';
@@ -504,7 +546,6 @@ function renderEarlyComerStreakRanking() {
     `;
     container.appendChild(top1Card);
 
-    // Runner-ups
     const rankBadges = ['🥈 #2', '🥉 #3', '🎖️ #4'];
     top4List.slice(1).forEach((item, index) => {
         const row = document.createElement('div');
@@ -1884,7 +1925,6 @@ async function refreshAllData() {
     showToast('✓ ດຶງຂໍ້ມູນສຳເລັດແລ້ວ!');
 }
 
-// SAFE MODAL OPEN/CLOSE
 function openModal(id) { 
     const modal = document.getElementById(id);
     if (modal) {
@@ -1943,7 +1983,7 @@ function closeMobileMenu() {
 if (mobileBtn) mobileBtn.onclick = openMobileMenu;
 if (overlay) overlay.onclick = closeMobileMenu;
 
-// SAFE DOM READY INITIALIZATION
+// APP INITIALIZATION
 window.addEventListener('DOMContentLoaded', () => {
     if (supabaseUrl) {
         const urlInput = document.getElementById('config-supabase-url');
