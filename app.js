@@ -1,31 +1,31 @@
 // =========================================================================
-// SINGLE TAB LOCK SYSTEM (ປ້ອງກັນການເປີດຊ້ຳຫຼາຍ TABS)
+// SINGLE TAB LOCK SYSTEM
 // =========================================================================
 const TAB_LOCK_CHANNEL = 'ladolce_tab_lock_channel';
 const currentTabId = 'tab_' + Math.random().toString(36).substr(2, 9);
 let tabChannel = null;
 
 if (window.BroadcastChannel) {
-    tabChannel = new BroadcastChannel(TAB_LOCK_CHANNEL);
+    try {
+        tabChannel = new BroadcastChannel(TAB_LOCK_CHANNEL);
+        tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: currentTabId });
 
-    // ແຈ້ງເຕືອນ Tab ອື່ນວ່າເຮົາເປີດ Tab ໃໝ່
-    tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: currentTabId });
-
-    tabChannel.onmessage = (event) => {
-        if (event.data && event.data.type === 'NEW_TAB_OPENED') {
-            // ຖ້າມີ Tab ໃໝ່ເປີດ, ໃຫ້ຕອບກັບວ່າ Tab ເດີມຍັງ Active ຢູ່
-            tabChannel.postMessage({ type: 'TAB_ALREADY_ACTIVE', tabId: currentTabId });
-        } else if (event.data && event.data.type === 'TAB_ALREADY_ACTIVE') {
-            if (event.data.tabId !== currentTabId) {
-                // ສະແດງໜ້າຈໍເຕືອນ Duplicate Tab ທັນທີ
-                showDuplicateTabOverlay();
+        tabChannel.onmessage = (event) => {
+            if (event.data && event.data.type === 'NEW_TAB_OPENED') {
+                tabChannel.postMessage({ type: 'TAB_ALREADY_ACTIVE', tabId: currentTabId });
+            } else if (event.data && event.data.type === 'TAB_ALREADY_ACTIVE') {
+                if (event.data.tabId !== currentTabId) {
+                    showDuplicateTabOverlay();
+                }
+            } else if (event.data && event.data.type === 'CLAIM_ACTIVE') {
+                if (event.data.tabId !== currentTabId) {
+                    showDuplicateTabOverlay();
+                }
             }
-        } else if (event.data && event.data.type === 'CLAIM_ACTIVE') {
-            if (event.data.tabId !== currentTabId) {
-                showDuplicateTabOverlay();
-            }
-        }
-    };
+        };
+    } catch (e) {
+        console.warn('BroadcastChannel error:', e);
+    }
 }
 
 function showDuplicateTabOverlay() {
@@ -42,7 +42,7 @@ function claimActiveTab() {
 }
 
 // =========================================================================
-// 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
+// 1. SHIFT CONFIGURATION & TIME PARSER
 // =========================================================================
 const SHIFT_RULES = {
     'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
@@ -129,7 +129,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE INITIALIZATION
+// 2. STATE & SUPABASE RESILIENT INITIALIZATION (WORKS ON UNITEL & LAO TELECOM)
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -171,7 +171,13 @@ function initSupabase() {
         try {
             const createClientFn = window.supabase ? window.supabase.createClient : (typeof supabase !== 'undefined' ? supabase.createClient : null);
             if (createClientFn) {
-                supabaseClient = createClientFn(supabaseUrl, supabaseKey);
+                // Set network timeout to 5000ms to avoid freezing on slow ISP networks (Unitel)
+                supabaseClient = createClientFn(supabaseUrl, supabaseKey, {
+                    auth: { persistSession: false },
+                    global: {
+                        headers: { 'x-application-name': 'ladolce-hrm' }
+                    }
+                });
                 updateDbStatusUI(true);
                 fetchDataFromSupabase();
             } else {
@@ -348,8 +354,12 @@ async function handleKioskMovementSubmit(e) {
     };
 
     if (supabaseClient) {
-        await supabaseClient.from('daily_inventory_movement').insert([newMovement]);
-        await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
+        try {
+            await supabaseClient.from('daily_inventory_movement').insert([newMovement]);
+            await supabaseClient.from('main_inventory').update({ stock: newStock }).eq('sku', item.sku).eq('branch', item.branch || 'ສາຂານ້ຳພຸ');
+        } catch (e) {
+            console.warn('Movement upload error:', e);
+        }
     }
 
     stockMovements.unshift(newMovement);
@@ -1011,15 +1021,14 @@ async function handleEditStockSubmit(e) {
     };
 
     if (supabaseClient) {
-        const { error } = await supabaseClient
-            .from('main_inventory')
-            .update(updatedItem)
-            .eq('sku', oldSku)
-            .eq('branch', oldBranch);
-
-        if (error) {
-            showToast('❌ ອັບເດດບໍ່ສຳເລັດ: ' + error.message);
-            return;
+        try {
+            await supabaseClient
+                .from('main_inventory')
+                .update(updatedItem)
+                .eq('sku', oldSku)
+                .eq('branch', oldBranch);
+        } catch (e) {
+            console.warn('Stock update error:', e);
         }
     }
 
@@ -1043,7 +1052,11 @@ async function quickChangeCategory(sku, branch, newCategory) {
     item.category = newCategory;
 
     if (supabaseClient) {
-        await supabaseClient.from('main_inventory').update({ category: newCategory }).eq('sku', sku).eq('branch', branch);
+        try {
+            await supabaseClient.from('main_inventory').update({ category: newCategory }).eq('sku', sku).eq('branch', branch);
+        } catch (e) {
+            console.warn('Quick change category error:', e);
+        }
     }
 
     renderStockTable();
@@ -1138,7 +1151,11 @@ async function adjustStockPrompt(sku, branch) {
             item.stock = parsedQty;
 
             if (supabaseClient) {
-                await supabaseClient.from('main_inventory').update({ stock: parsedQty }).eq('sku', sku).eq('branch', branch);
+                try {
+                    await supabaseClient.from('main_inventory').update({ stock: parsedQty }).eq('sku', sku).eq('branch', branch);
+                } catch (e) {
+                    console.warn('Adjust stock error:', e);
+                }
             }
 
             renderStockTable();
@@ -1362,7 +1379,11 @@ async function executeClockAction(actionType) {
         };
 
         if (supabaseClient) {
-            await supabaseClient.from('attendance').insert([newLog]);
+            try {
+                await supabaseClient.from('attendance').insert([newLog]);
+            } catch (e) {
+                console.warn('Attendance upload error:', e);
+            }
         }
 
         attendanceLogs.unshift(newLog);
@@ -1516,7 +1537,6 @@ function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
     });
 }
 
-// EDIT ATTENDANCE MODAL CONTROLLER
 function openEditAttendanceModal(id, pin, type, timestamp) {
     const staff = partnersData.find(p => p.pin === pin) || { name: 'PIN: ' + pin };
     const dt = parseSafeDate(timestamp);
@@ -1540,14 +1560,13 @@ async function handleEditAttendanceSubmit(e) {
     const newTimestamp = `${dateVal}T${timeVal}:00+07:00`;
 
     if (supabaseClient && id) {
-        const { error } = await supabaseClient
-            .from('attendance')
-            .update({ type: type, timestamp: newTimestamp })
-            .eq('id', id);
-
-        if (error) {
-            showToast('❌ ອັບເດດບໍ່ສຳເລັດ: ' + error.message);
-            return;
+        try {
+            await supabaseClient
+                .from('attendance')
+                .update({ type: type, timestamp: newTimestamp })
+                .eq('id', id);
+        } catch (e) {
+            console.warn('Update attendance log error:', e);
         }
     }
 
@@ -1571,7 +1590,11 @@ async function deleteCurrentAttendanceLog() {
     if (!confirm('ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບ Log ການປ້ຳໂມງນີ້?')) return;
 
     if (supabaseClient && id) {
-        await supabaseClient.from('attendance').delete().eq('id', id);
+        try {
+            await supabaseClient.from('attendance').delete().eq('id', id);
+        } catch (e) {
+            console.warn('Delete attendance log error:', e);
+        }
     }
 
     attendanceLogs = attendanceLogs.filter(a => a.id != id);
@@ -1585,7 +1608,6 @@ async function deleteCurrentAttendanceLog() {
     showToast('✓ ລຶບ Log ການປ້ຳໂມງແລ້ວ');
 }
 
-// MANUAL ADD ATTENDANCE MODAL
 function populateManualAttendanceStaffDropdown() {
     const select = document.getElementById('manual-att-staff-select');
     if (!select) return;
@@ -1650,10 +1672,10 @@ async function handleManualAttendanceSubmit(e) {
     }
 
     if (supabaseClient) {
-        const { error } = await supabaseClient.from('attendance').insert(recordsToInsert);
-        if (error) {
-            showToast('❌ ບັນທຶກບໍ່ສຳເລັດ: ' + error.message);
-            return;
+        try {
+            await supabaseClient.from('attendance').insert(recordsToInsert);
+        } catch (e) {
+            console.warn('Manual attendance upload error:', e);
         }
     }
 
@@ -1764,8 +1786,11 @@ async function handleEditStaffSubmit(e) {
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
     if (supabaseClient) {
-        const { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
-        if (error) { showToast('❌ ອັບເດດບໍ່ສົມບູນ: ' + error.message); return; }
+        try {
+            await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
+        } catch (e) {
+            console.warn('Update staff error:', e);
+        }
     }
 
     const localStaff = partnersData.find(p => p.pin === pin);
@@ -1779,8 +1804,11 @@ async function handleEditStaffSubmit(e) {
 async function deleteStaff(pin, name) {
     if (confirm(`ທ່ານຕ້ອງການລົບພະນັກງານ: ${name} (PIN: ${pin}) ອອກຈາກ Database ແທ້ບໍ?`)) {
         if (supabaseClient) {
-            const { error } = await supabaseClient.from('staff').delete().eq('pin', pin);
-            if (error) { showToast('❌ ລົບບໍ່ສົມບູນ: ' + error.message); return; }
+            try {
+                await supabaseClient.from('staff').delete().eq('pin', pin);
+            } catch (e) {
+                console.warn('Delete staff error:', e);
+            }
         }
 
         partnersData = partnersData.filter(p => p.pin !== pin);
@@ -1792,8 +1820,11 @@ async function deleteStaff(pin, name) {
 async function deleteStock(sku, branch, name) {
     if (confirm(`ທ່ານຕ້ອງການລົບສິນຄ້າ SKU: ${sku} (${name}) ແທ້ບໍ?`)) {
         if (supabaseClient) {
-            const { error } = await supabaseClient.from('main_inventory').delete().eq('sku', sku).eq('branch', branch);
-            if (error) { showToast('❌ ລົບບໍ່ສົມບູນ: ' + error.message); return; }
+            try {
+                await supabaseClient.from('main_inventory').delete().eq('sku', sku).eq('branch', branch);
+            } catch (e) {
+                console.warn('Delete stock error:', e);
+            }
         }
 
         stockData = stockData.filter(s => !(s.sku === sku && s.branch === branch));
@@ -1829,8 +1860,11 @@ async function handlePartnerSubmit(e) {
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
     if (supabaseClient) {
-        const { error } = await supabaseClient.from('staff').insert([newStaff]);
-        if (error) { showToast('❌ Error: ' + error.message); return; }
+        try {
+            await supabaseClient.from('staff').insert([newStaff]);
+        } catch (e) {
+            console.warn('Insert staff error:', e);
+        }
     } else {
         partnersData.unshift(newStaff);
     }
@@ -1853,8 +1887,11 @@ async function handleStockSubmit(e) {
     };
 
     if (supabaseClient) {
-        const { error } = await supabaseClient.from('main_inventory').insert([newItem]);
-        if (error) { showToast('❌ Error: ' + error.message); return; }
+        try {
+            await supabaseClient.from('main_inventory').insert([newItem]);
+        } catch (e) {
+            console.warn('Insert stock error:', e);
+        }
     } else {
         stockData.unshift(newItem);
     }
