@@ -29,6 +29,23 @@ css
     pointer-events: auto !important;
 }
 
+/* ROUND CARD CONFIRM STYLES */
+.round-card-confirm {
+    border-radius: 9999px;
+    padding: 6px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.round-card-confirm:active {
+    transform: scale(0.95);
+}
+
 ::-webkit-scrollbar { 
     width: 5px; 
     height: 5px; 
