@@ -42,7 +42,7 @@ function claimActiveTab() {
 }
 
 // =========================================================================
-// 1. SHIFT CONFIGURATION & TIME PARSER
+// 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
 // =========================================================================
 const SHIFT_RULES = {
     'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
@@ -63,6 +63,17 @@ function calculateLateMinutes(clockInDate, shiftName = 'ກະ 1') {
     const timeInfo = getLaosTimeInfo(clockInDate);
     const diff = timeInfo.totalMinutes - shift.startMins;
     return diff > 0 ? diff : 0;
+}
+
+function calculateDailyOtHours(clockInDate, clockOutDate, shiftName = 'ກະ 1') {
+    if (!clockInDate || !clockOutDate || clockOutDate <= clockInDate) return 0;
+    const shift = detectActualShift(clockInDate, shiftName);
+    const outInfo = getLaosTimeInfo(clockOutDate);
+    if (outInfo.totalMinutes > shift.endMins) {
+        const postOtMins = outInfo.totalMinutes - shift.endMins;
+        return parseFloat((postOtMins / 60).toFixed(1));
+    }
+    return 0;
 }
 
 function getDaysInMonth(year, month) {
@@ -129,7 +140,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE RESILIENT INITIALIZATION (WORKS ON UNITEL & LAO TELECOM)
+// 2. STATE & SUPABASE INITIALIZATION
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -171,12 +182,9 @@ function initSupabase() {
         try {
             const createClientFn = window.supabase ? window.supabase.createClient : (typeof supabase !== 'undefined' ? supabase.createClient : null);
             if (createClientFn) {
-                // Set network timeout to 5000ms to avoid freezing on slow ISP networks (Unitel)
                 supabaseClient = createClientFn(supabaseUrl, supabaseKey, {
                     auth: { persistSession: false },
-                    global: {
-                        headers: { 'x-application-name': 'ladolce-hrm' }
-                    }
+                    global: { headers: { 'x-application-name': 'ladolce-hrm' } }
                 });
                 updateDbStatusUI(true);
                 fetchDataFromSupabase();
@@ -392,7 +400,8 @@ function renderKioskMovementLogs() {
                 <p class="font-bold text-on-surface text-xs">${m.name || m.sku}</p>
                 <p class="text-[10px] text-on-surface-variant">${m.note || 'N/A'} • ${parseSafeDate(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
             </div>
-            <span class="px-2 py-0.5 rounded font-mono font-bold text-xs ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+            <span class="px-2 py-0.5 rounded font-mono font-bold text-xs flex items-center gap-0.5 ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                <span class="material-symbols-outlined text-xs">${m.type === 'IN' ? 'arrow_downward' : 'arrow_upward'}</span>
                 ${m.type === 'IN' ? '+' : '-'}${m.qty}
             </span>
         `;
@@ -401,7 +410,7 @@ function renderKioskMovementLogs() {
 }
 
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER
+// 5. ON-DUTY & DAY STREAK TRACKER (NO EMOJI, PURE MATERIAL SYMBOLS)
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -466,7 +475,7 @@ function renderEarlyComerStreakRanking() {
     const dayNamesEng = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
     if (streakTodayBadge) {
-        streakTodayBadge.innerHTML = `✨ ມື້ນີ້: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
+        streakTodayBadge.innerHTML = `<span class="material-symbols-outlined text-xs inline align-middle">calendar_today</span> ມື້ນີ້: <b>${dayNamesEng[todayDayIndex]} (ວັນ${dayNamesLao[todayDayIndex]})</b>`;
     }
 
     for (let i = 0; i < 7; i++) {
@@ -528,6 +537,7 @@ function renderEarlyComerStreakRanking() {
         return;
     }
 
+    // Top 1 Champion Card
     const top1 = top4List[0];
     const top1Card = document.createElement('div');
     top1Card.className = 'p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl flex items-center justify-between shadow-sm mb-2';
@@ -535,12 +545,16 @@ function renderEarlyComerStreakRanking() {
         <div class="flex items-center gap-3">
             <div class="relative">
                 <img src="${top1.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-11 h-11 rounded-full object-cover border-2 border-amber-500 shadow-sm">
-                <span class="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">👑</span>
+                <span class="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold shadow">
+                    <span class="material-symbols-outlined text-[13px] icon-fill">stars</span>
+                </span>
             </div>
             <div>
                 <div class="flex items-center gap-1.5">
                     <h4 class="font-bold text-xs text-on-surface">${top1.name}</h4>
-                    <span class="text-[9px] font-extrabold bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded-full uppercase">#1 Champion</span>
+                    <span class="text-[9px] font-extrabold bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded-full uppercase flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-[10px]">military_tech</span> #1 Champion
+                    </span>
                 </div>
                 <p class="text-[10px] text-on-surface-variant font-semibold mt-0.5">
                     ${currentEarlyRankingFilter === 'daily' 
@@ -550,19 +564,24 @@ function renderEarlyComerStreakRanking() {
             </div>
         </div>
         <div class="text-right">
-            <span class="font-bold text-amber-700 text-xs block">🔥 ${top1.currentStreak} Day Streak</span>
+            <span class="font-bold text-amber-700 text-xs flex items-center justify-end gap-0.5">
+                <span class="material-symbols-outlined text-sm icon-fill text-amber-600">local_fire_department</span> ${top1.currentStreak} Day Streak
+            </span>
             <span class="text-[9px] text-outline font-semibold">Super Active</span>
         </div>
     `;
     container.appendChild(top1Card);
 
-    const rankBadges = ['🥈 #2', '🥉 #3', '🎖️ #4'];
+    // Runner-ups (No Emoji)
+    const rankBadges = ['#2', '#3', '#4'];
     top4List.slice(1).forEach((item, index) => {
         const row = document.createElement('div');
         row.className = 'p-2.5 bg-surface-container-low border border-outline-variant/30 rounded-xl flex items-center justify-between hover:bg-surface-container transition-all';
         row.innerHTML = `
             <div class="flex items-center gap-2.5">
-                <span class="font-mono font-bold text-xs text-on-surface-variant w-8">${rankBadges[index]}</span>
+                <span class="font-mono font-bold text-xs text-on-surface-variant w-6 flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-xs text-amber-600">military_tech</span>${rankBadges[index]}
+                </span>
                 <img src="${item.photo || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120'}" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
                 <div>
                     <h5 class="font-bold text-xs text-on-surface leading-tight">${item.name}</h5>
@@ -574,7 +593,8 @@ function renderEarlyComerStreakRanking() {
                 </div>
             </div>
             <div class="text-right">
-                <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] ${item.currentStreak >= 3 ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-800'}">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-[10px] flex items-center gap-0.5 ${item.currentStreak >= 3 ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-emerald-100 text-emerald-800'}">
+                    <span class="material-symbols-outlined text-[11px]">${item.currentStreak >= 3 ? 'local_fire_department' : 'check'}</span>
                     ${item.currentStreak} Streak
                 </span>
             </div>
@@ -661,8 +681,8 @@ function calculateRealtimePayroll(staff) {
     });
 
     const actualDaysPay = Math.round(daysWorked * dailyRate);
-    const totalOtHours = Math.round((Number(staff.ot) || 0) + autoOtHours);
-    const otPay = totalOtHours * 17000;
+    const totalOtHours = parseFloat(((Number(staff.ot) || 0) + autoOtHours).toFixed(1));
+    const otPay = Math.round(totalOtHours * 17000);
     const totalNetPay = actualDaysPay + otPay + effectiveBenefit;
 
     return {
@@ -714,8 +734,9 @@ function renderEmployeesAndPayroll() {
                     </div>
                     <div class="flex flex-col items-end gap-1">
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.active !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-surface-variant text-outline'}">${p.active !== false ? 'Active' : 'Off'}</span>
-                        <span class="px-2 py-0.5 rounded text-[9px] font-bold ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-gray-100 text-gray-600'}">
-                            ${payroll.isBenefitApproved ? '✓ ໄດ້ຮັບສະຫວັດດີການ' : '⏳ ຍັງບໍ່ໄດ້ຮັບສະຫວັດດີການ'}
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5 ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-gray-100 text-gray-600'}">
+                            <span class="material-symbols-outlined text-[11px]">${payroll.isBenefitApproved ? 'check_circle' : 'pending'}</span>
+                            ${payroll.isBenefitApproved ? 'ໄດ້ຮັບສະຫວັດດີການ' : 'ຍັງບໍ່ໄດ້ຮັບ'}
                         </span>
                     </div>
                 </div>
@@ -811,7 +832,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// 7. STAFF SELF-SERVICE PORTAL
+// 7. STAFF SELF-SERVICE PORTAL (NO EMOJI, ROUND CARDS)
 // =========================================================================
 let currentViewingStaffPin = null;
 
@@ -878,6 +899,7 @@ function renderStaffPortal(staff) {
     }
 
     document.getElementById('portal-days-worked').textContent = `${payroll.daysWorked} ມື້`;
+    document.getElementById('portal-total-ot-hours').textContent = `${payroll.otHours} ຊົ່ວໂມງ`;
     document.getElementById('portal-total-late').textContent = `${payroll.totalLateMinutes} ນາທີ`;
 
     const staffApprovedOffDays = staffOffDays[staff.pin] || [];
@@ -918,30 +940,44 @@ function renderStaffPortal(staff) {
         let inTimeStr = '--:--';
         let outTimeStr = '--:--';
         let lateMins = 0;
+        let dailyOt = 0;
         let statusBadge = '';
-        let actionBtn = '';
+        let confirmActionCard = '';
 
         if (dayRecord && dayRecord.in) {
             inTimeStr = dayRecord.in.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            if (dayRecord.out) outTimeStr = dayRecord.out.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            if (dayRecord.out) {
+                outTimeStr = dayRecord.out.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                dailyOt = calculateDailyOtHours(dayRecord.in, dayRecord.out, staff.shift);
+            }
             
             lateMins = calculateLateMinutes(dayRecord.in, staff.shift);
-            statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-100 text-emerald-800">✓ ມາວຽກ</span>`;
-            actionBtn = `<span class="text-[10px] text-outline">ປ້ຳໂມງແລ້ວ</span>`;
+            statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-100 text-emerald-800 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">check</span> ມາວຽກ</span>`;
+            confirmActionCard = `<span class="text-[10px] text-outline font-semibold">ປ້ຳໂມງແລ້ວ</span>`;
         } else if (isOffDay) {
-            statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-100 text-blue-900">🏖️ ວັນພັກປົກກະຕິ</span>`;
-            actionBtn = `<button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-100 rounded text-[10px] font-bold">ຍົກເລີກພັກ</button>`;
+            statusBadge = `<span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-blue-100 text-blue-900 border border-blue-300 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">event_busy</span> ວັນພັກ Confirmed</span>`;
+            confirmActionCard = `
+                <button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="round-card-confirm bg-red-50 text-error hover:bg-red-100 border border-red-200">
+                    <span class="material-symbols-outlined text-sm">cancel</span>
+                    <span>ຍົກເລີກພັກ</span>
+                </button>
+            `;
         } else if (isPastDay) {
             absentCount++;
-            statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error font-bold">❌ ຂາດວຽກ</span>`;
+            statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-red-100 text-error font-bold flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">close</span> ຂາດວຽກ</span>`;
             if (offRemaining > 0) {
-                actionBtn = `<button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold shadow-sm">+ Proof ວັນພັກ</button>`;
+                confirmActionCard = `
+                    <button type="button" onclick="toggleOffDayProof('${staff.pin}', '${dateKey}')" class="round-card-confirm bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+                        <span class="material-symbols-outlined text-sm">event_available</span>
+                        <span>Confirm ວັນພັກ</span>
+                    </button>
+                `;
             } else {
-                actionBtn = `<span class="text-[10px] text-error font-bold">ໂຄຕ້າພັກໝົດ</span>`;
+                confirmActionCard = `<span class="text-[10px] text-error font-bold">ໂຄຕ້າພັກໝົດ</span>`;
             }
         } else {
             statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-surface-variant text-outline">ຍັງບໍ່ຮອດມື້</span>`;
-            actionBtn = `<span class="text-[10px] text-outline">--</span>`;
+            confirmActionCard = `<span class="text-[10px] text-outline">--</span>`;
         }
 
         const tr = document.createElement('tr');
@@ -953,8 +989,11 @@ function renderStaffPortal(staff) {
             <td class="p-2.5 font-mono font-bold ${lateMins > 0 ? 'text-amber-700' : 'text-outline'}">
                 ${lateMins > 0 ? `+${lateMins} ນາທີ` : '0'}
             </td>
+            <td class="p-2.5 font-mono font-bold ${dailyOt > 0 ? 'text-amber-800' : 'text-outline'}">
+                ${dailyOt > 0 ? `+${dailyOt} ຊມ` : '0'}
+            </td>
             <td class="p-2.5">${statusBadge}</td>
-            <td class="p-2.5 text-right">${actionBtn}</td>
+            <td class="p-2.5 text-right">${confirmActionCard}</td>
         `;
         tbody.appendChild(tr);
     }
@@ -968,7 +1007,7 @@ function toggleOffDayProof(pin, dateStr) {
 
     if (idx > -1) {
         staffOffDays[pin].splice(idx, 1);
-        showToast(`✓ ຍົກເລີກການ Proof ວັນພັກຂອງວັນທີ ${dateStr}`);
+        showToast(`✓ ຍົກເລີກການ Confirm ວັນພັກຂອງວັນທີ ${dateStr}`);
     } else {
         const currentMonthStr = dateStr.substring(0, 7);
         const thisMonthOff = staffOffDays[pin].filter(d => d.startsWith(currentMonthStr));
@@ -977,7 +1016,7 @@ function toggleOffDayProof(pin, dateStr) {
             return;
         }
         staffOffDays[pin].push(dateStr);
-        showToast(`✓ Proof ວັນພັກວັນທີ ${dateStr} ສຳເລັດ`);
+        showToast(`✓ Confirm ວັນພັກວັນທີ ${dateStr} ສຳເລັດ`);
     }
 
     localStorage.setItem('staff_off_days', JSON.stringify(staffOffDays));
@@ -1090,10 +1129,10 @@ function renderStockTable(filterCat = currentStockFilter) {
             <td class="p-3 font-medium">
                 ${isAdminLoggedIn ? `
                 <select onchange="quickChangeCategory('${item.sku}', '${item.branch || 'ສາຂານ້ຳພຸ'}', this.value)" class="text-xs font-bold py-1 px-2 border border-outline-variant/60 rounded-lg bg-surface focus:ring-1 focus:ring-primary">
-                    <option value="ວັດຖຸດິບ" ${item.category === 'ວັດຖຸດິບ' ? 'selected' : ''}>☕ ວັດຖຸດິບ</option>
-                    <option value="ໄຊຮັບ" ${item.category === 'ໄຊຮັບ' ? 'selected' : ''}>🍯 ໄຊຮັບ</option>
-                    <option value="ເຄື່ອງຍ່ອຍ" ${item.category === 'ເຄື່ອງຍ່ອຍ' ? 'selected' : ''}>🍺 ເຄື່ອງຍ່ອຍ</option>
-                    <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ" ${item.category === 'ເຄື່ອງໃຊ້ທົ່ວໄປ' ? 'selected' : ''}>🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
+                    <option value="ວັດຖຸດິບ" ${item.category === 'ວັດຖຸດິບ' ? 'selected' : ''}>ວັດຖຸດິບ</option>
+                    <option value="ໄຊຮັບ" ${item.category === 'ໄຊຮັບ' ? 'selected' : ''}>ໄຊຮັບ</option>
+                    <option value="ເຄື່ອງຍ່ອຍ" ${item.category === 'ເຄື່ອງຍ່ອຍ' ? 'selected' : ''}>ເຄື່ອງຍ່ອຍ</option>
+                    <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ" ${item.category === 'ເຄື່ອງໃຊ້ທົ່ວໄປ' ? 'selected' : ''}>ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
                 </select>
                 ` : `<span class="text-on-surface-variant font-semibold">${item.category || 'N/A'}</span>`}
             </td>
@@ -1288,8 +1327,9 @@ function renderStockAnalytics() {
             <td class="p-2.5 font-mono text-[11px] text-on-surface-variant">${parseSafeDate(m.timestamp).toLocaleDateString('en-GB')} ${parseSafeDate(m.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td>
             <td class="p-2.5 font-bold text-on-surface">${m.name || m.sku} <span class="text-[10px] text-outline">(${m.sku || ''})</span></td>
             <td class="p-2.5">
-                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-                    ${m.type === 'IN' ? '📥 ນຳເຂົ້າ' : '📤 ເບີກອອກ'}
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] flex items-center gap-0.5 ${m.type === 'IN' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                    <span class="material-symbols-outlined text-xs">${m.type === 'IN' ? 'arrow_downward' : 'arrow_upward'}</span>
+                    ${m.type === 'IN' ? 'ນຳເຂົ້າ' : 'ເບີກອອກ'}
                 </span>
             </td>
             <td class="p-2.5 font-mono font-bold ${m.type === 'IN' ? 'text-emerald-700' : 'text-red-700'}">
@@ -1343,9 +1383,9 @@ function verifyKioskPin() {
 
                 let statusText = '';
                 if (lateMins === 0) {
-                    statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1">✓ ມາຕົງເວລາ / ກ່ອນເວລາ (${detectedShift.name})</span>`;
+                    statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">check_circle</span> ມາຕົງເວລາ (${detectedShift.name})</span>`;
                 } else {
-                    statusText = `<span class="text-error font-bold block text-[11px] mt-1">⚠️ ມາຊ້າ ${lateMins} ນາທີ (${detectedShift.name})</span>`;
+                    statusText = `<span class="text-error font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">warning</span> ມາຊ້າ ${lateMins} ນາທີ (${detectedShift.name})</span>`;
                 }
 
                 document.getElementById('kiosk-user-info').innerHTML = `
@@ -1451,7 +1491,7 @@ function renderTodayKioskAttendance() {
             </div>
             <span class="px-2.5 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 ${isOnDuty ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' : 'bg-gray-200 text-gray-800'}">
                 <span class="w-1.5 h-1.5 rounded-full ${isOnDuty ? 'bg-emerald-600 animate-pulse' : 'bg-gray-500'}"></span>
-                ${isOnDuty ? '🟢 On Duty' : '🔴 End of Duty'}
+                ${isOnDuty ? 'On Duty' : 'End of Duty'}
             </span>
         `;
         container.appendChild(item);
@@ -1518,7 +1558,8 @@ function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
             <td class="p-2.5 font-mono text-[11px]">${dt.toLocaleDateString('en-GB')} ${dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</td>
             <td class="p-2.5 font-bold text-on-surface">${staff.name} (PIN: ${a.pin})</td>
             <td class="p-2.5">
-                <span class="px-2 py-0.5 rounded font-bold text-[10px] ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                <span class="px-2 py-0.5 rounded font-bold text-[10px] flex items-center gap-0.5 ${isClockIn ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                    <span class="material-symbols-outlined text-xs">${isClockIn ? 'login' : 'logout'}</span>
                     ${a.type || 'Clock-In'}
                 </span>
             </td>
@@ -2044,3 +2085,4 @@ window.addEventListener('DOMContentLoaded', () => {
     // LAND AT DASHBOARD
     navigateTo('dashboard');
 });
+```
