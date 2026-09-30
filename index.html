@@ -11,13 +11,13 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23001d3d'/><text x='50%' y='56%' dominant-baseline='central' text-anchor='middle' fill='%238cd889' font-family='Arial, sans-serif' font-weight='900' font-size='40' letter-spacing='-1'>HRM</text></svg>">
 
-    <!-- Fonts & Icons -->
+    <!-- Fonts & Google Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-    <!-- Multi-CDN Supabase Embed with Local Fallback (ແກ້ບັນຫາ Unitel Block CDN) -->
+    <!-- Multi-CDN Supabase Embed with Local Fallback -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
     <script>
       if (typeof supabase === 'undefined' && !window.supabase) {
@@ -203,7 +203,7 @@
 
                 <button type="button" onclick="navigateTo('self-service')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300 flex items-center gap-1.5 transition-all">
                     <span class="material-symbols-outlined text-sm">person_check</span>
-                    <span>ກວດມື້ມາວຽກ & Proof ວັນພັກ</span>
+                    <span>ກວດມື້ມາວຽກ & Confirm ວັນພັກ</span>
                 </button>
 
                 <button type="button" onclick="openModal('supabase-config-modal')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high border border-outline-variant/50 flex items-center gap-1.5">
@@ -280,18 +280,20 @@
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm">
                         <h3 class="font-headline font-bold text-sm text-primary mb-3 flex items-center gap-1.5">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                            📌 ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Clocked-In)
+                            <span class="material-symbols-outlined text-base text-emerald-700">badge</span>
+                            ພະນັກງານທີ່ກຳລັງເຮັດວຽກຢູ່ດຽວນີ້ (Clocked-In)
                         </h3>
                         <div id="on-duty-staff-container" class="flex flex-wrap gap-2.5">
                             <p class="text-xs text-outline italic py-2">ກຳລັງກວດສອບ...</p>
                         </div>
                     </div>
 
+                    <!-- DAY STREAK TRACKER -->
                     <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="font-headline font-bold text-sm text-emerald-800 flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-lg text-amber-500 icon-fill">stars</span>
-                                🏆 ຈັດອັນດັບມາວຽກໄວ & Day Streak (Top 4)
+                                ຈັດອັນດັບມາວຽກໄວ & Day Streak (Top 4)
                             </h3>
                             <div class="flex gap-1 bg-surface-container-low p-1 rounded-xl text-[10px] font-bold">
                                 <button type="button" onclick="setEarlyRankingFilter('daily')" id="btn-early-daily" class="early-rank-tab px-2.5 py-0.5 rounded-lg text-on-surface-variant hover:bg-surface">ລາຍວັນ (Daily)</button>
@@ -338,10 +340,18 @@
 
                 <div class="flex gap-2 overflow-x-auto pb-2 border-b border-outline-variant/40">
                     <button type="button" onclick="filterStockCategory('all')" id="tab-stock-all" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white">ທັງໝົດ (All)</button>
-                    <button type="button" onclick="filterStockCategory('ວັດຖຸດິບ')" id="tab-stock-ວັດຖຸດິບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">☕ ວັດຖຸດິບ</button>
-                    <button type="button" onclick="filterStockCategory('ໄຊຮັບ')" id="tab-stock-ໄຊຮັບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍯 ໄຊຮັບ</button>
-                    <button type="button" onclick="filterStockCategory('ເຄື່ອງຍ່ອຍ')" id="tab-stock-ເຄື່ອງຍ່ອຍ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🍺 ເຄື່ອງຍ່ອຍ</button>
-                    <button type="button" onclick="filterStockCategory('ເຄື່ອງໃຊ້ທົ່ວໄປ')" id="tab-stock-ເຄື່ອງໃຊ້ທົ່ວໄປ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</button>
+                    <button type="button" onclick="filterStockCategory('ວັດຖຸດິບ')" id="tab-stock-ວັດຖຸດິບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">coffee</span> ວັດຖຸດິບ
+                    </button>
+                    <button type="button" onclick="filterStockCategory('ໄຊຮັບ')" id="tab-stock-ໄຊຮັບ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">water_drop</span> ໄຊຮັບ
+                    </button>
+                    <button type="button" onclick="filterStockCategory('ເຄື່ອງຍ່ອຍ')" id="tab-stock-ເຄື່ອງຍ່ອຍ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">sports_bar</span> ເຄື່ອງຍ່ອຍ
+                    </button>
+                    <button type="button" onclick="filterStockCategory('ເຄື່ອງໃຊ້ທົ່ວໄປ')" id="tab-stock-ເຄື່ອງໃຊ້ທົ່ວໄປ" class="stock-tab-btn whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-bold bg-surface border border-outline-variant text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">inventory</span> ເຄື່ອງໃຊ້ທົ່ວໄປ
+                    </button>
                 </div>
 
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 shadow-sm overflow-hidden">
@@ -374,19 +384,27 @@
 
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">📥 ນຳເຂົ້າລວມ (Total In)</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm text-emerald-700">arrow_downward</span> ນຳເຂົ້າລວມ (Total In)
+                        </p>
                         <h3 class="font-headline font-bold text-2xl text-emerald-700 mt-1" id="stat-total-in-qty">0 ຊິ້ນ</h3>
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">📤 ເບີກອອກລວມ (Total Out)</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm text-red-700">arrow_upward</span> ເບີກອອກລວມ (Total Out)
+                        </p>
                         <h3 class="font-headline font-bold text-2xl text-red-700 mt-1" id="stat-total-out-qty">0 ຊິ້ນ</h3>
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">🔥 Burn Rate ສະເລ່ຍ</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm text-amber-600">local_fire_department</span> Burn Rate ສະເລ່ຍ
+                        </p>
                         <h3 class="font-headline font-bold text-2xl text-primary mt-1" id="stat-avg-burn-rate">0 ລາຍການ/ມື້</h3>
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
-                        <p class="text-[11px] text-on-surface-variant font-bold uppercase">⏳ ສິນຄ້າໄກ້ໝົດ (&lt; 3 ມື້)</p>
+                        <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm text-amber-700">hourglass_bottom</span> ສິນຄ້າໄກ້ໝົດ (&lt; 3 ມື້)
+                        </p>
                         <h3 class="font-headline font-bold text-2xl text-amber-700 mt-1" id="stat-critical-items">0 ລາຍການ</h3>
                     </div>
                 </div>
@@ -413,6 +431,7 @@
                     </div>
                 </div>
 
+                <!-- FULL STOCK MOVEMENT HISTORY TABLE -->
                 <div class="bg-surface rounded-2xl border border-outline-variant/40 p-4 shadow-sm space-y-3">
                     <div class="flex justify-between items-center">
                         <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
@@ -517,7 +536,7 @@
                                     <th class="p-3">ຄ່າແຮງຕໍ່ມື້</th>
                                     <th class="p-3">ມື້ມາວຽກຈິງ</th>
                                     <th class="p-3 text-amber-700 font-bold">ລວມມາຊ້າ</th>
-                                    <th class="p-3">OT @17k</th>
+                                    <th class="p-3 text-amber-800 font-bold">OT ລວມ</th>
                                     <th class="p-3">ສະຫວັດດີການ</th>
                                     <th class="p-3 font-bold text-emerald-800">ເງິນເດືອນ Real-Time ສຸທິ</th>
                                 </tr>
@@ -534,9 +553,9 @@
                     <div class="bg-surface rounded-2xl p-5 border border-outline-variant/40 shadow-sm text-center">
                         <h2 class="font-headline font-bold text-lg text-primary flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-amber-600">badge</span>
-                            ລະບົບກວດສອບມື້ມາວຽກ & ສະຖານະສະຫວັດດີການ (Staff Portal)
+                            ລະບົບກວດສອບມື້ມາວຽກ, OT & Confirm ວັນພັກ (Staff Portal)
                         </h2>
-                        <p class="text-xs text-on-surface-variant mt-1">ປ້ອນ PIN 6 ຫຼັກ ເພື່ອກວດສອບປະຫວັດການມາວຽກ, ມາຊ້າ ແລະ ກົດ Proof ວັນພັກປະຈຳເດືອນ (ສູງສຸດ 4 ວັນ)</p>
+                        <p class="text-xs text-on-surface-variant mt-1">ປ້ອນ PIN 6 ຫຼັກ ເພື່ອກວດສອບມື້ມາວຽກ, ຊົ່ວໂມງ OT ແລະ Confirm ວັນພັກປະຈຳເດືອນ (ສູງສຸດ 4 ວັນ)</p>
 
                         <div class="mt-4 flex max-w-sm mx-auto gap-2">
                             <input id="staff-portal-pin" type="password" maxlength="6" placeholder="ປ້ອນ PIN 6 ຫຼັກ" class="w-full text-center font-mono font-bold text-base px-3 py-2 border border-outline-variant rounded-xl focus:ring-1 focus:ring-primary">
@@ -566,22 +585,28 @@
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-center">
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-4 text-center">
                                 <div class="p-2.5 bg-surface-container rounded-xl">
                                     <p class="text-[10px] text-on-surface-variant font-bold">ມື້ມາວຽກຈິງ</p>
-                                    <h4 id="portal-days-worked" class="font-headline font-bold text-lg text-emerald-700">0 ມື້</h4>
+                                    <h4 id="portal-days-worked" class="font-headline font-bold text-base text-emerald-700">0 ມື້</h4>
+                                </div>
+                                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl shadow-sm">
+                                    <p class="text-[10px] text-amber-900 font-bold flex items-center justify-center gap-0.5">
+                                        <span class="material-symbols-outlined text-xs text-amber-700">timer</span> OT ລວມເດືອນນີ້
+                                    </p>
+                                    <h4 id="portal-total-ot-hours" class="font-headline font-extrabold text-base text-amber-700">0 ຊົ່ວໂມງ</h4>
                                 </div>
                                 <div class="p-2.5 bg-surface-container rounded-xl">
-                                    <p class="text-[10px] text-on-surface-variant font-bold">ວັນພັກປົກກະຕິ</p>
-                                    <h4 id="portal-days-off" class="font-headline font-bold text-lg text-blue-700">0 / 4 ມື້</h4>
+                                    <p class="text-[10px] text-on-surface-variant font-bold">ວັນພັກ (Confirmed)</p>
+                                    <h4 id="portal-days-off" class="font-headline font-bold text-base text-blue-700">0 / 4 ມື້</h4>
                                 </div>
                                 <div class="p-2.5 bg-surface-container rounded-xl">
-                                    <p class="text-[10px] text-on-surface-variant font-bold">ຂາດວຽກ</p>
-                                    <h4 id="portal-days-absent" class="font-headline font-bold text-lg text-error">0 ມື້</h4>
+                                    <p class="text-[10px] text-on-surface-variant font-bold">ຂາດວຽກ (Absent)</p>
+                                    <h4 id="portal-days-absent" class="font-headline font-bold text-base text-error">0 ມື້</h4>
                                 </div>
-                                <div class="p-2.5 bg-surface-container rounded-xl">
+                                <div class="p-2.5 bg-surface-container rounded-xl col-span-2 sm:col-span-1">
                                     <p class="text-[10px] text-on-surface-variant font-bold">ມາຊ້າສະສົມ</p>
-                                    <h4 id="portal-total-late" class="font-headline font-bold text-lg text-amber-700">0 ນາທີ</h4>
+                                    <h4 id="portal-total-late" class="font-headline font-bold text-base text-amber-700">0 ນາທີ</h4>
                                 </div>
                             </div>
                         </div>
@@ -591,22 +616,24 @@
                                 <div>
                                     <h3 class="font-headline font-bold text-sm text-primary flex items-center gap-1.5">
                                         <span class="material-symbols-outlined text-base">calendar_month</span>
-                                        ຕາຕະລາງກວດສອບມື້ມາວຽກ & Proof ວັນພັກ
+                                        ຕາຕະລາງກວດສອບມື້ມາວຽກ, OT & Confirm ວັນພັກ
                                     </h3>
+                                    <p class="text-[10px] text-outline">ກົດທີ່ <b>Round Card Confirm ວັນພັກ</b> ເພື່ອຢືນຢັນມື້ພັກປົກກະຕິ (ສູງສຸດ 4 ວັນ/ເດືອນ)</p>
                                 </div>
                                 <span id="portal-off-quota-tag" class="text-xs bg-blue-100 text-blue-900 border border-blue-300 px-2.5 py-1 rounded-full font-bold">ໂຄຕ້າ: ເຫຼືອ 4 ມື້</span>
                             </div>
 
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs min-w-[650px]">
+                                <table class="w-full text-left text-xs min-w-[700px]">
                                     <thead class="bg-surface-container-low text-on-surface-variant uppercase font-bold border-b border-outline-variant/40">
                                         <tr>
                                             <th class="p-2.5">ວັນທີ</th>
                                             <th class="p-2.5">ເວລາເຂົ້າ</th>
                                             <th class="p-2.5">ເວລາອອກ</th>
                                             <th class="p-2.5">ມາຊ້າ</th>
+                                            <th class="p-2.5 font-bold text-amber-800">OT ປະຈຳມື້</th>
                                             <th class="p-2.5">ສະຖານະ</th>
-                                            <th class="p-2.5 text-right">Proof ວັນພັກ</th>
+                                            <th class="p-2.5 text-right">Confirm ວັນພັກ</th>
                                         </tr>
                                     </thead>
                                     <tbody id="portal-days-table-body" class="divide-y divide-surface-container-high"></tbody>
@@ -847,7 +874,7 @@
         </div>
     </div>
 
-    <!-- Supabase Config & Network Modal -->
+    <!-- Supabase Config Modal -->
     <div id="supabase-config-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
             <div class="flex justify-between items-center mb-3">
