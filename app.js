@@ -410,7 +410,7 @@ function renderKioskMovementLogs() {
 }
 
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER (NO EMOJI, PURE MATERIAL SYMBOLS)
+// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING)
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -832,7 +832,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// 7. STAFF SELF-SERVICE PORTAL (NO EMOJI, ROUND CARDS)
+// 7. STAFF SELF-SERVICE PORTAL (WITH OT & ROUND CONFIRM CARDS)
 // =========================================================================
 let currentViewingStaffPin = null;
 
@@ -1943,6 +1943,7 @@ async function handleStockSubmit(e) {
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
+// Fetch Supabase Data
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -2003,6 +2004,7 @@ async function refreshAllData() {
     showToast('✓ ດຶງຂໍ້ມູນສຳເລັດແລ້ວ!');
 }
 
+// SAFE MODAL OPEN/CLOSE
 function openModal(id) { 
     const modal = document.getElementById(id);
     if (modal) {
@@ -2085,4 +2087,3 @@ window.addEventListener('DOMContentLoaded', () => {
     // LAND AT DASHBOARD
     navigateTo('dashboard');
 });
-```
