@@ -42,6 +42,53 @@ function claimActiveTab() {
 }
 
 // =========================================================================
+// IMAGE COMPRESSOR (ບີບອັດຮູບອັດຕະໂນມັດ ບໍ່ໃຫ້ຖານຂໍ້ມູນຕິດ Error)
+// =========================================================================
+function handleImageCompress(fileInput, targetInputId, previewImgId) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 200;
+            const MAX_HEIGHT = 200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+            const targetInput = document.getElementById(targetInputId);
+            const previewImg = document.getElementById(previewImgId);
+
+            if (targetInput) targetInput.value = compressedBase64;
+            if (previewImg) previewImg.src = compressedBase64;
+            showToast('✓ ອັບໂຫຼດ ແລະ ບີບອັດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
+        };
+    };
+}
+
+// =========================================================================
 // 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
 // =========================================================================
 const SHIFT_RULES = {
@@ -572,7 +619,7 @@ function renderEarlyComerStreakRanking() {
     `;
     container.appendChild(top1Card);
 
-    // Runner-ups (No Emoji)
+    // Runner-ups
     const rankBadges = ['#2', '#3', '#4'];
     top4List.slice(1).forEach((item, index) => {
         const row = document.createElement('div');
@@ -1733,7 +1780,7 @@ async function handleManualAttendanceSubmit(e) {
 }
 
 // =========================================================================
-// 12. ADMIN AUTHENTICATION & CRUD
+// 12. ADMIN AUTHENTICATION & CRUD (WITH PHOTO PERSISTENCE)
 // =========================================================================
 function unlockAdminMode() {
     isAdminLoggedIn = true;
@@ -1801,14 +1848,18 @@ function openEditStaffModal(pin) {
     document.getElementById('edit-staff-type-input').value = p.emp_type || 'Full-time';
     document.getElementById('edit-staff-shift-input').value = p.shift || 'ກະ 1';
 
+    const photoVal = p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
+    document.getElementById('edit-staff-photo-input').value = photoVal;
+    document.getElementById('edit-preview-img').src = photoVal;
+
     openModal('edit-staff-modal');
 }
 
 async function handleEditStaffSubmit(e) {
     e.preventDefault();
     const pin = document.getElementById('edit-staff-pin-hidden').value;
-
     const isBenefitApproved = document.getElementById('edit-staff-benefit-approved').checked;
+    const photoUrl = document.getElementById('edit-staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
     const updatedData = {
         staff_id: document.getElementById('edit-staff-id-input').value.trim(),
@@ -1820,7 +1871,8 @@ async function handleEditStaffSubmit(e) {
         benefit: parseInt(document.getElementById('edit-staff-benefit-input').value) || 0,
         benefit_approved: isBenefitApproved,
         emp_type: document.getElementById('edit-staff-type-input').value,
-        shift: document.getElementById('edit-staff-shift-input').value
+        shift: document.getElementById('edit-staff-shift-input').value,
+        photo_url: photoUrl
     };
 
     localBenefitApprovals[pin] = isBenefitApproved;
@@ -1880,6 +1932,7 @@ async function handlePartnerSubmit(e) {
     e.preventDefault();
     const isBenefitApproved = document.getElementById('staff-benefit-approved-input').checked;
     const pin = document.getElementById('staff-pin-input').value.trim();
+    const photoUrl = document.getElementById('staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
     const newStaff = {
         pin: pin,
@@ -1893,7 +1946,7 @@ async function handlePartnerSubmit(e) {
         benefit_approved: isBenefitApproved,
         emp_type: document.getElementById('staff-type-input').value,
         shift: document.getElementById('staff-shift-input').value,
-        photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120',
+        photo_url: photoUrl,
         active: true
     };
 
@@ -1906,13 +1959,15 @@ async function handlePartnerSubmit(e) {
         } catch (e) {
             console.warn('Insert staff error:', e);
         }
-    } else {
-        partnersData.unshift(newStaff);
     }
 
+    // Always add to local state immediately to ensure instant display
+    partnersData.unshift(newStaff);
+
     renderEmployeesAndPayroll();
+    populateManualAttendanceStaffDropdown();
     closeModal('partner-modal');
-    showToast(`✓ ເພີ່ມພະນັກງານ ${newStaff.name} ແລ້ວ!`);
+    showToast(`✓ ເພີ່ມພະນັກງານ ${newStaff.name} ສຳເລັດແລ້ວ!`);
 }
 
 async function handleStockSubmit(e) {
@@ -1933,17 +1988,18 @@ async function handleStockSubmit(e) {
         } catch (e) {
             console.warn('Insert stock error:', e);
         }
-    } else {
-        stockData.unshift(newItem);
     }
+
+    stockData.unshift(newItem);
 
     renderStockTable();
     renderStockAnalytics();
+    populateStockMovementDropdown();
     closeModal('stock-modal');
     showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
 }
 
-// Fetch Supabase Data
+// Fetch Supabase Data with Safe Network Retry
 async function fetchDataFromSupabase() {
     if (!supabaseClient) return;
 
@@ -2084,6 +2140,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updateOnDutyStaffUI();
     renderEarlyComerStreakRanking();
     
-    // LAND AT DASHBOARD
+    // LAND AT DASHBOARD FIRST
     navigateTo('dashboard');
-});
+})
