@@ -11,24 +11,14 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23001d3d'/><text x='50%' y='56%' dominant-baseline='central' text-anchor='middle' fill='%238cd889' font-family='Arial, sans-serif' font-weight='900' font-size='40' letter-spacing='-1'>HRM</text></svg>">
 
-    <!-- Fonts & Google Material Symbols -->
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Noto+Sans+Lao:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-    <!-- Multi-CDN Supabase Embed with Local Fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
-    <script>
-      if (typeof supabase === 'undefined' && !window.supabase) {
-        document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.39.8/dist/umd/supabase.js"><\/script>');
-      }
-    </script>
-    <script>
-      if (typeof supabase === 'undefined' && !window.supabase) {
-        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.8/supabase.min.js"><\/script>');
-      }
-    </script>
+    <!-- Supabase JS SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -874,7 +864,7 @@
         </div>
     </div>
 
-    <!-- Supabase Config Modal -->
+    <!-- Supabase Config & Network Modal -->
     <div id="supabase-config-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-md w-full p-5 shadow-2xl border border-outline-variant/30">
             <div class="flex justify-between items-center mb-3">
@@ -891,7 +881,6 @@
                     <input id="config-supabase-key" required type="password" class="w-full text-xs font-mono px-3 py-2 border border-outline-variant rounded-xl">
                 </div>
 
-                <!-- Unitel Network Troubleshooting Tip -->
                 <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-1">
                     <p class="font-bold flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm text-amber-700">wifi_find</span> ຄຳແນະນຳສຳລັບເຄືອຂ່າຍ Unitel:
@@ -960,10 +949,10 @@
                 <div>
                     <label class="block text-xs font-bold text-primary mb-1">ໝວດໝູ່ສິນຄ້າ (Category) *</label>
                     <select id="edit-modal-category" class="w-full text-xs font-bold px-3 py-2 border border-primary/40 rounded-xl bg-primary-container/10">
-                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ (High Frequency)</option>
-                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ (Syrups)</option>
-                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ (Beverages)</option>
-                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ (Supplies)</option>
+                        <option value="ວັດຖຸດິບ">ວັດຖຸດິບ (High Frequency)</option>
+                        <option value="ໄຊຮັບ">ໄຊຮັບ (Syrups)</option>
+                        <option value="ເຄື່ອງຍ່ອຍ">ເຄື່ອງຍ່ອຍ (Beverages)</option>
+                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">ເຄື່ອງໃຊ້ທົ່ວໄປ (Supplies)</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2.5">
@@ -1010,10 +999,10 @@
                 <div>
                     <label class="block text-xs font-bold mb-1">ໝວດໝູ່ *</label>
                     <select id="modal-item-category" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                        <option value="ວັດຖຸດິບ">☕ ວັດຖຸດິບ</option>
-                        <option value="ໄຊຮັບ">🍯 ໄຊຮັບ</option>
-                        <option value="ເຄື່ອງຍ່ອຍ">🍺 ເຄື່ອງຍ່ອຍ</option>
-                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">🥤 ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
+                        <option value="ວັດຖຸດິບ">ວັດຖຸດິບ</option>
+                        <option value="ໄຊຮັບ">ໄຊຮັບ</option>
+                        <option value="ເຄື່ອງຍ່ອຍ">ເຄື່ອງຍ່ອຍ</option>
+                        <option value="ເຄື່ອງໃຊ້ທົ່ວໄປ">ເຄື່ອງໃຊ້ທົ່ວໄປ</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2.5">
@@ -1034,7 +1023,7 @@
         </div>
     </div>
 
-    <!-- Edit Staff Modal -->
+    <!-- EDIT STAFF MODAL (WITH PHOTO UPLOAD & COMPRESSION) -->
     <div id="edit-staff-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -1044,6 +1033,18 @@
             
             <form onsubmit="handleEditStaffSubmit(event)" class="space-y-3.5">
                 <input id="edit-staff-pin-hidden" type="hidden">
+
+                <!-- Staff Photo Upload & Preview -->
+                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
+                    <label class="block text-xs font-bold text-primary mb-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)
+                    </label>
+                    <input type="file" id="edit-staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'edit-staff-photo-input', 'edit-preview-img')" class="w-full text-xs">
+                    <div class="flex items-center gap-3 pt-1">
+                        <img id="edit-preview-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120" class="w-12 h-12 rounded-full object-cover border-2 border-primary shadow-sm">
+                        <input id="edit-staff-photo-input" type="text" placeholder="ຫຼື ໃສ່ URL ຮູບພາບ" class="w-full text-[11px] px-2.5 py-2 border border-outline-variant rounded-lg font-mono">
+                    </div>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -1125,7 +1126,7 @@
         </div>
     </div>
 
-    <!-- Partner Modal -->
+    <!-- ADD NEW STAFF MODAL (WITH PHOTO UPLOAD & COMPRESSION) -->
     <div id="partner-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -1134,6 +1135,18 @@
             </div>
             
             <form onsubmit="handlePartnerSubmit(event)" class="space-y-3.5">
+                <!-- Staff Photo Upload & Preview -->
+                <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
+                    <label class="block text-xs font-bold text-primary mb-1 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)
+                    </label>
+                    <input type="file" id="staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'staff-photo-input', 'add-preview-img')" class="w-full text-xs">
+                    <div class="flex items-center gap-3 pt-1">
+                        <img id="add-preview-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120" class="w-12 h-12 rounded-full object-cover border-2 border-primary shadow-sm">
+                        <input id="staff-photo-input" type="text" placeholder="ຫຼື ໃສ່ URL ຮູບພາບ" class="w-full text-[11px] px-2.5 py-2 border border-outline-variant rounded-lg font-mono">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold mb-1">PIN 6 ຫຼັກ *</label>
