@@ -1,4 +1,56 @@
 // =========================================================================
+// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP
+// =========================================================================
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // ປ້ອງກັນບໍ່ໃຫ້ browser ສະແດງ mini-infobar ອັດຕະໂນມັດ
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    
+    // ສະແດງ Banner ແລະ ປຸ່ມຕິດຕັ້ງທຸກບ່ອນ
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.classList.remove('hidden');
+
+    const mobileBtn = document.getElementById('btn-pwa-install-mobile');
+    if (mobileBtn) mobileBtn.classList.remove('hidden');
+
+    const sidebarBtn = document.getElementById('btn-pwa-install-sidebar');
+    if (sidebarBtn) sidebarBtn.classList.remove('hidden');
+
+    const desktopBtn = document.getElementById('btn-pwa-install-desktop');
+    if (desktopBtn) desktopBtn.classList.remove('hidden');
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.classList.add('hidden');
+    showToast('✓ ຕິດຕັ້ງແອັບ LA DOLCE ລົງໜ້າຈໍໂຮມສຳເລັດແລ້ວ!');
+});
+
+async function triggerPwaInstall() {
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choiceResult = await deferredInstallPrompt.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+            showToast('✓ ກຳລັງດຳເນີນການຕິດຕັ້ງແອັບ...');
+        } else {
+            showToast('ຍົກເລີກການຕິດຕັ້ງແອັບ');
+        }
+        deferredInstallPrompt = null;
+    } else {
+        // ສຳລັບກໍລະນີທີ່ Browser ບໍ່ຮອງຮັບ Native Prompt ຫຼື ຢູ່ໃນ Chrome ທີ່ຕິດຕັ້ງໄປແລ້ວ
+        showToast('💡 ວິທີຕິດຕັ້ງເທິງ Android: ກົດປຸ່ມ 3 ຈ້ຳ (⋮) ມຸມຂວາເທິງຂອງ Chrome ແລ້ວເລືອກ "Install app" ຫຼື "Add to Home screen"');
+    }
+}
+
+function dismissPwaBanner() {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.classList.add('hidden');
+}
+
+// =========================================================================
 // SINGLE TAB LOCK SYSTEM
 // =========================================================================
 const TAB_LOCK_CHANNEL = 'ladolce_tab_lock_channel';
@@ -1961,7 +2013,6 @@ async function handlePartnerSubmit(e) {
         }
     }
 
-    // Always add to local state immediately to ensure instant display
     partnersData.unshift(newStaff);
 
     renderEmployeesAndPayroll();
@@ -2084,7 +2135,7 @@ function showToast(msg) {
     toast.className = 'bg-primary text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xl flex items-center gap-2 pointer-events-auto';
     toast.innerHTML = `<span class="material-symbols-outlined text-accent text-sm">info</span><span>${msg}</span>`;
     container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+    setTimeout(() => toast.remove(), 3500);
 }
 
 // Clock Loop
@@ -2142,4 +2193,4 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // LAND AT DASHBOARD FIRST
     navigateTo('dashboard');
-})
+});
