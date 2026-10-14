@@ -1,31 +1,63 @@
 // =========================================================================
-// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP
+// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP (AUTO-HIDE WHEN INSTALLED)
 // =========================================================================
 let deferredInstallPrompt = null;
 
+// ຟັງຊັນສຳລັບເຊື່ອງປຸ່ມຕິດຕັ້ງທັງໝົດແບບຖາວອນ
+function hideAllInstallButtons() {
+    const ids = [
+        'pwa-install-banner',
+        'btn-pwa-install-mobile',
+        'btn-pwa-install-sidebar',
+        'btn-pwa-install-desktop'
+    ];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.add('hidden');
+            el.style.display = 'none'; // ຮັບປະກັນການເຊື່ອງ 100%
+        }
+    });
+}
+
+// ກວດສອບສະຖານະວ່າເຄີຍຕິດຕັ້ງແລ້ວ ຫຼື ເປີດຢູ່ໃນໂໝດ Standalone ແລ້ວບໍ
+function checkIfAlreadyInstalled() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isMarkedInstalled = localStorage.getItem('app_is_installed') === 'true';
+
+    if (isStandalone || isMarkedInstalled) {
+        hideAllInstallButtons();
+        return true;
+    }
+    return false;
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
-    // ປ້ອງກັນບໍ່ໃຫ້ browser ສະແດງ mini-infobar ອັດຕະໂນມັດ
+    // ຖ້າຕິດຕັ້ງແລ້ວ ບໍ່ຕ້ອງເຮັດຫຍັງ ແລະ ບໍ່ຕ້ອງສະແດງປຸ່ມ
+    if (checkIfAlreadyInstalled()) return;
+
     e.preventDefault();
     deferredInstallPrompt = e;
     
-    // ສະແດງ Banner ແລະ ປຸ່ມຕິດຕັ້ງທຸກບ່ອນ
+    // ສະແດງ Banner ແລະ ປຸ່ມຕິດຕັ້ງ
     const banner = document.getElementById('pwa-install-banner');
-    if (banner) banner.classList.remove('hidden');
+    if (banner) { banner.classList.remove('hidden'); banner.style.display = ''; }
 
     const mobileBtn = document.getElementById('btn-pwa-install-mobile');
-    if (mobileBtn) mobileBtn.classList.remove('hidden');
+    if (mobileBtn) { mobileBtn.classList.remove('hidden'); mobileBtn.style.display = ''; }
 
     const sidebarBtn = document.getElementById('btn-pwa-install-sidebar');
-    if (sidebarBtn) sidebarBtn.classList.remove('hidden');
+    if (sidebarBtn) { sidebarBtn.classList.remove('hidden'); sidebarBtn.style.display = ''; }
 
     const desktopBtn = document.getElementById('btn-pwa-install-desktop');
-    if (desktopBtn) desktopBtn.classList.remove('hidden');
+    if (desktopBtn) { desktopBtn.classList.remove('hidden'); desktopBtn.style.display = ''; }
 });
 
+// ເມື່ອ Browser ຕິດຕັ້ງແອັບສຳເລັດ
 window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
-    const banner = document.getElementById('pwa-install-banner');
-    if (banner) banner.classList.add('hidden');
+    localStorage.setItem('app_is_installed', 'true');
+    hideAllInstallButtons();
     showToast('✓ ຕິດຕັ້ງແອັບ LA DOLCE ລົງໜ້າຈໍໂຮມສຳເລັດແລ້ວ!');
 });
 
@@ -34,20 +66,26 @@ async function triggerPwaInstall() {
         deferredInstallPrompt.prompt();
         const choiceResult = await deferredInstallPrompt.userChoice;
         if (choiceResult.outcome === 'accepted') {
-            showToast('✓ ກຳລັງດຳເນີນການຕິດຕັ້ງແອັບ...');
+            // ເມື່ອກົດຍອມຮັບຕິດຕັ້ງ ໃຫ້ບັນທຶກ ແລະ ເຊື່ອງປຸ່ມທັນທີ
+            localStorage.setItem('app_is_installed', 'true');
+            hideAllInstallButtons();
+            showToast('✓ ກຳລັງຕິດຕັ້ງແອັບລົງໜ້າຈໍໂຮມ...');
         } else {
             showToast('ຍົກເລີກການຕິດຕັ້ງແອັບ');
         }
         deferredInstallPrompt = null;
     } else {
-        // ສຳລັບກໍລະນີທີ່ Browser ບໍ່ຮອງຮັບ Native Prompt ຫຼື ຢູ່ໃນ Chrome ທີ່ຕິດຕັ້ງໄປແລ້ວ
+        // ສຳລັບກໍລະນີທີ່ Browser ບໍ່ຮອງຮັບ Native Prompt
         showToast('💡 ວິທີຕິດຕັ້ງເທິງ Android: ກົດປຸ່ມ 3 ຈ້ຳ (⋮) ມຸມຂວາເທິງຂອງ Chrome ແລ້ວເລືອກ "Install app" ຫຼື "Add to Home screen"');
     }
 }
 
 function dismissPwaBanner() {
     const banner = document.getElementById('pwa-install-banner');
-    if (banner) banner.classList.add('hidden');
+    if (banner) {
+        banner.classList.add('hidden');
+        banner.style.display = 'none';
+    }
 }
 
 // =========================================================================
@@ -2172,6 +2210,9 @@ if (overlay) overlay.onclick = closeMobileMenu;
 
 // APP INITIALIZATION
 window.addEventListener('DOMContentLoaded', () => {
+    // ກວດສອບທັນທີຕອນໂຫຼດໜ້າ: ຖ້າຕິດຕັ້ງແລ້ວ ໃຫ້ເຊື່ອງປຸ່ມຕິດຕັ້ງທັນທີ
+    checkIfAlreadyInstalled();
+
     if (supabaseUrl) {
         const urlInput = document.getElementById('config-supabase-url');
         if (urlInput) urlInput.value = supabaseUrl;
