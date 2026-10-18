@@ -1,5 +1,5 @@
 // =========================================================================
-// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP (AUTO-HIDE WHEN INSTALLED)
+// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP
 // =========================================================================
 let deferredInstallPrompt = null;
 
@@ -125,6 +125,35 @@ function claimActiveTab() {
 }
 
 // =========================================================================
+// MODAL & TOAST CONTROLLERS (DEFINED GLOBALLY)
+// =========================================================================
+function openModal(id) { 
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closeModal(id) { 
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function showToast(msg) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'bg-primary text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-xl flex items-center gap-2 pointer-events-auto border border-white/20';
+    toast.innerHTML = `<span class="material-symbols-outlined text-accent text-sm">info</span><span>${msg}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+// =========================================================================
 // IMAGE COMPRESSOR
 // =========================================================================
 function handleImageCompress(fileInput, targetInputId, previewImgId) {
@@ -166,13 +195,13 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
 
             if (targetInput) targetInput.value = compressedBase64;
             if (previewImg) previewImg.src = compressedBase64;
-            showToast('✓ ອັບໂຫຼດ ແລະ ບີບອັດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
+            showToast('✓ ອັບໂຫຼດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
         };
     };
 }
 
 // =========================================================================
-// 1. SHIFT CONFIGURATION & UNIVERSAL ATTENDANCE PARSER
+// 1. SHIFT & TIME PARSER
 // =========================================================================
 const SHIFT_RULES = {
     'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
@@ -270,7 +299,7 @@ function normalizeAttendanceLog(log) {
 }
 
 // =========================================================================
-// 2. STATE & SUPABASE INITIALIZATION
+// 2. STATE & SUPABASE
 // =========================================================================
 let supabaseUrl = localStorage.getItem('supabase_url') || '';
 let supabaseKey = localStorage.getItem('supabase_key') || '';
@@ -397,7 +426,7 @@ function navigateTo(viewId) {
 }
 
 // =========================================================================
-// 4. KIOSK & STOCK MOVEMENT HANDLERS
+// 4. KIOSK & STOCK MOVEMENT
 // =========================================================================
 function openStockMovementKiosk() {
     navigateTo('kiosk');
@@ -520,7 +549,7 @@ function renderKioskMovementLogs() {
 }
 
 // =========================================================================
-// 5. ON-DUTY & DAY STREAK TRACKER (TOP 4 RANKING)
+// 5. ON-DUTY & DAY STREAK
 // =========================================================================
 function updateOnDutyStaffUI() {
     const container = document.getElementById('on-duty-staff-container');
@@ -712,7 +741,7 @@ function renderEarlyComerStreakRanking() {
 }
 
 // =========================================================================
-// 6. REAL-TIME PAYROLL & BENEFIT CALCULATION
+// 6. REAL-TIME PAYROLL
 // =========================================================================
 function calculateRealtimePayroll(staff) {
     const todayStr = getLaosDateString();
@@ -932,7 +961,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// 7. STAFF SELF-SERVICE PORTAL
+// 7. STAFF PORTAL
 // =========================================================================
 let currentViewingStaffPin = null;
 
@@ -1125,7 +1154,7 @@ function toggleOffDayProof(pin, dateStr) {
 }
 
 // =========================================================================
-// 8. STOCK CRUD & EDITING
+// 8. STOCK CRUD
 // =========================================================================
 function openEditStockModal(sku, branch) {
     const item = stockData.find(i => i.sku === sku && i.branch === branch);
@@ -1305,7 +1334,7 @@ async function adjustStockPrompt(sku, branch) {
 }
 
 // =========================================================================
-// 9. INVENTORY ANALYTICS & MOVEMENT HISTORY RENDERING
+// 9. INVENTORY ANALYTICS
 // =========================================================================
 function renderStockAnalytics() {
     const categoryProgressContainer = document.getElementById('analytics-category-progress');
@@ -1442,7 +1471,7 @@ function renderStockAnalytics() {
 }
 
 // =========================================================================
-// 10. KIOSK PIN CLOCK-IN/OUT
+// 10. KIOSK PIN
 // =========================================================================
 let currentPin = '';
 const maxPin = 6;
@@ -1599,7 +1628,7 @@ function renderTodayKioskAttendance() {
 }
 
 // =========================================================================
-// 11. ADMIN ATTENDANCE LOGS, EDITING & MANUAL ADD
+// 11. ADMIN ATTENDANCE LOGS
 // =========================================================================
 let currentAdminAttFilter = 'daily';
 
@@ -1767,4 +1796,447 @@ function openManualAttendanceModal(preselectPin = null) {
 
     const today = new Date();
     const dateInput = document.getElementById('manual-att-date-input');
-    const inT
+    const inTimeInput = document.getElementById('manual-att-in-time');
+    const outTimeInput = document.getElementById('manual-att-out-time');
+
+    if (dateInput) dateInput.value = getLaosDateString(today);
+    if (inTimeInput) inTimeInput.value = '07:00';
+    if (outTimeInput) outTimeInput.value = '16:00';
+
+    if (preselectPin) {
+        const select = document.getElementById('manual-att-staff-select');
+        if (select) select.value = preselectPin;
+    }
+
+    openModal('manual-attendance-modal');
+}
+
+async function handleManualAttendanceSubmit(e) {
+    e.preventDefault();
+    const pin = document.getElementById('manual-att-staff-select').value;
+    const dateVal = document.getElementById('manual-att-date-input').value;
+    const inTimeVal = document.getElementById('manual-att-in-time').value;
+    const outTimeVal = document.getElementById('manual-att-out-time').value;
+
+    const staff = partnersData.find(p => p.pin === pin);
+    if (!staff || !dateVal || !inTimeVal) return;
+
+    const recordsToInsert = [];
+
+    const inIsoString = `${dateVal}T${inTimeVal}:00+07:00`;
+    recordsToInsert.push({
+        pin: pin,
+        type: 'Clock-In',
+        branch: staff.branch || 'ສາຂານ້ຳພຸ',
+        timestamp: inIsoString
+    });
+
+    if (outTimeVal) {
+        const outIsoString = `${dateVal}T${outTimeVal}:00+07:00`;
+        recordsToInsert.push({
+            pin: pin,
+            type: 'Clock-Out',
+            branch: staff.branch || 'ສາຂານ້ຳພຸ',
+            timestamp: outIsoString
+        });
+    }
+
+    if (supabaseClient) {
+        try {
+            await supabaseClient.from('attendance').insert(recordsToInsert);
+        } catch (e) {
+            console.warn('Manual attendance upload error:', e);
+        }
+    }
+
+    recordsToInsert.forEach(rec => attendanceLogs.unshift(rec));
+
+    renderAdminAttendanceTable(currentAdminAttFilter);
+    renderTodayKioskAttendance();
+    updateOnDutyStaffUI();
+    renderEmployeesAndPayroll();
+    renderEarlyComerStreakRanking();
+
+    closeModal('manual-attendance-modal');
+    showToast(`✓ ບັນທຶກເວລາຍ້ອນຫຼັງສຳເລັດ ສຳລັບ ${staff.name} (${dateVal})`);
+}
+
+// =========================================================================
+// 12. ADMIN AUTHENTICATION & CRUD
+// =========================================================================
+function unlockAdminMode() {
+    isAdminLoggedIn = true;
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+    document.getElementById('admin-banner-sidebar').classList.remove('hidden');
+    document.getElementById('top-admin-tag').classList.remove('hidden');
+    renderStockTable();
+    renderEmployeesAndPayroll();
+    renderAdminAttendanceTable(currentAdminAttFilter);
+    showToast('🔓 ປົດລັອກ HRM Admin ສຳເລັດແລ້ວ!');
+}
+
+function lockAdminMode() {
+    isAdminLoggedIn = false;
+    document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+    document.getElementById('admin-banner-sidebar').classList.add('hidden');
+    document.getElementById('top-admin-tag').classList.add('hidden');
+    renderStockTable();
+    renderAdminAttendanceTable(currentAdminAttFilter);
+    
+    if (window.location.hash === '#employees' || window.location.hash === '#payroll') {
+        navigateTo('dashboard');
+    }
+    showToast('🔒 ອອກຈາກ Admin Mode ແລ້ວ');
+}
+
+function handleAdminPinSubmit(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('modal-admin-pin-input');
+    const val = input.value.trim();
+
+    if (val === '7777' || val === '777777') {
+        unlockAdminMode();
+        closeAdminModalForce();
+        navigateTo('employees');
+    } else {
+        showToast('❌ ລະຫັດຜ່ານ Admin ບໍ່ຖືກຕ້ອງ');
+    }
+}
+
+function closeAdminModalForce() {
+    const modal = document.getElementById('admin-pin-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    const input = document.getElementById('modal-admin-pin-input');
+    if (input) input.value = '';
+}
+
+function openEditStaffModal(pin) {
+    const p = partnersData.find(item => item.pin === pin);
+    if (!p) return;
+
+    document.getElementById('edit-staff-pin-hidden').value = p.pin;
+    document.getElementById('edit-staff-pin-disabled').value = p.pin;
+    document.getElementById('edit-staff-id-input').value = p.staff_id || '';
+    document.getElementById('edit-staff-name-input').value = p.name || '';
+    document.getElementById('edit-staff-branch-input').value = p.branch || 'ສາຂານ້ຳພຸ';
+    document.getElementById('edit-staff-role-input').value = p.role || 'Barista';
+    document.getElementById('edit-staff-phone-input').value = p.phone || '';
+    document.getElementById('edit-staff-salary-input').value = p.salary || 4000000;
+    document.getElementById('edit-staff-benefit-input').value = p.benefit || 500000;
+    document.getElementById('edit-staff-benefit-approved').checked = p.benefit_approved === true;
+    document.getElementById('edit-staff-type-input').value = p.emp_type || 'Full-time';
+    document.getElementById('edit-staff-shift-input').value = p.shift || 'ກະ 1';
+
+    const photoVal = p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
+    document.getElementById('edit-staff-photo-input').value = photoVal;
+    document.getElementById('edit-preview-img').src = photoVal;
+
+    openModal('edit-staff-modal');
+}
+
+async function handleEditStaffSubmit(e) {
+    e.preventDefault();
+    const pin = document.getElementById('edit-staff-pin-hidden').value;
+    const isBenefitApproved = document.getElementById('edit-staff-benefit-approved').checked;
+
+    const updatedData = {
+        staff_id: document.getElementById('edit-staff-id-input').value.trim(),
+        name: document.getElementById('edit-staff-name-input').value.trim(),
+        branch: document.getElementById('edit-staff-branch-input').value.trim(),
+        role: document.getElementById('edit-staff-role-input').value.trim(),
+        phone: document.getElementById('edit-staff-phone-input').value.trim(),
+        salary: parseInt(document.getElementById('edit-staff-salary-input').value) || 4000000,
+        shift: document.getElementById('edit-staff-shift-input').value
+    };
+
+    localBenefitApprovals[pin] = isBenefitApproved;
+    localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
+
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
+            if (error) {
+                console.error('Update staff error:', error);
+                showToast('⚠️ Supabase Error: ' + error.message);
+            }
+        } catch (err) {
+            console.warn('Update staff exception:', err);
+        }
+    }
+
+    const localStaff = partnersData.find(p => p.pin === pin);
+    if (localStaff) {
+        Object.assign(localStaff, updatedData);
+        localStaff.benefit_approved = isBenefitApproved;
+    }
+
+    renderEmployeesAndPayroll();
+    closeModal('edit-staff-modal');
+    showToast(`✓ ອັບເດດຂໍ້ມູນ ${updatedData.name} ສຳເລັດ!`);
+}
+
+async function deleteStaff(pin, name) {
+    if (confirm(`ທ່ານຕ້ອງການລົບພະນັກງານ: ${name} (PIN: ${pin}) ອອກຈາກ Database ແທ້ບໍ?`)) {
+        if (supabaseClient) {
+            try {
+                const { error } = await supabaseClient.from('staff').delete().eq('pin', pin);
+                if (error) {
+                    alert('❌ Supabase ປະຕິເສດການລຶບ: ' + error.message);
+                    return;
+                }
+            } catch (e) {
+                console.warn('Delete staff error:', e);
+            }
+        }
+
+        partnersData = partnersData.filter(p => p.pin !== pin);
+        renderEmployeesAndPayroll();
+        showToast(`✓ ລົບພະນັກງານ ${name} ແລ້ວ`);
+    }
+}
+
+async function deleteStock(sku, branch, name) {
+    if (confirm(`ທ່ານຕ້ອງການລົບສິນຄ້າ SKU: ${sku} (${name}) ແທ້ບໍ?`)) {
+        if (supabaseClient) {
+            try {
+                await supabaseClient.from('main_inventory').delete().eq('sku', sku).eq('branch', branch);
+            } catch (e) {
+                console.warn('Delete stock error:', e);
+            }
+        }
+
+        stockData = stockData.filter(s => !(s.sku === sku && s.branch === branch));
+        renderStockTable();
+        renderStockAnalytics();
+        populateStockMovementDropdown();
+        showToast(`✓ ລົບສິນຄ້າ ${name} ແລ້ວ`);
+    }
+}
+
+// -------------------------------------------------------------------------
+// DIRECT SUPABASE INSERTION FOR TABLE `staff`
+// -------------------------------------------------------------------------
+async function handlePartnerSubmit(e) {
+    e.preventDefault();
+    const isBenefitApproved = document.getElementById('staff-benefit-approved-input').checked;
+    const pin = document.getElementById('staff-pin-input').value.trim();
+    const staffId = document.getElementById('staff-id-input').value.trim();
+    const staffName = document.getElementById('staff-name-input').value.trim();
+    const staffBranch = document.getElementById('staff-branch-input').value.trim() || 'ສາຂານ້ຳພຸ';
+    const staffRole = document.getElementById('staff-role-input').value.trim() || 'Barista';
+    const staffPhone = document.getElementById('staff-phone-input').value.trim() || '';
+    const staffSalary = parseInt(document.getElementById('staff-salary-input').value) || 4000000;
+    const staffShift = document.getElementById('staff-shift-input').value || 'ກະ 1';
+
+    if (!supabaseClient) {
+        alert('⚠️ ລະບົບຍັງບໍ່ທັນເຊື່ອມຕໍ່ກັບ Supabase! ກະລຸນາກວດສອບ API Key ທີ່ປຸ່ມຕັ້ງຄ່າ');
+        return;
+    }
+
+    let dbPayload = {
+        pin: pin,
+        staff_id: staffId,
+        name: staffName,
+        branch: staffBranch,
+        role: staffRole,
+        phone: staffPhone,
+        salary: staffSalary,
+        shift: staffShift
+    };
+
+    showToast('⏳ ກຳລັງສົ່ງຂໍ້ມູນໄປ Supabase...');
+
+    let { data, error } = await supabaseClient.from('staff').insert([dbPayload]).select();
+
+    if (error && error.message && error.message.includes('column')) {
+        console.warn('Retrying with core columns only...');
+        dbPayload = {
+            pin: pin,
+            staff_id: staffId,
+            name: staffName,
+            branch: staffBranch,
+            role: staffRole
+        };
+        const retry = await supabaseClient.from('staff').insert([dbPayload]).select();
+        error = retry.error;
+    }
+
+    if (error) {
+        console.error('Supabase Error Detailed:', error);
+        alert('❌ Supabase ປະຕິເສດການບັນທຶກ:\n\n' + 
+              'ຂໍ້ຄວາມ Error: ' + error.message + '\n' +
+              'ລະຫັດ Error Code: ' + error.code + '\n' +
+              'ລາຍລະອຽດ Details: ' + (error.details || 'ບໍ່ມີ'));
+        return;
+    }
+
+    localBenefitApprovals[pin] = isBenefitApproved;
+    localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
+
+    alert(`✓ ເພີ່ມພະນັກງານ ${staffName} ລົງຖານຂໍ້ມູນ Supabase ສຳເລັດຮຽບຮ້ອຍແລ້ວ!`);
+    closeModal('partner-modal');
+
+    document.getElementById('staff-pin-input').value = '';
+    document.getElementById('staff-name-input').value = '';
+    document.getElementById('staff-phone-input').value = '';
+
+    await fetchDataFromSupabase();
+}
+
+async function handleStockSubmit(e) {
+    e.preventDefault();
+    const newItem = {
+        sku: document.getElementById('modal-sku').value.trim(),
+        branch: document.getElementById('modal-branch').value.trim(),
+        name: document.getElementById('modal-item-name').value.trim(),
+        category: document.getElementById('modal-item-category').value,
+        stock: parseInt(document.getElementById('modal-item-qty').value) || 0,
+        min_stock: parseInt(document.getElementById('modal-item-min').value) || 1,
+        status: 'OK'
+    };
+
+    if (supabaseClient) {
+        try {
+            await supabaseClient.from('main_inventory').insert([newItem]);
+        } catch (e) {
+            console.warn('Insert stock error:', e);
+        }
+    }
+
+    stockData.unshift(newItem);
+
+    renderStockTable();
+    renderStockAnalytics();
+    populateStockMovementDropdown();
+    closeModal('stock-modal');
+    showToast(`✓ ເພີ່ມ SKU ${newItem.sku} ແລ້ວ!`);
+}
+
+// Fetch Supabase Data
+async function fetchDataFromSupabase() {
+    if (!supabaseClient) return;
+
+    try {
+        const { data: stockRes } = await supabaseClient.from('main_inventory').select('*').not('sku', 'ilike', '%XS').order('sku');
+        if (stockRes && stockRes.length > 0) {
+            stockData = stockRes;
+            renderStockTable();
+            renderStockAnalytics();
+            populateStockMovementDropdown();
+        }
+    } catch (e) {
+        console.warn('Stock fetch warning:', e);
+    }
+
+    try {
+        const { data: staffRes, error } = await supabaseClient.from('staff').select('*').order('pin');
+        if (error) {
+            console.error('Fetch staff error:', error);
+        } else if (staffRes) {
+            partnersData = staffRes.map(s => ({
+                ...s,
+                salary: s.salary || 4000000,
+                role: s.role || 'Barista',
+                shift: s.shift || 'ກະ 1',
+                branch: s.branch || 'ສາຂານ້ຳພຸ',
+                benefit_approved: localBenefitApprovals[s.pin] !== undefined ? localBenefitApprovals[s.pin] : (s.benefit_approved === true)
+            }));
+            renderEmployeesAndPayroll();
+        }
+    } catch (e) {
+        console.warn('Staff fetch warning:', e);
+    }
+
+    try {
+        const { data: moveRes } = await supabaseClient.from('daily_inventory_movement').select('*').order('id', { ascending: false }).limit(100);
+        if (moveRes) {
+            stockMovements = moveRes;
+            renderStockAnalytics();
+            renderKioskMovementLogs();
+        }
+    } catch (e) {
+        console.warn('Movement fetch warning:', e);
+    }
+
+    try {
+        const { data: attRes } = await supabaseClient.from('attendance').select('*').order('id', { ascending: false });
+        if (attRes) {
+            attendanceLogs = attRes.map(normalizeAttendanceLog);
+            renderTodayKioskAttendance();
+            updateOnDutyStaffUI();
+            renderEmployeesAndPayroll();
+            renderEarlyComerStreakRanking();
+            renderAdminAttendanceTable(currentAdminAttFilter);
+        }
+    } catch (e) {
+        console.warn('Attendance fetch warning:', e);
+    }
+}
+
+async function refreshAllData() {
+    showToast('🔄 ກຳລັງດຶງຂໍ້ມູນໃໝ່ລ້າສຸດ...');
+    await fetchDataFromSupabase();
+    showToast('✓ ດຶງຂໍ້ມູນສຳເລັດແລ້ວ!');
+}
+
+// Clock Loop
+setInterval(() => {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: '2-digit', year: 'numeric' });
+    
+    const topClock = document.getElementById('top-live-clock');
+    const topDate = document.getElementById('top-live-date');
+    const kioskClock = document.getElementById('kiosk-digital-clock');
+    const kioskDate = document.getElementById('kiosk-current-date');
+
+    if (topClock) topClock.textContent = timeStr;
+    if (topDate) topDate.textContent = dateStr;
+    if (kioskClock) kioskClock.textContent = timeStr;
+    if (kioskDate) kioskDate.textContent = dateStr;
+}, 1000);
+
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebar-overlay');
+
+function openMobileMenu() { 
+    if (sidebar) sidebar.classList.remove('-translate-x-full'); 
+    if (overlay) overlay.classList.remove('hidden'); 
+}
+function closeMobileMenu() { 
+    if (sidebar) sidebar.classList.add('-translate-x-full'); 
+    if (overlay) overlay.classList.add('hidden'); 
+}
+if (mobileBtn) mobileBtn.onclick = openMobileMenu;
+if (overlay) overlay.onclick = closeMobileMenu;
+
+// APP INITIALIZATION
+window.addEventListener('DOMContentLoaded', () => {
+    checkIfAlreadyInstalled();
+
+    if (supabaseUrl) {
+        const urlInput = document.getElementById('config-supabase-url');
+        if (urlInput) urlInput.value = supabaseUrl;
+    }
+    if (supabaseKey) {
+        const keyInput = document.getElementById('config-supabase-key');
+        if (keyInput) keyInput.value = supabaseKey;
+    }
+
+    initSupabase();
+    renderStockTable();
+    renderStockAnalytics();
+    renderEmployeesAndPayroll();
+    populateStockMovementDropdown();
+    renderTodayKioskAttendance();
+    renderKioskMovementLogs();
+    updateOnDutyStaffUI();
+    renderEarlyComerStreakRanking();
+    
+    // LAND AT DASHBOARD FIRST
+    navigateTo('dashboard');
+});
