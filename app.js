@@ -154,11 +154,19 @@ function showToast(msg) {
 }
 
 // =========================================================================
-// IMAGE COMPRESSOR
+// ULTRA COMPACT IMAGE COMPRESSOR (ບີບອັດຮູບໃຫ້ເບົາສຸດໆ ບໍ່ໃຫ້ DB ຕິດ Error)
 // =========================================================================
 function handleImageCompress(fileInput, targetInputId, previewImgId) {
     const file = fileInput.files[0];
     if (!file) return;
+
+    // ກວດສອບປະເພດໄຟລ໌
+    if (!file.type.startsWith('image/')) {
+        showToast('⚠️ ກະລຸນາເລືອກໄຟລ໌ຮູບພາບເທົ່ານັ້ນ');
+        return;
+    }
+
+    showToast('⏳ ກຳລັງບີບອັດຮູບພາບ...');
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -167,19 +175,20 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
         img.src = event.target.result;
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 180;
-            const MAX_HEIGHT = 180;
+            // ຂະໜາດ Profile Avatar ທີ່ເໝາະສົມທີ່ສຸດ (120x120px)
+            const MAX_WIDTH = 120;
+            const MAX_HEIGHT = 120;
             let width = img.width;
             let height = img.height;
 
             if (width > height) {
                 if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
+                    height = Math.round((height * MAX_WIDTH) / width);
                     width = MAX_WIDTH;
                 }
             } else {
                 if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
+                    width = Math.round((width * MAX_HEIGHT) / height);
                     height = MAX_HEIGHT;
                 }
             }
@@ -189,13 +198,19 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
+            // ບີບອັດເປັນ JPEG ຄຸນນະພາບ 0.6 ເພື່ອໃຫ້ຂະໜາດບໍ່ເກີນ 10KB
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+            
             const targetInput = document.getElementById(targetInputId);
             const previewImg = document.getElementById(previewImgId);
 
             if (targetInput) targetInput.value = compressedBase64;
             if (previewImg) previewImg.src = compressedBase64;
-            showToast('✓ ອັບໂຫຼດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
+            
+            showToast('✓ ອັບໂຫຼດ ແລະ ບີບອັດຮູບພາບຮຽບຮ້ອຍແລ້ວ');
+        };
+        img.onerror = () => {
+            showToast('❌ ບໍ່ສາມາດອ່ານໄຟລ໌ຮູບພາບນີ້ໄດ້');
         };
     };
 }
@@ -961,7 +976,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// 7. STAFF PORTAL
+// 7. STAFF SELF-SERVICE PORTAL
 // =========================================================================
 let currentViewingStaffPin = null;
 
@@ -1941,6 +1956,7 @@ async function handleEditStaffSubmit(e) {
     e.preventDefault();
     const pin = document.getElementById('edit-staff-pin-hidden').value;
     const isBenefitApproved = document.getElementById('edit-staff-benefit-approved').checked;
+    const photoUrl = document.getElementById('edit-staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
     const updatedData = {
         staff_id: document.getElementById('edit-staff-id-input').value.trim(),
@@ -1949,7 +1965,8 @@ async function handleEditStaffSubmit(e) {
         role: document.getElementById('edit-staff-role-input').value.trim(),
         phone: document.getElementById('edit-staff-phone-input').value.trim(),
         salary: parseInt(document.getElementById('edit-staff-salary-input').value) || 4000000,
-        shift: document.getElementById('edit-staff-shift-input').value
+        shift: document.getElementById('edit-staff-shift-input').value,
+        photo_url: photoUrl
     };
 
     localBenefitApprovals[pin] = isBenefitApproved;
@@ -1957,10 +1974,11 @@ async function handleEditStaffSubmit(e) {
 
     if (supabaseClient) {
         try {
-            const { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
-            if (error) {
-                console.error('Update staff error:', error);
-                showToast('⚠️ Supabase Error: ' + error.message);
+            let { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
+            if (error && error.message && error.message.includes('photo_url')) {
+                // ຖ້າ DB ຍັງບໍ່ມີຖັນ photo_url ໃຫ້ອັບເດດສະເພາະສ່ວນທີ່ເຫຼືອ
+                delete updatedData.photo_url;
+                await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
             }
         } catch (err) {
             console.warn('Update staff exception:', err);
@@ -2017,7 +2035,7 @@ async function deleteStock(sku, branch, name) {
 }
 
 // -------------------------------------------------------------------------
-// DIRECT SUPABASE INSERTION FOR TABLE `staff`
+// DIRECT SUPABASE INSERTION FOR TABLE `staff` (WITH PHOTO_URL HANDLING)
 // -------------------------------------------------------------------------
 async function handlePartnerSubmit(e) {
     e.preventDefault();
@@ -2030,12 +2048,14 @@ async function handlePartnerSubmit(e) {
     const staffPhone = document.getElementById('staff-phone-input').value.trim() || '';
     const staffSalary = parseInt(document.getElementById('staff-salary-input').value) || 4000000;
     const staffShift = document.getElementById('staff-shift-input').value || 'ກະ 1';
+    const staffPhoto = document.getElementById('staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
     if (!supabaseClient) {
         alert('⚠️ ລະບົບຍັງບໍ່ທັນເຊື່ອມຕໍ່ກັບ Supabase! ກະລຸນາກວດສອບ API Key ທີ່ປຸ່ມຕັ້ງຄ່າ');
         return;
     }
 
+    // ກຽມ Payload ພ້ອມຮູບພາບ
     let dbPayload = {
         pin: pin,
         staff_id: staffId,
@@ -2044,24 +2064,29 @@ async function handlePartnerSubmit(e) {
         role: staffRole,
         phone: staffPhone,
         salary: staffSalary,
-        shift: staffShift
+        shift: staffShift,
+        photo_url: staffPhoto
     };
 
-    showToast('⏳ ກຳລັງສົ່ງຂໍ້ມູນໄປ Supabase...');
+    showToast('⏳ ກຳລັງສົ່ງຂໍ້ມູນ ແລະ ຮູບພາບໄປ Supabase...');
 
     let { data, error } = await supabaseClient.from('staff').insert([dbPayload]).select();
 
-    if (error && error.message && error.message.includes('column')) {
-        console.warn('Retrying with core columns only...');
-        dbPayload = {
-            pin: pin,
-            staff_id: staffId,
-            name: staffName,
-            branch: staffBranch,
-            role: staffRole
-        };
+    // ຖ້າຫາກ Error ຍ້ອນຖັນ photo_url ຍັງບໍ່ທັນຖືກສ້າງໃນ Supabase
+    if (error && error.message && error.message.includes('photo_url')) {
+        console.warn('photo_url column missing in Supabase, retrying without photo_url...');
+        delete dbPayload.photo_url;
         const retry = await supabaseClient.from('staff').insert([dbPayload]).select();
         error = retry.error;
+    }
+
+    // ຖ້າ Error ເລື່ອງຖັນອື່ນໆ
+    if (error && error.message && error.message.includes('column')) {
+        delete dbPayload.phone;
+        delete dbPayload.salary;
+        delete dbPayload.shift;
+        const retry2 = await supabaseClient.from('staff').insert([dbPayload]).select();
+        error = retry2.error;
     }
 
     if (error) {
@@ -2076,12 +2101,13 @@ async function handlePartnerSubmit(e) {
     localBenefitApprovals[pin] = isBenefitApproved;
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
-    alert(`✓ ເພີ່ມພະນັກງານ ${staffName} ລົງຖານຂໍ້ມູນ Supabase ສຳເລັດຮຽບຮ້ອຍແລ້ວ!`);
+    showToast(`✓ ເພີ່ມພະນັກງານ ${staffName} ລົງ Supabase ສຳເລັດ!`);
     closeModal('partner-modal');
 
     document.getElementById('staff-pin-input').value = '';
     document.getElementById('staff-name-input').value = '';
     document.getElementById('staff-phone-input').value = '';
+    document.getElementById('staff-photo-input').value = '';
 
     await fetchDataFromSupabase();
 }
@@ -2142,6 +2168,7 @@ async function fetchDataFromSupabase() {
                 role: s.role || 'Barista',
                 shift: s.shift || 'ກະ 1',
                 branch: s.branch || 'ສາຂານ້ຳພຸ',
+                photo_url: s.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120',
                 benefit_approved: localBenefitApprovals[s.pin] !== undefined ? localBenefitApprovals[s.pin] : (s.benefit_approved === true)
             }));
             renderEmployeesAndPayroll();
