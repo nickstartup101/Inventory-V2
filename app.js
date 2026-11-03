@@ -1,5 +1,5 @@
 // =========================================================================
-// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP
+// PWA INSTALLATION SYSTEM FOR ANDROID / DESKTOP (AUTO-HIDE WHEN INSTALLED)
 // =========================================================================
 let deferredInstallPrompt = null;
 
@@ -154,13 +154,12 @@ function showToast(msg) {
 }
 
 // =========================================================================
-// ULTRA COMPACT IMAGE COMPRESSOR (ບີບອັດຮູບໃຫ້ເບົາສຸດໆ ບໍ່ໃຫ້ DB ຕິດ Error)
+// ULTRA COMPACT IMAGE COMPRESSOR
 // =========================================================================
 function handleImageCompress(fileInput, targetInputId, previewImgId) {
     const file = fileInput.files[0];
     if (!file) return;
 
-    // ກວດສອບປະເພດໄຟລ໌
     if (!file.type.startsWith('image/')) {
         showToast('⚠️ ກະລຸນາເລືອກໄຟລ໌ຮູບພາບເທົ່ານັ້ນ');
         return;
@@ -175,7 +174,6 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
         img.src = event.target.result;
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            // ຂະໜາດ Profile Avatar ທີ່ເໝາະສົມທີ່ສຸດ (120x120px)
             const MAX_WIDTH = 120;
             const MAX_HEIGHT = 120;
             let width = img.width;
@@ -198,7 +196,6 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // ບີບອັດເປັນ JPEG ຄຸນນະພາບ 0.6 ເພື່ອໃຫ້ຂະໜາດບໍ່ເກີນ 10KB
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
             
             const targetInput = document.getElementById(targetInputId);
@@ -216,35 +213,36 @@ function handleImageCompress(fileInput, targetInputId, previewImgId) {
 }
 
 // =========================================================================
-// 1. SHIFT & TIME PARSER
+// 1. ADMIN CUSTOM SHIFT & PRECISE ATTENDANCE PARSER
 // =========================================================================
-const SHIFT_RULES = {
-    'ກະ 1': { name: 'ກະ 1', startHour: 7, startMin: 0, endHour: 16, endMin: 0, stdHours: 8, startMins: 420, endMins: 960 },
-    'ກະ 2': { name: 'ກະ 2', startHour: 11, startMin: 30, endHour: 20, endMin: 0, stdHours: 8, startMins: 690, endMins: 1200 }
-};
-
-function detectActualShift(clockInDate, defaultShiftName = 'ກະ 1') {
-    const timeInfo = getLaosTimeInfo(clockInDate);
-    if (timeInfo.totalMinutes < 555) {
-        return SHIFT_RULES['ກະ 1'];
-    } else {
-        return SHIFT_RULES['ກະ 2'];
-    }
+function parseTimeToMinutes(timeStr = '07:00') {
+    if (!timeStr) return 420; // 07:00 = 7*60
+    const parts = String(timeStr).split(':');
+    const h = parseInt(parts[0], 10) || 0;
+    const m = parseInt(parts[1], 10) || 0;
+    return (h * 60) + m;
 }
 
-function calculateLateMinutes(clockInDate, shiftName = 'ກະ 1') {
-    const shift = detectActualShift(clockInDate, shiftName);
-    const timeInfo = getLaosTimeInfo(clockInDate);
-    const diff = timeInfo.totalMinutes - shift.startMins;
+// ຄິດໄລ່ ມາຊ້າ (Late) ທຽບກັບເວລາເຂົ້າວຽກທີ່ Admin ກຳນົດໃຫ້ແຕ່ລະຄົນ
+function calculateStaffLateMinutes(clockInDate, staff) {
+    if (!clockInDate) return 0;
+    const startTimeStr = staff && staff.work_start_time ? staff.work_start_time : '07:00';
+    const shiftStartMinutes = parseTimeToMinutes(startTimeStr);
+
+    const inTimeInfo = getLaosTimeInfo(clockInDate);
+    const diff = inTimeInfo.totalMinutes - shiftStartMinutes;
     return diff > 0 ? diff : 0;
 }
 
-function calculateDailyOtHours(clockInDate, clockOutDate, shiftName = 'ກະ 1') {
+// ຄິດໄລ່ OT ທຽບກັບເວລາເລີກວຽກທີ່ Admin ກຳນົດໃຫ້ແຕ່ລະຄົນ
+function calculateStaffDailyOtHours(clockInDate, clockOutDate, staff) {
     if (!clockInDate || !clockOutDate || clockOutDate <= clockInDate) return 0;
-    const shift = detectActualShift(clockInDate, shiftName);
-    const outInfo = getLaosTimeInfo(clockOutDate);
-    if (outInfo.totalMinutes > shift.endMins) {
-        const postOtMins = outInfo.totalMinutes - shift.endMins;
+    const endTimeStr = staff && staff.work_end_time ? staff.work_end_time : '16:00';
+    const shiftEndMinutes = parseTimeToMinutes(endTimeStr);
+
+    const outTimeInfo = getLaosTimeInfo(clockOutDate);
+    if (outTimeInfo.totalMinutes > shiftEndMinutes) {
+        const postOtMins = outTimeInfo.totalMinutes - shiftEndMinutes;
         return parseFloat((postOtMins / 60).toFixed(1));
     }
     return 0;
@@ -279,9 +277,9 @@ function getLaosTimeInfo(timestamp) {
     const dt = parseSafeDate(timestamp);
     const laosStr = dt.toLocaleTimeString('en-US', { timeZone: 'Asia/Vientiane', hour12: false });
     const parts = laosStr.split(':');
-    const hours = parseInt(parts[0]) || 0;
-    const minutes = parseInt(parts[1]) || 0;
-    const seconds = parseInt(parts[2]) || 0;
+    const hours = parseInt(parts[0], 10) || 0;
+    const minutes = parseInt(parts[1], 10) || 0;
+    const seconds = parseInt(parts[2], 10) || 0;
     const totalMinutes = hours * 60 + minutes;
     const totalSeconds = totalMinutes * 60 + seconds;
     return { hours, minutes, seconds, totalMinutes, totalSeconds };
@@ -324,6 +322,7 @@ let isAdminLoggedIn = false;
 let attendanceLogs = [];
 let staffOffDays = JSON.parse(localStorage.getItem('staff_off_days') || '{}');
 let localBenefitApprovals = JSON.parse(localStorage.getItem('staff_benefit_approvals') || '{}');
+let localStaffWorkSchedules = JSON.parse(localStorage.getItem('staff_work_schedules') || '{}');
 
 let stockData = [];
 let stockMovements = [];
@@ -489,7 +488,7 @@ function populateStockMovementDropdown() {
 function addQuickQty(amount) {
     const input = document.getElementById('movement-qty-input');
     if (!input) return;
-    const current = parseInt(input.value) || 0;
+    const current = parseInt(input.value, 10) || 0;
     input.value = current + amount;
 }
 
@@ -497,7 +496,7 @@ async function handleKioskMovementSubmit(e) {
     e.preventDefault();
     const sku = document.getElementById('movement-item-select').value;
     const movementType = document.querySelector('input[name="movement-type"]:checked').value;
-    const qty = parseInt(document.getElementById('movement-qty-input').value);
+    const qty = parseInt(document.getElementById('movement-qty-input').value, 10);
     const note = document.getElementById('movement-note-input').value.trim() || 'ບັນທຶກ Kiosk';
 
     const item = stockData.find(i => i.sku === sku);
@@ -655,9 +654,10 @@ function renderEarlyComerStreakRanking() {
         if (todayLog) {
             const inDate = parseSafeDate(todayLog.timestamp);
             clockInTimeStr = inDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            const shift = detectActualShift(inDate, p.shift);
+            
+            // ຄິດໄລ່ເວລາທີ່ມາກ່ອນເວລາວຽກທີ່ Admin ຕັ້ງໃຫ້
+            const shiftStartSecs = parseTimeToMinutes(p.work_start_time || '07:00') * 60;
             const inInfo = getLaosTimeInfo(inDate);
-            const shiftStartSecs = shift.startMins * 60;
             if (inInfo.totalSeconds < shiftStartSecs) {
                 secondsEarlyToday = shiftStartSecs - inInfo.totalSeconds;
             }
@@ -756,14 +756,14 @@ function renderEarlyComerStreakRanking() {
 }
 
 // =========================================================================
-// 6. REAL-TIME PAYROLL
+// 6. REAL-TIME PAYROLL (PRECISION CALCULATION)
 // =========================================================================
 function calculateRealtimePayroll(staff) {
     const todayStr = getLaosDateString();
     const currentMonthStr = todayStr.substring(0, 7);
     const [yearStr, monthStr] = currentMonthStr.split('-');
-    const year = parseInt(yearStr);
-    const month = parseInt(monthStr);
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
 
     const daysInMonth = getDaysInMonth(year, month);
     const standardWorkDays = Math.max(1, daysInMonth - 4);
@@ -808,11 +808,9 @@ function calculateRealtimePayroll(staff) {
         if (day.in) {
             daysWorked++;
 
-            const shiftRule = detectActualShift(day.in, staff.shift || 'ກະ 1');
-            const inInfo = getLaosTimeInfo(day.in);
-
-            if (inInfo.totalMinutes > shiftRule.startMins) {
-                const lateMins = inInfo.totalMinutes - shiftRule.startMins;
+            // ຄິດໄລ່ ມາຊ້າ ຕາມເວລາເຂົ້າວຽກສະເພາະຂອງພະນັກງານຄົນນີ້
+            const lateMins = calculateStaffLateMinutes(day.in, staff);
+            if (lateMins > 0) {
                 totalLateMinutes += lateMins;
                 dailyStreak = 0;
             } else {
@@ -822,12 +820,10 @@ function calculateRealtimePayroll(staff) {
 
             if (dailyStreak > maxStreak) maxStreak = dailyStreak;
 
+            // ຄິດໄລ່ OT ຕາມເວລາເລີກວຽກສະເພາະຂອງພະນັກງານຄົນນີ້
             if (day.out && day.out > day.in) {
-                const outInfo = getLaosTimeInfo(day.out);
-                if (outInfo.totalMinutes > shiftRule.endMins) {
-                    const postOtMins = outInfo.totalMinutes - shiftRule.endMins;
-                    autoOtHours += (postOtMins / 60);
-                }
+                const ot = calculateStaffDailyOtHours(day.in, day.out, staff);
+                autoOtHours += ot;
             }
         }
     });
@@ -870,6 +866,15 @@ function renderEmployeesAndPayroll() {
             p.benefit_approved = localBenefitApprovals[p.pin];
         }
 
+        // ໂຫຼດຄ່າເວລາເຮັດວຽກທີ່ Admin ຕັ້ງໄວ້ (ຖ້າ Database ບໍ່ມີ ໃຫ້ດຶງຈາກ Local)
+        if (!p.work_start_time && localStaffWorkSchedules[p.pin]) {
+            p.work_start_time = localStaffWorkSchedules[p.pin].start;
+            p.work_end_time = localStaffWorkSchedules[p.pin].end;
+        }
+
+        const startTime = p.work_start_time || '07:00';
+        const endTime = p.work_end_time || '16:00';
+
         const payroll = calculateRealtimePayroll(p);
 
         const card = document.createElement('div');
@@ -892,10 +897,16 @@ function renderEmployeesAndPayroll() {
                         </span>
                     </div>
                 </div>
+
+                <div class="p-2 mb-2 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs flex items-center justify-between">
+                    <span class="text-amber-900 font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm text-amber-700">schedule</span> ເວລາວຽກກຳນົດ:
+                    </span>
+                    <span class="font-mono font-black text-amber-950">${startTime} - ${endTime}</span>
+                </div>
                 
                 <div class="space-y-1 text-xs border-t border-surface-container-high pt-2 text-on-surface-variant">
                     <p><span class="text-outline font-semibold">ຕຳແໜ່ງ:</span> <strong>${p.role || 'Barista'}</strong></p>
-                    <p><span class="text-outline font-semibold">ກະຫຼັກ:</span> ${p.shift || 'ກະ 1'} <span class="text-[10px] text-emerald-700 font-bold">(Auto-detect)</span></p>
                     <p><span class="text-outline font-semibold">ເງິນເດືອນພື້ນຖານ:</span> <span class="font-mono font-bold text-emerald-800">${(Number(p.salary) || 4000000).toLocaleString()} ກີບ</span></p>
                     <p><span class="text-outline font-semibold">ຄ່າແຮງຕໍ່ມື້:</span> <span class="font-mono font-semibold text-primary">${payroll.dailyRate.toLocaleString()} ກີບ/ມື້</span></p>
                 </div>
@@ -909,7 +920,7 @@ function renderEmployeesAndPayroll() {
                         <button type="button" onclick="toggleBenefitDirectly('${p.pin}')" class="px-2 py-1 rounded-lg text-xs font-bold transition-all shadow-sm ${payroll.isBenefitApproved ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300' : 'bg-primary text-white hover:bg-primary-container'}">
                             ${payroll.isBenefitApproved ? 'ປິດສະຫວັດດີການ' : 'ອະນຸມັດ'}
                         </button>
-                        <button type="button" onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all" title="ແກ້ໄຂ">
+                        <button type="button" onclick="openEditStaffModal('${p.pin}')" class="px-2 py-1 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-bold transition-all" title="ແກ້ໄຂເວລາວຽກ & ຂໍ້ມູນ">
                             <span class="material-symbols-outlined text-xs">edit</span>
                         </button>
                         <button type="button" onclick="deleteStaff('${p.pin}', '${p.name}')" class="px-2 py-1 bg-red-50 text-error hover:bg-red-600 hover:text-white rounded-lg font-bold transition-all" title="ລຶບ">
@@ -930,7 +941,7 @@ function renderEmployeesAndPayroll() {
         tr.innerHTML = `
             <td class="p-3 font-mono font-bold text-primary">${p.pin} / ${p.staff_id || ''}</td>
             <td class="p-3 font-bold text-on-surface">${p.name}</td>
-            <td class="p-3 font-bold text-outline">${p.shift || 'ກະ 1'}</td>
+            <td class="p-3 font-mono font-bold text-amber-900 bg-amber-500/10 rounded">${startTime} - ${endTime}</td>
             <td class="p-3 font-mono font-bold">${(Number(p.salary) || 4000000).toLocaleString()} ກີບ</td>
             <td class="p-3 font-mono font-semibold text-primary">${payroll.dailyRate.toLocaleString()} ກີບ</td>
             <td class="p-3 font-mono font-bold text-blue-700">
@@ -955,7 +966,8 @@ function renderEmployeesAndPayroll() {
     attendanceLogs.forEach(a => {
         if (getLaosDateString(parseSafeDate(a.timestamp)) === todayStr && (a.type || '').toLowerCase().includes('in')) {
             const dt = parseSafeDate(a.timestamp);
-            todayLateTotal += calculateLateMinutes(dt);
+            const staff = partnersData.find(p => p.pin === a.pin);
+            todayLateTotal += calculateStaffLateMinutes(dt, staff);
         }
     });
     const lateEl = document.getElementById('dash-today-late-mins');
@@ -976,7 +988,7 @@ async function toggleBenefitDirectly(pin) {
 }
 
 // =========================================================================
-// 7. STAFF SELF-SERVICE PORTAL
+// 7. STAFF PORTAL
 // =========================================================================
 let currentViewingStaffPin = null;
 
@@ -1019,11 +1031,14 @@ function renderStaffPortal(staff) {
     const daysInMonth = getDaysInMonth(year, month);
     const curMonthStr = `${year}-${String(month).padStart(2, '0')}`;
 
+    const startTime = staff.work_start_time || '07:00';
+    const endTime = staff.work_end_time || '16:00';
+
     document.getElementById('portal-staff-photo').src = staff.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
     document.getElementById('portal-staff-name').textContent = `${staff.name} (PIN: ${staff.pin})`;
     document.getElementById('portal-staff-role').textContent = `${staff.role || 'Barista'} (${staff.staff_id})`;
     document.getElementById('portal-staff-branch').textContent = staff.branch || 'ສາຂານ້ຳພຸ';
-    document.getElementById('portal-staff-shift-badge').textContent = `ກະຫຼັກ: ${staff.shift || 'ກະ 1'} (Auto-detect)`;
+    document.getElementById('portal-staff-shift-badge').textContent = `ເວລາເຂົ້າ-ເລີກວຽກ: ${startTime} - ${endTime}`;
 
     const benefitBadgeEl = document.getElementById('portal-benefit-status-badge');
     if (payroll.isBenefitApproved) {
@@ -1092,10 +1107,10 @@ function renderStaffPortal(staff) {
             inTimeStr = dayRecord.in.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             if (dayRecord.out) {
                 outTimeStr = dayRecord.out.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                dailyOt = calculateDailyOtHours(dayRecord.in, dayRecord.out, staff.shift);
+                dailyOt = calculateStaffDailyOtHours(dayRecord.in, dayRecord.out, staff);
             }
             
-            lateMins = calculateLateMinutes(dayRecord.in, staff.shift);
+            lateMins = calculateStaffLateMinutes(dayRecord.in, staff);
             statusBadge = `<span class="px-2 py-0.5 rounded font-bold text-[10px] bg-emerald-100 text-emerald-800 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">check</span> ມາວຽກ</span>`;
             confirmActionCard = `<span class="text-[10px] text-outline font-semibold">ປ້ຳໂມງແລ້ວ</span>`;
         } else if (isOffDay) {
@@ -1198,8 +1213,8 @@ async function handleEditStockSubmit(e) {
         branch: document.getElementById('edit-modal-branch').value.trim(),
         name: document.getElementById('edit-modal-name').value.trim(),
         category: document.getElementById('edit-modal-category').value,
-        stock: parseInt(document.getElementById('edit-modal-qty').value) || 0,
-        min_stock: parseInt(document.getElementById('edit-modal-min').value) || 1,
+        stock: parseInt(document.getElementById('edit-modal-qty').value, 10) || 0,
+        min_stock: parseInt(document.getElementById('edit-modal-min').value, 10) || 1,
         status: 'OK'
     };
 
@@ -1330,7 +1345,7 @@ async function adjustStockPrompt(sku, branch) {
     if (item) {
         const newQty = prompt(`ປັບຈຳນວນ Stock ໃໝ່ສຳລັບ SKU: ${item.sku} (${item.name})`, item.stock || 0);
         if (newQty !== null && !isNaN(newQty)) {
-            const parsedQty = parseInt(newQty);
+            const parsedQty = parseInt(newQty, 10);
             item.stock = parsedQty;
 
             if (supabaseClient) {
@@ -1522,14 +1537,14 @@ function verifyKioskPin() {
                 selectedPartnerForClock = partner;
 
                 const now = new Date();
-                const detectedShift = detectActualShift(now, partner.shift);
-                const lateMins = calculateLateMinutes(now, partner.shift);
+                const lateMins = calculateStaffLateMinutes(now, partner);
+                const startTime = partner.work_start_time || '07:00';
 
                 let statusText = '';
                 if (lateMins === 0) {
-                    statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">check_circle</span> ມາຕົງເວລາ (${detectedShift.name})</span>`;
+                    statusText = `<span class="text-emerald-700 font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">check_circle</span> ມາຕົງເວລາ (ກະເຂົ້າ: ${startTime})</span>`;
                 } else {
-                    statusText = `<span class="text-error font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">warning</span> ມາຊ້າ ${lateMins} ນາທີ (${detectedShift.name})</span>`;
+                    statusText = `<span class="text-error font-bold block text-[11px] mt-1 flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">warning</span> ມາຊ້າ ${lateMins} ນາທີ (ກະເຂົ້າ: ${startTime})</span>`;
                 }
 
                 document.getElementById('kiosk-user-info').innerHTML = `
@@ -1686,15 +1701,16 @@ function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
     }
 
     filteredLogs.forEach(a => {
-        const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin, shift: 'ກະ 1' };
+        const staff = partnersData.find(p => p.pin === a.pin) || { name: 'PIN: ' + a.pin };
         const dt = parseSafeDate(a.timestamp);
         const isClockIn = (a.type || '').toLowerCase().includes('in');
-        const detectedShift = detectActualShift(dt, staff.shift);
         
         let lateMins = 0;
         if (isClockIn) {
-            lateMins = calculateLateMinutes(dt, staff.shift);
+            lateMins = calculateStaffLateMinutes(dt, staff);
         }
+
+        const scheduledTime = `${staff.work_start_time || '07:00'} - ${staff.work_end_time || '16:00'}`;
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-surface-container-low';
@@ -1707,7 +1723,7 @@ function renderAdminAttendanceTable(filterType = currentAdminAttFilter) {
                     ${a.type || 'Clock-In'}
                 </span>
             </td>
-            <td class="p-2.5 font-mono font-bold text-xs text-primary">${detectedShift.name}</td>
+            <td class="p-2.5 font-mono font-bold text-xs text-amber-900">${scheduledTime}</td>
             <td class="p-2.5 font-mono font-bold ${lateMins > 0 ? 'text-amber-700' : 'text-emerald-700'}">
                 ${isClockIn ? (lateMins > 0 ? `+${lateMins} ນາທີ` : '✓ ຕົງເວລາ') : '--'}
             </td>
@@ -1877,7 +1893,7 @@ async function handleManualAttendanceSubmit(e) {
 }
 
 // =========================================================================
-// 12. ADMIN AUTHENTICATION & CRUD
+// 12. ADMIN AUTHENTICATION & CRUD (CUSTOM WORK SCHEDULE PRESETS)
 // =========================================================================
 function unlockAdminMode() {
     isAdminLoggedIn = true;
@@ -1945,6 +1961,10 @@ function openEditStaffModal(pin) {
     document.getElementById('edit-staff-type-input').value = p.emp_type || 'Full-time';
     document.getElementById('edit-staff-shift-input').value = p.shift || 'ກະ 1';
 
+    // ກຳນົດເວລາເຂົ້າ-ເລີກວຽກ
+    document.getElementById('edit-staff-start-time').value = p.work_start_time || '07:00';
+    document.getElementById('edit-staff-end-time').value = p.work_end_time || '16:00';
+
     const photoVal = p.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
     document.getElementById('edit-staff-photo-input').value = photoVal;
     document.getElementById('edit-preview-img').src = photoVal;
@@ -1958,25 +1978,35 @@ async function handleEditStaffSubmit(e) {
     const isBenefitApproved = document.getElementById('edit-staff-benefit-approved').checked;
     const photoUrl = document.getElementById('edit-staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
 
+    const startTime = document.getElementById('edit-staff-start-time').value || '07:00';
+    const endTime = document.getElementById('edit-staff-end-time').value || '16:00';
+
     const updatedData = {
         staff_id: document.getElementById('edit-staff-id-input').value.trim(),
         name: document.getElementById('edit-staff-name-input').value.trim(),
         branch: document.getElementById('edit-staff-branch-input').value.trim(),
         role: document.getElementById('edit-staff-role-input').value.trim(),
         phone: document.getElementById('edit-staff-phone-input').value.trim(),
-        salary: parseInt(document.getElementById('edit-staff-salary-input').value) || 4000000,
-        shift: document.getElementById('edit-staff-shift-input').value,
-        photo_url: photoUrl
+        salary: parseInt(document.getElementById('edit-staff-salary-input').value, 10) || 4000000,
+        shift: document.getElementById('edit-staff-shift-input').value || `ກະ (${startTime}-${endTime})`,
+        photo_url: photoUrl,
+        work_start_time: startTime,
+        work_end_time: endTime
     };
 
     localBenefitApprovals[pin] = isBenefitApproved;
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
+    localStaffWorkSchedules[pin] = { start: startTime, end: endTime };
+    localStorage.setItem('staff_work_schedules', JSON.stringify(localStaffWorkSchedules));
+
     if (supabaseClient) {
         try {
             let { error } = await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
-            if (error && error.message && error.message.includes('photo_url')) {
-                // ຖ້າ DB ຍັງບໍ່ມີຖັນ photo_url ໃຫ້ອັບເດດສະເພາະສ່ວນທີ່ເຫຼືອ
+            if (error && error.message && (error.message.includes('work_start_time') || error.message.includes('photo_url'))) {
+                // ຖ້າ Supabase ຍັງບໍ່ທັນເພີ່ມຖັນໃໝ່ ໃຫ້ຕັດອອກແລ້ວອັບເດດສ່ວນທີ່ເຫຼືອ
+                delete updatedData.work_start_time;
+                delete updatedData.work_end_time;
                 delete updatedData.photo_url;
                 await supabaseClient.from('staff').update(updatedData).eq('pin', pin);
             }
@@ -1989,11 +2019,13 @@ async function handleEditStaffSubmit(e) {
     if (localStaff) {
         Object.assign(localStaff, updatedData);
         localStaff.benefit_approved = isBenefitApproved;
+        localStaff.work_start_time = startTime;
+        localStaff.work_end_time = endTime;
     }
 
     renderEmployeesAndPayroll();
     closeModal('edit-staff-modal');
-    showToast(`✓ ອັບເດດຂໍ້ມູນ ${updatedData.name} ສຳເລັດ!`);
+    showToast(`✓ ອັບເດດຂໍ້ມູນ ແລະ ເວລາວຽກ (${startTime} - ${endTime}) ສຳເລັດ!`);
 }
 
 async function deleteStaff(pin, name) {
@@ -2011,6 +2043,9 @@ async function deleteStaff(pin, name) {
         }
 
         partnersData = partnersData.filter(p => p.pin !== pin);
+        delete localStaffWorkSchedules[pin];
+        localStorage.setItem('staff_work_schedules', JSON.stringify(localStaffWorkSchedules));
+
         renderEmployeesAndPayroll();
         showToast(`✓ ລົບພະນັກງານ ${name} ແລ້ວ`);
     }
@@ -2035,7 +2070,7 @@ async function deleteStock(sku, branch, name) {
 }
 
 // -------------------------------------------------------------------------
-// DIRECT SUPABASE INSERTION FOR TABLE `staff` (WITH PHOTO_URL HANDLING)
+// DIRECT SUPABASE INSERTION (WITH CUSTOM WORK SCHEDULE)
 // -------------------------------------------------------------------------
 async function handlePartnerSubmit(e) {
     e.preventDefault();
@@ -2046,16 +2081,18 @@ async function handlePartnerSubmit(e) {
     const staffBranch = document.getElementById('staff-branch-input').value.trim() || 'ສາຂານ້ຳພຸ';
     const staffRole = document.getElementById('staff-role-input').value.trim() || 'Barista';
     const staffPhone = document.getElementById('staff-phone-input').value.trim() || '';
-    const staffSalary = parseInt(document.getElementById('staff-salary-input').value) || 4000000;
+    const staffSalary = parseInt(document.getElementById('staff-salary-input').value, 10) || 4000000;
     const staffShift = document.getElementById('staff-shift-input').value || 'ກະ 1';
     const staffPhoto = document.getElementById('staff-photo-input').value.trim() || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120';
+    
+    const startTime = document.getElementById('staff-start-time').value || '07:00';
+    const endTime = document.getElementById('staff-end-time').value || '16:00';
 
     if (!supabaseClient) {
         alert('⚠️ ລະບົບຍັງບໍ່ທັນເຊື່ອມຕໍ່ກັບ Supabase! ກະລຸນາກວດສອບ API Key ທີ່ປຸ່ມຕັ້ງຄ່າ');
         return;
     }
 
-    // ກຽມ Payload ພ້ອມຮູບພາບ
     let dbPayload = {
         pin: pin,
         staff_id: staffId,
@@ -2065,43 +2102,38 @@ async function handlePartnerSubmit(e) {
         phone: staffPhone,
         salary: staffSalary,
         shift: staffShift,
-        photo_url: staffPhoto
+        photo_url: staffPhoto,
+        work_start_time: startTime,
+        work_end_time: endTime
     };
 
-    showToast('⏳ ກຳລັງສົ່ງຂໍ້ມູນ ແລະ ຮູບພາບໄປ Supabase...');
+    showToast('⏳ ກຳລັງສົ່ງຂໍ້ມູນ ແລະ ເວລາວຽກໄປ Supabase...');
 
     let { data, error } = await supabaseClient.from('staff').insert([dbPayload]).select();
 
-    // ຖ້າຫາກ Error ຍ້ອນຖັນ photo_url ຍັງບໍ່ທັນຖືກສ້າງໃນ Supabase
-    if (error && error.message && error.message.includes('photo_url')) {
-        console.warn('photo_url column missing in Supabase, retrying without photo_url...');
+    // ຖ້າຫາກຖັນ work_start_time ຫຼື photo_url ຍັງບໍ່ມີໃນ Supabase ໃຫ້ Retry ສ່ວນທີ່ເຫຼືອ
+    if (error && error.message && (error.message.includes('work_start_time') || error.message.includes('photo_url'))) {
+        delete dbPayload.work_start_time;
+        delete dbPayload.work_end_time;
         delete dbPayload.photo_url;
         const retry = await supabaseClient.from('staff').insert([dbPayload]).select();
         error = retry.error;
     }
 
-    // ຖ້າ Error ເລື່ອງຖັນອື່ນໆ
-    if (error && error.message && error.message.includes('column')) {
-        delete dbPayload.phone;
-        delete dbPayload.salary;
-        delete dbPayload.shift;
-        const retry2 = await supabaseClient.from('staff').insert([dbPayload]).select();
-        error = retry2.error;
-    }
-
     if (error) {
         console.error('Supabase Error Detailed:', error);
-        alert('❌ Supabase ປະຕິເສດການບັນທຶກ:\n\n' + 
-              'ຂໍ້ຄວາມ Error: ' + error.message + '\n' +
-              'ລະຫັດ Error Code: ' + error.code + '\n' +
-              'ລາຍລະອຽດ Details: ' + (error.details || 'ບໍ່ມີ'));
+        alert('❌ Supabase ປະຕິເສດການບັນທຶກ:\n\n' + error.message);
         return;
     }
 
+    // ບັນທຶກຄ່າເວລາວຽກ ແລະ ສະຫວັດດີການລົງ Local ເພື່ອຮັບປະກັນການຄິດໄລ່ທັນທີ
     localBenefitApprovals[pin] = isBenefitApproved;
     localStorage.setItem('staff_benefit_approvals', JSON.stringify(localBenefitApprovals));
 
-    showToast(`✓ ເພີ່ມພະນັກງານ ${staffName} ລົງ Supabase ສຳເລັດ!`);
+    localStaffWorkSchedules[pin] = { start: startTime, end: endTime };
+    localStorage.setItem('staff_work_schedules', JSON.stringify(localStaffWorkSchedules));
+
+    showToast(`✓ ເພີ່ມພະນັກງານ ${staffName} ພ້ອມເວລາວຽກ (${startTime} - ${endTime}) ສຳເລັດ!`);
     closeModal('partner-modal');
 
     document.getElementById('staff-pin-input').value = '';
@@ -2119,8 +2151,8 @@ async function handleStockSubmit(e) {
         branch: document.getElementById('modal-branch').value.trim(),
         name: document.getElementById('modal-item-name').value.trim(),
         category: document.getElementById('modal-item-category').value,
-        stock: parseInt(document.getElementById('modal-item-qty').value) || 0,
-        min_stock: parseInt(document.getElementById('modal-item-min').value) || 1,
+        stock: parseInt(document.getElementById('modal-item-qty').value, 10) || 0,
+        min_stock: parseInt(document.getElementById('modal-item-min').value, 10) || 1,
         status: 'OK'
     };
 
@@ -2162,15 +2194,20 @@ async function fetchDataFromSupabase() {
         if (error) {
             console.error('Fetch staff error:', error);
         } else if (staffRes) {
-            partnersData = staffRes.map(s => ({
-                ...s,
-                salary: s.salary || 4000000,
-                role: s.role || 'Barista',
-                shift: s.shift || 'ກະ 1',
-                branch: s.branch || 'ສາຂານ້ຳພຸ',
-                photo_url: s.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120',
-                benefit_approved: localBenefitApprovals[s.pin] !== undefined ? localBenefitApprovals[s.pin] : (s.benefit_approved === true)
-            }));
+            partnersData = staffRes.map(s => {
+                const schedule = localStaffWorkSchedules[s.pin] || {};
+                return {
+                    ...s,
+                    salary: s.salary || 4000000,
+                    role: s.role || 'Barista',
+                    shift: s.shift || 'ກະ 1',
+                    branch: s.branch || 'ສາຂານ້ຳພຸ',
+                    photo_url: s.photo_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120',
+                    work_start_time: s.work_start_time || schedule.start || '07:00',
+                    work_end_time: s.work_end_time || schedule.end || '16:00',
+                    benefit_approved: localBenefitApprovals[s.pin] !== undefined ? localBenefitApprovals[s.pin] : (s.benefit_approved === true)
+                };
+            });
             renderEmployeesAndPayroll();
         }
     } catch (e) {
