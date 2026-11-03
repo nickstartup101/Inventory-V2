@@ -95,7 +95,6 @@
         </div>
         
         <div class="flex items-center gap-1.5">
-            <!-- Android PWA Install Button (Mobile Header) -->
             <button id="btn-pwa-install-mobile" type="button" onclick="triggerPwaInstall()" class="bg-accent text-slate-950 text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-sm">install_mobile</span> ຕິດຕັ້ງແອັບ
             </button>
@@ -117,7 +116,6 @@
             <p class="text-[11px] text-primary-fixed-dim font-medium mt-1 tracking-wide">La Dolce cafe • NP Branch</p>
         </div>
 
-        <!-- Android / Device Install Button in Sidebar -->
         <div class="px-4 mb-3">
             <button type="button" id="btn-pwa-install-sidebar" onclick="triggerPwaInstall()" class="w-full bg-accent/20 border border-accent/40 text-accent font-headline font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-2 hover:bg-accent hover:text-slate-950 transition-all shadow-sm">
                 <span class="material-symbols-outlined text-base">download_for_offline</span>
@@ -198,7 +196,6 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <!-- Desktop Install PWA Button -->
                 <button type="button" id="btn-pwa-install-desktop" onclick="triggerPwaInstall()" class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 flex items-center gap-1.5 shadow-sm transition-all">
                     <span class="material-symbols-outlined text-sm text-emerald-700">download_for_offline</span>
                     <span>Install App</span>
@@ -240,7 +237,7 @@
             <!-- VIEW 1: DASHBOARD (HOMEPAGE) -->
             <section id="view-dashboard" class="view-panel active space-y-5">
                 
-                <!-- ANDROID INSTALL BANNER ON HOMEPAGE -->
+                <!-- ANDROID INSTALL BANNER -->
                 <div id="pwa-install-banner" class="bg-gradient-to-r from-primary to-primary-container text-white p-4 rounded-2xl shadow-md border border-primary-fixed/30 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="flex items-center gap-3.5 w-full sm:w-auto">
                         <div class="w-11 h-11 bg-accent text-slate-950 rounded-2xl flex items-center justify-center shrink-0 shadow-sm font-bold">
@@ -427,19 +424,19 @@
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm text-red-700">arrow_upward</span> ເບີກອອກລວມ (Total Out)
+                            <span class="material-symbols-outlined text-red-700">arrow_upward</span> ເບີກອອກລວມ (Total Out)
                         </p>
                         <h3 class="font-headline font-bold text-2xl text-red-700 mt-1" id="stat-total-out-qty">0 ຊິ້ນ</h3>
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm text-amber-600">local_fire_department</span> Burn Rate ສະເລ່ຍ
+                            <span class="material-symbols-outlined text-amber-600">local_fire_department</span> Burn Rate ສະເລ່ຍ
                         </p>
                         <h3 class="font-headline font-bold text-2xl text-primary mt-1" id="stat-avg-burn-rate">0 ລາຍການ/ມື້</h3>
                     </div>
                     <div class="bg-surface rounded-2xl p-4 border border-outline-variant/40 shadow-sm">
                         <p class="text-[11px] text-on-surface-variant font-bold uppercase flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm text-amber-700">hourglass_bottom</span> ສິນຄ້າໄກ້ໝົດ (&lt; 3 ມື້)
+                            <span class="material-symbols-outlined text-amber-700">hourglass_bottom</span> ສິນຄ້າໄກ້ໝົດ (&lt; 3 ມື້)
                         </p>
                         <h3 class="font-headline font-bold text-2xl text-amber-700 mt-1" id="stat-critical-items">0 ລາຍການ</h3>
                     </div>
@@ -499,7 +496,7 @@
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
                     <div>
                         <h2 class="font-headline font-extrabold text-lg text-amber-900">ລາຍຊື່ພະນັກງານ (staff table)</h2>
-                        <p class="text-amber-800 text-xs">ຈັດການຂໍ້ມູນພະນັກງານ, PIN, ເງິນເດືອນ ແລະ ການບັນທຶກເວລາຍ້ອນຫຼັງ</p>
+                        <p class="text-amber-800 text-xs">ກຳນົດເວລາເຂົ້າ-ອອກວຽກຂອງແຕ່ລະຄົນ, ຈັດການຂໍ້ມູນ, PIN, ເງິນເດືອນ ແລະ ການບັນທຶກເວລາຍ້ອນຫຼັງ</p>
                     </div>
                     <div class="flex gap-2">
                         <button type="button" onclick="openManualAttendanceModal()" class="bg-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:bg-primary-container flex items-center gap-1.5 shadow-sm transition-all">
@@ -535,7 +532,7 @@
                                     <th class="p-2.5">ວັນທີ & ເວລາ</th>
                                     <th class="p-2.5">PIN / ພະນັກງານ</th>
                                     <th class="p-2.5">ປະເພດ</th>
-                                    <th class="p-2.5">ກະວຽກ</th>
+                                    <th class="p-2.5">ກະວຽກທີ່ກຳນົດ</th>
                                     <th class="p-2.5 font-bold text-amber-700">ມາຊ້າ (Late)</th>
                                     <th class="p-2.5 text-right admin-only hidden" id="th-attendance-actions">ຈັດການ (Actions)</th>
                                 </tr>
@@ -552,7 +549,7 @@
                     <div>
                         <h1 class="font-headline font-extrabold text-lg text-amber-900" id="payroll-header-title">ຈັດການເງິນເດືອນ Real-Time</h1>
                         <p class="text-amber-800 text-xs" id="payroll-header-desc">
-                            ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ (ຈຳນວນມື້ໃນເດືອນ - 4 ມື້ພັກ) | OT 17,000 ກີບ/ຊມ + ສະຫວັດດີການ
+                            ຄ່າແຮງຕໍ່ມື້ = ເງິນເດືອນ ÷ (ຈຳນວນມື້ໃນເດືອນ - 4 ມື້ພັກ) | OT 17,000 ກີບ/ຊມ (ຄິດໄລ່ຈາກເວລາເລີກວຽກທີ່ Admin ຕັ້ງໃຫ້) + ສະຫວັດດີການ
                         </p>
                     </div>
                     <button type="button" onclick="showToast('ອະນຸມັດເງິນເດືອນລວມປະຈຳເດືອນແລ້ວ!')" class="bg-amber-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl hover:bg-amber-900">
@@ -567,7 +564,7 @@
                                 <tr>
                                     <th class="p-3">PIN / Staff ID</th>
                                     <th class="p-3">ພະນັກງານ</th>
-                                    <th class="p-3">ກະຫຼັກ</th>
+                                    <th class="p-3">ເວລາເຂົ້າ-ເລີກວຽກ</th>
                                     <th class="p-3">ເງິນເດືອນພື້ນຖານ</th>
                                     <th class="p-3">ຄ່າແຮງຕໍ່ມື້</th>
                                     <th class="p-3">ມື້ມາວຽກຈິງ</th>
@@ -700,7 +697,7 @@
                     <div id="kiosk-subview-time-clock" class="w-full max-w-md flex flex-col items-center space-y-4">
                         <div id="kiosk-pin-panel" class="bg-surface rounded-2xl shadow-lg border border-outline-variant/40 p-5 sm:p-6 w-full flex flex-col items-center">
                             <div class="text-center mb-3">
-                                <h2 class="font-headline font-bold text-base sm:lg text-on-surface">ເຄື່ອງບັນທຶກເວລາ ເຂົ້າ-ອອກ ວຽກ</h2>
+                                <h2 class="font-headline font-bold text-base sm:text-lg text-on-surface">ເຄື່ອງບັນທຶກເວລາ ເຂົ້າ-ອອກ ວຽກ</h2>
                                 <p class="text-[11px] text-on-surface-variant mt-0.5">ປ້ອນລະຫັດ PIN 6 ຫຼັກ ຂອງພະນັກງານ</p>
                             </div>
 
@@ -1069,7 +1066,7 @@
         </div>
     </div>
 
-    <!-- EDIT STAFF MODAL (WITH PHOTO UPLOAD & COMPRESSION) -->
+    <!-- EDIT STAFF MODAL (WITH CUSTOM WORK SCHEDULE) -->
     <div id="edit-staff-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -1083,7 +1080,7 @@
                 <!-- Staff Photo Upload & Preview -->
                 <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
                     <label class="block text-xs font-bold text-primary mb-1 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)
+                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ
                     </label>
                     <input type="file" id="edit-staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'edit-staff-photo-input', 'edit-preview-img')" class="w-full text-xs">
                     <div class="flex items-center gap-3 pt-1">
@@ -1112,6 +1109,35 @@
                         <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
                         <input id="edit-staff-branch-input" required type="text" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
+                </div>
+
+                <!-- ADMIN CUSTOM WORK TIME FOR LATE & OT CALCULATION -->
+                <div class="p-3 bg-amber-500/10 border-2 border-amber-500/30 rounded-xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black text-amber-950 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base text-amber-700">timer</span>
+                            ກຳນົດເວລາເຂົ້າ-ເລີກວຽກສະເພາະບຸກຄົນ (ສຳລັບຄິດໄລ່ ມາຊ້າ & OT) *
+                        </label>
+                        <span class="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-bold">Admin Preset</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div>
+                            <span class="text-[11px] font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                                <span class="material-symbols-outlined text-xs">login</span> ເວລາເຂົ້າວຽກ (Start)
+                            </span>
+                            <input id="edit-staff-start-time" required type="time" class="w-full text-xs font-mono font-bold px-3 py-2 border border-emerald-400 rounded-xl bg-white focus:ring-1 focus:ring-emerald-600">
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-amber-900 flex items-center gap-1 mb-1">
+                                <span class="material-symbols-outlined text-xs">logout</span> ເວລາເລີກວຽກ (End)
+                            </span>
+                            <input id="edit-staff-end-time" required type="time" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-400 rounded-xl bg-white focus:ring-1 focus:ring-amber-600">
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant italic">
+                        * ຖ້າເຂົ້າວຽກຫຼັງເວລານີ້ ຈະຖືກນັບເປັນ <b>ມາຊ້າ</b> | ຖ້າເລີກວຽກຫຼັງເວລານີ້ ຈະຖືກຄິດໄລ່ເປັນ <b>OT (17,000 ກີບ/ຊມ)</b>
+                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1156,11 +1182,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">ກະວຽກ</label>
-                        <select id="edit-staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
-                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
-                        </select>
+                        <label class="block text-xs font-bold mb-1">ຊື່ກະ (Shift Preset Tag)</label>
+                        <input id="edit-staff-shift-input" type="text" placeholder="ເຊັ່ນ: ກະ 1, ກະ 2, ກະພິເສດ" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                 </div>
 
@@ -1172,7 +1195,7 @@
         </div>
     </div>
 
-    <!-- ADD NEW STAFF MODAL (WITH PHOTO UPLOAD & COMPRESSION) -->
+    <!-- ADD NEW STAFF MODAL (WITH CUSTOM WORK SCHEDULE) -->
     <div id="partner-modal" class="modal-backdrop fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-surface rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-outline-variant/30 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-container-high">
@@ -1184,7 +1207,7 @@
                 <!-- Staff Photo Upload & Preview -->
                 <div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2">
                     <label class="block text-xs font-bold text-primary mb-1 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ (ບີບອັດອັດໂນມັດ)
+                        <span class="material-symbols-outlined text-sm">photo_camera</span> ອັບໂຫຼດຮູບພາບພະນັກງານ
                     </label>
                     <input type="file" id="staff-file-input" accept="image/*" onchange="handleImageCompress(this, 'staff-photo-input', 'add-preview-img')" class="w-full text-xs">
                     <div class="flex items-center gap-3 pt-1">
@@ -1211,8 +1234,37 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold mb-1">ສາຂາ *</label>
-                        <input id="staff-branch-input" required type="text" value="NP branch" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
+                        <input id="staff-branch-input" required type="text" value="ສາຂານ້ຳພຸ" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
+                </div>
+
+                <!-- ADMIN CUSTOM WORK TIME FOR LATE & OT CALCULATION -->
+                <div class="p-3 bg-amber-500/10 border-2 border-amber-500/30 rounded-xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black text-amber-950 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base text-amber-700">timer</span>
+                            ກຳນົດເວລາເຂົ້າ-ເລີກວຽກສະເພາະບຸກຄົນ (ສຳລັບຄິດໄລ່ ມາຊ້າ & OT) *
+                        </label>
+                        <span class="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded font-bold">Admin Preset</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <div>
+                            <span class="text-[11px] font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                                <span class="material-symbols-outlined text-xs">login</span> ເວລາເຂົ້າວຽກ (Start)
+                            </span>
+                            <input id="staff-start-time" required type="time" value="07:00" class="w-full text-xs font-mono font-bold px-3 py-2 border border-emerald-400 rounded-xl bg-white focus:ring-1 focus:ring-emerald-600">
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-amber-900 flex items-center gap-1 mb-1">
+                                <span class="material-symbols-outlined text-xs">logout</span> ເວລາເລີກວຽກ (End)
+                            </span>
+                            <input id="staff-end-time" required type="time" value="16:00" class="w-full text-xs font-mono font-bold px-3 py-2 border border-amber-400 rounded-xl bg-white focus:ring-1 focus:ring-amber-600">
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant italic">
+                        * ລະບົບຈະນຳໃຊ້ເວລານີ້ໃນການຕັດ <b>ມາຊ້າ</b> ແລະ ຄິດໄລ່ <b>OT</b> ໃຫ້ພະນັກງານຄົນນີ້ໂດຍສະເພາະ
+                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1229,7 +1281,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold mb-1">ເງິນເດືອນພື້ນຖານ *</label>
-                        <input id="staff-salary-input" required type="number" value="3800000" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
+                        <input id="staff-salary-input" required type="number" value="4000000" class="w-full text-xs font-mono font-bold px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                     <div>
                         <label class="block text-xs font-bold mb-1">ສະຫວັດດີການ</label>
@@ -1257,11 +1309,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">ກະວຽກ</label>
-                        <select id="staff-shift-input" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
-                            <option value="ກະ 1">ກະ 1 (07:00 - 16:00)</option>
-                            <option value="ກະ 2">ກະ 2 (11:30 - 20:00)</option>
-                        </select>
+                        <label class="block text-xs font-bold mb-1">ຊື່ກະ (Shift Preset Tag)</label>
+                        <input id="staff-shift-input" type="text" value="ກະ 1 (07:00 - 16:00)" class="w-full text-xs px-3 py-2 border border-outline-variant rounded-xl">
                     </div>
                 </div>
 
